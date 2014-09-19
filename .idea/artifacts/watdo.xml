@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="javafx" name="JavaFXApp">
-    <output-path>$PROJECT_DIR$/out/artifacts/JavaFXApp</output-path>
+  <artifact type="javafx" build-on-make="true" name="watdo">
+    <output-path>$PROJECT_DIR$/out/artifacts/watdo</output-path>
     <properties id="javafx-properties">
       <options>
         <option name="appClass" value="sample.Main" />
