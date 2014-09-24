@@ -43,10 +43,15 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void configureGrid() {
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setPadding(new Insets(5, 7, 5, 7));
     }
 
     private void configureTaskName() {
+        taskNameLabel.getStylesheets().add(this.getStylesheets().get(0));
+        taskNameLabel.getStyleClass().add("task-name-label");
+        taskNameLabel.setMaxWidth(350);
+        taskNameLabel.setMaxHeight(80);
+        taskNameLabel.setWrapText(true);
     }
 
     private void addControlsToGrid() {
@@ -60,7 +65,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void addContent(TodoItem task) {
         setText(null);
-        taskNameLabel.setText(task.getTaskName());
+        taskNameLabel.setText(task.getTaskName().toUpperCase());
         setGraphic(grid);
     }
 

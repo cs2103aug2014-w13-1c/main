@@ -28,6 +28,7 @@ public class TaskListViewController {
         taskData.add(new TodoItem("finish CS2101 progress report", new Date(), new Date()));
         taskData.add(new TodoItem("run 24km", new Date(), new Date()));
         taskData.add(new TodoItem("have lunch with some person", new Date(), new Date()));
+        taskData.add(new TodoItem("This is a very looooooooooooooong task name to test for word wrap", new Date(), new Date()));
 
         taskListView.setCellFactory(taskListView -> new TaskListCellController());
         taskListView.setItems(taskData);
