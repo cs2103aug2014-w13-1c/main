@@ -30,8 +30,12 @@ public class TaskListViewController {
         taskData.add(new TodoItem("have lunch with some person", new Date(), new Date()));
 
         taskListView.setCellFactory(taskListView -> new TaskListCellController());
-        taskListView.setItems(taskData);
+//        taskListView.setItems(taskData);
 
+    }
+
+    public void updateView() {
+        taskListView.setItems(taskData);
     }
 
     /**

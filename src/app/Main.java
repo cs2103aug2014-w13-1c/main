@@ -22,6 +22,7 @@ public class Main extends Application {
     private TextField inputField;
     private ListView taskListView;
     private CommandController commandController;
+    private TaskListViewController taskListViewController;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -34,6 +35,7 @@ public class Main extends Application {
         showTaskListView();
 
         commandController = new CommandController();
+        commandController.setMainApp(this);
         inputField.requestFocus();
     }
 
@@ -44,8 +46,8 @@ public class Main extends Application {
             taskListView = loader.load();
 
             rootLayout.setCenter(taskListView);
-            TaskListViewController controller = loader.getController();
-            controller.setMainApp(this);
+            taskListViewController = loader.getController();
+            taskListViewController.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,9 +106,9 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public TextField getInputField() {
-        return inputField;
-    }
+    public TextField getInputField() { return inputField; }
+
+    public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
     public CommandController getCommandController() { return commandController; }
 

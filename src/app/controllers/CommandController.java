@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.Main;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 
@@ -31,6 +32,7 @@ public class CommandController {
 
     // Class variables
     private TodoItemList taskList;
+    private Main main;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -65,11 +67,14 @@ public class CommandController {
         if (firstWordPos != -1) {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItems();
-        if (todoList.isEmpty()) {
-            return String.format(ERROR_FILE_EMPTY);
-        }
-        return displayTasks(todoList);
+//        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+//        if (todoList.isEmpty()) {
+//            return String.format(ERROR_FILE_EMPTY);
+//        }
+//        return displayTasks(todoList);
+
+        main.getTaskListViewController().updateView();
+        return "displaying tasks";
     }
 
     protected String displayTasks(ArrayList<TodoItem> todoList) {
@@ -182,5 +187,17 @@ public class CommandController {
     public void parseCommand(String command) {
         printString("Parsing: \"" + command + "\"\n");
         printString(processCommand(command));
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param main
+     */
+    public void setMainApp(Main main) {
+        this.main = main;
+
+        // Add observable list data to the table
+        // personTable.setItems(mainApp.getPersonData());
     }
 }
