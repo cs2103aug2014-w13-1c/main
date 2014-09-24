@@ -11,7 +11,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.control.Button;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 
 import java.io.IOException;
 
@@ -37,6 +43,13 @@ public class Main extends Application {
         commandController = new CommandController();
         commandController.setMainApp(this);
         inputField.requestFocus();
+
+//        Stage dialogStage = new Stage();
+//        dialogStage.initModality(Modality.WINDOW_MODAL);
+//        dialogStage.setScene(new Scene(VBoxBuilder.create().
+//                children(new Text("Hi"), new Button("Ok.")).
+//                alignment(Pos.CENTER).padding(new Insets(5)).build()));
+//        dialogStage.show();
     }
 
     private void showTaskListView() {
