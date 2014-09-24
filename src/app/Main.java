@@ -44,6 +44,8 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/InputField.fxml"));
             TextField inputField = (TextField) loader.load();
+            inputField.getStylesheets().add(getClass().getResource("stylesheets/TextField.css").toExternalForm());
+            inputField.getStyleClass().add("text-field");
 
             rootLayout.setBottom(inputField);
         } catch (IOException e) {

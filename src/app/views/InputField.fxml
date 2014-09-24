@@ -1,7 +1,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.text.Font?>
 
-<TextField prefHeight="100.0">
+<TextField prefHeight="100.0" promptText="wat do?">
 <font>
     <Font name="Helvetica" size="37.0" />
 </font></TextField>
