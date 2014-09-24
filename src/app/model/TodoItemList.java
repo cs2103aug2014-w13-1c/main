@@ -174,7 +174,7 @@ public class TodoItemList {
 		    Date currentStartDate = currentTodoItem.getStartDate();
 		    Date currentEndDate = currentTodoItem.getEndDate();
 		    if (currentTaskName != null) {
-		        fileObject.put("TaskName", currentTodoItem.getTaskName());
+		        fileObject.put("taskName", currentTodoItem.getTaskName());
 		    }
 		    if (currentStartDate != null) {
 		        fileObject.put("startDate", currentTodoItem.getStartDate().toString());
@@ -185,7 +185,10 @@ public class TodoItemList {
 		    
 		    fileArray.add(fileObject);
 		}
+		
+		System.out.println("Now it looks like this: " + fileArray.toJSONString());
 		writer.write(fileArray.toJSONString());
+		writer.flush();
 		fileToWrite.close();
 	}
 	
@@ -215,7 +218,7 @@ public class TodoItemList {
 		JSONArray fileArray = (JSONArray) parser.parse(fileString);
 		for (int i = 0; i < fileArray.size(); i++) {
 		    JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
-		    String currentTaskName = (String) currentJSONObject.get("TaskName");
+		    String currentTaskName = (String) currentJSONObject.get("taskName");
 		    Date currentStartDate = (Date) currentJSONObject.get("startDate");
 		    Date currentEndDate = (Date) currentJSONObject.get("endDate");
 		    
