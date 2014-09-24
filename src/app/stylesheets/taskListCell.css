@@ -1,0 +1,5 @@
+.cell {
+    -fx-border-style: solid;
+    -fx-stroke: black;
+    -fx-stroke-width: 10;
+}
