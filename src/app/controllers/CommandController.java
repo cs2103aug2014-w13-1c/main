@@ -19,7 +19,7 @@ import java.util.Date;
 
 public class CommandController {
     protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH
+        ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH, UPDATE
     }
 
     // Errors
@@ -31,6 +31,7 @@ public class CommandController {
     private final String MESSAGE_ADD_COMPLETE = "added: \"%1$s\"\n";
     private final String MESSAGE_DELETE_COMPLETE = "deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
+    private final String MESSAGE_UPDATE_COMPLETE = "updated: \"%1$s\"\n";
 
     // Class variables
     private TodoItemList taskList;
@@ -159,6 +160,30 @@ public class CommandController {
         return returnString;
     }
 
+    protected String update(String command) {
+        int firstWordPos = firstSpacePosition(command);
+        if (firstWordPos == -1) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        int index = -1;
+        String secondCommand = command.substring(firstWordPos + 1);
+        int secondWordPos = firstSpacePosition(secondCommand);
+        if (secondWordPos == -1) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        if(isInt(secondCommand.substring(0, secondWordPos))) {
+            index = Integer.parseInt(secondCommand.substring(0, secondWordPos)) - 1;
+        }
+        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        if (index < 0 || index >= todoList.size()) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
+        taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        return String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated);
+    }
+
     // Command processing methods
     protected COMMAND_TYPE determineCommandType(String commandWord) {
         if (commandWord.equals("add")) {
@@ -171,6 +196,8 @@ public class CommandController {
             return COMMAND_TYPE.EXIT;
         } else if (commandWord.equals("search")) {
             return COMMAND_TYPE.SEARCH;
+        } else if (commandWord.equals("update")) {
+            return COMMAND_TYPE.UPDATE;
         } else {
             return COMMAND_TYPE.INVALID;
         }
@@ -190,6 +217,8 @@ public class CommandController {
                 System.exit(0);
             case SEARCH :
                 return search(command);
+            case UPDATE :
+                return update(command);
             default :
                 return ERROR_WRONG_COMMAND_FORMAT;
         }

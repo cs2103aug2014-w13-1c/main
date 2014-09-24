@@ -37,11 +37,11 @@ public class SidebarController {
         });
 
         addButton.setOnAction((event) -> {
-            setAndFocusInputField("add");
+            setAndFocusInputField("add ");
         });
 
         searchButton.setOnAction((event) -> {
-            setAndFocusInputField("search");
+            setAndFocusInputField("search ");
         });
 
         settingsButton.setOnAction((event) -> {
@@ -65,7 +65,7 @@ public class SidebarController {
     private void setAndFocusInputField(String text) {
         TextField input = main.getInputField();
         input.requestFocus();
-        input.setText(text + " ");
-        input.positionCaret(text.length() + 1);
+        input.setText(text);
+        input.positionCaret(text.length());
     }
 }
