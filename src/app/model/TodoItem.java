@@ -27,22 +27,22 @@ public class TodoItem {
 	public static final String INVALID = "Invalid";
 	
 	// Constructors
-	public TodoItem(String taskName, Date startDate, Date endDate) {
-		if (taskName != null) { 
-			this.taskName = new SimpleStringProperty(taskName);
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
+		if (newTaskName != null) { 
+			this.taskName = new SimpleStringProperty(newTaskName);
 		} else {
 			this.taskName = null;
 		}
 		
-		if (startDate != null) {
-			this.startDate = new SimpleObjectProperty<Date>(startDate);
+		if (newStartDate != null) {
+			this.startDate = new SimpleObjectProperty<Date>(newStartDate);
 		} else {
-			startDate = null;
+			this.startDate = null;
 		}
-		if (endDate != null) {
-			this.endDate = new SimpleObjectProperty<Date>(endDate);
+		if (newEndDate != null) {
+			this.endDate = new SimpleObjectProperty<Date>(newEndDate);
 		} else {
-			endDate = null;
+			this.endDate = null;
 		}
 	}
 	
@@ -75,11 +75,15 @@ public class TodoItem {
 		return taskName;
 	}
 	
-	public void setTaskName(String taskName) {
-		if (taskName != null) {
-			this.taskName.set(taskName);
-		} else {
-			this.taskName = new SimpleStringProperty(taskName);
+	public void setTaskName(String newTaskName) {
+	    if (newTaskName == null) {
+	        this.taskName = null;
+	    } else {
+	        if (this.taskName != null) {
+	            this.taskName.set(newTaskName);
+	        } else {
+	            this.taskName = new SimpleStringProperty(newTaskName);
+		    }
 		}
 	}
 	
@@ -98,11 +102,15 @@ public class TodoItem {
 		return startDate;
 	}
 	
-	public void setStartDate(Date startDate) {
-		if (startDate != null) {
-			this.startDate.set(startDate);
-		} else {
-			this.startDate = new SimpleObjectProperty<Date>(startDate);
+	public void setStartDate(Date newStartDate) {
+	    if (newStartDate == null) {
+	        this.startDate = null;
+	    } else {
+	        if (this.startDate != null) {
+	            this.startDate.set(newStartDate);
+	        } else {
+		        this.startDate = new SimpleObjectProperty<Date>(newStartDate);
+		    }
 		}
 	}
 	
@@ -121,11 +129,15 @@ public class TodoItem {
 		return endDate;
 	}
 	
-	public void setEndDate(Date endDate) {
-		if (endDate != null) {
-			this.endDate.set(endDate);
-		} else {
-			this.endDate = new SimpleObjectProperty<Date>(endDate);
+	public void setEndDate(Date newEndDate) {
+	    if (newEndDate == null) {
+	        this.endDate = null;
+	    } else {
+	        if (this.endDate != null) {
+	            this.endDate.set(newEndDate);
+	        } else {
+		        this.endDate = new SimpleObjectProperty<Date>(newEndDate);
+		    }
 		}
 	}
 	
