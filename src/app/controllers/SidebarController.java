@@ -31,6 +31,9 @@ public class SidebarController {
      */
     @FXML
     private void initialize() {
+        displayButton.setOnAction((event) -> {
+
+        });
     }
 
     /**
