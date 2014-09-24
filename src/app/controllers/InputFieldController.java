@@ -34,14 +34,15 @@ public class InputFieldController {
         inputField.setOnAction((event) -> {
             lastCommand = inputField.getText();
             inputField.clear();
-            System.out.println(lastCommand);
+//            System.out.println(lastCommand);
+            main.getCommandController().parseCommand(lastCommand);
         });
 
         inputField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.TAB) {
-                    System.out.println("TAB");
+                    System.out.println("TAB: " + inputField.getText());
                     event.consume();
                     inputField.requestFocus();
                 }

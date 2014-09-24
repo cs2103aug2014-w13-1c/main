@@ -1,5 +1,6 @@
 package app;
 
+import app.controllers.CommandController;
 import app.controllers.InputFieldController;
 import app.controllers.SidebarController;
 import app.controllers.TaskListViewController;
@@ -18,9 +19,9 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-
     private TextField inputField;
     private ListView taskListView;
+    private CommandController commandController;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -31,6 +32,9 @@ public class Main extends Application {
         showSidebar();
         showInputField();
         showTaskListView();
+
+        commandController = new CommandController();
+        inputField.requestFocus();
     }
 
     private void showTaskListView() {
@@ -103,6 +107,8 @@ public class Main extends Application {
     public TextField getInputField() {
         return inputField;
     }
+
+    public CommandController getCommandController() { return commandController; }
 
     public static void main(String[] args) {
         launch(args);

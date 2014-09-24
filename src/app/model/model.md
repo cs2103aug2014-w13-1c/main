@@ -7,28 +7,33 @@ Stores data in program memory. No File I/O yet.
 Constructors
 ------------
 * public TodoItemList() _creates empty list of todo items with file name watdo.txt_
-* public TodoItemList(String fileName) _loads todo items from provided file name_
-* public TodoItem (String itemAction, Date startDate, Date endDate)
- * itemAction, startDate, endDate can be null
- * itemAction shouldn't be null
+* public TodoItemList(String fileName) _loads todo items from provided file name_ **still implementing**
+* public TodoItem (String taskName, Date startDate, Date endDate)
+ * taskName, startDate, endDate can be null
+ * taskName shouldn't be null
  * _startDate_ + _endDate_ = **Event**
  * no _startDate_ + _endDate_ = **Deadline**
  * no _startDate_ +  no _endDate_ = **Floating**
 
 CRUD methods: TodoItemList
 -----------
-* public void addTodoItem(TodoItem newItem)
-* public TodoItem readTodoItem(int index) _returns null if index out of bounds_
-* public void updateTodoItem(int index, String itemAction, Date startDate, Date endDate)
-* public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
+* TodoItem
+ * public void addTodoItem(TodoItem newItem)
+ * public TodoItem readTodoItem(int index) _returns null if index out of bounds_
+ * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate)
+ * public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
+ * public void clearTodoItems()
+* TodoItemList
+ * public ArrayList<TodoItem> getTodoItems() 
+ * public ListIterator<TodoItem> getTodoItemIterator() 
 
 GET methods: TodoItem
 -----------
 Return null if not set.
 
-* itemAction
- * public String getItemAction()
- * public StringProperty getItemActionProperty()
+* taskName
+ * public String getTaskName()
+ * public StringProperty getTaskNameProperty()
 * startDate
  * public Date getStartDate()
  * public ObjectProperty<Date> getStartDateProperty()
@@ -40,9 +45,9 @@ SET Methods: TodoItem
 ------------
 Create new Property if not set.
 
-* itemAction
-  * public void setItemAction(String itemAction)
-  * public void setItemActionProperty(StringProperty itemAction)
+* taskName
+  * public void setTaskName(String taskName)
+  * public void setTaskNameProperty(StringProperty taskName)
 * startDate
   * public void setStartDate(LocalDate startDate)
   * public void setStartDateProperty(ObjectProperty<Date> startDate)
@@ -57,3 +62,18 @@ Other methods: TodoItem
  * returns "Deadline" for Deadline
  * returns "Floating" for Floating
  * returns "Invalid" otherwise
+ 
+Other methods: TodoItemList
+-------------
+* public void changeFile() **still implementing**
+ * Switches the current file to a different file
+* public String getFileName()
+ * Returns the name of the current file being used
+* public ArrayList<TodoItem> getTodoItems()
+ * Returns the entire list of TodoItems
+* public String getLoadStatus()
+ * Gets the load status of the file. For I/O error checking.
+* public String getWriteStatus()
+ * Gets the write status of the file. For I/O error checking.
+* public int countTodoItems()
+ * Gets the number of TodoItems

@@ -40,7 +40,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void addContent(TodoItem task) {
         setText(null);
-        taskNameLabel.setText(task.getItemAction());
+        taskNameLabel.setText(task.getTaskName());
         setGraphic(grid);
     }
 
