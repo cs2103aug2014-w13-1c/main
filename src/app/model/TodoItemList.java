@@ -14,8 +14,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ListIterator;
 
 import org.json.simple.*;
@@ -57,12 +59,14 @@ public class TodoItemList {
 	}
 	
 	public TodoItemList(String fileName) {
-		this.fileName = fileName;
+        this.fileName = fileName; // The ordering of these two statements is very important.
+	    todoItems = new ArrayList<TodoItem>();
 		try {
-		    // loadFile(this.fileName);
+		    loadFile(this.fileName);
 		    loadStatus = LOAD_SUCCESS;
 		    writeStatus = WRITE_SUCCESS;
 		} catch (Exception e) {
+		    System.out.println(e);
 		    loadStatus = LOAD_FAILED;
 		    writeStatus = WRITE_FAILED;
 		}
@@ -102,7 +106,7 @@ public class TodoItemList {
 	public void addTodoItem(TodoItem newItem) {
 		todoItems.add(newItem);
 		try {
-		    // updateFile();
+		    updateFile();
 		    writeStatus = WRITE_SUCCESS;
 		} catch (Exception e) {
 		    writeStatus = WRITE_FAILED;
@@ -120,17 +124,11 @@ public class TodoItemList {
 	public void updateTodoItem(int index, String taskName, Date startDate, Date endDate) {
 		TodoItem updatedItem = todoItems.get(index);
 		
-		if (taskName != null) {
-			updatedItem.setTaskName(taskName);
-		}
-		if (startDate != null) {
-			updatedItem.setStartDate(startDate);
-		}
-		if (endDate != null) {
-			updatedItem.setEndDate(endDate);
-		}
+		updatedItem.setTaskName(taskName);
+		updatedItem.setStartDate(startDate);
+		updatedItem.setEndDate(endDate);
 		try {
-		    // updateFile();
+		    updateFile();
 		    writeStatus = WRITE_SUCCESS;
 		} catch (Exception e) {
 		    writeStatus = WRITE_FAILED;
@@ -140,7 +138,7 @@ public class TodoItemList {
 	public TodoItem deleteTodoItem(int index) {
 		try {
 			TodoItem removed = todoItems.remove(index);
-			// updateFile();
+			updateFile();
 			writeStatus = WRITE_SUCCESS;
 			return removed;
 		} catch (Exception e) {
@@ -150,7 +148,12 @@ public class TodoItemList {
 	}
 	
 	public void clearTodoItems() {
-	    todoItems = new ArrayList<TodoItem>(); 
+        todoItems = new ArrayList<TodoItem>();
+	    try {
+	        updateFile();
+	    } catch (Exception e) {
+	        writeStatus = WRITE_FAILED;
+	    }
 	}
 	
 	public int countTodoItems() {
@@ -162,7 +165,6 @@ public class TodoItemList {
 		BufferedWriter writer = new BufferedWriter(fileToWrite);
 		
 		JSONArray fileArray = new JSONArray();
-		System.out.println("fileArray looks like this: " + fileArray.toJSONString());
 		
 		ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
 		
@@ -177,31 +179,28 @@ public class TodoItemList {
 		        fileObject.put("taskName", currentTodoItem.getTaskName());
 		    }
 		    if (currentStartDate != null) {
-		        fileObject.put("startDate", currentTodoItem.getStartDate().toString());
+		        fileObject.put("startDate", currentTodoItem.getStartDate().getTime());
 		    }
 		    if (currentEndDate != null) {
-		        fileObject.put("endDate", currentTodoItem.getEndDate().toString());
+		        fileObject.put("endDate", currentTodoItem.getEndDate().getTime());
 		    }
 		    
 		    fileArray.add(fileObject);
 		}
 		
-		System.out.println("Now it looks like this: " + fileArray.toJSONString());
 		writer.write(fileArray.toJSONString());
 		writer.flush();
 		fileToWrite.close();
 	}
 	
-	private void loadFile(String fileToLoad) throws IOException, ParseException {
+	private void loadFile(String fileToLoad) throws IOException, ParseException, java.text.ParseException {
 	    FileReader fileToRead;
 	    try {
 	        fileToRead = new FileReader(fileToLoad);
-	        System.out.println("Here!");
 	    } catch (FileNotFoundException e) { // if no file found at stated path, create new file
-	        System.out.println("Or here!");
 	        File fileToBeCreated = new File(fileToLoad);
 	        fileToBeCreated.createNewFile();
-            updateFile();
+	        updateFile();
 	        fileToRead = new FileReader(fileToLoad);
 	    }
 	    BufferedReader reader = new BufferedReader(fileToRead);
@@ -215,12 +214,28 @@ public class TodoItemList {
 		todoItems = new ArrayList<TodoItem>();
 		
 		JSONParser parser = new JSONParser();
+		DateFormat dateParser = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+		
 		JSONArray fileArray = (JSONArray) parser.parse(fileString);
 		for (int i = 0; i < fileArray.size(); i++) {
 		    JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
-		    String currentTaskName = (String) currentJSONObject.get("taskName");
-		    Date currentStartDate = (Date) currentJSONObject.get("startDate");
-		    Date currentEndDate = (Date) currentJSONObject.get("endDate");
+		    String currentTaskName = null;
+		    Date currentStartDate = null;
+		    Date currentEndDate = null;
+		    
+		    Object JSONTaskName = currentJSONObject.get("taskName");
+		    Object JSONStartDate = currentJSONObject.get("startDate");
+		    Object JSONEndDate = currentJSONObject.get("endDate");
+		    
+		    if (JSONTaskName != null) {
+		        currentTaskName = (String) JSONTaskName;
+		    }
+		    if (JSONStartDate != null) {
+		        currentStartDate = new Date((Long) JSONStartDate);
+		    }
+		    if (JSONEndDate != null) {
+		        currentEndDate = new Date((Long) JSONEndDate);
+		    }
 		    
 		    todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate));
 		}
