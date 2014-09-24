@@ -18,6 +18,7 @@ import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.control.Button;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
+import javafx.event.EventHandler;
 
 import java.io.IOException;
 
@@ -51,6 +52,23 @@ public class Main extends Application {
 //                children(new Text("Hi"), new Button("Ok.")).
 //                alignment(Pos.CENTER).padding(new Insets(5)).build()));
 //        dialogStage.show();
+
+//        Button btn = new Button();
+//        btn.setText("Open Dialog");
+//        btn.setOnAction(
+//                new EventHandler<ActionEvent>() {
+//                    @Override
+//                    public void handle(ActionEvent event) {
+//                        final Stage dialog = new Stage();
+//                        dialog.initModality(Modality.APPLICATION_MODAL);
+//                        dialog.initOwner(primaryStage);
+//                        VBox dialogVbox = new VBox(20);
+//                        dialogVbox.getChildren().add(new Text("This is a Dialog"));
+//                        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//                        dialog.setScene(dialogScene);
+//                        dialog.show();
+//                    }
+//                });
     }
 
     private void showTaskListView() {
