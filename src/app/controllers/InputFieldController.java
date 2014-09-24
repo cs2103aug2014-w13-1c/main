@@ -1,10 +1,15 @@
 package app.controllers;
 
 import app.Main;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class InputFieldController {
+
+    private String lastCommand;
 
     @FXML
     private TextField inputField;
@@ -22,14 +27,25 @@ public class InputFieldController {
      */
     @FXML
     private void initialize() {
-
-
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
+            // System.out.println("TextField Text Changed (newValue: " + newValue + ")");
         });
 
         inputField.setOnAction((event) -> {
-            System.out.println("TextField Action");
+            lastCommand = inputField.getText();
+            inputField.clear();
+            System.out.println(lastCommand);
+        });
+
+        inputField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.TAB) {
+                    System.out.println("TAB");
+                    event.consume();
+                    inputField.requestFocus();
+                }
+            }
         });
     }
 
