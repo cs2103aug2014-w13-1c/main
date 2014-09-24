@@ -8,4 +8,4 @@ ipch/
 *.sdf
 *.opensdf
 out/**
-.idea/workspace.xml
+.idea/

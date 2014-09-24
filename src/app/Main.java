@@ -31,7 +31,7 @@ public class Main extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/TaskListView.fxml"));
-            ListView taskListView = (ListView) loader.load();
+            ListView taskListView = loader.load();
 
             rootLayout.setCenter(taskListView);
         } catch (IOException e) {
@@ -43,7 +43,7 @@ public class Main extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/InputField.fxml"));
-            TextField inputField = (TextField) loader.load();
+            TextField inputField = loader.load();
 
             rootLayout.setBottom(inputField);
         } catch (IOException e) {
@@ -55,9 +55,8 @@ public class Main extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/Sidebar.fxml"));
-            VBox sidebar = (VBox) loader.load();
+            VBox sidebar = loader.load();
 
-            // Set person overview into the center of root layout.
             rootLayout.setLeft(sidebar);
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,7 +67,7 @@ public class Main extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/RootLayout.fxml"));
-            rootLayout = (BorderPane) loader.load();
+            rootLayout = loader.load();
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
