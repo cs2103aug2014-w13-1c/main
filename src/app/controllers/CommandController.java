@@ -6,6 +6,14 @@ import app.model.TodoItemList;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Class CommandController
+ *
+ * Basically my CE2.
+ *
+ * @author jolly
+ */
+
 public class CommandController {
     protected enum COMMAND_TYPE {
         ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH
