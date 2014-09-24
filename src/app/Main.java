@@ -1,5 +1,6 @@
 package app;
 
+import app.controllers.SidebarController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -58,6 +59,9 @@ public class Main extends Application {
             VBox sidebar = loader.load();
 
             rootLayout.setLeft(sidebar);
+
+            SidebarController controller = loader.getController();
+            controller.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
