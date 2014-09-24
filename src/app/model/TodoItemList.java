@@ -43,8 +43,15 @@ public class TodoItemList {
 	public TodoItemList() {
 		todoItems = new ArrayList<TodoItem>();
 		fileName = defaultFileName;
-		loadStatus = LOAD_SUCCESS;
-		writeStatus = WRITE_SUCCESS;
+		try {
+		    loadFile(this.fileName);
+		    loadStatus = LOAD_SUCCESS;
+	        writeStatus = WRITE_SUCCESS;
+		} catch (Exception e) {
+		    System.out.println(e);
+		    loadStatus = LOAD_FAILED;
+		    writeStatus = WRITE_FAILED;
+		}
 	}
 	
 	public TodoItemList(String fileName) {
@@ -55,7 +62,7 @@ public class TodoItemList {
 		    writeStatus = WRITE_SUCCESS;
 		} catch (Exception e) {
 		    loadStatus = LOAD_FAILED;
-		    writeStatus = WRITE_SUCCESS;
+		    writeStatus = WRITE_FAILED;
 		}
 	}
 	

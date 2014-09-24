@@ -120,4 +120,12 @@ public class ModelUnits {
         assertEquals(testInput4, testedList.readTodoItem(2).getTaskName());
         assertEquals(testInput2, testedList.readTodoItem(3).getTaskName());
     }
+    
+ // Tests file loading
+    @Test
+    public void testFileLoad() {
+        TodoItemList testedList = new TodoItemList();
+        
+        assertEquals(TodoItemList.LOAD_SUCCESS, testedList.getLoadStatus());
+    }
 }
