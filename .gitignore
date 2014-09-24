@@ -7,4 +7,5 @@ CodeAnalyst/
 ipch/
 *.sdf
 *.opensdf
-out/
+out/**
+.idea/
