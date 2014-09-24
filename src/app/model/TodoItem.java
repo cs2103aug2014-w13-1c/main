@@ -17,21 +17,21 @@ import java.util.Date;
  */
 
 public class TodoItem {
-	private StringProperty itemAction;
+	private StringProperty taskName;
 	private ObjectProperty<Date> startDate;
 	private ObjectProperty<Date> endDate;
 	
-	public final String EVENT = "Event";
-	public final String DEADLINE = "Deadline";
-	public final String FLOATING = "Floating";
-	public final String INVALID = "Invalid";
+	public static final String EVENT = "Event";
+	public static final String DEADLINE = "Deadline";
+	public static final String FLOATING = "Floating";
+	public static final String INVALID = "Invalid";
 	
 	// Constructors
-	public TodoItem(String itemAction, Date startDate, Date endDate) {
-		if (itemAction != null) { 
-			this.itemAction = new SimpleStringProperty(itemAction);
+	public TodoItem(String taskName, Date startDate, Date endDate) {
+		if (taskName != null) { 
+			this.taskName = new SimpleStringProperty(taskName);
 		} else {
-			this.itemAction = null;
+			this.taskName = null;
 		}
 		
 		if (startDate != null) {
@@ -64,27 +64,27 @@ public class TodoItem {
 	
 	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
-	public String getItemAction() {
-		if (itemAction != null) {
-			return itemAction.get();
+	public String getTaskName() {
+		if (taskName != null) {
+			return taskName.get();
 		}
 		return null;
 	}
 	
-	public StringProperty getItemActionProperty() {
-		return itemAction;
+	public StringProperty gettaskNameProperty() {
+		return taskName;
 	}
 	
-	public void setItemAction(String itemAction) {
-		if (itemAction != null) {
-			this.itemAction.set(itemAction);
+	public void setTaskName(String taskName) {
+		if (taskName != null) {
+			this.taskName.set(taskName);
 		} else {
-			this.itemAction = new SimpleStringProperty(itemAction);
+			this.taskName = new SimpleStringProperty(taskName);
 		}
 	}
 	
-	public void setItemActionProperty(StringProperty itemAction) {
-		this.itemAction = itemAction;
+	public void setTaskNameProperty(StringProperty taskName) {
+		this.taskName = taskName;
 	}
 	
 	public Date getStartDate() {
