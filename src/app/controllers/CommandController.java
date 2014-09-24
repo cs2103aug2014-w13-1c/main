@@ -68,7 +68,7 @@ public class CommandController {
         String returnString = "";
         int index = 1;
         for (TodoItem todo : todoList) {
-            returnString += index + ". " + todo.getItemAction() + "\n";
+            returnString += index + ". " + todo.getTaskName() + "\n";
             index++;
         }
         return returnString;
@@ -87,7 +87,7 @@ public class CommandController {
         if (index < 0 || index >= todoList.size()) {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
-        String toBeDeleted = todoList.get(index).getItemAction();
+        String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
         return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
     }
@@ -122,9 +122,9 @@ public class CommandController {
         String returnString = "";
         int index = 1;
         for (TodoItem todo : todoList) {
-            if (todo.getItemAction().toLowerCase().
+            if (todo.getTaskName().toLowerCase().
                     contains(query.toLowerCase())) {
-                returnString += index + ". " + todo.getItemAction() + "\n";
+                returnString += index + ". " + todo.getTaskName() + "\n";
             }
             index++;
         }
