@@ -42,6 +42,7 @@ public class Main extends Application {
 
         commandController = new CommandController();
         commandController.setMainApp(this);
+        commandController.updateView();
         inputField.requestFocus();
 
 //        Stage dialogStage = new Stage();

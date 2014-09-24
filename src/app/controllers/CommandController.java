@@ -233,6 +233,10 @@ public class CommandController {
         printString(processCommand(command));
     }
 
+    public void updateView() {
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+    }
+
     /**
      * Is called by the main application to give a reference back to itself.
      *
