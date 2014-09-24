@@ -6,8 +6,9 @@ Stores data in program memory. No File I/O yet.
 
 Constructors
 ------------
-* public TodoItemList() _creates empty list of todo items_
-* public TodoItem (String itemAction, LocalDate startDate, LocalDate endDate)
+* public TodoItemList() _creates empty list of todo items with file name watdo.txt_
+* public TodoItemList(String fileName) _loads todo items from provided file name_
+* public TodoItem (String itemAction, Date startDate, Date endDate)
  * itemAction, startDate, endDate can be null
  * itemAction shouldn't be null
  * _startDate_ + _endDate_ = **Event**
@@ -18,7 +19,7 @@ CRUD methods: TodoItemList
 -----------
 * public void addTodoItem(TodoItem newItem)
 * public TodoItem readTodoItem(int index) _returns null if index out of bounds_
-* public void updateTodoItem(int index, String itemAction, LocalDate startDate, LocalDate endDate)
+* public void updateTodoItem(int index, String itemAction, Date startDate, Date endDate)
 * public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
 
 GET methods: TodoItem
@@ -29,11 +30,11 @@ Return null if not set.
  * public String getItemAction()
  * public StringProperty getItemActionProperty()
 * startDate
- * public LocalDate getStartDate()
- * public ObjectProperty<LocalDate> getStartDateProperty()
+ * public Date getStartDate()
+ * public ObjectProperty<Date> getStartDateProperty()
 * endDate
  * public LocalDate getEndDate()
- * public ObjectProperty<LocalDate> getEndDateProperty()
+ * public ObjectProperty<Date> getEndDateProperty()
 
 SET Methods: TodoItem
 ------------
@@ -44,10 +45,10 @@ Create new Property if not set.
   * public void setItemActionProperty(StringProperty itemAction)
 * startDate
   * public void setStartDate(LocalDate startDate)
-  * public void setStartDateProperty(ObjectProperty<LocalDate> startDate)
+  * public void setStartDateProperty(ObjectProperty<Date> startDate)
 * endDate
   * public void setEndDate(LocalDate endDate)
-  * public void setEndDateProperty(ObjectProperty<LocalDate> endDate)
+  * public void setEndDateProperty(ObjectProperty<Date> endDate)
 
 Other methods: TodoItem
 -------------

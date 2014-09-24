@@ -1,4 +1,4 @@
-package app;
+package app.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Class TodoItem
@@ -18,8 +18,8 @@ import java.time.LocalDate;
 
 public class TodoItem {
 	private StringProperty itemAction;
-	private ObjectProperty<LocalDate> startDate;
-	private ObjectProperty<LocalDate> endDate;
+	private ObjectProperty<Date> startDate;
+	private ObjectProperty<Date> endDate;
 	
 	public final String EVENT = "Event";
 	public final String DEADLINE = "Deadline";
@@ -27,7 +27,7 @@ public class TodoItem {
 	public final String INVALID = "Invalid";
 	
 	// Constructors
-	public TodoItem(String itemAction, LocalDate startDate, LocalDate endDate) {
+	public TodoItem(String itemAction, Date startDate, Date endDate) {
 		if (itemAction != null) { 
 			this.itemAction = new SimpleStringProperty(itemAction);
 		} else {
@@ -35,12 +35,12 @@ public class TodoItem {
 		}
 		
 		if (startDate != null) {
-			this.startDate = new SimpleObjectProperty<LocalDate>(startDate);
+			this.startDate = new SimpleObjectProperty<Date>(startDate);
 		} else {
 			startDate = null;
 		}
 		if (endDate != null) {
-			this.endDate = new SimpleObjectProperty<LocalDate>(endDate);
+			this.endDate = new SimpleObjectProperty<Date>(endDate);
 		} else {
 			endDate = null;
 		}
@@ -62,7 +62,7 @@ public class TodoItem {
 		}
 	}
 	
-	// RESTful
+	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
 	public String getItemAction() {
 		if (itemAction != null) {
@@ -87,49 +87,49 @@ public class TodoItem {
 		this.itemAction = itemAction;
 	}
 	
-	public LocalDate getStartDate() {
+	public Date getStartDate() {
 		if (startDate != null) {
 			return startDate.get();
 		}
 		return null;
 	}
 	
-	public ObjectProperty<LocalDate> getStartDateProperty() {
+	public ObjectProperty<Date> getStartDateProperty() {
 		return startDate;
 	}
 	
-	public void setStartDate(LocalDate startDate) {
+	public void setStartDate(Date startDate) {
 		if (startDate != null) {
 			this.startDate.set(startDate);
 		} else {
-			this.startDate = new SimpleObjectProperty<LocalDate>(startDate);
+			this.startDate = new SimpleObjectProperty<Date>(startDate);
 		}
 	}
 	
-	public void setStartDateProperty(ObjectProperty<LocalDate> startDate) {
+	public void setStartDateProperty(ObjectProperty<Date> startDate) {
 		this.startDate = startDate;
 	}
 	
-	public LocalDate getEndDate() {
+	public Date getEndDate() {
 		if (endDate != null) {
 			return endDate.get();
 		}
 		return null;
 	}
 	
-	public ObjectProperty<LocalDate> getEndDateProperty() {
+	public ObjectProperty<Date> getEndDateProperty() {
 		return endDate;
 	}
 	
-	public void setEndDate(LocalDate endDate) {
+	public void setEndDate(Date endDate) {
 		if (endDate != null) {
 			this.endDate.set(endDate);
 		} else {
-			this.endDate = new SimpleObjectProperty<LocalDate>(endDate);
+			this.endDate = new SimpleObjectProperty<Date>(endDate);
 		}
 	}
 	
-	public void setEndDateProperty(ObjectProperty<LocalDate> endDate) {
+	public void setEndDateProperty(ObjectProperty<Date> endDate) {
 		this.endDate = endDate;
 	}
 	 
