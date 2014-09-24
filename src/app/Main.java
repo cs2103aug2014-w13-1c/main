@@ -11,7 +11,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.control.Button;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.event.EventHandler;
 
 import java.io.IOException;
 
@@ -22,6 +29,7 @@ public class Main extends Application {
     private TextField inputField;
     private ListView taskListView;
     private CommandController commandController;
+    private TaskListViewController taskListViewController;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -34,7 +42,33 @@ public class Main extends Application {
         showTaskListView();
 
         commandController = new CommandController();
+        commandController.setMainApp(this);
+        commandController.updateView();
         inputField.requestFocus();
+
+//        Stage dialogStage = new Stage();
+//        dialogStage.initModality(Modality.WINDOW_MODAL);
+//        dialogStage.setScene(new Scene(VBoxBuilder.create().
+//                children(new Text("Hi"), new Button("Ok.")).
+//                alignment(Pos.CENTER).padding(new Insets(5)).build()));
+//        dialogStage.show();
+
+//        Button btn = new Button();
+//        btn.setText("Open Dialog");
+//        btn.setOnAction(
+//                new EventHandler<ActionEvent>() {
+//                    @Override
+//                    public void handle(ActionEvent event) {
+//                        final Stage dialog = new Stage();
+//                        dialog.initModality(Modality.APPLICATION_MODAL);
+//                        dialog.initOwner(primaryStage);
+//                        VBox dialogVbox = new VBox(20);
+//                        dialogVbox.getChildren().add(new Text("This is a Dialog"));
+//                        Scene dialogScene = new Scene(dialogVbox, 300, 200);
+//                        dialog.setScene(dialogScene);
+//                        dialog.show();
+//                    }
+//                });
     }
 
     private void showTaskListView() {
@@ -44,8 +78,8 @@ public class Main extends Application {
             taskListView = loader.load();
 
             rootLayout.setCenter(taskListView);
-            TaskListViewController controller = loader.getController();
-            controller.setMainApp(this);
+            taskListViewController = loader.getController();
+            taskListViewController.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,9 +138,9 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public TextField getInputField() {
-        return inputField;
-    }
+    public TextField getInputField() { return inputField; }
+
+    public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
     public CommandController getCommandController() { return commandController; }
 

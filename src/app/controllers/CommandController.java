@@ -1,14 +1,25 @@
 package app.controllers;
 
+import app.Main;
 import app.model.TodoItem;
 import app.model.TodoItemList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Class CommandController
+ *
+ * Basically my CE2.
+ *
+ * @author jolly
+ */
+
 public class CommandController {
     protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH
+        ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH, UPDATE
     }
 
     // Errors
@@ -20,9 +31,11 @@ public class CommandController {
     private final String MESSAGE_ADD_COMPLETE = "added: \"%1$s\"\n";
     private final String MESSAGE_DELETE_COMPLETE = "deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
+    private final String MESSAGE_UPDATE_COMPLETE = "updated: \"%1$s\"\n";
 
     // Class variables
     private TodoItemList taskList;
+    private Main main;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -49,6 +62,7 @@ public class CommandController {
         }
         String toBeInserted = command.substring(firstWordPos + 1);
         taskList.addTodoItem(new TodoItem(toBeInserted, new Date(), new Date()));
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return String.format(MESSAGE_ADD_COMPLETE, toBeInserted);
     }
 
@@ -57,21 +71,35 @@ public class CommandController {
         if (firstWordPos != -1) {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItems();
-        if (todoList.isEmpty()) {
-            return String.format(ERROR_FILE_EMPTY);
-        }
-        return displayTasks(todoList);
+//        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+//        if (todoList.isEmpty()) {
+//            return String.format(ERROR_FILE_EMPTY);
+//        }
+//        return displayTasks(todoList);
+
+
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        return "displaying tasks";
     }
 
-    protected String displayTasks(ArrayList<TodoItem> todoList) {
-        String returnString = "";
+//    protected String displayTasks(ArrayList<TodoItem> todoList) {
+//        String returnString = "";
+//        int index = 1;
+//        for (TodoItem todo : todoList) {
+//            returnString += index + ". " + todo.getTaskName() + "\n";
+//            index++;
+//        }
+//        return returnString;
+//    }
+
+    protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+        ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            returnString += index + ". " + todo.getTaskName() + "\n";
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate()));
             index++;
         }
-        return returnString;
+        return taskData;
     }
 
     protected String deleteEntry(String command) {
@@ -89,6 +117,7 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
     }
 
@@ -131,6 +160,30 @@ public class CommandController {
         return returnString;
     }
 
+    protected String update(String command) {
+        int firstWordPos = firstSpacePosition(command);
+        if (firstWordPos == -1) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        int index = -1;
+        String secondCommand = command.substring(firstWordPos + 1);
+        int secondWordPos = firstSpacePosition(secondCommand);
+        if (secondWordPos == -1) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        if(isInt(secondCommand.substring(0, secondWordPos))) {
+            index = Integer.parseInt(secondCommand.substring(0, secondWordPos)) - 1;
+        }
+        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        if (index < 0 || index >= todoList.size()) {
+            return ERROR_WRONG_COMMAND_FORMAT;
+        }
+        String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
+        taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        return String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated);
+    }
+
     // Command processing methods
     protected COMMAND_TYPE determineCommandType(String commandWord) {
         if (commandWord.equals("add")) {
@@ -143,6 +196,8 @@ public class CommandController {
             return COMMAND_TYPE.EXIT;
         } else if (commandWord.equals("search")) {
             return COMMAND_TYPE.SEARCH;
+        } else if (commandWord.equals("update")) {
+            return COMMAND_TYPE.UPDATE;
         } else {
             return COMMAND_TYPE.INVALID;
         }
@@ -162,6 +217,8 @@ public class CommandController {
                 System.exit(0);
             case SEARCH :
                 return search(command);
+            case UPDATE :
+                return update(command);
             default :
                 return ERROR_WRONG_COMMAND_FORMAT;
         }
@@ -174,5 +231,21 @@ public class CommandController {
     public void parseCommand(String command) {
         printString("Parsing: \"" + command + "\"\n");
         printString(processCommand(command));
+    }
+
+    public void updateView() {
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     *
+     * @param main
+     */
+    public void setMainApp(Main main) {
+        this.main = main;
+
+        // Add observable list data to the table
+        // personTable.setItems(mainApp.getPersonData());
     }
 }

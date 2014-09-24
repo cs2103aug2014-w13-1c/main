@@ -17,22 +17,17 @@ public class TaskListViewController {
     @FXML
     public ListView<TodoItem> taskListView;
 
-    private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
+    private ObservableList<TodoItem> taskData;
 
     private Main main;
 
     @FXML
     public void initialize() {
-        taskData.add(new TodoItem("buy milk", new Date(), new Date()));
-        taskData.add(new TodoItem("walk the dog", null, new Date()));
-        taskData.add(new TodoItem("finish CS2101 progress report", null, null));
-        taskData.add(new TodoItem("run 24km", new Date(), new Date()));
-        taskData.add(new TodoItem("have lunch with some person", new Date(), new Date()));
-        taskData.add(new TodoItem("This is a very looooooooooooooong task name to test for word wrap", new Date(), new Date()));
-
         taskListView.setCellFactory(taskListView -> new TaskListCellController());
-        taskListView.setItems(taskData);
+    }
 
+    public void updateView(ObservableList<TodoItem> taskData) {
+        taskListView.setItems(taskData);
     }
 
     /**
@@ -42,8 +37,5 @@ public class TaskListViewController {
      */
     public void setMainApp(Main main) {
         this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
     }
 }
