@@ -3,6 +3,8 @@ package app.controllers;
 import app.Main;
 import app.model.TodoItem;
 import app.model.TodoItemList;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,7 @@ public class CommandController {
         }
         String toBeInserted = command.substring(firstWordPos + 1);
         taskList.addTodoItem(new TodoItem(toBeInserted, new Date(), new Date()));
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return String.format(MESSAGE_ADD_COMPLETE, toBeInserted);
     }
 
@@ -73,18 +76,27 @@ public class CommandController {
 //        }
 //        return displayTasks(todoList);
 
-        main.getTaskListViewController().updateView();
+
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return "displaying tasks";
     }
 
-    protected String displayTasks(ArrayList<TodoItem> todoList) {
-        String returnString = "";
-        int index = 1;
+//    protected String displayTasks(ArrayList<TodoItem> todoList) {
+//        String returnString = "";
+//        int index = 1;
+//        for (TodoItem todo : todoList) {
+//            returnString += index + ". " + todo.getTaskName() + "\n";
+//            index++;
+//        }
+//        return returnString;
+//    }
+
+    protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+        ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         for (TodoItem todo : todoList) {
-            returnString += index + ". " + todo.getTaskName() + "\n";
-            index++;
+            taskData.add(todo);
         }
-        return returnString;
+        return taskData;
     }
 
     protected String deleteEntry(String command) {
@@ -102,6 +114,7 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
+        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
     }
 
