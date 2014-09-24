@@ -1,0 +1,6 @@
+.sidebar {
+    -fx-border-style: solid;
+    -fx-stroke: black;
+    -fx-stroke-width: 8;
+    -fx-background-color: rgb(246, 210, 79);
+}

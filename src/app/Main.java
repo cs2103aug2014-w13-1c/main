@@ -59,6 +59,8 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/Sidebar.fxml"));
             VBox sidebar = loader.load();
+            sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
+            sidebar.getStyleClass().add("sidebar");
 
             rootLayout.setLeft(sidebar);
 
