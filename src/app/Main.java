@@ -17,6 +17,8 @@ public class Main extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
 
+    private TextField inputField;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
@@ -44,7 +46,7 @@ public class Main extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/InputField.fxml"));
-            TextField inputField = loader.load();
+            inputField = loader.load();
 
             rootLayout.setBottom(inputField);
         } catch (IOException e) {
@@ -84,6 +86,10 @@ public class Main extends Application {
 
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public TextField getInputField() {
+        return inputField;
     }
 
     public static void main(String[] args) {
