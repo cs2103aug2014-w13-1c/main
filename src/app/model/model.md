@@ -22,6 +22,7 @@ CRUD methods: TodoItemList
  * public TodoItem readTodoItem(int index) _returns null if index out of bounds_
  * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate)
  * public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
+ * public void clearTodoItems()
 * TodoItemList
  * public ArrayList<TodoItem> getTodoItems() 
  * public ListIterator<TodoItem> getTodoItemIterator() 

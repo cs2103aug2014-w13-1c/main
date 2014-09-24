@@ -1,10 +1,13 @@
-package app.model;
+package app.tests;
 
 import static org.junit.Assert.*;
 
 import java.util.Date;
 
 import org.junit.Test;
+
+import app.model.TodoItem;
+import app.model.TodoItemList;
 
 public class ModelUnits {
 
