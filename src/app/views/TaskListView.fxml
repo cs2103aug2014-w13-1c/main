@@ -1,0 +1,2 @@
+<?import javafx.scene.control.ListView?>
+<ListView fixedCellSize="20.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/MainListView.css" />
