@@ -9,6 +9,8 @@ import javafx.beans.property.StringProperty;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -183,8 +185,8 @@ public class TodoItemList {
 	}
 	
 	private void loadFile(String fileToLoad) throws IOException, ParseException {
-		FileReader fileToRead = new FileReader(fileToLoad);
-		BufferedReader reader = new BufferedReader(fileToRead);
+	    FileReader fileToRead = new FileReader(fileToLoad);
+	    BufferedReader reader = new BufferedReader(fileToRead);
 		
 		String fileString = "";
 		String line = "";
