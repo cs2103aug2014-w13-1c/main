@@ -11,14 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.Modality;
-import javafx.scene.layout.VBoxBuilder;
-import javafx.scene.control.Button;
-import javafx.geometry.Pos;
-import javafx.geometry.Insets;
-import javafx.event.EventHandler;
 
 import java.io.IOException;
 
@@ -35,6 +28,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("wat do?");
+        this.primaryStage.setResizable(false);
 
         initRootLayout();
         showSidebar();
@@ -139,6 +133,12 @@ public class Main extends Application {
     }
 
     public TextField getInputField() { return inputField; }
+
+    public void setAndFocusInputField(String text) {
+        inputField.requestFocus();
+        inputField.setText(text);
+        inputField.positionCaret(text.length());
+    }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
