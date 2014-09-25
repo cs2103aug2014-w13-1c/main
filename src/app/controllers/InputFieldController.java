@@ -1,55 +1,46 @@
 package app.controllers;
 
 import app.Main;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 public class InputFieldController {
 
     private String lastCommand;
-
-    @FXML
-    private TextField inputField;
+    private InlineCssTextArea inputField;
 
     // Reference to the main application
     private Main main;
 
     public InputFieldController() {
+        inputField = new InlineCssTextArea();
+        inputField.setPrefHeight(100);
+        inputField.getStylesheets().add("app/stylesheets/inputField.css");
+        inputField.getStyleClass().add("input-field");
+        inputField.setWrapText(true);
 
-    }
-
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
-     */
-    @FXML
-    private void initialize() {
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-            // System.out.println("TextField Text Changed (newValue: " + newValue + ")");
+//            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
+            inputField.setStyle(0, inputField.getLength(), "-fx-fill: white;");
         });
 
-        inputField.setOnAction((event) -> {
-            lastCommand = inputField.getText();
-            inputField.clear();
-//            System.out.println(lastCommand);
-            main.getCommandController().parseCommand(lastCommand);
-        });
-
-        inputField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.TAB) {
-                    System.out.println("TAB: " + inputField.getText());
-                    event.consume();
-                    inputField.requestFocus();
-                }
+        inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume();
+                lastCommand = inputField.getText();
+                inputField.clear();
+                main.getCommandController().parseCommand(lastCommand);
+            } else if (event.getCode() == KeyCode.TAB) {
+                event.consume();
+                System.out.println("TAB: \"" + inputField.getText() + "\"");
             }
         });
+    }
+
+    public InlineCssTextArea getInputField() {
+        return inputField;
     }
 
     /**

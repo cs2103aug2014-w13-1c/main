@@ -1,0 +1,6 @@
+.input-field {
+    -fx-font-family: Helvetica;
+    -fx-font-size: 37px;
+    -fx-background-color: black;
+    -fx-padding: 10px;
+}

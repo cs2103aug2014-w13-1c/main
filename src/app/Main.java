@@ -12,14 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
 
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.StyleSpans;
-import org.fxmisc.richtext.StyleSpansBuilder;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 import java.io.IOException;
 
@@ -28,7 +26,7 @@ public class Main extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
 //    private TextField inputField;
-    private CodeArea inputField;
+    private InlineCssTextArea inputField;
     private ListView taskListView;
     private CommandController commandController;
     private TaskListViewController taskListViewController;
@@ -46,7 +44,6 @@ public class Main extends Application {
         commandController = new CommandController();
         commandController.setMainApp(this);
         commandController.updateView();
-//        inputField.requestFocus();
 
         Dialogs.create()
                 .owner(primaryStage)
@@ -54,6 +51,8 @@ public class Main extends Application {
                 .masthead(null)
                 .message("wat will you do today?")
                 .showInformation();
+
+        inputField.requestFocus();
     }
 
     private void showTaskListView() {
@@ -86,7 +85,9 @@ public class Main extends Application {
 //           e.printStackTrace();
 //        }
 
-        inputField = new CodeArea();
+        InputFieldController inputFieldController = new InputFieldController();
+        inputFieldController.setMainApp(this);
+        inputField = inputFieldController.getInputField();
         rootLayout.setBottom(new StackPane(inputField));
     }
 
