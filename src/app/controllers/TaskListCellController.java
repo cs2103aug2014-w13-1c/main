@@ -89,18 +89,15 @@ public class TaskListCellController extends ListCell<TodoItem> {
         setText(null);
         taskNameLabel.setText(task.getTaskName().toUpperCase());
 
-        if (task.getStartDate() != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(task.getStartDate());
-
-            topDateLabel.setText("START " + getDateString(task.getStartDate()));
-            bottomDateLabel.setText("END " + getDateString(task.getEndDate()));
+        if (task.getTodoItemType().equalsIgnoreCase("Event")) {
+            topDateLabel.setText("START " + getDateString(task.getStartDate()).toUpperCase());
+            bottomDateLabel.setText("END " + getDateString(task.getEndDate()).toUpperCase());
 
             topDateLabel.setVisible(true);
             bottomDateLabel.setVisible(true);
 
-        } else if (task.getEndDate() != null) {
-            topDateLabel.setText("DUE " + getDateString(task.getEndDate()));
+        } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
+            topDateLabel.setText("DUE " + getDateString(task.getEndDate()).toUpperCase());
             topDateLabel.setVisible(true);
         }
 
@@ -117,7 +114,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     public static String theMonth(int month){
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        return monthNames[month].toUpperCase();
+        return monthNames[month];
     }
 
     @Override
