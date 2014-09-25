@@ -66,7 +66,7 @@ public class CommandController {
         }
         String toBeChecked = command.substring(firstWordPos + 1);
         timeParser(toBeChecked);
-        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        updateView();
         return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
     }
 
@@ -142,7 +142,7 @@ public class CommandController {
 //        return displayTasks(todoList);
 
 
-        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        updateView();
         return "displaying tasks";
     }
 
@@ -189,7 +189,7 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
-        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        updateView();
         return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
     }
 
@@ -254,7 +254,7 @@ public class CommandController {
         }
         String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
         taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
-        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        updateView();
         return String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated);
     }
 
