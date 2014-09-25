@@ -57,7 +57,7 @@ public class TodoItem {
 			}
 		} else {
 			if (endDate == null) {
-				return INVALID;
+				return FLOATING;
 			} else {
 				return EVENT;
 			}

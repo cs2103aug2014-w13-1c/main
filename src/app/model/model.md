@@ -14,6 +14,7 @@ Constructors
  * _startDate_ + _endDate_ = **Event**
  * no _startDate_ + _endDate_ = **Deadline**
  * no _startDate_ +  no _endDate_ = **Floating**
+ * _startDate_ + no _endDate_ = **Floating**
 
 CRUD methods: TodoItemList
 -----------
