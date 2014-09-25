@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import org.fxmisc.richtext.CodeArea;
+
 public class InputFieldController {
 
     private String lastCommand;

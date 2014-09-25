@@ -63,9 +63,9 @@ public class SidebarController {
     }
 
     private void setAndFocusInputField(String text) {
-        TextField input = main.getInputField();
-        input.requestFocus();
-        input.setText(text);
-        input.positionCaret(text.length());
+//        TextField input = main.getInputField();
+//        input.requestFocus();
+//        input.setText(text);
+//        input.positionCaret(text.length());
     }
 }

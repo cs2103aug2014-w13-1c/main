@@ -10,10 +10,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
+
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
 
 import java.io.IOException;
 
@@ -21,7 +27,8 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private TextField inputField;
+//    private TextField inputField;
+    private CodeArea inputField;
     private ListView taskListView;
     private CommandController commandController;
     private TaskListViewController taskListViewController;
@@ -39,7 +46,7 @@ public class Main extends Application {
         commandController = new CommandController();
         commandController.setMainApp(this);
         commandController.updateView();
-        inputField.requestFocus();
+//        inputField.requestFocus();
 
         Dialogs.create()
                 .owner(primaryStage)
@@ -64,20 +71,23 @@ public class Main extends Application {
     }
 
     private void showInputField() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("views/InputField.fxml"));
-            inputField = loader.load();
-            inputField.getStylesheets().add(getClass().getResource("stylesheets/TextField.css").toExternalForm());
-            inputField.getStyleClass().add("text-field");
+//        try {
+//            FXMLLoader loader = new FXMLLoader();
+//            loader.setLocation(getClass().getResource("views/InputField.fxml"));
+//            inputField = loader.load();
+//            inputField.getStylesheets().add(getClass().getResource("stylesheets/TextField.css").toExternalForm());
+//            inputField.getStyleClass().add("text-field");
+//
+//            rootLayout.setBottom(inputField);
+//
+//            InputFieldController controller = loader.getController();
+//            controller.setMainApp(this);
+//        } catch (IOException e) {
+//           e.printStackTrace();
+//        }
 
-            rootLayout.setBottom(inputField);
-
-            InputFieldController controller = loader.getController();
-            controller.setMainApp(this);
-        } catch (IOException e) {
-           e.printStackTrace();
-        }
+        inputField = new CodeArea();
+        rootLayout.setBottom(new StackPane(inputField));
     }
 
     private void showSidebar() {
@@ -116,7 +126,7 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public TextField getInputField() { return inputField; }
+//    public TextField getInputField() { return inputField; }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
