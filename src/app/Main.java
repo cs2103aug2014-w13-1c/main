@@ -43,7 +43,7 @@ public class Main extends Application {
 
         Dialogs.create()
                 .owner(primaryStage)
-                .title("Welcome?")
+                .title("Welcome")
                 .masthead(null)
                 .message("wat will you do today?")
                 .showInformation();
