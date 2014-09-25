@@ -13,3 +13,4 @@ out/
 out/**
 .idea/
 watdo.json
+.DS_Store
