@@ -8,11 +8,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
@@ -70,21 +68,6 @@ public class Main extends Application {
     }
 
     private void showInputField() {
-//        try {
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(getClass().getResource("views/InputField.fxml"));
-//            inputField = loader.load();
-//            inputField.getStylesheets().add(getClass().getResource("stylesheets/TextField.css").toExternalForm());
-//            inputField.getStyleClass().add("text-field");
-//
-//            rootLayout.setBottom(inputField);
-//
-//            InputFieldController controller = loader.getController();
-//            controller.setMainApp(this);
-//        } catch (IOException e) {
-//           e.printStackTrace();
-//        }
-
         InputFieldController inputFieldController = new InputFieldController();
         inputFieldController.setMainApp(this);
         inputField = inputFieldController.getInputField();
@@ -127,7 +110,7 @@ public class Main extends Application {
         return primaryStage;
     }
 
-//    public TextField getInputField() { return inputField; }
+    public InlineCssTextArea getInputField() { return inputField; }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
