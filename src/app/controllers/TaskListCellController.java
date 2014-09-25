@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 /**
  * Created by jin on 24/9/14.
@@ -78,8 +79,8 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void configureTaskName() {
         taskNameLabel.getStylesheets().add(this.getStylesheets().get(0));
         taskNameLabel.getStyleClass().add("task-name-label");
-        taskNameLabel.setMaxWidth(450);
-        taskNameLabel.setMaxHeight(70);
+        taskNameLabel.setMaxWidth(350);
+        taskNameLabel.setMaxHeight(50);
         taskNameLabel.setWrapText(true);
         taskNameLabel.setTextFill(Color.WHITE);
     }
@@ -88,7 +89,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
         label.setVisible(false);
         label.getStylesheets().add(this.getStylesheets().get(0));
         label.getStyleClass().add("date-label");
-        label.setMaxWidth(350);
+        label.setMaxWidth(250);
         label.setMaxHeight(30);
         label.setWrapText(true);
         label.setTextFill(Color.WHITE);
@@ -100,6 +101,9 @@ public class TaskListCellController extends ListCell<TodoItem> {
         grid.add(bottomDateLabel, 0, 2);
         grid.add(updateButton, 5, 0);
         grid.add(deleteButton, 5, 5);
+
+        grid.setColumnSpan(taskNameLabel, 6);
+        grid.setRowSpan(taskNameLabel, 1);
 //        grid.setGridLinesVisible(true);
     }
 
@@ -120,14 +124,19 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void setDeleteButtonEventHandler(TodoItem task) {
         deleteButton.setOnAction((event) -> {
-            main.getInputField().setText("delete ");
+            main.setAndFocusInputField("delete " + getTaskIndex(task));
         });
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
         updateButton.setOnAction((event) -> {
-            main.getInputField().setText("update ");
+            main.setAndFocusInputField("update " + getTaskIndex(task) + " ");
         });
+    }
+
+    private int getTaskIndex(TodoItem task) {
+        int idx = new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
+        return idx;
     }
 
     private void addContentToDateLabels(TodoItem task) {

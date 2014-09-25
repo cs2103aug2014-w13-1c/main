@@ -134,6 +134,12 @@ public class Main extends Application {
 
     public TextField getInputField() { return inputField; }
 
+    public void setAndFocusInputField(String text) {
+        inputField.requestFocus();
+        inputField.setText(text);
+        inputField.positionCaret(text.length());
+    }
+
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
 
     public CommandController getCommandController() { return commandController; }
