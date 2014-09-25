@@ -12,9 +12,9 @@ public class CommandControllerUnits {
     
     CommandController commandTest = new CommandController();
     
-    // Testing if tasks can be added
+    // Testing if todo can be added
     @org.junit.Test
-    public void canAddTasks() throws Exception {
+    public void canAdd() throws Exception {
         commandTest.parseCommand("clear");
         commandTest.parseCommand("add task 1");
         commandTest.parseCommand("add *&$(*&$)(@");
