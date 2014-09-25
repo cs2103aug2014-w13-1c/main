@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.model.TodoItem;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
@@ -22,6 +23,9 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private Label topDateLabel = new Label();
     private Label bottomDateLabel = new Label();
 
+    private Button updateButton = new Button("update");
+    private Button deleteButton = new Button("delete");
+
     private Calendar cal = Calendar.getInstance();
 
     ArrayList<String> colors = new ArrayList<String>();
@@ -37,7 +41,25 @@ public class TaskListCellController extends ListCell<TodoItem> {
         configureTaskName();
         configureDateLabel(topDateLabel);
         configureDateLabel(bottomDateLabel);
+        configureUpdateButton();
+        configureDeleteButton();
         addControlsToGrid();
+    }
+
+    private void configureDeleteButton() {
+//        Image image = new Image(getClass().getResourceAsStream("app/resources/cross.png"));
+//        deleteButton.setGraphic(new ImageView(image));
+        deleteButton.setOnAction((event) -> {
+            // delete task
+        });
+    }
+
+    private void configureUpdateButton() {
+//        Image image = new Image(getClass().getResourceAsStream("app/resources/compose-3.png"));
+//        updateButton.setGraphic(new ImageView(image));
+        updateButton.setOnAction((event) -> {
+            // update task
+        });
     }
 
     private void initColors() {
@@ -49,7 +71,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void configureGrid() {
-        grid.setHgap(5);
+        grid.setHgap(27);
         grid.setVgap(5);
         grid.setPadding(new Insets(5, 7, 5, 7));
     }
@@ -57,7 +79,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void configureTaskName() {
         taskNameLabel.getStylesheets().add(this.getStylesheets().get(0));
         taskNameLabel.getStyleClass().add("task-name-label");
-        taskNameLabel.setMaxWidth(350);
+        taskNameLabel.setMaxWidth(450);
         taskNameLabel.setMaxHeight(70);
         taskNameLabel.setWrapText(true);
         taskNameLabel.setTextFill(Color.WHITE);
@@ -74,10 +96,14 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void addControlsToGrid() {
-        grid.add(taskNameLabel, 1, 0);
-        grid.add(topDateLabel, 1, 1);
-        grid.add(bottomDateLabel, 1, 2);
+        grid.add(taskNameLabel, 0, 0);
+        grid.add(topDateLabel, 0, 1);
+        grid.add(bottomDateLabel, 0, 2);
+        grid.add(updateButton, 5, 0);
+        grid.add(deleteButton, 5, 5);
+//        grid.setGridLinesVisible(true);
 
+        grid.setColumnSpan(taskNameLabel, 4);
     }
 
     private void clearContent() {
