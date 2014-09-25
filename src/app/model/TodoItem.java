@@ -73,9 +73,6 @@ public class TodoItem {
 			this.endDate = null;
 		}
 		
-		if (newTaskName.equals("Test Stringy 3")) {
-		    System.out.println(newPriority);
-		}
 		if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
 		    this.priority = newPriority;
 		} else {
