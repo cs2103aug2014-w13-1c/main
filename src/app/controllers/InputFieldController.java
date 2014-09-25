@@ -32,6 +32,7 @@ public class InputFieldController {
                 lastCommand = inputField.getText();
                 inputField.clear();
                 main.getCommandController().parseCommand(lastCommand);
+                main.getCommandController().updateView();
             } else if (event.getCode() == KeyCode.TAB) {
                 event.consume();
                 System.out.println("TAB: \"" + inputField.getText() + "\"");

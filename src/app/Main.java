@@ -111,10 +111,11 @@ public class Main extends Application {
     }
 
     public InlineCssTextArea getInputField() { return inputField; }
+
     public void setAndFocusInputField(String text) {
-        inputField.requestFocus();
         inputField.replaceText(text);
         inputField.positionCaret(text.length());
+        inputField.requestFocus();
     }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
