@@ -73,26 +73,9 @@ public class CommandController {
         if (firstWordPos != -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-//        ArrayList<TodoItem> todoList = taskList.getTodoItems();
-//        if (todoList.isEmpty()) {
-//            return String.format(ERROR_FILE_EMPTY);
-//        }
-//        return displayTasks(todoList);
-
-
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return "displaying tasks";
     }
-
-//    protected String displayTasks(ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            returnString += index + ". " + todo.getTaskName() + "\n";
-//            index++;
-//        }
-//        return returnString;
-//    }
 
     protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
