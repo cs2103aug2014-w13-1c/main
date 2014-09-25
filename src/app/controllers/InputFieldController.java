@@ -1,10 +1,17 @@
 package app.controllers;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import app.Main;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.richtext.StyleClassedTextArea;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
 
 /**
  * Created by jolly on 24/9/14.
@@ -12,13 +19,19 @@ import org.fxmisc.richtext.InlineCssTextArea;
 public class InputFieldController {
 
     private String lastCommand;
-    private InlineCssTextArea inputField;
+    private StyleClassedTextArea inputField;
 
     // Reference to the main application
     private Main main;
 
+    private final String[] KEYWORDS = new String[] {
+        "add", "delete", "update"
+    };
+
+    private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
+
     public InputFieldController() {
-        inputField = new InlineCssTextArea();
+        inputField = new StyleClassedTextArea();
         inputField.setPrefHeight(100);
         inputField.getStylesheets().add("app/stylesheets/inputField.css");
         inputField.getStyleClass().add("input-field");
@@ -26,7 +39,8 @@ public class InputFieldController {
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
-            inputField.setStyle(0, inputField.getLength(), "-fx-fill: white;");
+//            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
+            inputField.setStyleSpans(0, computeHighlighting(newValue));
         });
 
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -43,7 +57,21 @@ public class InputFieldController {
         });
     }
 
-    public InlineCssTextArea getInputField() {
+    private StyleSpans<Collection<String>> computeHighlighting(String text) {
+        Matcher matcher = KEYWORD_PATTERN.matcher(text);
+        int lastKwEnd = 0;
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        while(matcher.find()) {
+            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+            spansBuilder.add(Collections.singleton("keyword"), matcher.end() - matcher.start());
+            lastKwEnd = matcher.end();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
+    }
+
+
+    public StyleClassedTextArea getInputField() {
         return inputField;
     }
 

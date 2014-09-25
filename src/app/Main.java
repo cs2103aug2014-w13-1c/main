@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
 
-import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private InlineCssTextArea inputField;
+    private StyleClassedTextArea inputField;
     private ListView taskListView;
     private CommandController commandController;
     private TaskListViewController taskListViewController;
@@ -110,7 +110,7 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public InlineCssTextArea getInputField() { return inputField; }
+    public StyleClassedTextArea getInputField() { return inputField; }
 
     public void setAndFocusInputField(String text) {
         inputField.replaceText(text);

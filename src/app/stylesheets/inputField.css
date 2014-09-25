@@ -1,6 +1,11 @@
 .input-field {
     -fx-font-family: Helvetica;
     -fx-font-size: 37px;
-    -fx-background-color: black;
-    -fx-padding: 10px;
+    -fx-background-color: rgb(246, 210, 79);
+    -fx-padding: 20px;
+}
+
+.keyword {
+    -fx-fill: red;
+    -fx-font-weight: bold;
 }
