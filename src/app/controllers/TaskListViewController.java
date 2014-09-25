@@ -2,12 +2,9 @@ package app.controllers;
 
 import app.Main;
 import app.model.TodoItem;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
-
-import java.util.Date;
 
 /**
  * Created by jin on 24/9/14.
@@ -16,8 +13,6 @@ public class TaskListViewController {
 
     @FXML
     public ListView<TodoItem> taskListView;
-
-    private ObservableList<TodoItem> taskData;
 
     private Main main;
 
