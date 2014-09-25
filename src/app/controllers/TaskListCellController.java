@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.Main;
 import app.model.TodoItem;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,9 +29,11 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private Calendar cal = Calendar.getInstance();
 
+    private Main main;
+
     ArrayList<String> colors = new ArrayList<String>();
 
-    public TaskListCellController() {
+    public TaskListCellController(Main main) {
         this.getStylesheets().add("app/stylesheets/taskListCell.css");
         this.getStyleClass().add("cell");
 
@@ -44,6 +47,8 @@ public class TaskListCellController extends ListCell<TodoItem> {
         configureUpdateButton();
         configureDeleteButton();
         addControlsToGrid();
+
+        this.main = main;
     }
 
     private void configureDeleteButton() {
@@ -115,13 +120,13 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void setDeleteButtonEventHandler(TodoItem task) {
         deleteButton.setOnAction((event) -> {
-            // delete task
+            main.getInputField().setText("delete ");
         });
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
         updateButton.setOnAction((event) -> {
-            // update task
+            main.getInputField().setText("update ");
         });
     }
 
