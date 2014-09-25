@@ -3,7 +3,6 @@ package app.controllers;
 import app.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 
 public class SidebarController {
 
@@ -33,19 +32,19 @@ public class SidebarController {
     @FXML
     private void initialize() {
         displayButton.setOnAction((event) -> {
-            setAndFocusInputField("display");
+            main.setAndFocusInputField("display");
         });
 
         addButton.setOnAction((event) -> {
-            setAndFocusInputField("add ");
+            main.setAndFocusInputField("add ");
         });
 
         searchButton.setOnAction((event) -> {
-            setAndFocusInputField("search ");
+            main.setAndFocusInputField("search ");
         });
 
         settingsButton.setOnAction((event) -> {
-            setAndFocusInputField("settings");
+            main.setAndFocusInputField("settings");
         });
 
     }
@@ -60,12 +59,5 @@ public class SidebarController {
 
         // Add observable list data to the table
         // personTable.setItems(mainApp.getPersonData());
-    }
-
-    private void setAndFocusInputField(String text) {
-        TextField input = main.getInputField();
-        input.requestFocus();
-        input.setText(text);
-        input.positionCaret(text.length());
     }
 }
