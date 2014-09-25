@@ -1,0 +1,49 @@
+/* http://blog.ngopal.com.np/2012/07/11/customize-scrollbar-via-css/ */
+
+/* The increment and decrement button CSS class of scrollbar */
+.task-list .increment-button ,.task-list .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 2em;
+
+}
+
+/* The main scrollbar **track** CSS class  */
+.task-list .scroll-bar:horizontal .track,
+.task-list .scroll-bar:vertical .track{
+	-fx-background-color: transparent;
+	-fx-border-color:derive(gray,80%);
+
+	-fx-background-radius: 2em;
+	-fx-border-radius:2em;
+}
+
+/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.task-list .scroll-bar:horizontal .thumb,
+.task-list .scroll-bar:vertical .thumb {
+    -fx-background-color:derive(black,90%);
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+
+}
+
+/* ------------------------------------------------------------------------------------- */
+/** EVENT CSS **/
+/* ------------------------------------------------------------------------------------- */
+
+/* The main scrollbar **track** CSS class on event of "hover" and "pressed" */
+/*
+.task-list .scroll-bar:horizontal:hover .track ,
+.task-list .scroll-bar:horizontal:pressed .track ,
+.task-list .scroll-bar:vertical:hover .track,
+.task-list .scroll-bar:vertical:pressed .track{
+     -fx-background-color: derive(#434343,70%);
+	 -fx-opacity: 0.5;
+	 -fx-background-radius: 0em;
+
+}*/
+
+/* The main scrollbar **thumb** CSS class on event of "hover" and "pressed" */
+.task-list .scroll-bar .thumb:hover,
+.task-list .scroll-bar .thumb:pressed{
+    -fx-background-color: derive(black,50%);
+}
