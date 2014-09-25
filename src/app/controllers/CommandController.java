@@ -7,14 +7,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 /**
  * Class CommandController
  *
- * Basically my CE2.
+ * Skeleton based on jolly's CE2.
  *
- * @author jolly
+ * @author ryan
  */
 
 public class CommandController {
@@ -55,17 +57,76 @@ public class CommandController {
     }
 
     // Individual command methods
+    // Add command method(s)
     protected String addNewLine(String command){
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
-        String toBeInserted = command.substring(firstWordPos + 1);
-        taskList.addTodoItem(new TodoItem(toBeInserted, new Date(), new Date()));
+        String toBeChecked = command.substring(firstWordPos + 1);
+        addTodo(toBeChecked);
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
-        return String.format(MESSAGE_ADD_COMPLETE, toBeInserted);
+        return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
     }
 
+    protected void addTodo(String toBeChecked) {
+        StringTokenizer st = new StringTokenizer(toBeChecked);
+        String toBeInserted = "";
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar endCalendar = Calendar.getInstance();
+        boolean startFlag = false;
+        boolean endFlag = false;
+        while (st.hasMoreTokens()) {
+            String check = st.nextToken();
+            if (check.equalsIgnoreCase("start")) {
+                int date = Integer.valueOf(st.nextToken());
+                String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
+                String monthCheck = st.nextToken();
+                int month = 0;
+                for (int i = 0; i < 12; i++) {
+                    if (monthName[i].equalsIgnoreCase(monthCheck)) {
+                        month = i;
+                        break;
+                    }
+                }
+                int year = Integer.valueOf(st.nextToken());
+                startCalendar.set(year, month, date);
+                startFlag = true;
+            }
+            else if (check.equalsIgnoreCase("end")) {
+                int date = Integer.valueOf(st.nextToken());
+                String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
+                String monthCheck = st.nextToken();
+                int month = 0;
+                for (int i = 0; i < 12; i++) {
+                    if (monthName[i].equalsIgnoreCase(monthCheck)) {
+                        month = i;
+                        break;
+                    }
+                }
+                int year = Integer.valueOf(st.nextToken());
+                endCalendar.set(year, month, date);
+                endFlag = true;
+            }
+            else {
+                toBeInserted = toBeInserted.concat(check + " ");
+            }
+        }
+        if (endFlag) {
+            if (startFlag) {
+                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
+            }
+            else {
+                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime()));
+            }
+        }
+        else {
+            taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
+        }
+        
+    }
+
+    // Display command method(s)
     protected String display(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos != -1) {
@@ -102,6 +163,7 @@ public class CommandController {
         return taskData;
     }
 
+    // Delete command method(s)
     protected String deleteEntry(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
@@ -130,6 +192,7 @@ public class CommandController {
         return true;
     }
 
+    // Search command method(s)
     protected String search(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
@@ -160,6 +223,7 @@ public class CommandController {
         return returnString;
     }
 
+    // Update command method(s)
     protected String update(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
@@ -186,17 +250,17 @@ public class CommandController {
 
     // Command processing methods
     protected COMMAND_TYPE determineCommandType(String commandWord) {
-        if (commandWord.equals("add")) {
+        if (commandWord.equalsIgnoreCase("add")) {
             return COMMAND_TYPE.ADD;
-        } else if (commandWord.equals("delete")) {
+        } else if (commandWord.equalsIgnoreCase("delete")) {
             return COMMAND_TYPE.DELETE;
-        } else if (commandWord.equals("display")) {
+        } else if (commandWord.equalsIgnoreCase("display")) {
             return COMMAND_TYPE.DISPLAY;
-        } else if (commandWord.equals("exit")) {
+        } else if (commandWord.equalsIgnoreCase("exit")) {
             return COMMAND_TYPE.EXIT;
-        } else if (commandWord.equals("search")) {
+        } else if (commandWord.equalsIgnoreCase("search")) {
             return COMMAND_TYPE.SEARCH;
-        } else if (commandWord.equals("update")) {
+        } else if (commandWord.equalsIgnoreCase("update")) {
             return COMMAND_TYPE.UPDATE;
         } else {
             return COMMAND_TYPE.INVALID;
@@ -236,7 +300,7 @@ public class CommandController {
     public void updateView() {
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
     }
-
+        
     /**
      * Is called by the main application to give a reference back to itself.
      *
