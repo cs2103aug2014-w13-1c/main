@@ -18,7 +18,7 @@ public class TaskListViewController {
 
     @FXML
     public void initialize() {
-        taskListView.setCellFactory(taskListView -> new TaskListCellController());
+        taskListView.setCellFactory(taskListCell -> new TaskListCellController(main));
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {

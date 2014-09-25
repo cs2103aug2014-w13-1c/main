@@ -32,6 +32,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("wat do?");
+        this.primaryStage.setResizable(false);
 
         initRootLayout();
         showSidebar();
@@ -110,6 +111,11 @@ public class Main extends Application {
     }
 
     public InlineCssTextArea getInputField() { return inputField; }
+    public void setAndFocusInputField(String text) {
+        inputField.requestFocus();
+        inputField.setText(text);
+        inputField.positionCaret(text.length());
+    }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }
 

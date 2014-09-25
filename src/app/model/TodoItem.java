@@ -6,7 +6,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
 import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Class TodoItem
@@ -20,14 +22,40 @@ public class TodoItem {
 	private StringProperty taskName;
 	private ObjectProperty<Date> startDate;
 	private ObjectProperty<Date> endDate;
+	private String priority;
 	
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
 	public static final String FLOATING = "Floating";
 	public static final String INVALID = "Invalid";
 	
+	public static final String HIGH = "High";
+	public static final String MEDIUM = "Medium";
+	public static final String LOW = "Low";
+	
 	// Constructors
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
+        if (newTaskName != null) { 
+            this.taskName = new SimpleStringProperty(newTaskName);
+        } else {
+            this.taskName = null;
+        }
+        
+        if (newStartDate != null) {
+            this.startDate = new SimpleObjectProperty<Date>(newStartDate);
+        } else {
+            this.startDate = null;
+        }
+        if (newEndDate != null) {
+            this.endDate = new SimpleObjectProperty<Date>(newEndDate);
+        } else {
+            this.endDate = null;
+        }
+        
+        this.priority = MEDIUM;
+    }
+	
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority) {
 		if (newTaskName != null) { 
 			this.taskName = new SimpleStringProperty(newTaskName);
 		} else {
@@ -44,6 +72,12 @@ public class TodoItem {
 		} else {
 			this.endDate = null;
 		}
+		
+		if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
+		    this.priority = newPriority;
+		} else {
+		    this.priority = MEDIUM;
+		}
 	}
 	
 	public String getTodoItemType() {
@@ -55,12 +89,44 @@ public class TodoItem {
 			}
 		} else {
 			if (endDate == null) {
-				return INVALID;
+				return FLOATING;
 			} else {
 				return EVENT;
 			}
 		}
 	}
+	
+	public String getPriority() {
+	    return this.priority;
+	}
+	
+	public void setPriority(String newPriority) {
+	    if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM))) {
+            this.priority = newPriority;
+	    }
+	}
+	
+	public String getStartDateString() {
+	    return getDateString(getStartDate());
+	}
+	
+	public String getEndDateString() {
+	    return getDateString(getEndDate());
+	}
+	
+	private String getDateString(Date date) {
+	    Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        String month = theMonth(cal.get(Calendar.MONTH));
+        int year = cal.get(Calendar.YEAR);
+        return day + " " + month + " " + year;
+    }
+
+    public static String theMonth(int month){
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        return monthNames[month].toUpperCase();
+    }
 	
 	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
