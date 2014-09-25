@@ -113,7 +113,7 @@ public class Main extends Application {
     public InlineCssTextArea getInputField() { return inputField; }
     public void setAndFocusInputField(String text) {
         inputField.requestFocus();
-        inputField.setText(text);
+        inputField.replaceText(text);
         inputField.positionCaret(text.length());
     }
 
