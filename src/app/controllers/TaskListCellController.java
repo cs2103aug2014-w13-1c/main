@@ -146,8 +146,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private int getTaskIndex(TodoItem task) {
-        int idx = new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
-        return idx;
+        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
     }
 
     private void addContentToDateLabels(TodoItem task) {
