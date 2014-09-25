@@ -22,14 +22,40 @@ public class TodoItem {
 	private StringProperty taskName;
 	private ObjectProperty<Date> startDate;
 	private ObjectProperty<Date> endDate;
+	private String priority;
 	
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
 	public static final String FLOATING = "Floating";
 	public static final String INVALID = "Invalid";
 	
+	public static final String HIGH = "High";
+	public static final String MEDIUM = "Medium";
+	public static final String LOW = "Low";
+	
 	// Constructors
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
+        if (newTaskName != null) { 
+            this.taskName = new SimpleStringProperty(newTaskName);
+        } else {
+            this.taskName = null;
+        }
+        
+        if (newStartDate != null) {
+            this.startDate = new SimpleObjectProperty<Date>(newStartDate);
+        } else {
+            this.startDate = null;
+        }
+        if (newEndDate != null) {
+            this.endDate = new SimpleObjectProperty<Date>(newEndDate);
+        } else {
+            this.endDate = null;
+        }
+        
+        this.priority = MEDIUM;
+    }
+	
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority) {
 		if (newTaskName != null) { 
 			this.taskName = new SimpleStringProperty(newTaskName);
 		} else {
@@ -45,6 +71,15 @@ public class TodoItem {
 			this.endDate = new SimpleObjectProperty<Date>(newEndDate);
 		} else {
 			this.endDate = null;
+		}
+		
+		if (newTaskName.equals("Test Stringy 3")) {
+		    System.out.println(newPriority);
+		}
+		if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
+		    this.priority = newPriority;
+		} else {
+		    this.priority = MEDIUM;
 		}
 	}
 	
@@ -62,6 +97,16 @@ public class TodoItem {
 				return EVENT;
 			}
 		}
+	}
+	
+	public String getPriority() {
+	    return this.priority;
+	}
+	
+	public void setPriority(String newPriority) {
+	    if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM))) {
+            this.priority = newPriority;
+	    }
 	}
 	
 	public String getStartDateString() {
