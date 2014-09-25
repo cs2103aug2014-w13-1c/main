@@ -14,19 +14,16 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- * Created by jin on 24/9/14.
- */
 public class TaskListCellController extends ListCell<TodoItem> {
 
-    private GridPane grid = new GridPane();
-    private Label taskNameLabel = new Label();
+    final private GridPane grid = new GridPane();
+    final private Label taskNameLabel = new Label();
 
-    private Label topDateLabel = new Label();
-    private Label bottomDateLabel = new Label();
+    final private Label topDateLabel = new Label();
+    final private Label bottomDateLabel = new Label();
 
-    private Button updateButton = new Button();
-    private Button deleteButton = new Button();
+    final private Button updateButton = new Button();
+    final private Button deleteButton = new Button();
 
     private Main main;
 
@@ -134,15 +131,11 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void setDeleteButtonEventHandler(TodoItem task) {
-        deleteButton.setOnAction((event) -> {
-            main.setAndFocusInputField("delete " + getTaskIndex(task));
-        });
+        deleteButton.setOnAction((event) -> main.setAndFocusInputField("delete " + getTaskIndex(task)));
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> {
-            main.setAndFocusInputField("update " + getTaskIndex(task) + " ");
-        });
+        updateButton.setOnAction((event) -> main.setAndFocusInputField("update " + getTaskIndex(task) + " "));
     }
 
     private int getTaskIndex(TodoItem task) {

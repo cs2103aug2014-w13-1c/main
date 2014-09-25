@@ -31,22 +31,10 @@ public class SidebarController {
      */
     @FXML
     private void initialize() {
-        displayButton.setOnAction((event) -> {
-            main.setAndFocusInputField("display");
-        });
-
-        addButton.setOnAction((event) -> {
-            main.setAndFocusInputField("add ");
-        });
-
-        searchButton.setOnAction((event) -> {
-            main.setAndFocusInputField("search ");
-        });
-
-        settingsButton.setOnAction((event) -> {
-            main.setAndFocusInputField("settings");
-        });
-
+        displayButton.setOnAction((event) -> main.setAndFocusInputField("display"));
+        addButton.setOnAction((event) -> main.setAndFocusInputField("add "));
+        searchButton.setOnAction((event) -> main.setAndFocusInputField("search "));
+        settingsButton.setOnAction((event) -> main.setAndFocusInputField("settings"));
     }
 
     /**
