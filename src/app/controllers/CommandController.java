@@ -64,12 +64,12 @@ public class CommandController {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
         String toBeChecked = command.substring(firstWordPos + 1);
-        addTodo(toBeChecked);
+        timeParser(toBeChecked);
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
         return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
     }
 
-    protected void addTodo(String toBeChecked) {
+    protected void timeParser(String toBeChecked) {
         StringTokenizer st = new StringTokenizer(toBeChecked);
         String toBeInserted = "";
         Calendar startCalendar = Calendar.getInstance();
@@ -79,39 +79,21 @@ public class CommandController {
         while (st.hasMoreTokens()) {
             String check = st.nextToken();
             if (check.equalsIgnoreCase("start")) {
-                int date = Integer.valueOf(st.nextToken());
-                String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
-                String monthCheck = st.nextToken();
-                int month = 0;
-                for (int i = 0; i < 12; i++) {
-                    if (monthName[i].equalsIgnoreCase(monthCheck)) {
-                        month = i;
-                        break;
-                    }
-                }
-                int year = Integer.valueOf(st.nextToken());
-                startCalendar.set(year, month, date);
+                startCalendar.setTime(getDate(st));
                 startFlag = true;
             }
             else if (check.equalsIgnoreCase("end")) {
-                int date = Integer.valueOf(st.nextToken());
-                String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
-                String monthCheck = st.nextToken();
-                int month = 0;
-                for (int i = 0; i < 12; i++) {
-                    if (monthName[i].equalsIgnoreCase(monthCheck)) {
-                        month = i;
-                        break;
-                    }
-                }
-                int year = Integer.valueOf(st.nextToken());
-                endCalendar.set(year, month, date);
+                endCalendar.setTime(getDate(st));
                 endFlag = true;
             }
             else {
                 toBeInserted = toBeInserted.concat(check + " ");
             }
         }
+        addTodo(toBeInserted, startCalendar, endCalendar, startFlag, endFlag);
+    }
+    
+    protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
         if (endFlag) {
             if (startFlag) {
                 taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
@@ -123,9 +105,29 @@ public class CommandController {
         else {
             taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
         }
-        
     }
-
+    
+    protected Date getDate(StringTokenizer st) {
+        int date = Integer.valueOf(st.nextToken());
+        int month = getMonth(st.nextToken());
+        int year = Integer.valueOf(st.nextToken());
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, date);
+        return cal.getTime();
+    }
+    
+    protected int getMonth(String monthInput) {
+        String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
+        int month = -1;
+        for (int i = 0; i < 12; i++) {
+            if (monthName[i].equalsIgnoreCase(monthInput)) {
+                month = i;
+                break;
+            }
+        }
+        return month;
+    }
+    
     // Display command method(s)
     protected String display(String command) {
         int firstWordPos = firstSpacePosition(command);
