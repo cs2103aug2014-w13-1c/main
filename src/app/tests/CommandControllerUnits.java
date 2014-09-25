@@ -9,12 +9,26 @@ import java.util.Calendar;
 import static org.junit.Assert.assertEquals;
 
 public class CommandControllerUnits {
-
-    // Tests add operation for all three data types (and clear)
-    @Test
-    public void testAdd() {
-        CommandController commandTest = new CommandController();
+    
+    CommandController commandTest = new CommandController();
+    
+    // Testing if tasks can be added
+    @org.junit.Test
+    public void canAddTasks() throws Exception {
+        commandTest.parseCommand("clear");
+        commandTest.parseCommand("add task 1");
+        commandTest.parseCommand("add *&$(*&$)(@");
+        commandTest.parseCommand("add 34987314");
+        commandTest.parseCommand("add hello world");
+        TodoItemList thing = new TodoItemList();
+        assertEquals(4, thing.countTodoItems());
         
+        commandTest.parseCommand("clear");
+    }
+    
+    // Testing whether add todo with start and end date
+    @org.junit.Test
+    public void canParseStartEndDate() throws Exception {
         Calendar expectedStartDate = Calendar.getInstance();
         expectedStartDate.set(2000, 5, 6);
         Calendar expectedEndDate = Calendar.getInstance();
@@ -33,5 +47,7 @@ public class CommandControllerUnits {
         assertEquals(expectedEndDate.get(Calendar.DAY_OF_MONTH), outputEndDate.get(Calendar.DAY_OF_MONTH));
         assertEquals(expectedEndDate.get(Calendar.MONTH), outputEndDate.get(Calendar.MONTH));
         assertEquals(expectedEndDate.get(Calendar.YEAR), outputEndDate.get(Calendar.YEAR));
+        
+        commandTest.parseCommand("clear");
     }
 }
