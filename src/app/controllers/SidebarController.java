@@ -3,7 +3,7 @@ package app.controllers;
 import app.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import org.fxmisc.richtext.InlineCssTextArea;
 
 public class SidebarController {
 
@@ -63,9 +63,9 @@ public class SidebarController {
     }
 
     private void setAndFocusInputField(String text) {
-//        TextField input = main.getInputField();
-//        input.requestFocus();
-//        input.setText(text);
-//        input.positionCaret(text.length());
+        InlineCssTextArea input = main.getInputField();
+        input.requestFocus();
+        input.replaceText(text);
+        input.positionCaret(text.length());
     }
 }

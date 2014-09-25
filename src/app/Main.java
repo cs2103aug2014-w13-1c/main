@@ -23,7 +23,6 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-//    private TextField inputField;
     private InlineCssTextArea inputField;
     private ListView taskListView;
     private CommandController commandController;
