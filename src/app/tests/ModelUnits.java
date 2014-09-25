@@ -222,4 +222,47 @@ public class ModelUnits {
         
         testedList1.clearTodoItems();
     }
+    
+ // Tests priorities
+    @Test
+    public void testPriorities() {
+        TodoItemList testedList = new TodoItemList();
+        testedList.clearTodoItems();
+        
+        String testInput1 = "Test String 1";
+        Date startDate1 = new Date();
+        Date endDate1 = new Date();
+        
+        testedList.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
+        
+        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(0).getPriority());
+        
+        String testInput2 = "Test String 2";
+        Date startDate2 = new Date();
+        
+        testedList.addTodoItem(new TodoItem(testInput2, startDate2, null, TodoItem.HIGH));
+        
+        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
+        
+        String testInput3 = "Test Stringy 3";
+        String dummyInput1 = "Very high";
+        
+        testedList.addTodoItem(new TodoItem(testInput3, null, null, dummyInput1));
+        
+        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(2).getPriority());
+        
+        testedList.addTodoItem(new TodoItem(testInput3, null, null, null));
+        
+        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(3).getPriority());
+        
+        testedList.updateTodoItem(1, testInput2, startDate2, null, TodoItem.HIGH);
+        
+        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
+        
+        testedList.updateTodoItem(1, testInput1, startDate1, endDate1, dummyInput1);
+        
+        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
+        
+        testedList.clearTodoItems();
+    }
 }

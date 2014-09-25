@@ -75,7 +75,7 @@ public class TodoItemList {
 	public void changeFile(String fileName) {
 		this.fileName = fileName;
 		try {
-		    // loadFile(this.fileName);
+		    loadFile(this.fileName);
 		    loadStatus = LOAD_SUCCESS;
 		} catch (Exception e) {
 		    loadStatus = LOAD_FAILED;
@@ -135,6 +135,21 @@ public class TodoItemList {
 		}
 	}
 	
+	public void updateTodoItem(int index, String taskName, Date startDate, Date endDate, String priority) {
+        TodoItem updatedItem = todoItems.get(index);
+        
+        updatedItem.setTaskName(taskName);
+        updatedItem.setStartDate(startDate);
+        updatedItem.setEndDate(endDate);
+        updatedItem.setPriority(priority);
+        try {
+            updateFile();
+            writeStatus = WRITE_SUCCESS;
+        } catch (Exception e) {
+            writeStatus = WRITE_FAILED;
+        }
+	}
+	
 	public TodoItem deleteTodoItem(int index) {
 		try {
 			TodoItem removed = todoItems.remove(index);
@@ -151,6 +166,7 @@ public class TodoItemList {
         todoItems = new ArrayList<TodoItem>();
 	    try {
 	        updateFile();
+	        writeStatus = WRITE_SUCCESS;
 	    } catch (Exception e) {
 	        writeStatus = WRITE_FAILED;
 	    }
@@ -175,16 +191,19 @@ public class TodoItemList {
 		    String currentTaskName = currentTodoItem.getTaskName();
 		    Date currentStartDate = currentTodoItem.getStartDate();
 		    Date currentEndDate = currentTodoItem.getEndDate();
+		    String currentPriority = currentTodoItem.getPriority();
 		    if (currentTaskName != null) {
-		        fileObject.put("taskName", currentTodoItem.getTaskName());
+		        fileObject.put("taskName", currentTaskName);
 		    }
 		    if (currentStartDate != null) {
-		        fileObject.put("startDate", currentTodoItem.getStartDate().getTime());
+		        fileObject.put("startDate", currentStartDate.getTime());
 		    }
 		    if (currentEndDate != null) {
-		        fileObject.put("endDate", currentTodoItem.getEndDate().getTime());
+		        fileObject.put("endDate", currentEndDate.getTime());
 		    }
-		    
+		    if (currentPriority != null) {
+		        fileObject.put("priority", currentPriority);
+		    }
 		    fileArray.add(fileObject);
 		}
 		
@@ -214,7 +233,6 @@ public class TodoItemList {
 		todoItems = new ArrayList<TodoItem>();
 		
 		JSONParser parser = new JSONParser();
-		DateFormat dateParser = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
 		
 		JSONArray fileArray = (JSONArray) parser.parse(fileString);
 		for (int i = 0; i < fileArray.size(); i++) {
@@ -222,10 +240,12 @@ public class TodoItemList {
 		    String currentTaskName = null;
 		    Date currentStartDate = null;
 		    Date currentEndDate = null;
+		    String currentPriority = null;
 		    
 		    Object JSONTaskName = currentJSONObject.get("taskName");
 		    Object JSONStartDate = currentJSONObject.get("startDate");
 		    Object JSONEndDate = currentJSONObject.get("endDate");
+		    Object JSONPriority = currentJSONObject.get("priority"); 
 		    
 		    if (JSONTaskName != null) {
 		        currentTaskName = (String) JSONTaskName;
@@ -236,8 +256,11 @@ public class TodoItemList {
 		    if (JSONEndDate != null) {
 		        currentEndDate = new Date((Long) JSONEndDate);
 		    }
+		    if (JSONPriority != null) {
+		        currentPriority = (String) JSONPriority;
+		    }
 		    
-		    todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate));
+		    todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority));
 		}
 		
 		reader.close();

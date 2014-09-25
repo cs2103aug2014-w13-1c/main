@@ -6,14 +6,21 @@ Stores data in program memory. No File I/O yet.
 
 Constructors
 ------------
+TodoItemList constructors will load data from the file.
+If no fileName is specified, watdo.json will be used. 
+
 * public TodoItemList() _creates empty list of todo items with file name watdo.txt_
 * public TodoItemList(String fileName) _loads todo items from provided file name_ **still implementing**
 * public TodoItem (String taskName, Date startDate, Date endDate)
- * taskName, startDate, endDate can be null
+* public TodoItem (String taskName, Date startDate, Date endDate, String priority)
+ * taskName, startDate, endDate, priority can be null
  * taskName shouldn't be null
  * _startDate_ + _endDate_ = **Event**
  * no _startDate_ + _endDate_ = **Deadline**
  * no _startDate_ +  no _endDate_ = **Floating**
+ * _startDate_ + no _endDate_ = **Floating**
+ * Use priority as TodoItem.HIGH, TodoItem.MEDIUM and TodoItem.LOW
+ * If no priority is specified, automatically assumed to be Medium
 
 CRUD methods: TodoItemList
 -----------
@@ -21,11 +28,18 @@ CRUD methods: TodoItemList
  * public void addTodoItem(TodoItem newItem)
  * public TodoItem readTodoItem(int index) _returns null if index out of bounds_
  * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate)
+ * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate, String priority)
+  * If specified priority is not TodoItem.HIGH/MEDIUM/LOW, current priority will not be changed
  * public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
  * public void clearTodoItems()
-* TodoItemList
- * public ArrayList<TodoItem> getTodoItems() 
- * public ListIterator<TodoItem> getTodoItemIterator() 
+
+GET methods: TodoItemList
+-----------
+* public ArrayList<TodoItem> getTodoItems() 
+* public ListIterator<TodoItem> getTodoItemIterator()
+* public String getFileName()
+* public String getLoadStatus()
+* public String getWriteStatus()
 
 GET methods: TodoItem
 -----------
@@ -40,6 +54,8 @@ Return null if not set.
 * endDate
  * public LocalDate getEndDate()
  * public ObjectProperty<Date> getEndDateProperty()
+* priority
+ * public String getPriority()
 
 SET Methods: TodoItem
 ------------
@@ -54,6 +70,8 @@ Create new Property if not set.
 * endDate
   * public void setEndDate(LocalDate endDate)
   * public void setEndDateProperty(ObjectProperty<Date> endDate)
+* priority
+  * public String setPriority(String priority) _if not TodoItem.HIGH/MEDIUM/LOW, no change made_
 
 Other methods: TodoItem
 -------------
@@ -62,18 +80,16 @@ Other methods: TodoItem
  * returns "Deadline" for Deadline
  * returns "Floating" for Floating
  * returns "Invalid" otherwise
+* public String getStartDateString()
+ * returns the start date as a string
+ * if not set, returns null
+* public String getEndDateString()
+ * returns the end date as a string
+ * if not set, returns null
  
 Other methods: TodoItemList
 -------------
-* public void changeFile() **still implementing**
- * Switches the current file to a different file
-* public String getFileName()
- * Returns the name of the current file being used
-* public ArrayList<TodoItem> getTodoItems()
- * Returns the entire list of TodoItems
-* public String getLoadStatus()
- * Gets the load status of the file. For I/O error checking.
-* public String getWriteStatus()
- * Gets the write status of the file. For I/O error checking.
+* public void changeFile()
+ * Switches the current file in use to a different file
 * public int countTodoItems()
  * Gets the number of TodoItems
