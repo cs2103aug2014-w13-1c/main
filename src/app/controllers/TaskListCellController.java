@@ -49,17 +49,11 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void configureDeleteButton() {
 //        Image image = new Image(getClass().getResourceAsStream("app/resources/cross.png"));
 //        deleteButton.setGraphic(new ImageView(image));
-        deleteButton.setOnAction((event) -> {
-            // delete task
-        });
     }
 
     private void configureUpdateButton() {
 //        Image image = new Image(getClass().getResourceAsStream("app/resources/compose-3.png"));
 //        updateButton.setGraphic(new ImageView(image));
-        updateButton.setOnAction((event) -> {
-            // update task
-        });
     }
 
     private void initColors() {
@@ -102,8 +96,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
         grid.add(updateButton, 5, 0);
         grid.add(deleteButton, 5, 5);
 //        grid.setGridLinesVisible(true);
-
-        grid.setColumnSpan(taskNameLabel, 4);
     }
 
     private void clearContent() {
@@ -113,21 +105,40 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void addContent(TodoItem task) {
         setText(null);
-        taskNameLabel.setText(task.getTaskName().toUpperCase());
+        addContentToTaskName(task);
+        addContentToDateLabels(task);
+        setUpdateButtonEventHandler(task);
+        setDeleteButtonEventHandler(task);
 
+        setGraphic(grid);
+    }
+
+    private void setDeleteButtonEventHandler(TodoItem task) {
+        deleteButton.setOnAction((event) -> {
+            // delete task
+        });
+    }
+
+    private void setUpdateButtonEventHandler(TodoItem task) {
+        updateButton.setOnAction((event) -> {
+            // update task
+        });
+    }
+
+    private void addContentToDateLabels(TodoItem task) {
         if (task.getTodoItemType().equalsIgnoreCase("Event")) {
             topDateLabel.setText("START " + getDateString(task.getStartDate()).toUpperCase());
             bottomDateLabel.setText("END " + getDateString(task.getEndDate()).toUpperCase());
-
             topDateLabel.setVisible(true);
             bottomDateLabel.setVisible(true);
-
         } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
             topDateLabel.setText("DUE " + getDateString(task.getEndDate()).toUpperCase());
             topDateLabel.setVisible(true);
         }
+    }
 
-        setGraphic(grid);
+    private void addContentToTaskName(TodoItem task) {
+        taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
     private String getDateString(Date date) {
