@@ -66,7 +66,6 @@ public class CommandController {
         }
         String toBeChecked = command.substring(firstWordPos + 1);
         timeParser(toBeChecked);
-        updateView();
         return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
     }
 
@@ -141,8 +140,6 @@ public class CommandController {
 //        }
 //        return displayTasks(todoList);
 
-
-        updateView();
         return "displaying tasks";
     }
 
@@ -169,7 +166,6 @@ public class CommandController {
     // Clear command method(s)
     protected String clear() {
         taskList.clearTodoItems();
-        updateView();
         return MESSAGE_CLEAR_COMPLETE;
     }
     
@@ -189,7 +185,6 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
-        updateView();
         return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
     }
 
@@ -254,7 +249,6 @@ public class CommandController {
         }
         String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
         taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
-        updateView();
         return String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated);
     }
 
@@ -314,7 +308,7 @@ public class CommandController {
     public void updateView() {
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
     }
-        
+
     /**
      * Is called by the main application to give a reference back to itself.
      *
