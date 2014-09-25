@@ -62,6 +62,12 @@ Other methods: TodoItem
  * returns "Deadline" for Deadline
  * returns "Floating" for Floating
  * returns "Invalid" otherwise
+* public String getStartDateString()
+ * returns the start date as a string
+ * if not set, returns null
+* public String getEndDateString()
+ * returns the end date as a string
+ * if not set, returns null
  
 Other methods: TodoItemList
 -------------

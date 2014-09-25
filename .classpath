@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_20"/>
 	<classpathentry kind="lib" path="C:/Users/Dat/Documents/watdo/lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/controlsfx-8.0.6_20.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -93,31 +93,18 @@ public class TaskListCellController extends ListCell<TodoItem> {
             Calendar cal = Calendar.getInstance();
             cal.setTime(task.getStartDate());
 
-            topDateLabel.setText("START " + getDateString(task.getStartDate()));
-            bottomDateLabel.setText("END " + getDateString(task.getEndDate()));
+            topDateLabel.setText("START " + task.getStartDateString());
+            bottomDateLabel.setText("END " + task.getEndDateString());
 
             topDateLabel.setVisible(true);
             bottomDateLabel.setVisible(true);
 
         } else if (task.getEndDate() != null) {
-            topDateLabel.setText("DUE " + getDateString(task.getEndDate()));
+            topDateLabel.setText("DUE " + task.getEndDateString());
             topDateLabel.setVisible(true);
         }
 
         setGraphic(grid);
-    }
-
-    private String getDateString(Date date) {
-        cal.setTime(date);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        String month = theMonth(cal.get(Calendar.MONTH));
-        int year = cal.get(Calendar.YEAR);
-        return day + " " + month + " " + year;
-    }
-
-    public static String theMonth(int month){
-        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        return monthNames[month].toUpperCase();
     }
 
     @Override
