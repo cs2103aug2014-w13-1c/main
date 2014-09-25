@@ -36,6 +36,7 @@ public class InputFieldController {
             inputField.clear();
 //            System.out.println(lastCommand);
             main.getCommandController().parseCommand(lastCommand);
+            main.getCommandController().updateView();
         });
 
         inputField.setOnKeyPressed(new EventHandler<KeyEvent>() {
