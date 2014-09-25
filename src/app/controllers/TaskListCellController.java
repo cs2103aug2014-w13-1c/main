@@ -6,12 +6,12 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -25,14 +25,12 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private Label topDateLabel = new Label();
     private Label bottomDateLabel = new Label();
 
-    private Button updateButton = new Button("update");
-    private Button deleteButton = new Button("delete");
-
-    private Calendar cal = Calendar.getInstance();
+    private Button updateButton = new Button();
+    private Button deleteButton = new Button();
 
     private Main main;
 
-    ArrayList<String> colors = new ArrayList<String>();
+    ArrayList<String> colors = new ArrayList<>();
 
     public TaskListCellController(Main main) {
         this.getStylesheets().add("app/stylesheets/taskListCell.css");
@@ -52,14 +50,34 @@ public class TaskListCellController extends ListCell<TodoItem> {
         this.main = main;
     }
 
+    private void configureGrid() {
+        grid.setHgap(30);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(5, 7, 5, 7));
+//        grid.setGridLinesVisible(true);
+    }
+
     private void configureDeleteButton() {
-//        Image image = new Image(getClass().getResourceAsStream("app/resources/cross.png"));
-//        deleteButton.setGraphic(new ImageView(image));
+        Image image = new Image("app/resources/cross.png");
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+
+
+        deleteButton.setGraphic(imageView);
+        deleteButton.setStyle("-fx-background-color: transparent;");
     }
 
     private void configureUpdateButton() {
-//        Image image = new Image(getClass().getResourceAsStream("app/resources/compose-3.png"));
-//        updateButton.setGraphic(new ImageView(image));
+        Image image = new Image("app/resources/compose-3.png");
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitHeight(20);
+        imageView.setFitWidth(20);
+
+        updateButton.setGraphic(imageView);
+        updateButton.setStyle("-fx-background-color: transparent;");
     }
 
     private void initColors() {
@@ -68,12 +86,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
         colors.add("#F78F37");
         colors.add("#F15B5A");
         colors.add("#B76BDB");
-    }
-
-    private void configureGrid() {
-        grid.setHgap(27);
-        grid.setVgap(5);
-        grid.setPadding(new Insets(5, 7, 5, 7));
     }
 
     private void configureTaskName() {
@@ -104,7 +116,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
         grid.setColumnSpan(taskNameLabel, 6);
         grid.setRowSpan(taskNameLabel, 1);
-//        grid.setGridLinesVisible(true);
     }
 
     private void clearContent() {
