@@ -6,7 +6,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
 import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Class TodoItem
@@ -61,6 +63,28 @@ public class TodoItem {
 			}
 		}
 	}
+	
+	public String getStartDateString() {
+	    return getDateString(getStartDate());
+	}
+	
+	public String getEndDateString() {
+	    return getDateString(getEndDate());
+	}
+	
+	private String getDateString(Date date) {
+	    Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        String month = theMonth(cal.get(Calendar.MONTH));
+        int year = cal.get(Calendar.YEAR);
+        return day + " " + month + " " + year;
+    }
+
+    public static String theMonth(int month){
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        return monthNames[month].toUpperCase();
+    }
 	
 	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
