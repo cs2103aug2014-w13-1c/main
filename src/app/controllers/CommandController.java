@@ -67,7 +67,7 @@ public class CommandController {
         }
         String toBeChecked = command.substring(firstWordPos + 1);
         timeParser(toBeChecked);
-        return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
+        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, toBeChecked));
     }
 
     protected void timeParser(String toBeChecked) {
@@ -133,26 +133,10 @@ public class CommandController {
     protected String display(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos != -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-//        ArrayList<TodoItem> todoList = taskList.getTodoItems();
-//        if (todoList.isEmpty()) {
-//            return String.format(ERROR_FILE_EMPTY);
-//        }
-//        return displayTasks(todoList);
-
         return "displaying tasks";
     }
-
-//    protected String displayTasks(ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            returnString += index + ". " + todo.getTaskName() + "\n";
-//            index++;
-//        }
-//        return returnString;
-//    }
 
     protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();

@@ -6,6 +6,9 @@ import javafx.scene.input.KeyEvent;
 
 import org.fxmisc.richtext.InlineCssTextArea;
 
+/**
+ * Created by jolly on 24/9/14.
+ */
 public class InputFieldController {
 
     private String lastCommand;
