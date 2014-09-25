@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 
 public class CommandController {
     protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, EXIT, INVALID, SEARCH, UPDATE
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, INVALID, SEARCH, UPDATE
     }
 
     // Errors
@@ -31,6 +31,7 @@ public class CommandController {
 
     // Messages
     private final String MESSAGE_ADD_COMPLETE = "added: \"%1$s\"\n";
+    private final String MESSAGE_CLEAR_COMPLETE = "todo cleared";
     private final String MESSAGE_DELETE_COMPLETE = "deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "updated: \"%1$s\"\n";
@@ -165,6 +166,13 @@ public class CommandController {
         return taskData;
     }
 
+    // Clear command method(s)
+    protected String clear() {
+        taskList.clearTodoItems();
+        updateView();
+        return MESSAGE_CLEAR_COMPLETE;
+    }
+    
     // Delete command method(s)
     protected String deleteEntry(String command) {
         int firstWordPos = firstSpacePosition(command);
@@ -258,6 +266,8 @@ public class CommandController {
             return COMMAND_TYPE.DELETE;
         } else if (commandWord.equalsIgnoreCase("display")) {
             return COMMAND_TYPE.DISPLAY;
+        } else if (commandWord.equalsIgnoreCase("clear")) {
+            return COMMAND_TYPE.CLEAR;
         } else if (commandWord.equalsIgnoreCase("exit")) {
             return COMMAND_TYPE.EXIT;
         } else if (commandWord.equalsIgnoreCase("search")) {
@@ -279,6 +289,8 @@ public class CommandController {
                 return deleteEntry(command);
             case DISPLAY :
                 return display(command);
+            case CLEAR :
+                return clear();
             case EXIT :
                 System.exit(0);
             case SEARCH :
