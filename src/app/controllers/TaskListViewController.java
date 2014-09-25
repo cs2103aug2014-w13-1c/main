@@ -6,9 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
-/**
- * Created by jin on 24/9/14.
- */
 public class TaskListViewController {
 
     @FXML
