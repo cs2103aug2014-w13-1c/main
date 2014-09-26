@@ -58,6 +58,8 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/TaskListView.fxml"));
             taskListView = loader.load();
+            taskListView.getStylesheets().add("app/stylesheets/taskList.css");
+            taskListView.getStyleClass().add("task-list");
 
             rootLayout.setCenter(taskListView);
             taskListViewController = loader.getController();

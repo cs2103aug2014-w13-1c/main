@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
 
-<ListView fx:id="taskListView" fixedCellSize="150.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/MainListView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.TaskListViewController" />
+<ListView fx:id="taskListView" fixedCellSize="150.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.TaskListViewController" />
