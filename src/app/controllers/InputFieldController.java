@@ -25,7 +25,7 @@ public class InputFieldController {
     private Main main;
 
     private final String[] KEYWORDS = new String[] {
-        "add", "delete", "update"
+        "add", "delete", "display", "clear", "exit", "search", "update"
     };
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
