@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class TaskListCellController extends ListCell<TodoItem> {
@@ -78,11 +79,11 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void initColors() {
-        colors.add("#0D4EB2");
-        colors.add("#67BF55");
-        colors.add("#F78F37");
-        colors.add("#F15B5A");
-        colors.add("#B76BDB");
+        colors.add("#556270");
+        colors.add("#4ECDC4");
+        colors.add("#C7F464");
+        colors.add("#FF6B6B");
+        colors.add("#C44D58");
     }
 
     private void configureTaskName() {
@@ -168,6 +169,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     public String getRandomColor() {
-        return colors.get((int) (Math.random() * (colors.size() - 1)));
+        return colors.get(new Random().nextInt(colors.size()));
     }
 }
