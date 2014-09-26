@@ -15,6 +15,10 @@ import org.fxmisc.richtext.StyleSpansBuilder;
 
 /**
  * Created by jolly on 24/9/14.
+ *
+ * computeHighlighting code taken from:
+ * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
+ * will rewrite/refactor later
  */
 public class InputFieldController {
 
