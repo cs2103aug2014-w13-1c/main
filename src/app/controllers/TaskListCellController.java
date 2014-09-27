@@ -50,11 +50,18 @@ public class TaskListCellController extends ListCell<TodoItem> {
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
         setGraphic(cellGrid);
-        if (!empty) {
+        if (empty) {
+            clearContent();
+        } else {
             populateContent(task);
             setUpdateButtonEventHandler(task);
             setDeleteButtonEventHandler(task);
         }
+    }
+
+    private void clearContent() {
+        setText(null);
+        setGraphic(null);
     }
 
     private void populateContent(TodoItem task) {

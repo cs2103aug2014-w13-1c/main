@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
 
-<ListView fx:id="taskListView" fixedCellSize="150.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.TaskListViewController" />
+<?import javafx.scene.text.Font?>
+<ListView fx:id="taskListView" fixedCellSize="150.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.TaskListViewController">
+    <Label fx:id="placeholder" text="You have no tasks." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+</ListView>
