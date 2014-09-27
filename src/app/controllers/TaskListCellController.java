@@ -89,7 +89,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void initColors() {
         colors.add("#556270");
         colors.add("#4ECDC4");
-        colors.add("#C7F464");
+        colors.add("#C7DC11");
         colors.add("#FF6B6B");
         colors.add("#C44D58");
     }
