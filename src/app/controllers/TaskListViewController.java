@@ -4,7 +4,10 @@ import app.Main;
 import app.model.TodoItem;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListView;
+
+import java.io.IOException;
 
 public class TaskListViewController {
 
@@ -15,7 +18,19 @@ public class TaskListViewController {
 
     @FXML
     public void initialize() {
-        taskListView.setCellFactory(taskListCell -> new TaskListCellController(main));
+        taskListView.setCellFactory(taskListView -> {
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(main.getClass().getResource("views/TaskListCell.fxml"));
+                loader.load();
+                NewTaskListCellController controller = loader.getController();
+                controller.setMainApp(main);
+                return controller;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {
