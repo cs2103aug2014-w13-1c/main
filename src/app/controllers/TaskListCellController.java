@@ -3,15 +3,11 @@ package app.controllers;
 import app.Main;
 import app.model.TodoItem;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -94,11 +90,21 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void initColors() {
-        colors.add("#556270");
-        colors.add("#4ECDC4");
-        colors.add("#C7DC11");
-        colors.add("#FF6B6B");
-        colors.add("#C44D58");
+        colors.add("#d01716"); // red 700
+        colors.add("#c2185b"); // pink 700
+        colors.add("#7b1fa2"); // purple 700
+        colors.add("#512da8"); // deep purple 700
+        colors.add("#393f9f"); // indigo 700
+        colors.add("#455ede"); // blue 700
+        colors.add("#0288d1"); // light blue 700
+        colors.add("#0097a7"); // cyan 700
+        colors.add("#00796b"); // teal 700
+        colors.add("#0a7e07"); // green 700
+        colors.add("#558b2f"); // light green 800
+        colors.add("#827717"); // lime 900
+        colors.add("#e65100"); // orange 900
+        colors.add("#e54a19"); // deep orange 700
+        colors.add("#795548"); // brown 500
     }
 
     public String getRandomColor() {
