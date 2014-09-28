@@ -65,11 +65,11 @@ public class CommandController {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
         String toBeChecked = command.substring(firstWordPos + 1);
-        timeParser(toBeChecked);
+        addTimeParser(toBeChecked);
         return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
     }
 
-    protected void timeParser(String toBeChecked) {
+    protected void addTimeParser(String toBeChecked) {
         StringTokenizer st = new StringTokenizer(toBeChecked);
         String toBeInserted = "";
         Calendar startCalendar = Calendar.getInstance();
@@ -247,9 +247,47 @@ public class CommandController {
         if (index < 0 || index >= todoList.size()) {
             return ERROR_WRONG_COMMAND_FORMAT;
         }
-        String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
-        taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
-        return String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated);
+        String toBeChecked = command.substring(firstWordPos + secondWordPos + 2);
+        updateTimeParser(index, toBeChecked);
+        return String.format(MESSAGE_UPDATE_COMPLETE, toBeChecked);
+    }
+    
+    protected void updateTimeParser(int index, String toBeChecked) {
+        StringTokenizer st = new StringTokenizer(toBeChecked);
+        String toBeUpdated = "";
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar endCalendar = Calendar.getInstance();
+        boolean startFlag = false;
+        boolean endFlag = false;
+        while (st.hasMoreTokens()) {
+            String check = st.nextToken();
+            if (check.equalsIgnoreCase("start")) {
+                startCalendar.setTime(getDate(st));
+                startFlag = true;
+            }
+            else if (check.equalsIgnoreCase("end")) {
+                endCalendar.setTime(getDate(st));
+                endFlag = true;
+            }
+            else {
+                toBeUpdated = toBeUpdated.concat(check + " ");
+            }
+        }
+        updateTodo(index, toBeUpdated, startCalendar, endCalendar, startFlag, endFlag);
+    }
+    
+    protected void updateTodo(int index, String toBeUpdated, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
+        if (endFlag) {
+            if (startFlag) {
+                taskList.updateTodoItem(index, toBeUpdated, startCalendar.getTime(), endCalendar.getTime());
+            }
+            else {
+                taskList.updateTodoItem(index, toBeUpdated, null, endCalendar.getTime());
+            }
+        }
+        else {
+            taskList.updateTodoItem(index, toBeUpdated, null, null);
+        }
     }
 
     // Command processing methods
