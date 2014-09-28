@@ -90,7 +90,7 @@ public class CommandController {
                 toBeInserted = toBeInserted.concat(check + " ");
             }
         }
-        addTodo(toBeInserted, startCalendar, endCalendar, startFlag, endFlag);
+        addTodo(toBeInserted.trim(), startCalendar, endCalendar, startFlag, endFlag);
     }
     
     protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
@@ -273,7 +273,7 @@ public class CommandController {
                 toBeUpdated = toBeUpdated.concat(check + " ");
             }
         }
-        updateTodo(index, toBeUpdated, startCalendar, endCalendar, startFlag, endFlag);
+        updateTodo(index, toBeUpdated.trim(), startCalendar, endCalendar, startFlag, endFlag);
     }
     
     protected void updateTodo(int index, String toBeUpdated, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
