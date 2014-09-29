@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * Class CommandController
@@ -62,11 +63,11 @@ public class CommandController {
     protected String addNewLine(String command){
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeChecked = command.substring(firstWordPos + 1);
         addTimeParser(toBeChecked);
-        return String.format(MESSAGE_ADD_COMPLETE, toBeChecked);
+        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, toBeChecked));
     }
 
     protected void addTimeParser(String toBeChecked) {
@@ -132,26 +133,10 @@ public class CommandController {
     protected String display(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos != -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-//        ArrayList<TodoItem> todoList = taskList.getTodoItems();
-//        if (todoList.isEmpty()) {
-//            return String.format(ERROR_FILE_EMPTY);
-//        }
-//        return displayTasks(todoList);
-
         return "displaying tasks";
     }
-
-//    protected String displayTasks(ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            returnString += index + ". " + todo.getTaskName() + "\n";
-//            index++;
-//        }
-//        return returnString;
-//    }
 
     protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
@@ -173,7 +158,7 @@ public class CommandController {
     protected String deleteEntry(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
         if(isInt(command.substring(firstWordPos + 1))) {
@@ -181,11 +166,11 @@ public class CommandController {
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
-        return String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted);
+        return showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
     protected boolean isInt(String number) {
@@ -201,17 +186,17 @@ public class CommandController {
     protected String search(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (todoList.isEmpty()) {
-            return String.format(ERROR_FILE_EMPTY);
+            return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
         String returnString = searchList(command.substring(firstWordPos + 1), todoList);
         if (returnString.equals("")) {
-            return ERROR_SEARCH_TERM_NOT_FOUND;
+            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
-            return String.format(MESSAGE_SEARCH_COMPLETE, returnString);
+            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
         }
     }
 
@@ -232,24 +217,24 @@ public class CommandController {
     protected String update(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
         String secondCommand = command.substring(firstWordPos + 1);
         int secondWordPos = firstSpacePosition(secondCommand);
         if (secondWordPos == -1) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         if(isInt(secondCommand.substring(0, secondWordPos))) {
             index = Integer.parseInt(secondCommand.substring(0, secondWordPos)) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
-            return ERROR_WRONG_COMMAND_FORMAT;
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeChecked = command.substring(firstWordPos + secondWordPos + 2);
         updateTimeParser(index, toBeChecked);
-        return String.format(MESSAGE_UPDATE_COMPLETE, toBeChecked);
+        return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeChecked));
     }
     
     protected void updateTimeParser(int index, String toBeChecked) {
@@ -324,13 +309,14 @@ public class CommandController {
             case CLEAR :
                 return clear();
             case EXIT :
+                showInfoDialog("Bye!");
                 System.exit(0);
             case SEARCH :
                 return search(command);
             case UPDATE :
                 return update(command);
             default :
-                return ERROR_WRONG_COMMAND_FORMAT;
+                return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
     }
 
@@ -357,5 +343,25 @@ public class CommandController {
 
         // Add observable list data to the table
         // personTable.setItems(mainApp.getPersonData());
+    }
+
+    public String showErrorDialog(String error) {
+        Dialogs.create()
+                .owner(main.getPrimaryStage())
+                .title("Error")
+                .masthead(null)
+                .message(error)
+                .showError();
+        return error;
+    }
+
+    public String showInfoDialog(String message) {
+        Dialogs.create()
+                .owner(main.getPrimaryStage())
+                .title("Information")
+                .masthead(null)
+                .message(message)
+                .showInformation();
+        return message;
     }
 }
