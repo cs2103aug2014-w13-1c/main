@@ -8,10 +8,14 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import org.controlsfx.dialog.Dialogs;
+
+import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.IOException;
 
@@ -19,7 +23,7 @@ public class Main extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    private TextField inputField;
+    private StyleClassedTextArea inputField;
     private ListView taskListView;
     private CommandController commandController;
     private TaskListViewController taskListViewController;
@@ -38,31 +42,15 @@ public class Main extends Application {
         commandController = new CommandController();
         commandController.setMainApp(this);
         commandController.updateView();
+
+        Dialogs.create()
+                .owner(primaryStage)
+                .title("Welcome")
+                .masthead(null)
+                .message("wat will you do today?")
+                .showInformation();
+
         inputField.requestFocus();
-
-//        Stage dialogStage = new Stage();
-//        dialogStage.initModality(Modality.WINDOW_MODAL);
-//        dialogStage.setScene(new Scene(VBoxBuilder.create().
-//                children(new Text("Hi"), new Button("Ok.")).
-//                alignment(Pos.CENTER).padding(new Insets(5)).build()));
-//        dialogStage.show();
-
-//        Button btn = new Button();
-//        btn.setText("Open Dialog");
-//        btn.setOnAction(
-//                new EventHandler<ActionEvent>() {
-//                    @Override
-//                    public void handle(ActionEvent event) {
-//                        final Stage dialog = new Stage();
-//                        dialog.initModality(Modality.APPLICATION_MODAL);
-//                        dialog.initOwner(primaryStage);
-//                        VBox dialogVbox = new VBox(20);
-//                        dialogVbox.getChildren().add(new Text("This is a Dialog"));
-//                        Scene dialogScene = new Scene(dialogVbox, 300, 200);
-//                        dialog.setScene(dialogScene);
-//                        dialog.show();
-//                    }
-//                });
     }
 
     private void showTaskListView() {
@@ -70,6 +58,8 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("views/TaskListView.fxml"));
             taskListView = loader.load();
+            taskListView.getStylesheets().add("app/stylesheets/taskList.css");
+            taskListView.getStyleClass().add("task-list");
 
             rootLayout.setCenter(taskListView);
             taskListViewController = loader.getController();
@@ -80,20 +70,10 @@ public class Main extends Application {
     }
 
     private void showInputField() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("views/InputField.fxml"));
-            inputField = loader.load();
-            inputField.getStylesheets().add(getClass().getResource("stylesheets/TextField.css").toExternalForm());
-            inputField.getStyleClass().add("text-field");
-
-            rootLayout.setBottom(inputField);
-
-            InputFieldController controller = loader.getController();
-            controller.setMainApp(this);
-        } catch (IOException e) {
-           e.printStackTrace();
-        }
+        InputFieldController inputFieldController = new InputFieldController();
+        inputFieldController.setMainApp(this);
+        inputField = inputFieldController.getInputField();
+        rootLayout.setBottom(new StackPane(inputField));
     }
 
     private void showSidebar() {
@@ -132,12 +112,12 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public TextField getInputField() { return inputField; }
+    public StyleClassedTextArea getInputField() { return inputField; }
 
     public void setAndFocusInputField(String text) {
-        inputField.requestFocus();
-        inputField.setText(text);
+        inputField.replaceText(text);
         inputField.positionCaret(text.length());
+        inputField.requestFocus();
     }
 
     public TaskListViewController getTaskListViewController() { return taskListViewController; }

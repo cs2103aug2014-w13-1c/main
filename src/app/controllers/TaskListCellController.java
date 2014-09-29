@@ -2,120 +2,57 @@ package app.controllers;
 
 import app.Main;
 import app.model.TodoItem;
-import javafx.geometry.Insets;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Created by jin on 24/9/14.
+ * Created by jin on 28/9/14.
  */
 public class TaskListCellController extends ListCell<TodoItem> {
 
-    private GridPane grid = new GridPane();
-    private Label taskNameLabel = new Label();
+    @FXML
+    private GridPane cellGrid;
 
-    private Label topDateLabel = new Label();
-    private Label bottomDateLabel = new Label();
+    @FXML
+    private Label taskNameLabel;
 
-    private Button updateButton = new Button();
-    private Button deleteButton = new Button();
+    @FXML
+    private Label topDateLabel;
+
+    @FXML
+    private Label bottomDateLabel;
+
+    @FXML
+    private Button updateButton;
+
+    @FXML
+    private Button deleteButton;
 
     private Main main;
 
     ArrayList<String> colors = new ArrayList<>();
 
-    public TaskListCellController(Main main) {
-        this.getStylesheets().add("app/stylesheets/taskListCell.css");
-        this.getStyleClass().add("cell");
-
-        initColors();
-        this.setStyle("-fx-background-color: " + getRandomColor() + ";");
-
-        configureGrid();
-        configureTaskName();
-        configureDateLabel(topDateLabel);
-        configureDateLabel(bottomDateLabel);
-        configureUpdateButton();
-        configureDeleteButton();
-        addControlsToGrid();
-
-        this.main = main;
+    public TaskListCellController() {
     }
 
-    private void configureGrid() {
-        grid.setHgap(30);
-        grid.setVgap(5);
-        grid.setPadding(new Insets(5, 7, 5, 7));
-//        grid.setGridLinesVisible(true);
-    }
-
-    private void configureDeleteButton() {
-        Image image = new Image("app/resources/cross.png");
-        ImageView imageView = new ImageView(image);
-
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-
-
-        deleteButton.setGraphic(imageView);
-        deleteButton.setStyle("-fx-background-color: transparent;");
-    }
-
-    private void configureUpdateButton() {
-        Image image = new Image("app/resources/compose-3.png");
-        ImageView imageView = new ImageView(image);
-
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-
-        updateButton.setGraphic(imageView);
-        updateButton.setStyle("-fx-background-color: transparent;");
-    }
-
-    private void initColors() {
-        colors.add("#0D4EB2");
-        colors.add("#67BF55");
-        colors.add("#F78F37");
-        colors.add("#F15B5A");
-        colors.add("#B76BDB");
-    }
-
-    private void configureTaskName() {
-        taskNameLabel.getStylesheets().add(this.getStylesheets().get(0));
-        taskNameLabel.getStyleClass().add("task-name-label");
-        taskNameLabel.setMaxWidth(350);
-        taskNameLabel.setMaxHeight(50);
-        taskNameLabel.setWrapText(true);
-        taskNameLabel.setTextFill(Color.WHITE);
-    }
-
-    private void configureDateLabel(Label label) {
-        label.setVisible(false);
-        label.getStylesheets().add(this.getStylesheets().get(0));
-        label.getStyleClass().add("date-label");
-        label.setMaxWidth(250);
-        label.setMaxHeight(30);
-        label.setWrapText(true);
-        label.setTextFill(Color.WHITE);
-    }
-
-    private void addControlsToGrid() {
-        grid.add(taskNameLabel, 0, 0);
-        grid.add(topDateLabel, 0, 1);
-        grid.add(bottomDateLabel, 0, 2);
-        grid.add(updateButton, 5, 0);
-        grid.add(deleteButton, 5, 5);
-
-        grid.setColumnSpan(taskNameLabel, 6);
-        grid.setRowSpan(taskNameLabel, 1);
+    @Override
+    protected void updateItem(TodoItem task, boolean empty) {
+        super.updateItem(task, empty);
+        setGraphic(cellGrid);
+        if (empty) {
+            clearContent();
+        } else {
+            populateContent(task);
+            setUpdateButtonEventHandler(task);
+            setDeleteButtonEventHandler(task);
+        }
     }
 
     private void clearContent() {
@@ -123,34 +60,12 @@ public class TaskListCellController extends ListCell<TodoItem> {
         setGraphic(null);
     }
 
-    private void addContent(TodoItem task) {
-        setText(null);
-        addContentToTaskName(task);
-        addContentToDateLabels(task);
-        setUpdateButtonEventHandler(task);
-        setDeleteButtonEventHandler(task);
-
-        setGraphic(grid);
+    private void populateContent(TodoItem task) {
+        setTaskName(task);
+        setDates(task);
     }
 
-    private void setDeleteButtonEventHandler(TodoItem task) {
-        deleteButton.setOnAction((event) -> {
-            main.setAndFocusInputField("delete " + getTaskIndex(task));
-        });
-    }
-
-    private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> {
-            main.setAndFocusInputField("update " + getTaskIndex(task) + " ");
-        });
-    }
-
-    private int getTaskIndex(TodoItem task) {
-        int idx = new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
-        return idx;
-    }
-
-    private void addContentToDateLabels(TodoItem task) {
+    private void setDates(TodoItem task) {
         if (task.getTodoItemType().equalsIgnoreCase("Event")) {
             topDateLabel.setText("START " + task.getStartDateString());
             bottomDateLabel.setText("END " + task.getEndDateString());
@@ -158,24 +73,55 @@ public class TaskListCellController extends ListCell<TodoItem> {
             bottomDateLabel.setVisible(true);
         } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
             topDateLabel.setText("DUE " + task.getEndDateString());
+            topDateLabel.setVisible(true);
         }
     }
 
-    private void addContentToTaskName(TodoItem task) {
+    private void setTaskName(TodoItem task) {
         taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
-    @Override
-    protected void updateItem(TodoItem task, boolean empty) {
-        super.updateItem(task, empty);
-        if (empty) {
-            clearContent();
-        } else {
-            addContent(task);
-        }
+    private void setDeleteButtonEventHandler(TodoItem task) {
+        deleteButton.setOnAction((event) -> main.setAndFocusInputField("delete " + getTaskIndex(task)));
+    }
+
+    private void setUpdateButtonEventHandler(TodoItem task) {
+        updateButton.setOnAction((event) -> main.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+    }
+
+    private void initColors() {
+        colors.add("#d01716"); // red 700
+        colors.add("#c2185b"); // pink 700
+        colors.add("#7b1fa2"); // purple 700
+        colors.add("#512da8"); // deep purple 700
+        colors.add("#393f9f"); // indigo 700
+        colors.add("#455ede"); // blue 700
+        colors.add("#0288d1"); // light blue 700
+        colors.add("#0097a7"); // cyan 700
+        colors.add("#00796b"); // teal 700
+        colors.add("#0a7e07"); // green 700
+        colors.add("#558b2f"); // light green 800
+        colors.add("#827717"); // lime 900
+        colors.add("#e65100"); // orange 900
+        colors.add("#e54a19"); // deep orange 700
+        colors.add("#795548"); // brown 500
     }
 
     public String getRandomColor() {
-        return colors.get((int) (Math.random() * (colors.size() - 1)));
+        return colors.get(new Random().nextInt(colors.size()));
+    }
+
+    private int getTaskIndex(TodoItem task) {
+        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
+    }
+
+    @FXML
+    private void initialize() {
+        initColors();
+        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
+    }
+
+    public void setMainApp(Main main) {
+        this.main = main;
     }
 }

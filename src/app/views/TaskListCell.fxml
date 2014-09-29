@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="cellGrid" hgap="5.0" prefHeight="150.0" prefWidth="400.0" style="-fx-background-color: #999999;" styleClass="cell" stylesheets="@../stylesheets/taskListCell.css" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.TaskListCellController">
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints maxWidth="53.0" minWidth="10.0" prefWidth="24.0" />
+      <ColumnConstraints maxWidth="53.0" minWidth="6.0" prefWidth="53.0" />
+      <ColumnConstraints maxWidth="81.0" minWidth="10.0" prefWidth="73.0" />
+      <ColumnConstraints minWidth="10.0" prefWidth="73.0" />
+      <ColumnConstraints minWidth="10.0" prefWidth="73.0" />
+      <ColumnConstraints maxWidth="107.0" minWidth="10.0" prefWidth="53.0" />
+      <ColumnConstraints maxWidth="84.0" minWidth="10.0" prefWidth="35.0" />
+      <ColumnConstraints maxWidth="84.0" minWidth="6.0" prefWidth="6.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints maxHeight="29.0" minHeight="5.0" prefHeight="29.0" />
+      <RowConstraints maxHeight="26.0" minHeight="5.0" prefHeight="20.0" />
+      <RowConstraints maxHeight="26.0" minHeight="5.0" prefHeight="22.0" />
+      <RowConstraints maxHeight="32.0" minHeight="5.0" prefHeight="21.0" />
+      <RowConstraints maxHeight="21.0" minHeight="5.0" prefHeight="16.0" />
+      <RowConstraints maxHeight="23.0" minHeight="5.0" prefHeight="23.0" />
+      <RowConstraints maxHeight="21.0" minHeight="5.0" prefHeight="5.0" />
+   </rowConstraints>
+   <children>
+      <Label fx:id="taskNameLabel" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="3">
+         <font>
+            <Font size="20.0" />
+         </font></Label>
+      <Label fx:id="topDateLabel" text="START 26 JULY 2014" textFill="WHITE" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="4">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label fx:id="bottomDateLabel" text="END 26 JULY 2014" textFill="WHITE" GridPane.columnIndex="2" GridPane.columnSpan="4" GridPane.rowIndex="5">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Button fx:id="updateButton" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;" GridPane.columnIndex="7" GridPane.rowIndex="1">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/compose-3.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="deleteButton" mnemonicParsing="false" style="-fx-background-color: transparent;" GridPane.columnIndex="7" GridPane.rowIndex="6">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/cross.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</GridPane>
