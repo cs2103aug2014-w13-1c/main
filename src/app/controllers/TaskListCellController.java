@@ -78,6 +78,10 @@ public class TaskListCellController extends ListCell<TodoItem> {
         } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
             topDateLabel.setText("DUE " + task.getEndDateString());
             topDateLabel.setVisible(true);
+            bottomDateLabel.setVisible(false);
+        } else {
+            topDateLabel.setVisible(false);
+            bottomDateLabel.setVisible(false);
         }
     }
 

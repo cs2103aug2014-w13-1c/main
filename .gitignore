@@ -13,3 +13,4 @@ out/**
 watdo.json
 .DS_Store
 .classpath
+/src/META-INF/
