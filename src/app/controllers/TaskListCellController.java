@@ -37,10 +37,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     List<String> colors;
 
-
-    public TaskListCellController() {
-    }
-
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
@@ -92,6 +88,22 @@ public class TaskListCellController extends ListCell<TodoItem> {
         updateButton.setOnAction((event) -> main.setAndFocusInputField("update " + getTaskIndex(task) + " "));
     }
 
+    public String getRandomColor() {
+        return colors.get(new Random().nextInt(colors.size()));
+    }
+
+    private int getTaskIndex(TodoItem task) {
+        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
+    }
+
+    private void setRandomBackgroundColor() {
+        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
+    }
+
+    public void setMainApp(Main main) {
+        this.main = main;
+    }
+
     private void initColors() {
         colors = Arrays.asList(
                 "#d01716", // red 700
@@ -111,21 +123,9 @@ public class TaskListCellController extends ListCell<TodoItem> {
                 "#795548"); // brown 500
     }
 
-    public String getRandomColor() {
-        return colors.get(new Random().nextInt(colors.size()));
-    }
-
-    private int getTaskIndex(TodoItem task) {
-        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
-    }
-
     @FXML
     private void initialize() {
         initColors();
-        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
-    }
-
-    public void setMainApp(Main main) {
-        this.main = main;
+        setRandomBackgroundColor();
     }
 }
