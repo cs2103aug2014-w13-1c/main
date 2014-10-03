@@ -45,6 +45,13 @@ public class InputFieldController {
 //            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
 //            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
             inputField.setStyleSpans(0, computeHighlighting(newValue));
+            if (inputField.getText().startsWith("search ")) {
+                String query = inputField.getText().substring(7);
+                System.out.println("query: " + query);
+                main.getCommandController().updateView(main.getCommandController().instantSearch(query));
+            } else {
+                main.getCommandController().updateView();
+            }
         });
 
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {

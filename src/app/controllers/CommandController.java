@@ -183,6 +183,18 @@ public class CommandController {
     }
 
     // Search command method(s)
+    public ArrayList<TodoItem> instantSearch(String query) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : taskList.getTodoItems()) {
+            if (todo.getTaskName().toLowerCase().
+                    contains(query.toLowerCase())) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
+
     protected String search(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
@@ -293,6 +305,10 @@ public class CommandController {
 
     public void updateView() {
         main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+    }
+
+    public void updateView(ArrayList<TodoItem> todoItems) {
+        main.getTaskListViewController().updateView(convertList(todoItems));
     }
 
     /**
