@@ -75,6 +75,9 @@ Create new Property if not set.
 
 Other methods: TodoItem
 -------------
+* public boolean isOverdue()
+ * true if end date exists and current date is later than end date
+ * false otherwise
 * public String getTodoItemType()
  * returns "Event" for Event
  * returns "Deadline" for Deadline

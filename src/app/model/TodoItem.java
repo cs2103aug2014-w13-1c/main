@@ -127,6 +127,20 @@ public class TodoItem {
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         return monthNames[month].toUpperCase();
     }
+    
+    public boolean isOverdue() {
+        Date endDate = getEndDate();
+        
+        if (endDate == null) {
+            return false;
+        }
+        Date currentDate = new Date();
+        if (currentDate.getTime() > endDate.getTime()) {
+            return true;
+        }
+        
+        return false;
+    }
 	
 	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
