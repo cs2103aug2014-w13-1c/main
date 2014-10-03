@@ -31,7 +31,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("wat do?");
+        this.primaryStage.setTitle("wat do");
         this.primaryStage.setResizable(false);
 
         initRootLayout();
@@ -41,6 +41,7 @@ public class Main extends Application {
 
         commandController = new CommandController();
         commandController.setMainApp(this);
+        commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
         Dialogs.create()
@@ -51,6 +52,10 @@ public class Main extends Application {
                 .showInformation();
 
         inputField.requestFocus();
+    }
+
+    public void setTitle(String title) {
+        this.primaryStage.setTitle(title);
     }
 
     private void showTaskListView() {
