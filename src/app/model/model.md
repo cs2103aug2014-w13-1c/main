@@ -18,7 +18,7 @@ If no fileName is specified, watdo.json will be used.
  * _startDate_ + _endDate_ = **Event**
  * no _startDate_ + _endDate_ = **Deadline**
  * no _startDate_ +  no _endDate_ = **Floating**
- * _startDate_ + no _endDate_ = **Floating**
+ * _startDate_ + no _endDate_ = **Endless**
  * Use priority as TodoItem.HIGH, TodoItem.MEDIUM and TodoItem.LOW
  * If no priority is specified, automatically assumed to be Medium
 

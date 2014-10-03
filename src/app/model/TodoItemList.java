@@ -1,11 +1,11 @@
 package app.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+//import javafx.beans.property.IntegerProperty;
+//import javafx.beans.property.ObjectProperty;
+//import javafx.beans.property.SimpleIntegerProperty;
+//import javafx.beans.property.SimpleObjectProperty;
+//import javafx.beans.property.SimpleStringProperty;
+//import javafx.beans.property.StringProperty;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,8 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ListIterator;

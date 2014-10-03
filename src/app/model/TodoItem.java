@@ -27,6 +27,7 @@ public class TodoItem {
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
 	public static final String FLOATING = "Floating";
+	public static final String ENDLESS = "Endless";
 	public static final String INVALID = "Invalid";
 	
 	public static final String HIGH = "High";

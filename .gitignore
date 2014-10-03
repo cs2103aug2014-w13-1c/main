@@ -4,14 +4,13 @@
 Debug/
 Release/
 CodeAnalyst/
-ipch/
-*.sdf
-*.opensdf
 out/
 .project
 /bin/
 out/**
-.idea/
+.idea/workspace.xml
+.idea/tasks.xml
 watdo.json
 .DS_Store
 .classpath
+/src/META-INF/
