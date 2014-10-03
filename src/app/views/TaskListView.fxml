@@ -12,4 +12,14 @@
             <Font size="20.0" />
         </font>
     </Label>
+    <Label fx:id="emptySearch" text="No tasks found." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    <Label fx:id="startGuide" text="You have no tasks.\n Add something by using this command: add insert task name here" textFill="BLACK" wrapText="true">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
 </ListView>
