@@ -90,7 +90,7 @@ public class TodoItem {
 			}
 		} else {
 			if (endDate == null) {
-				return FLOATING;
+				return ENDLESS;
 			} else {
 				return EVENT;
 			}
