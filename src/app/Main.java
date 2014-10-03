@@ -44,12 +44,12 @@ public class Main extends Application {
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
-        Dialogs.create()
-                .owner(primaryStage)
-                .title("Welcome")
-                .masthead(null)
-                .message("wat will you do today?")
-                .showInformation();
+//        Dialogs.create()
+//                .owner(primaryStage)
+//                .title("Welcome")
+//                .masthead(null)
+//                .message("wat will you do today?")
+//                .showInformation();
 
         inputField.requestFocus();
     }
