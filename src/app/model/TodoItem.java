@@ -23,6 +23,9 @@ public class TodoItem {
 	private ObjectProperty<Date> startDate;
 	private ObjectProperty<Date> endDate;
 	private String priority;
+	private Boolean doneStatus;
+	
+	private Long epochTag;
 	
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
@@ -42,6 +45,13 @@ public class TodoItem {
             this.taskName = null;
         }
         
+        // Error check, to see if start date is later than end date
+        if (newStartDate != null && newEndDate != null) {
+            if (newStartDate.getTime() > newEndDate.getTime()) {
+                throw new IllegalArgumentException();
+            }
+        }
+        
         if (newStartDate != null) {
             this.startDate = new SimpleObjectProperty<Date>(newStartDate);
         } else {
@@ -54,6 +64,10 @@ public class TodoItem {
         }
         
         this.priority = MEDIUM;
+        
+        this.doneStatus = false;
+        
+        this.epochTag = (new Date()).getTime();
     }
 	
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority) {
@@ -79,7 +93,44 @@ public class TodoItem {
 		} else {
 		    this.priority = MEDIUM;
 		}
+		
+		this.doneStatus = false;
+		
+		this.epochTag = (new Date()).getTime();
 	}
+
+    public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
+        if (newTaskName != null) { 
+            this.taskName = new SimpleStringProperty(newTaskName);
+        } else {
+            this.taskName = null;
+        }
+        
+        if (newStartDate != null) {
+            this.startDate = new SimpleObjectProperty<Date>(newStartDate);
+        } else {
+            this.startDate = null;
+        }
+        if (newEndDate != null) {
+            this.endDate = new SimpleObjectProperty<Date>(newEndDate);
+        } else {
+            this.endDate = null;
+        }
+        
+        if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
+            this.priority = newPriority;
+        } else {
+            this.priority = MEDIUM;
+        }
+        
+        if (newDoneStatus != null) {
+            this.doneStatus = newDoneStatus;
+        } else {
+            this.doneStatus = false;
+        }
+        
+        this.epochTag = (new Date()).getTime();
+    }
 	
 	public String getTodoItemType() {
 		if (startDate == null) {
@@ -142,6 +193,10 @@ public class TodoItem {
         
         return false;
     }
+    
+    public Long getEpochTag() {
+        return epochTag;
+    }
 	
 	// RESTful (lel)
 	// Not recommended to use the set[..]Property methods. Just use the set methods.
@@ -181,6 +236,10 @@ public class TodoItem {
 	
 	public ObjectProperty<Date> getStartDateProperty() {
 		return startDate;
+	}
+	
+	public boolean isDone() {
+	    return doneStatus;
 	}
 	
 	public void setStartDate(Date newStartDate) {
@@ -225,5 +284,8 @@ public class TodoItem {
 	public void setEndDateProperty(ObjectProperty<Date> endDate) {
 		this.endDate = endDate;
 	}
-	 
+	
+	public void setDoneStatus(Boolean newDoneStatus) {
+	    this.doneStatus = newDoneStatus;
+	}
 }
