@@ -1,0 +1,20 @@
+/* to run: gradle build */
+
+/* install javafx-gradle plugin here
+https://bitbucket.org/shemnon/javafx-gradle */
+
+apply from: 'https://raw.githubusercontent.com/shemnon/javafx-gradle/master/samples/Modena/javafx.plugin'
+
+javafx {
+    mainClass = 'app.Main'
+}
+
+sourceCompatibility = 1.8
+version = '0.1'
+
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'wat do',
+               'Implementation-Version': version
+  }
+}
