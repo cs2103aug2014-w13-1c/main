@@ -15,3 +15,5 @@ watdo.json
 .classpath
 src/META-INF/
 .idea/
+build/
+.gradle/
