@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * Class CommandController
@@ -350,22 +349,12 @@ public class CommandController {
     }
 
     public String showErrorDialog(String error) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Error")
-                .masthead(null)
-                .message(error)
-                .showError();
+        main.showDialog("Error", error);
         return error;
     }
 
     public String showInfoDialog(String message) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Information")
-                .masthead(null)
-                .message(message)
-                .showInformation();
+        main.showDialog("Information", message);
         return message;
     }
 }
