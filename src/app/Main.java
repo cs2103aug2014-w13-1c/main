@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
 
+import java.net.URL;
+
 public class Main extends Application {
 
     private Stage primaryStage;
@@ -49,6 +51,10 @@ public class Main extends Application {
                 .masthead(null)
                 .message(error)
                 .showError();
+    }
+
+    public URL getResourceURL(String relativePath) {
+        return this.getClass().getResource(relativePath);
     }
 
     public Stage getPrimaryStage() {
