@@ -349,12 +349,12 @@ public class CommandController {
     }
 
     public String showErrorDialog(String error) {
-        main.showDialog("Error", error);
+        main.showErrorDialog("Error", error);
         return error;
     }
 
     public String showInfoDialog(String message) {
-        main.showDialog("Information", message);
+        main.showInfoDialog("Information", message);
         return message;
     }
 }

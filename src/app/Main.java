@@ -28,18 +28,27 @@ public class Main extends Application {
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
-        showDialog("Welcome", "wat will you do today?");
+        showInfoDialog("Welcome", "wat will you do today?");
 
         rootViewController.getInputField().requestFocus();
     }
 
-    public void showDialog(String title, String message) {
+    public void showInfoDialog(String title, String message) {
         Dialogs.create()
                 .owner(primaryStage)
                 .title(title)
                 .masthead(null)
                 .message(message)
                 .showInformation();
+    }
+
+    public void showErrorDialog(String title, String error) {
+        Dialogs.create()
+                .owner(primaryStage)
+                .title(title)
+                .masthead(null)
+                .message(error)
+                .showError();
     }
 
     public Stage getPrimaryStage() {
