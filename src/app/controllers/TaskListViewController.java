@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.Main;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +18,7 @@ public class TaskListViewController {
     @FXML
     private Label placeholder;
 
-    private Main main;
+    private RootViewController rootViewController;
 
     private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
 
@@ -28,10 +27,10 @@ public class TaskListViewController {
         taskListView.setCellFactory(taskListView -> {
             try {
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(main.getClass().getResource("views/TaskListCell.fxml"));
+                loader.setLocation(rootViewController.getMainApp().getClass().getResource("views/TaskListCell.fxml"));
                 loader.load();
                 TaskListCellController controller = loader.getController();
-                controller.setMainApp(main);
+                controller.setRootViewController(rootViewController);
                 return controller;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -58,12 +57,16 @@ public class TaskListViewController {
         taskListView.scrollTo(taskData.size());
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
-     */
-    public void setMainApp(Main main) {
-        this.main = main;
+
+    public void setRootController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
+    }
+
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
+    }
+
+    public RootViewController getRootViewController() {
+        return rootViewController;
     }
 }

@@ -33,7 +33,7 @@ public class TaskListCellController extends ListCell<TodoItem> {
     @FXML
     private Button deleteButton;
 
-    private Main main;
+    private RootViewController rootViewController;
 
     List<String> colors;
 
@@ -81,11 +81,11 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void setDeleteButtonEventHandler(TodoItem task) {
-        deleteButton.setOnAction((event) -> main.setAndFocusInputField("delete " + getTaskIndex(task)));
+        deleteButton.setOnAction((event) -> rootViewController.setAndFocusInputField("delete " + getTaskIndex(task)));
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> main.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+        updateButton.setOnAction((event) -> rootViewController.setAndFocusInputField("update " + getTaskIndex(task) + " "));
     }
 
     public String getRandomColor() {
@@ -98,10 +98,6 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private void setRandomBackgroundColor() {
         cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
-    }
-
-    public void setMainApp(Main main) {
-        this.main = main;
     }
 
     private void initColors() {
@@ -127,5 +123,9 @@ public class TaskListCellController extends ListCell<TodoItem> {
     private void initialize() {
         initColors();
         setRandomBackgroundColor();
+    }
+
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
     }
 }
