@@ -27,24 +27,31 @@ public class Main extends Application {
         commandController.setMainApp(this);
         commandController.updateView();
 
-        Dialogs.create()
-                .owner(primaryStage)
-                .title("Welcome")
-                .masthead(null)
-                .message("wat will you do today?")
-                .showInformation();
+        showDialog("Welcome", "wat will you do today?");
 
         rootViewController.getInputField().requestFocus();
     }
 
+    public void showDialog(String title, String message) {
+        Dialogs.create()
+                .owner(primaryStage)
+                .title(title)
+                .masthead(null)
+                .message(message)
+                .showInformation();
+    }
 
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    public TaskListViewController getTaskListViewController() { return rootViewController.getTaskListViewController(); }
+    public TaskListViewController getTaskListViewController() {
+        return rootViewController.getTaskListViewController();
+    }
 
-    public CommandController getCommandController() { return commandController; }
+    public CommandController getCommandController() {
+        return commandController;
+    }
 
     public static void main(String[] args) {
         launch(args);
