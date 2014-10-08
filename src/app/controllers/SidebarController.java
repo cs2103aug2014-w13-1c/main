@@ -20,10 +20,6 @@ public class SidebarController {
 
     private RootViewController rootViewController;
 
-    public SidebarController() {
-
-    }
-
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.

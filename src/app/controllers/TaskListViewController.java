@@ -58,15 +58,7 @@ public class TaskListViewController {
     }
 
 
-    public void setRootController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
-    }
-
     public void setRootViewController(RootViewController rootViewController) {
         this.rootViewController = rootViewController;
-    }
-
-    public RootViewController getRootViewController() {
-        return rootViewController;
     }
 }

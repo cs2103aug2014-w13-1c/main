@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.Main;
 import app.model.TodoItem;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
