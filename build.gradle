@@ -12,7 +12,12 @@ javafx {
 sourceCompatibility = 1.8
 version = '0.1'
 
+jfxCopyLibs.enabled = false
+
 jar {
+  configurations.compile.collect { it.isDirectory() ? it: zipTree(it) }
+  from(configurations.compile) {
+  }
   manifest {
     attributes 'Implementation-Title': 'wat do',
                'Implementation-Version': version
