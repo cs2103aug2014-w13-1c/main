@@ -20,7 +20,8 @@ import java.io.IOException;
 public class RootViewController {
 
     private Main mainApp;
-    private BorderPane rootLayout;
+    private StackPane rootLayout;
+    private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
     private TaskListViewController taskListViewController;
@@ -32,6 +33,21 @@ public class RootViewController {
         this.showTaskListView();
     }
 
+    private void initRootLayout(Stage primaryStage) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(mainApp.getClass().getResource("views/RootLayout.fxml"));
+            rootLayout = loader.load();
+            borderPane = (BorderPane) rootLayout.getChildren().get(0);
+
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showTaskListView() {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -40,7 +56,7 @@ public class RootViewController {
             taskListView.getStylesheets().add("app/stylesheets/taskList.css");
             taskListView.getStyleClass().add("task-list");
 
-            rootLayout.setCenter(taskListView);
+            borderPane.setCenter(taskListView);
             taskListViewController = loader.getController();
             taskListViewController.setRootViewController(this);
         } catch (IOException e) {
@@ -52,7 +68,7 @@ public class RootViewController {
         InputFieldController inputFieldController = new InputFieldController();
         inputFieldController.setRootViewController(this);
         inputField = inputFieldController.getInputField();
-        rootLayout.setBottom(new StackPane(inputField));
+        borderPane.setBottom(new StackPane(inputField));
     }
 
     private void showSidebar() {
@@ -63,24 +79,10 @@ public class RootViewController {
             sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
             sidebar.getStyleClass().add("sidebar");
 
-            rootLayout.setLeft(sidebar);
+            borderPane.setLeft(sidebar);
 
             SidebarController controller = loader.getController();
             controller.setRootViewController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initRootLayout(Stage primaryStage) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(mainApp.getClass().getResource("views/RootLayout.fxml"));
-            rootLayout = loader.load();
-
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
