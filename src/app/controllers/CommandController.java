@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * Class CommandController
@@ -134,7 +133,7 @@ public class CommandController {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         currentList = taskList.getTodoItems();
-        main.setTitle("wat do");
+        main.getPrimaryStage().setTitle("wat do");
         updateView();
         return "displaying tasks";
     }
@@ -211,7 +210,7 @@ public class CommandController {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
             currentList = results;
-            main.setTitle("Search results for: \"" + command.substring(firstWordPos + 1) + "\"");
+            main.getPrimaryStage().setTitle("Search results for: \"" + command.substring(firstWordPos + 1) + "\"");
             updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
@@ -333,7 +332,7 @@ public class CommandController {
     }
 
     public void resetTaskList() {
-        main.setTitle("wat do");
+        main.getPrimaryStage().setTitle("wat do");
         setTaskList(getTaskList());
     }
 
@@ -350,22 +349,12 @@ public class CommandController {
     }
 
     public String showErrorDialog(String error) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Error")
-                .masthead(null)
-                .message(error)
-                .showError();
+        main.showDialog("Error", error);
         return error;
     }
 
     public String showInfoDialog(String message) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Information")
-                .masthead(null)
-                .message(message)
-                .showInformation();
+        main.showDialog("Information", message);
         return message;
     }
 }

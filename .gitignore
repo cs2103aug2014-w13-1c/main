@@ -13,4 +13,5 @@ out/**
 watdo.json
 .DS_Store
 .classpath
-/src/META-INF/
+.idea/artifacts
+src/META-INF/

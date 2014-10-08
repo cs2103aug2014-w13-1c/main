@@ -25,8 +25,7 @@ public class InputFieldController {
     private String lastCommand;
     private StyleClassedTextArea inputField;
 
-    // Reference to the main application
-    private Main main;
+    private RootViewController rootViewController;
 
     private final String[] KEYWORDS = new String[] {
         "add", "delete", "display", "clear", "exit", "search", "update"
@@ -48,9 +47,12 @@ public class InputFieldController {
             if (inputField.getText().startsWith("search ")) {
                 String query = inputField.getText().substring(7);
                 System.out.println("query: " + query);
-                main.getCommandController().updateView(main.getCommandController().instantSearch(query));
+                rootViewController
+                        .getMainApp()
+                        .getCommandController()
+                        .updateView(rootViewController.getMainApp().getCommandController().instantSearch(query));
             } else {
-                main.getCommandController().updateView();
+                rootViewController.getMainApp().getCommandController().updateView();
             }
         });
 
@@ -60,8 +62,8 @@ public class InputFieldController {
                 if (!inputField.getText().equals("")) {
                     lastCommand = inputField.getText();
                     inputField.clear();
-                    main.getCommandController().parseCommand(lastCommand);
-                    main.getCommandController().updateView();
+                    rootViewController.getMainApp().getCommandController().parseCommand(lastCommand);
+                    rootViewController.getMainApp().getCommandController().updateView();
                 }
             } else if (event.getCode() == KeyCode.TAB) {
                 event.consume();
@@ -88,15 +90,7 @@ public class InputFieldController {
         return inputField;
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
-     */
-    public void setMainApp(Main main) {
-        this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
     }
 }
