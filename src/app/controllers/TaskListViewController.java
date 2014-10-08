@@ -26,8 +26,6 @@ public class TaskListViewController {
     @FXML
     private Label emptySearch;
 
-    private Main main;
-
     private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
 
     @FXML
