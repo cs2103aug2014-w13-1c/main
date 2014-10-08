@@ -25,6 +25,7 @@ public class Main extends Application {
 
         commandController = new CommandController();
         commandController.setMainApp(this);
+        commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
         showDialog("Welcome", "wat will you do today?");
