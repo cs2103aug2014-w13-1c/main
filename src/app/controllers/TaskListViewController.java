@@ -50,7 +50,7 @@ public class TaskListViewController {
     }
 
     private boolean newTaskAdded(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
-       return _new.size() == _old.size() + 1;
+       return _new.size() > _old.size();
     }
 
     private void scrollToLast() {

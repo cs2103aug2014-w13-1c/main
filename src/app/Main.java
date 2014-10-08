@@ -2,19 +2,9 @@ package app;
 
 import app.controllers.*;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
-
-import org.fxmisc.richtext.StyleClassedTextArea;
-
-import java.io.IOException;
 
 public class Main extends Application {
 
