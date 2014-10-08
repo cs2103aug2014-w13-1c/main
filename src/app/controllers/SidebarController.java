@@ -1,8 +1,9 @@
 package app.controllers;
 
-import app.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+
+import java.io.IOException;
 
 public class SidebarController {
 
@@ -29,7 +30,7 @@ public class SidebarController {
         displayButton.setOnAction((event) -> rootViewController.setAndFocusInputField("display"));
         addButton.setOnAction((event) -> rootViewController.setAndFocusInputField("add "));
         searchButton.setOnAction((event) -> rootViewController.setAndFocusInputField("search "));
-        settingsButton.setOnAction((event) -> rootViewController.setAndFocusInputField("settings"));
+        settingsButton.setOnAction((event) -> rootViewController.openSettings());
     }
 
     public void setRootViewController(RootViewController rootViewController) {
