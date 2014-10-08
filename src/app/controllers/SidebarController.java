@@ -18,12 +18,7 @@ public class SidebarController {
     @FXML
     private Button settingsButton;
 
-    // Reference to the main application
-    private Main main;
-
-    public SidebarController() {
-
-    }
+    private RootViewController rootViewController;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -31,21 +26,13 @@ public class SidebarController {
      */
     @FXML
     private void initialize() {
-        displayButton.setOnAction((event) -> main.setAndFocusInputField("display"));
-        addButton.setOnAction((event) -> main.setAndFocusInputField("add "));
-        searchButton.setOnAction((event) -> main.setAndFocusInputField("search "));
-        settingsButton.setOnAction((event) -> main.setAndFocusInputField("settings"));
+        displayButton.setOnAction((event) -> rootViewController.setAndFocusInputField("display"));
+        addButton.setOnAction((event) -> rootViewController.setAndFocusInputField("add "));
+        searchButton.setOnAction((event) -> rootViewController.setAndFocusInputField("search "));
+        settingsButton.setOnAction((event) -> rootViewController.setAndFocusInputField("settings"));
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
-     */
-    public void setMainApp(Main main) {
-        this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
     }
 }

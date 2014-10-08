@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.Main;
 import app.model.TodoItem;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -33,13 +32,9 @@ public class TaskListCellController extends ListCell<TodoItem> {
     @FXML
     private Button deleteButton;
 
-    private Main main;
+    private RootViewController rootViewController;
 
     List<String> colors;
-
-
-    public TaskListCellController() {
-    }
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
@@ -85,11 +80,23 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void setDeleteButtonEventHandler(TodoItem task) {
-        deleteButton.setOnAction((event) -> main.setAndFocusInputField("delete " + getTaskIndex(task)));
+        deleteButton.setOnAction((event) -> rootViewController.setAndFocusInputField("delete " + getTaskIndex(task)));
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> main.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+        updateButton.setOnAction((event) -> rootViewController.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+    }
+
+    public String getRandomColor() {
+        return colors.get(new Random().nextInt(colors.size()));
+    }
+
+    private int getTaskIndex(TodoItem task) {
+        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
+    }
+
+    private void setRandomBackgroundColor() {
+        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
     }
 
     private void initColors() {
@@ -111,21 +118,13 @@ public class TaskListCellController extends ListCell<TodoItem> {
                 "#795548"); // brown 500
     }
 
-    public String getRandomColor() {
-        return colors.get(new Random().nextInt(colors.size()));
-    }
-
-    private int getTaskIndex(TodoItem task) {
-        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
-    }
-
     @FXML
     private void initialize() {
         initColors();
-        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
+        setRandomBackgroundColor();
     }
 
-    public void setMainApp(Main main) {
-        this.main = main;
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
     }
 }
