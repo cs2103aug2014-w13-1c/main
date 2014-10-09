@@ -14,7 +14,8 @@ import org.controlsfx.dialog.Dialogs;
 
 /**
  * Class CommandController
- *
+ * 
+ * This class is the main controller.
  * Skeleton based on jolly's CE2.
  *
  * @author ryan
@@ -324,9 +325,9 @@ public class CommandController {
         taskList = new TodoItemList();
     }
 
-    public void parseCommand(String command) {
-        printString("Parsing: \"" + command + "\"\n");
-        printString(processCommand(command));
+    public void parseCommand(String inputString) {
+        printString("Parsing: \"" + inputString + "\"\n");
+        printString(processCommand(inputString));
     }
 
     public void updateView() {
