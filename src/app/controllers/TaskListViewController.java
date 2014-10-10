@@ -18,9 +18,6 @@ public class TaskListViewController {
     @FXML
     private Label placeholder;
 
-    @FXML
-    private Label startGuide;
-
     private RootViewController rootViewController;
 
     @FXML
@@ -44,7 +41,8 @@ public class TaskListViewController {
             }
         });
 //        taskListView.setPlaceholder(placeholder);
-        taskListView.setPlaceholder(startGuide);
+        UserGuide userGuide = new UserGuide();
+        taskListView.setPlaceholder(userGuide.getUserGuide());
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {
