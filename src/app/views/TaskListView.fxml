@@ -12,4 +12,9 @@
             <Font size="20.0" />
         </font>
     </Label>
+    <Label fx:id="emptySearch" text="No tasks found." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
 </ListView>

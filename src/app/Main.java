@@ -18,7 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("wat do?");
+        this.primaryStage.setTitle("wat do");
         this.primaryStage.setResizable(false);
 
         rootViewController = new RootViewController();
@@ -30,7 +30,7 @@ public class Main extends Application {
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
-        showInfoDialog("Welcome", "wat will you do today?");
+//        showInfoDialog("Welcome", "wat will you do today?");
 
         rootViewController.getInputField().requestFocus();
     }
@@ -67,6 +67,10 @@ public class Main extends Application {
 
     public CommandController getCommandController() {
         return commandController;
+    }
+
+    public RootViewController getRootViewController() {
+        return rootViewController;
     }
 
     public static void main(String[] args) {

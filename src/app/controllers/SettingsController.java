@@ -49,4 +49,9 @@ public class SettingsController {
     public void setRootViewController(RootViewController rootViewController) {
         this.rootViewController = rootViewController;
     }
+
+    public void focusOnButton() {
+        cancelButton.setDefaultButton(true);
+        cancelButton.requestFocus();
+    }
 }

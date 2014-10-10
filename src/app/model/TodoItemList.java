@@ -32,6 +32,7 @@ import org.json.simple.parser.ParseException;
 
 public class TodoItemList {
 	private ArrayList<TodoItem> todoItems;
+	
 	private String fileName;
 	private String loadStatus;
 	private String writeStatus;
@@ -40,11 +41,12 @@ public class TodoItemList {
 	public static final String LOAD_FAILED = "File load failed";
 	public static final String WRITE_SUCCESS = "File write success";
 	public static final String WRITE_FAILED = "File write failed";
-	public final String defaultFileName = "watdo.json";
+	
+	public static final String DEFAULT_FILE_NAME = "watdo.json";
 	
 	public TodoItemList() {
 		todoItems = new ArrayList<TodoItem>();
-		fileName = defaultFileName;
+		fileName = DEFAULT_FILE_NAME;
 		try {
 		    loadFile(this.fileName);
 		    loadStatus = LOAD_SUCCESS;
@@ -103,6 +105,7 @@ public class TodoItemList {
 	// CRUD
 	public void addTodoItem(TodoItem newItem) {
 		todoItems.add(newItem);
+		
 		try {
 		    updateFile();
 		    writeStatus = WRITE_SUCCESS;
@@ -148,6 +151,18 @@ public class TodoItemList {
         }
 	}
 	
+	public void markDoneStatus(int index, Boolean newDoneStatus) {
+        TodoItem updatedItem = todoItems.get(index);
+        
+        updatedItem.setDoneStatus(newDoneStatus);
+        try {
+            updateFile();
+            writeStatus = WRITE_SUCCESS;
+        } catch (Exception e) {
+            writeStatus = WRITE_FAILED;
+        }
+    }
+	
 	public TodoItem deleteTodoItem(int index) {
 		try {
 			TodoItem removed = todoItems.remove(index);
@@ -190,6 +205,7 @@ public class TodoItemList {
 		    Date currentStartDate = currentTodoItem.getStartDate();
 		    Date currentEndDate = currentTodoItem.getEndDate();
 		    String currentPriority = currentTodoItem.getPriority();
+		    Boolean currentDoneStatus = currentTodoItem.isDone();
 		    if (currentTaskName != null) {
 		        fileObject.put("taskName", currentTaskName);
 		    }
@@ -201,6 +217,9 @@ public class TodoItemList {
 		    }
 		    if (currentPriority != null) {
 		        fileObject.put("priority", currentPriority);
+		    }
+		    if (currentDoneStatus != null) {
+		        fileObject.put("doneStatus", currentDoneStatus);
 		    }
 		    fileArray.add(fileObject);
 		}
@@ -239,11 +258,13 @@ public class TodoItemList {
 		    Date currentStartDate = null;
 		    Date currentEndDate = null;
 		    String currentPriority = null;
+		    Boolean currentDoneStatus = null;
 		    
 		    Object JSONTaskName = currentJSONObject.get("taskName");
 		    Object JSONStartDate = currentJSONObject.get("startDate");
 		    Object JSONEndDate = currentJSONObject.get("endDate");
 		    Object JSONPriority = currentJSONObject.get("priority"); 
+		    Object JSONDoneStatus = currentJSONObject.get("doneStatus");
 		    
 		    if (JSONTaskName != null) {
 		        currentTaskName = (String) JSONTaskName;
@@ -256,6 +277,9 @@ public class TodoItemList {
 		    }
 		    if (JSONPriority != null) {
 		        currentPriority = (String) JSONPriority;
+		    }
+		    if (JSONDoneStatus != null) {
+		        currentDoneStatus = (Boolean) JSONDoneStatus;
 		    }
 		    
 		    todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority));

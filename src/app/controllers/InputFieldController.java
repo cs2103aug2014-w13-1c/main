@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import app.Main;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -28,7 +27,7 @@ public class InputFieldController {
     private RootViewController rootViewController;
 
     private final String[] KEYWORDS = new String[] {
-        "add", "delete", "display", "clear", "exit", "search", "update"
+        "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings"
     };
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");

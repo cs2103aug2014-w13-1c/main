@@ -28,14 +28,18 @@ public class RootViewController {
     private Main mainApp;
     private StackPane rootLayout;
     private Pane settingsView;
+    private Pane helpView;
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
     private TaskListViewController taskListViewController;
+    private SettingsController settingsController;
+    private HelpController helpController;
 
     public void initLayout(Stage primaryStage) throws IOException {
         this.initRootLayout(primaryStage);
         this.initSettingsView();
+        this.initHelpView();
         this.showSidebar();
         this.showInputField();
         this.showTaskListView();
@@ -57,11 +61,23 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
         settingsView = loader.load();
 
-        SettingsController controller = loader.getController();
-        controller.setRootViewController(this);
+        settingsController = loader.getController();
+        settingsController.setRootViewController(this);
 
         rootLayout.getChildren().add(settingsView);
         settingsView.toBack();
+    }
+
+    private void initHelpView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
+        helpView = loader.load();
+
+        helpController = loader.getController();
+        helpController.setRootViewController(this);
+
+        rootLayout.getChildren().add(helpView);
+        helpView.toBack();
     }
 
     private void showTaskListView() throws IOException {
@@ -106,10 +122,22 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
+        inputField.requestFocus();
     }
 
     public void openSettings() {
         settingsView.toFront();
+        settingsController.focusOnButton();
+    }
+
+    public void openHelp() {
+        helpView.toFront();
+        helpController.focusOnButton();
+    }
+
+    public void closeHelp() {
+        helpView.toBack();
+        inputField.requestFocus();
     }
 
     public void setMainApp(Main mainApp) {
