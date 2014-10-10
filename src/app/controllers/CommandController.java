@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * Class CommandController
@@ -32,7 +31,7 @@ public class CommandController {
 
     // Messages
     private final String MESSAGE_ADD_COMPLETE = "added: \"%1$s\"\n";
-    private final String MESSAGE_CLEAR_COMPLETE = "todo cleared";
+    private final String MESSAGE_CLEAR_COMPLETE = "todo cleared\n";
     private final String MESSAGE_DELETE_COMPLETE = "deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "updated: \"%1$s\"\n";
@@ -40,6 +39,7 @@ public class CommandController {
     // Class variables
     private TodoItemList taskList;
     private Main main;
+    private ArrayList<TodoItem> currentList;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -82,12 +82,10 @@ public class CommandController {
             if (check.equalsIgnoreCase("start")) {
                 startCalendar.setTime(getDate(st));
                 startFlag = true;
-            }
-            else if (check.equalsIgnoreCase("end")) {
+            } else if (check.equalsIgnoreCase("end")) {
                 endCalendar.setTime(getDate(st));
                 endFlag = true;
-            }
-            else {
+            } else {
                 toBeInserted = toBeInserted.concat(check + " ");
             }
         }
@@ -98,14 +96,13 @@ public class CommandController {
         if (endFlag) {
             if (startFlag) {
                 taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
-            }
-            else {
+            } else {
                 taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime()));
             }
-        }
-        else {
+        } else {
             taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
         }
+        resetTaskList();
     }
     
     protected Date getDate(StringTokenizer st) {
@@ -135,6 +132,9 @@ public class CommandController {
         if (firstWordPos != -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
+        currentList = taskList.getTodoItems();
+        main.getPrimaryStage().setTitle("wat do");
+        updateView();
         return "displaying tasks";
     }
 
@@ -151,6 +151,7 @@ public class CommandController {
     // Clear command method(s)
     protected String clear() {
         taskList.clearTodoItems();
+        resetTaskList();
         return MESSAGE_CLEAR_COMPLETE;
     }
     
@@ -170,6 +171,7 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         taskList.deleteTodoItem(index);
+        resetTaskList();
         return showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
@@ -183,6 +185,17 @@ public class CommandController {
     }
 
     // Search command method(s)
+    public ArrayList<TodoItem> instantSearch(String query) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : taskList.getTodoItems()) {
+            if (todo.getTaskName().toLowerCase().
+                    contains(query.toLowerCase())) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
     protected String search(String command) {
         int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
@@ -192,26 +205,35 @@ public class CommandController {
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        String returnString = searchList(command.substring(firstWordPos + 1), todoList);
-        if (returnString.equals("")) {
+        ArrayList<TodoItem> results = instantSearch(command.substring(firstWordPos + 1));
+        if (results.isEmpty()) {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
-            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
+            currentList = results;
+            main.getPrimaryStage().setTitle("Search results for: \"" + command.substring(firstWordPos + 1) + "\"");
+            updateView();
+            return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
+//        String returnString = searchList(command.substring(firstWordPos + 1), todoList);
+//        if (returnString.equals("") || returnString.equals(" ")) {
+//            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
+//        } else {
+//            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
+//        }
     }
 
-    protected String searchList(String query, ArrayList<TodoItem> todoList) {
-        String returnString = "";
-        int index = 1;
-        for (TodoItem todo : todoList) {
-            if (todo.getTaskName().toLowerCase().
-                    contains(query.toLowerCase())) {
-                returnString += index + ". " + todo.getTaskName() + "\n";
-            }
-            index++;
-        }
-        return returnString;
-    }
+//    protected String searchList(String query, ArrayList<TodoItem> todoList) {
+//        String returnString = "";
+//        int index = 1;
+//        for (TodoItem todo : todoList) {
+//            if (todo.getTaskName().toLowerCase().
+//                    contains(query.toLowerCase())) {
+//                returnString += index + ". " + todo.getTaskName() + "\n";
+//            }
+//            index++;
+//        }
+//        return returnString;
+//    }
 
     // Update command method(s)
     protected String update(String command) {
@@ -234,6 +256,7 @@ public class CommandController {
         }
         String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
         taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
+        resetTaskList();
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
@@ -284,6 +307,7 @@ public class CommandController {
 
     public CommandController() {
         taskList = new TodoItemList();
+        currentList = new ArrayList<TodoItem>();
     }
 
     public void parseCommand(String command) {
@@ -292,7 +316,24 @@ public class CommandController {
     }
 
     public void updateView() {
-        main.getTaskListViewController().updateView(convertList(taskList.getTodoItems()));
+        main.getTaskListViewController().updateView(convertList(currentList));
+    }
+
+    public void updateView(ArrayList<TodoItem> todoItems) {
+        main.getTaskListViewController().updateView(convertList(todoItems));
+    }
+
+    public ArrayList<TodoItem> getTaskList() {
+        return taskList.getTodoItems();
+    }
+
+    public void setTaskList(ArrayList<TodoItem> todoList) {
+        currentList = todoList;
+    }
+
+    public void resetTaskList() {
+        main.getPrimaryStage().setTitle("wat do");
+        setTaskList(getTaskList());
     }
 
     /**
@@ -308,22 +349,12 @@ public class CommandController {
     }
 
     public String showErrorDialog(String error) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Error")
-                .masthead(null)
-                .message(error)
-                .showError();
+        main.showErrorDialog("Error", error);
         return error;
     }
 
     public String showInfoDialog(String message) {
-        Dialogs.create()
-                .owner(main.getPrimaryStage())
-                .title("Information")
-                .masthead(null)
-                .message(message)
-                .showInformation();
+        main.showInfoDialog("Information", message);
         return message;
     }
 }
