@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.ListIterator;
 
@@ -287,4 +288,76 @@ public class TodoItemList {
 		
 		reader.close();
 	}
+	
+	public static Comparator<TodoItem> nameComparator = new Comparator<TodoItem>() {
+
+	    @Override
+        public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+            if ((todoItem1 == null || todoItem1.getTaskName() == null) && (todoItem2 == null || todoItem2.getTaskName() == null)) {
+                return 0;
+            }
+            if (todoItem1 == null || todoItem1.getTaskName() == null) {
+                return -1;
+            }
+            if (todoItem2 == null || todoItem2.getTaskName() == null) {
+                return 1;
+            }
+            return todoItem1.getTaskName().compareTo(todoItem2.getTaskName());
+        }
+	    
+	};
+	
+	public static Comparator<TodoItem> startComparator = new Comparator<TodoItem>() {
+
+	    @Override
+        public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+            if ((todoItem1 == null || todoItem1.getStartDate() == null) && (todoItem2 == null || todoItem2.getStartDate() == null)) {
+                return 0;
+            }
+            if (todoItem1 == null || todoItem1.getStartDate() == null) {
+                return -1;
+            }
+            if (todoItem2 == null || todoItem2.getStartDate() == null) {
+                return 1;
+            }
+            return ((Long) todoItem1.getStartDate().getTime()).compareTo(todoItem2.getStartDate().getTime());
+        }
+        
+    };
+    
+    public static Comparator<TodoItem> endComparator = new Comparator<TodoItem>() {
+
+        @Override
+        public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+            if ((todoItem1 == null || todoItem1.getEndDate() == null) && (todoItem2 == null || todoItem2.getEndDate() == null)) {
+                return 0;
+            }
+            if (todoItem1 == null || todoItem1.getEndDate() == null) {
+                return -1;
+            }
+            if (todoItem2 == null || todoItem2.getEndDate() == null) {
+                return 1;
+            }
+            return ((Long) todoItem1.getEndDate().getTime()).compareTo(todoItem2.getEndDate().getTime());
+        }
+        
+    };
+    
+    public static Comparator<TodoItem> priorityComparator = new Comparator<TodoItem>() {
+
+        @Override
+        public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+            if ((todoItem1 == null || todoItem1.getPriority() == null) && (todoItem2 == null || todoItem2.getPriority() == null)) {
+                return 0;
+            }
+            if (todoItem1 == null || todoItem1.getPriority() == null) {
+                return -1;
+            }
+            if (todoItem2 == null || todoItem2.getPriority() == null) {
+                return 1;
+            }
+            return ((Long) todoItem1.getEndDate().getTime()).compareTo(todoItem2.getEndDate().getTime());
+        }
+        
+    };
 }

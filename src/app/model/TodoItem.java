@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -33,9 +34,9 @@ public class TodoItem {
 	public static final String ENDLESS = "Endless";
 	public static final String INVALID = "Invalid";
 	
-	public static final String HIGH = "High";
-	public static final String MEDIUM = "Medium";
-	public static final String LOW = "Low";
+	public static final String HIGH = "3. High";
+	public static final String MEDIUM = "2. Medium";
+	public static final String LOW = "1. Low";
 	
 	// Constructors
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
