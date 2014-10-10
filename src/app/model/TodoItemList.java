@@ -190,104 +190,106 @@ public class TodoItemList {
 	    return todoItems.size();
 	}
 	
-	private void updateFile() throws IOException {
-	    FileWriter fileToWrite = new FileWriter(fileName);
-		BufferedWriter writer = new BufferedWriter(fileToWrite);
-		
-		JSONArray fileArray = new JSONArray();
-		
-		ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
-		
-		while (todoListIterator.hasNext()) {
-		    TodoItem currentTodoItem = todoListIterator.next();
-		    JSONObject fileObject = new JSONObject();
-		    
-		    String currentTaskName = currentTodoItem.getTaskName();
-		    Date currentStartDate = currentTodoItem.getStartDate();
-		    Date currentEndDate = currentTodoItem.getEndDate();
-		    String currentPriority = currentTodoItem.getPriority();
-		    Boolean currentDoneStatus = currentTodoItem.isDone();
-		    if (currentTaskName != null) {
-		        fileObject.put("taskName", currentTaskName);
-		    }
-		    if (currentStartDate != null) {
-		        fileObject.put("startDate", currentStartDate.getTime());
-		    }
-		    if (currentEndDate != null) {
-		        fileObject.put("endDate", currentEndDate.getTime());
-		    }
-		    if (currentPriority != null) {
-		        fileObject.put("priority", currentPriority);
-		    }
-		    if (currentDoneStatus != null) {
-		        fileObject.put("doneStatus", currentDoneStatus);
-		    }
-		    fileArray.add(fileObject);
-		}
-		
-		writer.write(fileArray.toJSONString());
-		writer.flush();
-		fileToWrite.close();
-	}
+	 public void loadFile(String fileToLoad) throws IOException, ParseException, java.text.ParseException {
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(fileToLoad);
+        } catch (FileNotFoundException e) { // if no file found at stated path, create new file
+            File fileToBeCreated = new File(fileToLoad);
+            fileToBeCreated.createNewFile();
+            updateFile();
+            fileToRead = new FileReader(fileToLoad);
+        }
+        BufferedReader reader = new BufferedReader(fileToRead);
+        
+        String fileString = "";
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            fileString += line;
+        }
+        
+        todoItems = new ArrayList<TodoItem>();
+        
+        JSONParser parser = new JSONParser();
+        
+        JSONArray fileArray = (JSONArray) parser.parse(fileString);
+        for (int i = 0; i < fileArray.size(); i++) {
+            JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
+            String currentTaskName = null;
+            Date currentStartDate = null;
+            Date currentEndDate = null;
+            String currentPriority = null;
+            Boolean currentDoneStatus = null;
+            
+            Object JSONTaskName = currentJSONObject.get("taskName");
+            Object JSONStartDate = currentJSONObject.get("startDate");
+            Object JSONEndDate = currentJSONObject.get("endDate");
+            Object JSONPriority = currentJSONObject.get("priority"); 
+            Object JSONDoneStatus = currentJSONObject.get("doneStatus");
+            
+            if (JSONTaskName != null) {
+                currentTaskName = (String) JSONTaskName;
+            }
+            if (JSONStartDate != null) {
+                currentStartDate = new Date((Long) JSONStartDate);
+            }
+            if (JSONEndDate != null) {
+                currentEndDate = new Date((Long) JSONEndDate);
+            }
+            if (JSONPriority != null) {
+                currentPriority = (String) JSONPriority;
+            }
+            if (JSONDoneStatus != null) {
+                currentDoneStatus = (Boolean) JSONDoneStatus;
+            }
+            
+            todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority));
+        }
+        
+        reader.close();
+    }
 	
-	private void loadFile(String fileToLoad) throws IOException, ParseException, java.text.ParseException {
-	    FileReader fileToRead;
-	    try {
-	        fileToRead = new FileReader(fileToLoad);
-	    } catch (FileNotFoundException e) { // if no file found at stated path, create new file
-	        File fileToBeCreated = new File(fileToLoad);
-	        fileToBeCreated.createNewFile();
-	        updateFile();
-	        fileToRead = new FileReader(fileToLoad);
-	    }
-	    BufferedReader reader = new BufferedReader(fileToRead);
-	    
-		String fileString = "";
-		String line = "";
-		while ((line = reader.readLine()) != null) {
-		    fileString += line;
-		}
-		
-		todoItems = new ArrayList<TodoItem>();
-		
-		JSONParser parser = new JSONParser();
-		
-		JSONArray fileArray = (JSONArray) parser.parse(fileString);
-		for (int i = 0; i < fileArray.size(); i++) {
-		    JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
-		    String currentTaskName = null;
-		    Date currentStartDate = null;
-		    Date currentEndDate = null;
-		    String currentPriority = null;
-		    Boolean currentDoneStatus = null;
-		    
-		    Object JSONTaskName = currentJSONObject.get("taskName");
-		    Object JSONStartDate = currentJSONObject.get("startDate");
-		    Object JSONEndDate = currentJSONObject.get("endDate");
-		    Object JSONPriority = currentJSONObject.get("priority"); 
-		    Object JSONDoneStatus = currentJSONObject.get("doneStatus");
-		    
-		    if (JSONTaskName != null) {
-		        currentTaskName = (String) JSONTaskName;
-		    }
-		    if (JSONStartDate != null) {
-		        currentStartDate = new Date((Long) JSONStartDate);
-		    }
-		    if (JSONEndDate != null) {
-		        currentEndDate = new Date((Long) JSONEndDate);
-		    }
-		    if (JSONPriority != null) {
-		        currentPriority = (String) JSONPriority;
-		    }
-		    if (JSONDoneStatus != null) {
-		        currentDoneStatus = (Boolean) JSONDoneStatus;
-		    }
-		    
-		    todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority));
-		}
-		
-		reader.close();
-	}
+    public void updateFile() throws IOException {
+        FileWriter fileToWrite = new FileWriter(fileName);
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        
+        JSONArray fileArray = new JSONArray();
+        
+        ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
+        
+        while (todoListIterator.hasNext()) {
+            TodoItem currentTodoItem = todoListIterator.next();
+            JSONObject fileObject = new JSONObject();
+            
+            String currentTaskName = currentTodoItem.getTaskName();
+            Date currentStartDate = currentTodoItem.getStartDate();
+            Date currentEndDate = currentTodoItem.getEndDate();
+            String currentPriority = currentTodoItem.getPriority();
+            Boolean currentDoneStatus = currentTodoItem.isDone();
+            if (currentTaskName != null) {
+                fileObject.put("taskName", currentTaskName);
+            }
+            if (currentStartDate != null) {
+                fileObject.put("startDate", currentStartDate.getTime());
+            }
+            if (currentEndDate != null) {
+                fileObject.put("endDate", currentEndDate.getTime());
+            }
+            if (currentPriority != null) {
+                fileObject.put("priority", currentPriority);
+            }
+            if (currentDoneStatus != null) {
+                fileObject.put("doneStatus", currentDoneStatus);
+            }
+            fileArray.add(fileObject);
+        }
+        
+        writer.write(fileArray.toJSONString());
+        writer.flush();
+        fileToWrite.close();
+    }
+	
+	
 	
 	public static Comparator<TodoItem> nameComparator = new Comparator<TodoItem>() {
 
