@@ -10,6 +10,7 @@ import javafx.beans.property.StringProperty;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Class TodoItem
@@ -26,7 +27,7 @@ public class TodoItem {
 	private String priority;
 	private Boolean doneStatus;
 	
-	private Long epochTag;
+	private UUID itemID;
 	
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
@@ -68,7 +69,7 @@ public class TodoItem {
         
         this.doneStatus = false;
         
-        this.epochTag = (new Date()).getTime();
+        this.itemID = UUID.randomUUID();
     }
 	
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority) {
@@ -97,7 +98,7 @@ public class TodoItem {
 		
 		this.doneStatus = false;
 		
-		this.epochTag = (new Date()).getTime();
+		this.itemID = UUID.randomUUID();
 	}
 
     public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
@@ -130,7 +131,7 @@ public class TodoItem {
             this.doneStatus = false;
         }
         
-        this.epochTag = (new Date()).getTime();
+        this.itemID = UUID.randomUUID();
     }
 	
 	public String getTodoItemType() {
@@ -195,8 +196,8 @@ public class TodoItem {
         return false;
     }
     
-    public Long getEpochTag() {
-        return epochTag;
+    public UUID getUUID() {
+        return itemID;
     }
 	
 	// RESTful (lel)
