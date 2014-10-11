@@ -94,11 +94,11 @@ public class InputFieldController {
         ArrayList<Keyword> keywords = new ArrayList<Keyword>();
 
         if (text.length() >= 3) {
-            keywords.add(new Keyword(0, 3));
+            keywords.add(new Keyword(0, 2));
         }
 
         if (text.length() >= 5) {
-            keywords.add(new Keyword(4, 5));
+            keywords.add(new Keyword(3, 4));
         }
 
         if (text.length() >= 10) {
@@ -108,8 +108,8 @@ public class InputFieldController {
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
             spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
-            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex());
-            lastWordEnd = keyword.getEndIndex();
+            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
+            lastWordEnd = keyword.getEndIndex() + 1;
         }
         spansBuilder.add(Collections.emptyList(), text.length() - lastWordEnd);
         return spansBuilder.create();
