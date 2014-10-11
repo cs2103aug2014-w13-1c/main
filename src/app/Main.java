@@ -61,10 +61,6 @@ public class Main extends Application {
         return primaryStage;
     }
 
-    public TaskListViewController getTaskListViewController() {
-        return rootViewController.getTaskListViewController();
-    }
-
     public CommandController getCommandController() {
         return commandController;
     }

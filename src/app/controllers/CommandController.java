@@ -344,11 +344,11 @@ public class CommandController {
     }
 
     public void updateView() {
-        main.getTaskListViewController().updateView(convertList(currentList));
+        main.getRootViewController().getTaskListViewController().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
-        main.getTaskListViewController().updateView(convertList(todoItems));
+        main.getRootViewController().getTaskListViewController().updateView(convertList(todoItems));
     }
 
     public ArrayList<TodoItem> getTaskList() {
