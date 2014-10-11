@@ -327,6 +327,9 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
+        CommandObject command = CommandParser.parse(inputString);
+        System.out.println(command.getToBeInsertedIndex());
+        System.out.println(command.getToBeInserted());
         printString(processCommand(inputString));
     }
 
