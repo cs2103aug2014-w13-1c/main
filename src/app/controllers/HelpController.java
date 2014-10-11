@@ -27,4 +27,8 @@ public class HelpController {
         okButton.setDefaultButton(true);
         okButton.requestFocus();
     }
+
+    public void cancelFocusOnButton() {
+        okButton.setDefaultButton(false);
+    }
 }

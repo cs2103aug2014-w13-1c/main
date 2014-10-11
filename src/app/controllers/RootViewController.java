@@ -122,6 +122,7 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
+        settingsController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
@@ -137,6 +138,7 @@ public class RootViewController {
 
     public void closeHelp() {
         helpView.toBack();
+        helpController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
