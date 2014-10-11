@@ -64,10 +64,11 @@ public class InputFieldController {
                     rootViewController.getMainApp().getCommandController().parseCommand(lastCommand);
                     rootViewController.getMainApp().getCommandController().updateView();
                 }
-            } else if (event.getCode() == KeyCode.TAB) {
-                event.consume();
-                System.out.println("TAB: \"" + inputField.getText() + "\"");
             }
+//            else if (event.getCode() == KeyCode.TAB) {
+//                event.consume();
+//                System.out.println("TAB: \"" + inputField.getText() + "\"");
+//            }
         });
     }
 
@@ -81,6 +82,14 @@ public class InputFieldController {
             lastKwEnd = matcher.end();
         }
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+        return spansBuilder.create();
+    }
+
+    private StyleSpans<Collection<String>> keywordDetection(String text) {
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+
+        
+
         return spansBuilder.create();
     }
 
