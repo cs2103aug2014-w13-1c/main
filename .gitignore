@@ -13,4 +13,9 @@ out/**
 watdo.json
 .DS_Store
 .classpath
+<<<<<<< HEAD
 *.json
+=======
+.idea/artifacts
+src/META-INF/
+>>>>>>> staging

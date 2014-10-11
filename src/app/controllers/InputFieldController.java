@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import app.Main;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -25,11 +24,10 @@ public class InputFieldController {
     private String lastCommand;
     private StyleClassedTextArea inputField;
 
-    // Reference to the main application
-    private Main main;
+    private RootViewController rootViewController;
 
     private final String[] KEYWORDS = new String[] {
-        "add", "delete", "display", "clear", "exit", "search", "update"
+        "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings"
     };
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
@@ -45,15 +43,27 @@ public class InputFieldController {
 //            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
 //            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
             inputField.setStyleSpans(0, computeHighlighting(newValue));
+            if (inputField.getText().startsWith("search ")) {
+                String query = inputField.getText().substring(7);
+                System.out.println("query: " + query);
+                rootViewController
+                        .getMainApp()
+                        .getCommandController()
+                        .updateView(rootViewController.getMainApp().getCommandController().instantSearch(query));
+            } else {
+                rootViewController.getMainApp().getCommandController().updateView();
+            }
         });
 
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 event.consume();
-                lastCommand = inputField.getText();
-                inputField.clear();
-                main.getCommandController().parseCommand(lastCommand);
-                main.getCommandController().updateView();
+                if (!inputField.getText().equals("")) {
+                    lastCommand = inputField.getText();
+                    inputField.clear();
+                    rootViewController.getMainApp().getCommandController().parseCommand(lastCommand);
+                    rootViewController.getMainApp().getCommandController().updateView();
+                }
             } else if (event.getCode() == KeyCode.TAB) {
                 event.consume();
                 System.out.println("TAB: \"" + inputField.getText() + "\"");
@@ -79,15 +89,7 @@ public class InputFieldController {
         return inputField;
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
-     */
-    public void setMainApp(Main main) {
-        this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
+    public void setRootViewController(RootViewController rootViewController) {
+        this.rootViewController = rootViewController;
     }
 }

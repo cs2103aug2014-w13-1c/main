@@ -45,6 +45,7 @@ GET methods: TodoItem
 -----------
 Return null if not set.
 
+* public boolean isDone() 
 * taskName
  * public String getTaskName()
  * public StringProperty getTaskNameProperty()
@@ -56,11 +57,14 @@ Return null if not set.
  * public ObjectProperty<Date> getEndDateProperty()
 * priority
  * public String getPriority()
+* epochTag
+ * public Long getEpochTag()
 
 SET Methods: TodoItem
 ------------
 Create new Property if not set.
 
+* public void setDone(boolean doneStatus)
 * taskName
   * public void setTaskName(String taskName)
   * public void setTaskNameProperty(StringProperty taskName)
@@ -75,6 +79,9 @@ Create new Property if not set.
 
 Other methods: TodoItem
 -------------
+* public boolean isOverdue()
+ * true if end date exists and current date is later than end date
+ * false otherwise
 * public String getTodoItemType()
  * returns "Event" for Event
  * returns "Deadline" for Deadline
@@ -93,3 +100,5 @@ Other methods: TodoItemList
  * Switches the current file in use to a different file
 * public int countTodoItems()
  * Gets the number of TodoItems
+* public void markDoneStatus(int index, Boolean doneStatus)
+ * Marks the TodoItem's doneStatus based on the doneStatus in the argument
