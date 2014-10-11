@@ -1,5 +1,6 @@
 package app.controllers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -42,7 +43,8 @@ public class InputFieldController {
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
 //            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
-            inputField.setStyleSpans(0, computeHighlighting(newValue));
+//            inputField.setStyleSpans(0, computeHighlighting(newValue));
+            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 String query = inputField.getText().substring(7);
                 System.out.println("query: " + query);
@@ -87,9 +89,29 @@ public class InputFieldController {
 
     private StyleSpans<Collection<String>> keywordDetection(String text) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        // pass string to commandcontroller, commandcontroller returns arraylist of keywords
+        // for now this is just a dummay arraylist of keywords
+        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
 
-        
+        if (text.length() >= 3) {
+            keywords.add(new Keyword(0, 3));
+        }
 
+        if (text.length() >= 5) {
+            keywords.add(new Keyword(4, 5));
+        }
+
+        if (text.length() >= 10) {
+            keywords.add(new Keyword(7, 9));
+        }
+
+        int lastWordEnd = 0;
+        for (Keyword keyword : keywords) {
+            spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
+            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex());
+            lastWordEnd = keyword.getEndIndex();
+        }
+        spansBuilder.add(Collections.emptyList(), text.length() - lastWordEnd);
         return spansBuilder.create();
     }
 
