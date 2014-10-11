@@ -8,9 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by jin on 28/9/14.
@@ -37,7 +35,8 @@ public class TaskListCellController extends ListCell<TodoItem> {
 
     private Main main;
 
-    ArrayList<String> colors = new ArrayList<>();
+    List<String> colors;
+
 
     public TaskListCellController() {
     }
@@ -74,6 +73,10 @@ public class TaskListCellController extends ListCell<TodoItem> {
         } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
             topDateLabel.setText("DUE " + task.getEndDateString());
             topDateLabel.setVisible(true);
+            bottomDateLabel.setVisible(false);
+        } else {
+            topDateLabel.setVisible(false);
+            bottomDateLabel.setVisible(false);
         }
     }
 
@@ -90,21 +93,22 @@ public class TaskListCellController extends ListCell<TodoItem> {
     }
 
     private void initColors() {
-        colors.add("#d01716"); // red 700
-        colors.add("#c2185b"); // pink 700
-        colors.add("#7b1fa2"); // purple 700
-        colors.add("#512da8"); // deep purple 700
-        colors.add("#393f9f"); // indigo 700
-        colors.add("#455ede"); // blue 700
-        colors.add("#0288d1"); // light blue 700
-        colors.add("#0097a7"); // cyan 700
-        colors.add("#00796b"); // teal 700
-        colors.add("#0a7e07"); // green 700
-        colors.add("#558b2f"); // light green 800
-        colors.add("#827717"); // lime 900
-        colors.add("#e65100"); // orange 900
-        colors.add("#e54a19"); // deep orange 700
-        colors.add("#795548"); // brown 500
+        colors = Arrays.asList(
+                "#d01716", // red 700
+                "#c2185b", // pink 700
+                "#7b1fa2", // purple 700
+                "#512da8", // deep purple 700
+                "#393f9f", // indigo 700
+                "#455ede", // blue 700
+                "#0288d1", // light blue 700
+                "#0097a7", // cyan 700
+                "#00796b", // teal 700
+                "#0a7e07", // green 700
+                "#558b2f", // light green 800
+                "#827717", // lime 900
+                "#e65100", // orange 900
+                "#e54a19", // deep orange 700
+                "#795548"); // brown 500
     }
 
     public String getRandomColor() {
