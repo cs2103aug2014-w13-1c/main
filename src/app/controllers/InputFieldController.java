@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.model.TodoItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -48,12 +49,15 @@ public class InputFieldController {
             if (inputField.getText().startsWith("search ")) {
                 String query = inputField.getText().substring(7);
                 System.out.println("query: " + query);
-                rootViewController
-                        .getMainApp()
-                        .getCommandController()
-                        .updateView(rootViewController.getMainApp().getCommandController().instantSearch(query));
+                ArrayList<TodoItem> results =
+                        rootViewController.getMainApp().getCommandController().instantSearch(query);
+                rootViewController.getMainApp().getCommandController().updateView(results);
+                if (results.isEmpty()) {
+                    rootViewController.getTaskListViewController().setEmptySearchPlaceholder();
+                }
             } else {
                 rootViewController.getMainApp().getCommandController().updateView();
+                rootViewController.getTaskListViewController().setUserGuidePlaceholder();
             }
         });
 

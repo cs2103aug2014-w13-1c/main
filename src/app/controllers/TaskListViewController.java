@@ -24,6 +24,7 @@ public class TaskListViewController {
     private Label emptySearch;
 
     private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
+    private UserGuide userGuide;
 
     @FXML
     public void initialize() {
@@ -40,8 +41,15 @@ public class TaskListViewController {
                 return null;
             }
         });
-//        taskListView.setPlaceholder(placeholder);
-        UserGuide userGuide = new UserGuide();
+        userGuide = new UserGuide();
+        taskListView.setPlaceholder(userGuide.getUserGuide());
+    }
+
+    public void setEmptySearchPlaceholder() {
+        taskListView.setPlaceholder(emptySearch);
+    }
+
+    public void setUserGuidePlaceholder() {
         taskListView.setPlaceholder(userGuide.getUserGuide());
     }
 
