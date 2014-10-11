@@ -29,7 +29,7 @@ public class CommandParser {
     // Command parser method
     public static CommandObject parse(String inputString) {
         String commandWord = getFirstWord(inputString);
-        int toBeInsertedIndex = nextSpacePosition(inputString, 0);
+        int inputStringIndex = nextSpacePosition(inputString, 0) + 1;
         int startDateIndex = inputString.indexOf("start");
         int startDateEndIndex = nextSpacePosition(inputString, startDateIndex);
         int endDateIndex = inputString.indexOf("end");
@@ -37,31 +37,31 @@ public class CommandParser {
         String toBeInserted = "";
         String startDate = "";
         String endDate = "";
-        if (toBeInsertedIndex != -1) {
+        if (inputStringIndex != -1) {
 	        if (startDateIndex > 0 && endDateIndex > 0) {
 	            if (startDateIndex < endDateIndex) {
-	                toBeInserted = inputString.substring(nextSpacePosition(inputString, 0) + 1, startDateIndex - 1);
+	                toBeInserted = inputString.substring(inputStringIndex, startDateIndex - 1);
 	                startDate = inputString.substring(nextSpacePosition(inputString, startDateIndex) + 1, endDateIndex - 1);
 	                endDate = inputString.substring(nextSpacePosition(inputString, endDateIndex) + 1);
 	            }
 	            else {
-	                toBeInserted = inputString.substring(nextSpacePosition(inputString, 0) + 1, endDateIndex - 1);
+	                toBeInserted = inputString.substring(inputStringIndex, endDateIndex - 1);
 	                startDate = inputString.substring(nextSpacePosition(inputString, startDateIndex) + 1);
 	                endDate = inputString.substring(nextSpacePosition(inputString, endDateIndex) + 1, startDateIndex - 1);
 	            }
 	        }
 	        else if (startDateIndex > 0 && endDateIndex == -1) {
-	            toBeInserted = inputString.substring(nextSpacePosition(inputString, 0) + 1, startDateIndex - 1);
+	            toBeInserted = inputString.substring(inputStringIndex, startDateIndex - 1);
 	            startDate = inputString.substring(nextSpacePosition(inputString, startDateIndex) + 1);
 	        }
 	        else if (startDateIndex == -1 && endDateIndex > 0) {
-	        	toBeInserted = inputString.substring(nextSpacePosition(inputString, 0) + 1, endDateIndex - 1);
+	        	toBeInserted = inputString.substring(inputStringIndex, endDateIndex - 1);
 	        	endDate = inputString.substring(nextSpacePosition(inputString, endDateIndex) + 1);
 	        }
 	        else {
-	        	toBeInserted = inputString.substring(nextSpacePosition(inputString, 0) + 1);
+	        	toBeInserted = inputString.substring(inputStringIndex);
 	        }
         }
-        return new CommandObject(commandWord, toBeInsertedIndex, toBeInserted, startDateIndex, startDateEndIndex, startDate, endDateIndex, endDateEndIndex, endDate);
+        return new CommandObject(commandWord, inputStringIndex, toBeInserted, startDateIndex, startDateEndIndex, startDate, endDateIndex, endDateEndIndex, endDate);
     }
 }
