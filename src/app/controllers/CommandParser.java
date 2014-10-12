@@ -14,6 +14,8 @@ public class CommandParser {
         System.out.print(message);
     }
 
+    
+    
     protected static int nextSpacePosition(String inputString, int startIndex) {
         return inputString.indexOf(" ", startIndex);
     }
