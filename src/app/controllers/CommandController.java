@@ -61,12 +61,12 @@ public class CommandController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(CommandObject commandInput){
-        int firstWordPos = commandInput.getInputStringIndex();
+    protected String addNewLine(String command){
+        int firstWordPos = firstSpacePosition(command);
         if (firstWordPos == -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeChecked = commandInput.getCommand();
+        String toBeChecked = command.substring(firstWordPos + 1);
         addTimeParser(toBeChecked);
         return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, toBeChecked));
     }
@@ -306,25 +306,25 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(CommandObject commandInput) {
-        String commandWord = commandInput.getCommand();
+    protected String processCommand(String command) {
+        String commandWord = getFirstWord(command);
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
             case ADD :
-                return addNewLine(commandInput);
+                return addNewLine(command);
             case DELETE :
-                return deleteEntry(commandWord);
+                return deleteEntry(command);
             case DISPLAY :
-                return display(commandWord);
+                return display(command);
             case CLEAR :
                 return clear();
             case EXIT :
                 showInfoDialog("Bye!");
                 System.exit(0);
             case SEARCH :
-                return search(commandWord);
+                return search(command);
             case UPDATE :
-                return update(commandWord);
+                return update(command);
             case HELP :
                 return help(commandWord);
             case SETTINGS :
@@ -341,10 +341,10 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandInput = CommandParser.parse(inputString);
-        System.out.println(commandInput.getInputStringIndex());
-        System.out.println(commandInput.getInputString());
-        printString(processCommand(commandInput));
+        CommandObject command = CommandParser.parse(inputString);
+        System.out.println(command.getToBeInsertedIndex());
+        System.out.println(command.getToBeInserted());
+        printString(processCommand(inputString));
     }
 
     public void updateView() {

@@ -10,44 +10,44 @@ package app.controllers;
  */
 
 public class CommandObject {
-    private int inputStringIndex;
+    private int toBeInsertedIndex;
     private int startDateIndex;
     private int startDateEndIndex;
     private int endDateIndex;
     private int endDateEndIndex;
     private String commandWord;
-    private String inputString;
+    private String toBeInserted;
     private String startDate;
     private String endDate;
     
     public CommandObject() {
-    		inputStringIndex = 0;
+        toBeInsertedIndex = 0;
         startDateIndex = -1;
         startDateEndIndex = -1;
         endDateIndex = -1;
         endDateEndIndex = -1;
         commandWord = "";
-        inputString = "";
+        toBeInserted = "";
         startDate = "";
         endDate = "";
     }
     
-    public CommandObject(String newCommandWord, int newInputStringIndex, String newInputString,
+    public CommandObject(String newCommandWord, int newToBeInsertedIndex, String newToBeInserted,
                          int newStartDateIndex, int newStartDateEndIndex, String newStartDate,
                          int newEndDateIndex, int newEndDateEndIndex, String newEndDate) {
-        this.inputStringIndex = newInputStringIndex;
+        this.toBeInsertedIndex = newToBeInsertedIndex;
         this.startDateIndex = newStartDateIndex;
         this.startDateEndIndex = newStartDateEndIndex;
         this.endDateIndex = newEndDateIndex;
         this.endDateEndIndex = newEndDateEndIndex;
         this.commandWord = newCommandWord;
-        this.inputString = newInputString;
+        this.toBeInserted = newToBeInserted;
         this.startDate = newStartDate;
         this.endDate = newEndDate;
     }
     
-    public int getInputStringIndex() {
-        return inputStringIndex;
+    public int getToBeInsertedIndex() {
+        return toBeInsertedIndex;
     }
     
     public int getStartDateIndex() {
@@ -70,8 +70,8 @@ public class CommandObject {
         return commandWord;
     }
     
-    public String getInputString() {
-        return inputString;
+    public String getToBeInserted() {
+        return toBeInserted;
     }
     
     public String getStartDate() {
@@ -82,8 +82,8 @@ public class CommandObject {
         return endDate;
     }
     
-    public void setInputStringIndex(int newCommandIndex) {
-        this.inputStringIndex = newCommandIndex;
+    public void setToBeInsertedIndex(int newCommandIndex) {
+        this.toBeInsertedIndex = newCommandIndex;
     }
     
     public void setStartDateIndex(int newStartIndex) {
@@ -106,8 +106,8 @@ public class CommandObject {
         this.commandWord = newCommandWord;
     }
     
-    public void setInputString(String newInputString) {
-        this.inputString = newInputString;
+    public void setToBeInserted(String newToBeInserted) {
+        this.toBeInserted = newToBeInserted;
     }
     
     public void setStartDate(String newStartDate) {
