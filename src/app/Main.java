@@ -32,7 +32,7 @@ public class Main extends Application {
 
 //        showInfoDialog("Welcome", "wat will you do today?");
 
-        rootViewController.getInputField().requestFocus();
+        rootViewController.setAndFocusInputField("");
     }
 
     public void showInfoDialog(String title, String message) {
