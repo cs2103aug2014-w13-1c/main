@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import app.helpers.Keyword;
 import app.model.TodoItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

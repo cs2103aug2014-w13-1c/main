@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.helpers.UserGuide;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

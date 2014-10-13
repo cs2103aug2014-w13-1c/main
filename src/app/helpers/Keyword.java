@@ -1,4 +1,4 @@
-package app.controllers;
+package app.helpers;
 
 /**
  * Created by jolly on 10/10/14.
