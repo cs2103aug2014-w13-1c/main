@@ -30,7 +30,7 @@ public class InputFieldController {
     private RootViewController rootViewController;
 
     private final String[] KEYWORDS = new String[] {
-        "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings"
+        "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings", "start", "end"
     };
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
@@ -45,8 +45,8 @@ public class InputFieldController {
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
 //            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
-//            inputField.setStyleSpans(0, computeHighlighting(newValue));
-            inputField.setStyleSpans(0, keywordDetection(newValue));
+            inputField.setStyleSpans(0, computeHighlighting(newValue));
+//            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 String query = inputField.getText().substring(7);
                 System.out.println("query: " + query);
