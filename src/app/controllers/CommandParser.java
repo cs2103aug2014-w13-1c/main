@@ -76,18 +76,8 @@ public class CommandParser {
         return commandWord.trim();       
     }
     
-    public static Date getStartDate(String inputString) {
-        StringTokenizer st = new StringTokenizer(inputString.substring(getStartDateEndIndex(inputString)));
-        int date = Integer.valueOf(st.nextToken());
-        int month = getMonth(st.nextToken());
-        int year = Integer.valueOf(st.nextToken());
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month, date);
-        return cal.getTime();
-    }
-    
-    public static Date getEndDate(String inputString) {
-        StringTokenizer st = new StringTokenizer(inputString.substring(getEndDateEndIndex(inputString)));
+    public static Date getDate(String toBeParsed) {
+        StringTokenizer st = new StringTokenizer(toBeParsed.substring(getStartDateEndIndex(toBeParsed)));
         int date = Integer.valueOf(st.nextToken());
         int month = getMonth(st.nextToken());
         int year = Integer.valueOf(st.nextToken());
