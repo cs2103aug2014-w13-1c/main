@@ -56,6 +56,10 @@ public class CommandParser {
     
     // Parser method(s)
     public static String getCommandWord(String inputString) {
+        int firstWordPos = nextSpacePosition(inputString, 0);
+        if(firstWordPos == -1) {
+            return inputString;
+        }
         return inputString.substring(0, nextSpacePosition(inputString, 0));
     }
     
