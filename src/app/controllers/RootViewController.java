@@ -2,14 +2,9 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.LoggingService;
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TabPane;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -17,7 +12,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
-import javax.swing.border.Border;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
