@@ -1,8 +1,12 @@
 package app.controllers;
 
+import app.helpers.InvalidInputException;
+import app.helpers.LoggingService;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,13 +47,12 @@ public class InputFieldController {
         inputField.setWrapText(true);
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
-//            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
             inputField.setStyleSpans(0, computeHighlighting(newValue));
 //            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
+                assert inputField.getText().length() > 6;
                 String query = inputField.getText().substring(7);
-                System.out.println("query: " + query);
+                LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
                 ArrayList<TodoItem> results =
                         rootViewController.getMainApp().getCommandController().instantSearch(query);
                 rootViewController.getMainApp().getCommandController().updateView(results);
@@ -57,6 +60,7 @@ public class InputFieldController {
                     rootViewController.getTaskListViewController().setEmptySearchPlaceholder();
                 }
             } else {
+                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
                 rootViewController.getMainApp().getCommandController().updateView();
                 rootViewController.getTaskListViewController().setUserGuidePlaceholder();
             }
@@ -65,11 +69,11 @@ public class InputFieldController {
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 event.consume();
-                if (!inputField.getText().equals("")) {
-                    lastCommand = inputField.getText();
-                    inputField.clear();
-                    rootViewController.getMainApp().getCommandController().parseCommand(lastCommand);
-                    rootViewController.getMainApp().getCommandController().updateView();
+                lastCommand = inputField.getText();
+                try {
+                    checkCommandLengthAndExecute(lastCommand);
+                } catch (InvalidInputException e) {
+                    LoggingService.getLogger().log(Level.WARNING, "Invalid Input Exception: empty command");
                 }
             }
 //            else if (event.getCode() == KeyCode.TAB) {
@@ -77,6 +81,18 @@ public class InputFieldController {
 //                System.out.println("TAB: \"" + inputField.getText() + "\"");
 //            }
         });
+    }
+
+    private void checkCommandLengthAndExecute(String command) throws InvalidInputException {
+        if (command.length() == 0) {
+            throw new InvalidInputException("empty command");
+        } else {
+            assert command.length() > 0;
+            inputField.clear();
+            LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
+            rootViewController.getMainApp().getCommandController().parseCommand(command);
+            rootViewController.getMainApp().getCommandController().updateView();
+        }
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
