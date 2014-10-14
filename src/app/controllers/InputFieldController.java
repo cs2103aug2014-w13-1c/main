@@ -47,8 +47,8 @@ public class InputFieldController {
         inputField.setWrapText(true);
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-            inputField.setStyleSpans(0, computeHighlighting(newValue));
-//            inputField.setStyleSpans(0, keywordDetection(newValue));
+//            inputField.setStyleSpans(0, computeHighlighting(newValue));
+            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 assert inputField.getText().length() > 6;
                 String query = inputField.getText().substring(7);
@@ -110,21 +110,19 @@ public class InputFieldController {
 
     private StyleSpans<Collection<String>> keywordDetection(String text) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        // pass string to commandcontroller, commandcontroller returns arraylist of keywords
-        // for now this is just a dummay arraylist of keywords
-        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
+        ArrayList<Keyword> keywords = CommandParser.parseKeywords(text);
 
-        if (text.length() >= 3) {
-            keywords.add(new Keyword(0, 2));
-        }
-
-        if (text.length() >= 5) {
-            keywords.add(new Keyword(3, 4));
-        }
-
-        if (text.length() >= 10) {
-            keywords.add(new Keyword(7, 9));
-        }
+//        if (text.length() >= 3) {
+//            keywords.add(new Keyword(0, 2));
+//        }
+//
+//        if (text.length() >= 5) {
+//            keywords.add(new Keyword(3, 4));
+//        }
+//
+//        if (text.length() >= 10) {
+//            keywords.add(new Keyword(7, 9));
+//        }
 
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
