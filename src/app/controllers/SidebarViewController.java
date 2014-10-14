@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class SidebarController {
+public class SidebarViewController {
 
     @FXML
     private Button displayButton;

@@ -111,7 +111,7 @@ public class RootViewController {
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarController controller = loader.getController();
+        SidebarViewController controller = loader.getController();
         controller.setRootViewController(this);
 
         borderPane.setLeft(sidebar);
