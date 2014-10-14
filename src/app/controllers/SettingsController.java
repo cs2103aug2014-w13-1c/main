@@ -54,4 +54,8 @@ public class SettingsController {
         cancelButton.setDefaultButton(true);
         cancelButton.requestFocus();
     }
+
+    public void cancelFocusOnButton() {
+        cancelButton.setDefaultButton(false);
+    }
 }

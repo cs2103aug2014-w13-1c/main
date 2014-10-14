@@ -1,4 +1,4 @@
-package app.controllers;
+package app.helpers;
 
 import javafx.geometry.Pos;
 import javafx.scene.paint.Color;

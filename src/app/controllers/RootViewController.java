@@ -1,14 +1,10 @@
 package app.controllers;
 
 import app.Main;
-import javafx.application.Application;
+import app.helpers.LoggingService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TabPane;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -16,9 +12,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
-import javax.swing.border.Border;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * Created by jin on 8/10/14.
@@ -37,6 +33,8 @@ public class RootViewController {
     private HelpController helpController;
 
     public void initLayout(Stage primaryStage) throws IOException {
+        LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
+
         this.initRootLayout(primaryStage);
         this.initSettingsView();
         this.initHelpView();
@@ -122,6 +120,7 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
+        settingsController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
@@ -137,6 +136,7 @@ public class RootViewController {
 
     public void closeHelp() {
         helpView.toBack();
+        helpController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
@@ -161,4 +161,5 @@ public class RootViewController {
         inputField.positionCaret(text.length());
         inputField.requestFocus();
     }
+
 }
