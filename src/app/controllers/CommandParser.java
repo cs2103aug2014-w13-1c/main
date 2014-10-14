@@ -20,9 +20,7 @@ public class CommandParser {
     public static int nextSpacePosition(String inputString, int startIndex) {
         return inputString.indexOf(" ", startIndex);
     }
-    
-    
-    
+
     protected static int getMonth(String monthInput) {
         String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
         int month = -1;
@@ -98,11 +96,11 @@ public class CommandParser {
     	ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
     	currentKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
     	currentKeywords.get(currentKeywords.size() - 1).setWord(getCommandString(inputString));
-    	if (getStartDateStartIndex(inputString) == -1) {
+    	if (getStartDateStartIndex(inputString) != -1) {
             currentKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
             currentKeywords.get(currentKeywords.size() - 1).setWord("start");
         }
-    	if (getEndDateStartIndex(inputString) == -1) {
+    	if (getEndDateStartIndex(inputString) != -1) {
     	    currentKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
     	    currentKeywords.get(currentKeywords.size() - 1).setWord("end");
         }

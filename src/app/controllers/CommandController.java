@@ -63,39 +63,22 @@ public class CommandController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(String command){
-        int firstWordPos = firstSpacePosition(command);
+    protected String addNewLine(String inputString){
+        int firstWordPos = CommandParser.nextSpacePosition(inputString, 0);
         if (firstWordPos == -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeChecked = command.substring(firstWordPos + 1);
-        addTimeParser(toBeChecked);
-        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, toBeChecked));
+        addTodo(inputString);
+        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, inputString));
     }
 
-    protected void addTimeParser(String toBeChecked) {
-        StringTokenizer st = new StringTokenizer(toBeChecked);
-        String toBeInserted = "";
+    protected void addTodo(String inputString) {
+        String toBeInserted = CommandParser.getCommandWord(inputString);
         Calendar startCalendar = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();
         boolean startFlag = false;
         boolean endFlag = false;
-        while (st.hasMoreTokens()) {
-            String check = st.nextToken();
-            if (check.equalsIgnoreCase("start")) {
-                startCalendar.setTime(getDate(st));
-                startFlag = true;
-            } else if (check.equalsIgnoreCase("end")) {
-                endCalendar.setTime(getDate(st));
-                endFlag = true;
-            } else {
-                toBeInserted = toBeInserted.concat(check + " ");
-            }
-        }
-        addTodo(toBeInserted.trim(), startCalendar, endCalendar, startFlag, endFlag);
-    }
-    
-    protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
+        
         if (endFlag) {
             if (startFlag) {
                 taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
