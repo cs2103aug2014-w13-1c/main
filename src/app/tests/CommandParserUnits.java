@@ -25,11 +25,11 @@ public class CommandParserUnits {
     @Test
     public void testGetCommandWord() {
         String test1 = CommandParser.getCommandWord("add task1");
-        String test2 = CommandParser.getCommandWord("delete");
+        String test2 = CommandParser.getCommandWord("clear");
         String test3 = CommandParser.getCommandWord("update 1");
         
         assertEquals("add", test1);
-        assertEquals("delete", test2);
+        assertEquals("clear", test2);
         assertEquals("update", test3);
     }
 }
