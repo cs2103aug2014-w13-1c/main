@@ -36,7 +36,7 @@ public class TaskListViewController {
                 FXMLLoader loader = new FXMLLoader();
                 loader.setLocation(rootViewController.getMainApp().getResourceURL("views/TaskListCell.fxml"));
                 loader.load();
-                TaskListCellController controller = loader.getController();
+                TaskListCellViewController controller = loader.getController();
                 controller.setRootViewController(rootViewController);
                 return controller;
             } catch (IOException e) {

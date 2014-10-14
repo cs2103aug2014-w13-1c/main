@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Created by jin on 28/9/14.
  */
-public class TaskListCellController extends ListCell<TodoItem> {
+public class TaskListCellViewController extends ListCell<TodoItem> {
 
     @FXML
     private GridPane cellGrid;
