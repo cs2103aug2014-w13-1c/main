@@ -1,13 +1,12 @@
-package app.controllers;
+package app.viewmanagers;
 
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
-public class SidebarController {
+public class SidebarViewManager {
 
     @FXML
     private Button displayButton;
@@ -21,7 +20,7 @@ public class SidebarController {
     @FXML
     private Button settingsButton;
 
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -39,23 +38,23 @@ public class SidebarController {
         LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
         switch (button.getId()) {
             case "displayButton":
-                rootViewController.setAndFocusInputField("display");
+                rootViewManager.setAndFocusInputField("display");
                 break;
             case "addButton":
-                rootViewController.setAndFocusInputField("add ");
+                rootViewManager.setAndFocusInputField("add ");
                 break;
             case "searchButton":
-                rootViewController.setAndFocusInputField("search ");
+                rootViewManager.setAndFocusInputField("search ");
                 break;
             case "settingsButton":
-                rootViewController.openSettings();
+                rootViewManager.openSettings();
                 break;
             default:
                 break;
         }
     }
 
-    public void setRootViewController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 }
