@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.helpers.LoggingService;
 import app.helpers.UserGuide;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
@@ -10,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TaskListViewController {
 
@@ -60,7 +63,7 @@ public class TaskListViewController {
         }
         this.taskData = taskData;
         taskListView.setItems(taskData);
-
+        LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
     private boolean newTaskAdded(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
@@ -75,4 +78,5 @@ public class TaskListViewController {
     public void setRootViewController(RootViewController rootViewController) {
         this.rootViewController = rootViewController;
     }
+
 }

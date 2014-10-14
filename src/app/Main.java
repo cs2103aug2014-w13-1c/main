@@ -1,6 +1,7 @@
 package app;
 
 import app.controllers.*;
+import app.helpers.LoggingService;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -21,8 +22,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        logger = Logger.getLogger(this.getClass().getName());
-        logger.log(Level.INFO, "Launching app.");
+        LoggingService.getLogger().log(Level.INFO, "Launching app");
 
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("wat do");

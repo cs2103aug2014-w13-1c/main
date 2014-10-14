@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.LoggingService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,6 +20,8 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 import javax.swing.border.Border;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by jin on 8/10/14.
@@ -37,6 +40,8 @@ public class RootViewController {
     private HelpController helpController;
 
     public void initLayout(Stage primaryStage) throws IOException {
+        LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
+
         this.initRootLayout(primaryStage);
         this.initSettingsView();
         this.initHelpView();
@@ -163,4 +168,5 @@ public class RootViewController {
         inputField.positionCaret(text.length());
         inputField.requestFocus();
     }
+
 }
