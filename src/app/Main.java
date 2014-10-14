@@ -18,28 +18,34 @@ public class Main extends Application {
     private CommandController commandController;
     private RootViewController rootViewController;
 
-    public static Logger logger;
-
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage stage) throws Exception{
         LoggingService.getLogger().log(Level.INFO, "Launching app");
 
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("wat do");
-        this.primaryStage.setResizable(false);
+        createPrimaryStage(stage);
+        initViewComponent();
+        initControllerComponent();
 
+        rootViewController.setAndFocusInputField("");
+    }
+
+    private void createPrimaryStage(Stage stage) {
+        primaryStage = stage;
+        primaryStage.setTitle("wat do");
+        primaryStage.setResizable(false);
+    }
+
+    private void initViewComponent() {
         rootViewController = new RootViewController();
         rootViewController.setMainApp(this);
         rootViewController.initLayout(primaryStage);
+    }
 
+    private void initControllerComponent() {
         commandController = new CommandController();
         commandController.setMainApp(this);
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
-
-//        showInfoDialog("Welcome", "wat will you do today?");
-
-        rootViewController.setAndFocusInputField("");
     }
 
     public void showInfoDialog(String title, String message) {
