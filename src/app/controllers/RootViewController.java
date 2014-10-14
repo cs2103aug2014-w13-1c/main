@@ -32,15 +32,20 @@ public class RootViewController {
     private SettingsController settingsController;
     private HelpController helpController;
 
-    public void initLayout(Stage primaryStage) throws IOException {
+    public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
 
-        this.initRootLayout(primaryStage);
-        this.initSettingsView();
-        this.initHelpView();
-        this.showSidebar();
-        this.showInputField();
-        this.showTaskListView();
+        try {
+            this.initRootLayout(primaryStage);
+            this.initSettingsView();
+            this.initHelpView();
+            this.showSidebar();
+            this.showInputField();
+            this.showTaskListView();
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+        }
+
     }
 
     private void initRootLayout(Stage primaryStage) throws IOException {

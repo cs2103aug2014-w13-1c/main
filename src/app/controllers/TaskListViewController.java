@@ -40,7 +40,7 @@ public class TaskListViewController {
                 controller.setRootViewController(rootViewController);
                 return controller;
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
                 return null;
             }
         });
