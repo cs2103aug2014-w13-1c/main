@@ -3,8 +3,11 @@ package app.model;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.json.simple.parser.ParseException;
+
+import app.helpers.LoggingService;
 
 public class ModelManager {
     
@@ -18,8 +21,10 @@ public class ModelManager {
         try {
             dataStorage.loadFile(todoList);
         } catch (ParseException e) {
+            LoggingService.getLogger().log(Level.INFO, "Failed to parse JSON data.");
             throw new IOException("Failed to parse JSON data.");
         } catch (IOException e) {
+            LoggingService.getLogger().log(Level.INFO, "Failed to load file at " + dataStorage.getFullFileName() + ".");
             throw new IOException("Failed to load file at " + dataStorage.getFullFileName() + ".");
         }
         
@@ -37,6 +42,7 @@ public class ModelManager {
         todoList.addTodoItem(newTodoItem);
         
         TodoItemSorter.resortTodoList(todoList);
+        LoggingService.getLogger().log(Level.INFO, "Adding new task " + newTaskName);
         
         dataStorage.updateFile(todoList.getTodoItems());
     }
@@ -51,7 +57,7 @@ public class ModelManager {
         TodoItem toChange = todoList.getByUUID(itemID);
         
         // UUID not found
-        if (toChange == null) return;
+        assert toChange != null;
         
         // Task name
         if (parameters[0]) {
@@ -79,6 +85,9 @@ public class ModelManager {
         }
         
         TodoItemSorter.resortTodoList(todoList);
+
+        LoggingService.getLogger().log(Level.INFO, "Updating task " + toChange.getTaskName());
+        
         dataStorage.updateFile(todoList.getTodoItems());
     }
     
@@ -86,6 +95,9 @@ public class ModelManager {
         TodoItem deletedItem = todoList.deleteByUUID(itemID);
         
         TodoItemSorter.resortTodoList(todoList);
+
+        LoggingService.getLogger().log(Level.INFO, "Deleting task " + deletedItem.getTaskName());
+        
         dataStorage.updateFile(todoList.getTodoItems());
         
         return deletedItem;
@@ -93,6 +105,7 @@ public class ModelManager {
     
     public void changeFileDirectory(String fileDirectory) throws IOException {
         dataStorage.changeDirectory(fileDirectory, todoList);
+        assert dataStorage.getFileDirectory().equals(fileDirectory);
     }
     
     public void setSortingStyle(int newSortingStyle) {

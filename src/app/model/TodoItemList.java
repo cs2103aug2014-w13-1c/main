@@ -268,7 +268,7 @@ public class TodoItemList {
                 currentDoneStatus = (Boolean) JSONDoneStatus;
             }
             
-            todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority));
+            todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
         }
         
         reader.close();

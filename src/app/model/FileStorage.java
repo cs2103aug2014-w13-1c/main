@@ -10,11 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ListIterator;
+import java.util.logging.Level;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import app.helpers.LoggingService;
 
 public class FileStorage {
     
@@ -41,10 +44,12 @@ public class FileStorage {
     }
     
     public void loadFile(TodoItemList todoItems) throws IOException, ParseException {
+        LoggingService.getLogger().log(Level.INFO, "Loading file.");
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(fileDirectory + fileName);
         } catch (FileNotFoundException e) { // if no file found at stated path, return
+            LoggingService.getLogger().log(Level.INFO, "No file found at target destination.");
             return;
         }
         BufferedReader reader = new BufferedReader(fileToRead);
@@ -58,6 +63,7 @@ public class FileStorage {
         JSONParser parser = new JSONParser();
         
         JSONArray fileArray = (JSONArray) parser.parse(fileString);
+        
         for (int i = 0; i < fileArray.size(); i++) {
             JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
             String currentTaskName = null;
@@ -139,12 +145,17 @@ public class FileStorage {
             fileArray.add(fileObject);
         }
         
+        LoggingService.getLogger().log(Level.INFO, "Updating file.");
+        
         try {
             writer.write(fileArray.toJSONString());
             writer.flush();
         } catch (Exception e) {
+            LoggingService.getLogger().log(Level.INFO, fileName + WRITE_FAILED);
             throw new IOException(fileName + WRITE_FAILED);
         }
+        
+        LoggingService.getLogger().log(Level.INFO, "Successfully updated file.");
         
         try {
             fileToWrite.close();
