@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main extends Application {
 
@@ -15,8 +17,13 @@ public class Main extends Application {
     private CommandController commandController;
     private RootViewController rootViewController;
 
+    public static Logger logger;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
+        logger = Logger.getLogger(this.getClass().getName());
+        logger.log(Level.INFO, "Launching app.");
+
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("wat do");
         this.primaryStage.setResizable(false);
