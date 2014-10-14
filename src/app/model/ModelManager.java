@@ -1,7 +1,9 @@
 package app.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.ListIterator;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -32,10 +34,6 @@ public class ModelManager {
         TodoItemSorter.resortTodoList(todoList);
     }
     
-    public TodoItemList getSortedTodoList() {
-        return todoList;
-    }
-    
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
         
@@ -49,10 +47,8 @@ public class ModelManager {
     
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         
-        // Incorrect parameters
-        if (parameters.length != 5) {
-            return;
-        }
+        // parameters array should be length 5
+        assert parameters.length == 5;
         
         TodoItem toChange = todoList.getByUUID(itemID);
         
@@ -110,5 +106,13 @@ public class ModelManager {
     
     public void setSortingStyle(int newSortingStyle) {
         TodoItemSorter.sortingStyle = newSortingStyle;
+    }
+
+    public ArrayList<TodoItem> getTodoItemList() {
+        return todoList.getTodoItems();
+    }
+    
+    public ListIterator<TodoItem> getTodoItemIterator() {
+        return todoList.getTodoItems().listIterator();
     }
 }

@@ -104,9 +104,10 @@ public class TodoItem {
 	}
 	
 	public void setPriority(String newPriority) {
-	    if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM))) {
-            this.priority = newPriority;
-	    }
+	    assert newPriority != null;
+	    assert (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM));
+	    
+	    this.priority = newPriority;
 	}
 
     public Boolean isDone() {
@@ -114,6 +115,8 @@ public class TodoItem {
     }
     
     public void setDoneStatus(Boolean newDoneStatus) {
+        assert newDoneStatus != null;
+        
         this.doneStatus = newDoneStatus;
     }
     
