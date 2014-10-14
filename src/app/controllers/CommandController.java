@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.Keyword;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 import javafx.collections.FXCollections;
@@ -41,6 +42,7 @@ public class CommandController {
     private TodoItemList taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
+    private ArrayList<Keyword> currentKeyword;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -338,13 +340,19 @@ public class CommandController {
     public CommandController() {
         taskList = new TodoItemList();
         currentList = new ArrayList<TodoItem>();
+        currentKeyword = new ArrayList<Keyword>();
     }
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
+        currentKeyword = CommandParser.parseKeywords(inputString);
         printString(processCommand(inputString));
     }
-
+    
+    public ArrayList<Keyword> getKeywords() {
+        return currentKeyword;
+    }
+    
     public void updateView() {
         main.getRootViewController().getTaskListViewController().updateView(convertList(currentList));
     }

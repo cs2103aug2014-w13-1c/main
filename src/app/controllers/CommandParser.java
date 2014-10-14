@@ -88,18 +88,18 @@ public class CommandParser {
         return cal.getTime();
     }
     
-    public static ArrayList<Keyword> getKeywords(String inputString) {
-    	ArrayList<Keyword> curKeywords = new ArrayList<Keyword>();
-    	curKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
-    	curKeywords.get(curKeywords.size() - 1).setWord(getCommandString(inputString));
+    public static ArrayList<Keyword> parseKeywords(String inputString) {
+    	ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
+    	currentKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
+    	currentKeywords.get(currentKeywords.size() - 1).setWord(getCommandString(inputString));
     	if (getStartDateStartIndex(inputString) == -1) {
-            curKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
-            curKeywords.get(curKeywords.size() - 1).setWord("start");
+            currentKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
+            currentKeywords.get(currentKeywords.size() - 1).setWord("start");
         }
     	if (getEndDateStartIndex(inputString) == -1) {
-    	    curKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
-    	    curKeywords.get(curKeywords.size() - 1).setWord("end");
+    	    currentKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
+    	    currentKeywords.get(currentKeywords.size() - 1).setWord("end");
         }
-    	return curKeywords;
+    	return currentKeywords;
     }
 }
