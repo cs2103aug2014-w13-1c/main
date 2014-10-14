@@ -12,7 +12,6 @@ import javafx.scene.control.ListView;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TaskListViewController {
 
@@ -58,6 +57,9 @@ public class TaskListViewController {
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {
+        assert(taskData.size() >= 0);
+        assert(taskData.size() <= Integer.MAX_VALUE);
+
         if (newTaskAdded(taskData, this.taskData)) {
             scrollToLast();
         }
@@ -67,7 +69,7 @@ public class TaskListViewController {
     }
 
     private boolean newTaskAdded(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
-       return _new.size() > _old.size();
+        return _new.size() > _old.size();
     }
 
     private void scrollToLast() {
