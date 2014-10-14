@@ -1,5 +1,7 @@
 package app.controllers;
 
+import app.helpers.Keyword;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -89,11 +91,14 @@ public class CommandParser {
     public static ArrayList<Keyword> getKeywords(String inputString) {
     	ArrayList<Keyword> curKeywords = new ArrayList<Keyword>();
     	curKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
+    	curKeywords.get(curKeywords.size() - 1).setWord(getCommandString(inputString));
     	if (getStartDateStartIndex(inputString) == -1) {
             curKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
+            curKeywords.get(curKeywords.size() - 1).setWord("start");
         }
     	if (getEndDateStartIndex(inputString) == -1) {
     	    curKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
+    	    curKeywords.get(curKeywords.size() - 1).setWord("end");
         }
     	return curKeywords;
     }
