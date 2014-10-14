@@ -29,7 +29,7 @@ public class RootViewController {
     private StyleClassedTextArea inputField;
     private ListView taskListView;
     private TaskListViewController taskListViewController;
-    private SettingsController settingsController;
+    private SettingsViewController settingsViewController;
     private HelpController helpController;
 
     public void initLayout(Stage primaryStage) {
@@ -64,8 +64,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
         settingsView = loader.load();
 
-        settingsController = loader.getController();
-        settingsController.setRootViewController(this);
+        settingsViewController = loader.getController();
+        settingsViewController.setRootViewController(this);
 
         rootLayout.getChildren().add(settingsView);
         settingsView.toBack();
@@ -125,13 +125,13 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
-        settingsController.cancelFocusOnButton();
+        settingsViewController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
     public void openSettings() {
         settingsView.toFront();
-        settingsController.focusOnButton();
+        settingsViewController.focusOnButton();
     }
 
     public void openHelp() {

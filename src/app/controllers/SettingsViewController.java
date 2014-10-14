@@ -12,7 +12,7 @@ import java.util.logging.Level;
 /**
  * Created by jin on 8/10/14.
  */
-public class SettingsController {
+public class SettingsViewController {
 
     @FXML
     private TextField filePathTextField;
