@@ -94,7 +94,7 @@ public class CommandParser {
     
     public static ArrayList<Keyword> parseKeywords(String inputString) {
     	ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
-    	currentKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
+    	currentKeywords.add(new Keyword(0, nextSpacePosition(inputString, 0)));
     	currentKeywords.get(currentKeywords.size() - 1).setWord(getCommandString(inputString));
     	if (getStartDateStartIndex(inputString) != -1) {
             currentKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
