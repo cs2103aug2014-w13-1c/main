@@ -1,8 +1,11 @@
 package app.controllers;
 
+import app.helpers.LoggingService;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,13 +46,11 @@ public class InputFieldController {
         inputField.setWrapText(true);
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println("TextField Text Changed (newValue: " + newValue + ")");
-//            inputField.setStyle(0, inputField.getLength(), "-fx-fill: black;");
             inputField.setStyleSpans(0, computeHighlighting(newValue));
 //            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 String query = inputField.getText().substring(7);
-                System.out.println("query: " + query);
+                LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
                 ArrayList<TodoItem> results =
                         rootViewController.getMainApp().getCommandController().instantSearch(query);
                 rootViewController.getMainApp().getCommandController().updateView(results);
@@ -57,6 +58,7 @@ public class InputFieldController {
                     rootViewController.getTaskListViewController().setEmptySearchPlaceholder();
                 }
             } else {
+                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
                 rootViewController.getMainApp().getCommandController().updateView();
                 rootViewController.getTaskListViewController().setUserGuidePlaceholder();
             }
