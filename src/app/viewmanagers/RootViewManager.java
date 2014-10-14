@@ -107,7 +107,7 @@ public class RootViewManager {
 
     private void showSidebar() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(mainApp.getResourceURL("views/Sidebar.fxml"));
+        loader.setLocation(mainApp.getResourceURL("views/SidebarView.fxml"));
         VBox sidebar = loader.load();
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");

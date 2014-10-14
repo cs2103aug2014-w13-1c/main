@@ -34,7 +34,7 @@ public class TaskListViewManager {
         taskListView.setCellFactory(taskListView -> {
             try {
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(rootViewManager.getMainApp().getResourceURL("views/TaskListCell.fxml"));
+                loader.setLocation(rootViewManager.getMainApp().getResourceURL("views/TaskListCellView.fxml"));
                 loader.load();
                 TaskListCellViewManager controller = loader.getController();
                 controller.setRootViewManager(rootViewManager);
