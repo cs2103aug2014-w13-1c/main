@@ -1,26 +1,25 @@
-package app.controllers;
+package app.viewmanagers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 
 /**
  * Created by jolly on 10/10/14.
  */
-public class HelpController {
+public class HelpViewManager {
 
     @FXML
     private Button okButton;
 
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     @FXML
     private void initialize() {
-        okButton.setOnAction((event) -> rootViewController.closeHelp());
+        okButton.setOnAction((event) -> rootViewManager.closeHelp());
     }
 
-    public void setRootViewController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 
     public void focusOnButton() {

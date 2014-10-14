@@ -2,6 +2,7 @@ package app;
 
 import app.controllers.*;
 import app.helpers.LoggingService;
+import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -9,37 +10,42 @@ import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main extends Application {
 
     private Stage primaryStage;
 
     private CommandController commandController;
-    private RootViewController rootViewController;
-
-    public static Logger logger;
+    private RootViewManager rootViewManager;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage stage) throws Exception {
         LoggingService.getLogger().log(Level.INFO, "Launching app");
 
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("wat do");
-        this.primaryStage.setResizable(false);
+        createPrimaryStage(stage);
+        initViewComponent();
+        initControllerComponent();
 
-        rootViewController = new RootViewController();
-        rootViewController.setMainApp(this);
-        rootViewController.initLayout(primaryStage);
+        rootViewManager.setAndFocusInputField("");
+    }
 
+    private void createPrimaryStage(Stage stage) {
+        primaryStage = stage;
+        primaryStage.setTitle("wat do");
+        primaryStage.setResizable(false);
+    }
+
+    private void initViewComponent() {
+        rootViewManager = new RootViewManager();
+        rootViewManager.setMainApp(this);
+        rootViewManager.initLayout(primaryStage);
+    }
+
+    private void initControllerComponent() {
         commandController = new CommandController();
         commandController.setMainApp(this);
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
-
-//        showInfoDialog("Welcome", "wat will you do today?");
-
-        rootViewController.setAndFocusInputField("");
     }
 
     public void showInfoDialog(String title, String message) {
@@ -72,8 +78,8 @@ public class Main extends Application {
         return commandController;
     }
 
-    public RootViewController getRootViewController() {
-        return rootViewController;
+    public RootViewManager getRootViewManager() {
+        return rootViewManager;
     }
 
     public static void main(String[] args) {
