@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewcontrollers;
 
 import app.helpers.LoggingService;
 import app.helpers.UserGuide;

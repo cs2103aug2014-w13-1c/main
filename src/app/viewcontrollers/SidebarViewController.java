@@ -1,10 +1,9 @@
-package app.controllers;
+package app.viewcontrollers;
 
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 public class SidebarViewController {

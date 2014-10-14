@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewcontrollers;
 
 import app.Main;
 import app.helpers.LoggingService;
@@ -98,9 +98,9 @@ public class RootViewController {
     }
 
     private void showInputField() {
-        InputFieldController inputFieldController = new InputFieldController();
-        inputFieldController.setRootViewController(this);
-        inputField = inputFieldController.getInputField();
+        InputFieldViewController inputFieldViewController = new InputFieldViewController();
+        inputFieldViewController.setRootViewController(this);
+        inputField = inputFieldViewController.getInputField();
 
         borderPane.setBottom(new StackPane(inputField));
     }

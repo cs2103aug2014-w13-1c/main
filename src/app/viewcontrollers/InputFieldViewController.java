@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewcontrollers;
 
 import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
@@ -26,7 +26,7 @@ import org.fxmisc.richtext.StyleSpansBuilder;
  * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
  * will rewrite/refactor later
  */
-public class InputFieldController {
+public class InputFieldViewController {
 
     private String lastCommand;
     private StyleClassedTextArea inputField;
@@ -39,7 +39,7 @@ public class InputFieldController {
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
 
-    public InputFieldController() {
+    public InputFieldViewController() {
         inputField = new StyleClassedTextArea();
         inputField.setPrefHeight(100);
         inputField.getStylesheets().add("app/stylesheets/inputField.css");

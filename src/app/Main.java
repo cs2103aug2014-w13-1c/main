@@ -2,6 +2,7 @@ package app;
 
 import app.controllers.*;
 import app.helpers.LoggingService;
+import app.viewcontrollers.RootViewController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -9,7 +10,6 @@ import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main extends Application {
 

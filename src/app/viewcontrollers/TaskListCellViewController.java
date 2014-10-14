@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewcontrollers;
 
 import app.model.TodoItem;
 import javafx.fxml.FXML;
