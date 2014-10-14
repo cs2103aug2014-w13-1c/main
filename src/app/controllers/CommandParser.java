@@ -32,7 +32,7 @@ public class CommandParser {
         }
         return month;
     }
-    
+
     // Index getter  method(s)
     protected static int getStartDateStartIndex(String inputString) {
         return inputString.indexOf("start");
@@ -42,7 +42,7 @@ public class CommandParser {
         if (getStartDateStartIndex(inputString) == -1) {
             return -1;
         }
-        return nextSpacePosition(" ", getStartDateStartIndex(inputString));
+        return nextSpacePosition(inputString, getStartDateStartIndex(inputString));
     }
     
     protected static int getEndDateStartIndex(String inputString) {
@@ -53,7 +53,7 @@ public class CommandParser {
         if (getEndDateStartIndex(inputString) == -1) {
             return -1;
         }
-        return nextSpacePosition(" ", getEndDateStartIndex(inputString));
+        return nextSpacePosition(inputString, getEndDateStartIndex(inputString));
     }
     
     // Parser method(s)
@@ -94,8 +94,7 @@ public class CommandParser {
     
     public static ArrayList<Keyword> parseKeywords(String inputString) {
     	ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
-    	System.out.println(nextSpacePosition(inputString, 0));
-    	currentKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
+    	currentKeywords.add(new Keyword(0, nextSpacePosition(inputString, 0)));
     	currentKeywords.get(currentKeywords.size() - 1).setWord(getCommandString(inputString));
     	if (getStartDateStartIndex(inputString) != -1) {
             currentKeywords.add(new Keyword(getStartDateStartIndex(inputString), getStartDateEndIndex(inputString)));
@@ -105,6 +104,9 @@ public class CommandParser {
     	    currentKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
     	    currentKeywords.get(currentKeywords.size() - 1).setWord("end");
         }
+    	for (int i = 0; i < currentKeywords.size(); i++) {
+    	    System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
+    	}
     	return currentKeywords;
     }
 }
