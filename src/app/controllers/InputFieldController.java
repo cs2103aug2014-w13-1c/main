@@ -111,6 +111,9 @@ public class InputFieldController {
     private StyleSpans<Collection<String>> keywordDetection(String text) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         ArrayList<Keyword> keywords = CommandParser.parseKeywords(text);
+        for (Keyword keyword : keywords) {
+            System.out.println(keyword.getWord() + " " + keyword.getStartIndex() + " " + keyword.getEndIndex());
+        }
 
 //        if (text.length() >= 3) {
 //            keywords.add(new Keyword(0, 2));
