@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * @author ryan
  */
 
-public class CommandParser {    
+public class CommandParser {
     // String manipulation methods
     public static int nextSpacePosition(String inputString, int startIndex) {
         return inputString.indexOf(" ", startIndex);
@@ -32,7 +32,7 @@ public class CommandParser {
         }
         return month;
     }
-    
+
     // Index getter  method(s)
     protected static int getStartDateStartIndex(String inputString) {
         return inputString.indexOf("start");
@@ -42,7 +42,7 @@ public class CommandParser {
         if (getStartDateStartIndex(inputString) == -1) {
             return -1;
         }
-        return nextSpacePosition(" ", getStartDateStartIndex(inputString));
+        return nextSpacePosition(inputString, getStartDateStartIndex(inputString));
     }
     
     protected static int getEndDateStartIndex(String inputString) {
@@ -53,7 +53,7 @@ public class CommandParser {
         if (getEndDateStartIndex(inputString) == -1) {
             return -1;
         }
-        return nextSpacePosition(" ", getEndDateStartIndex(inputString));
+        return nextSpacePosition(inputString, getEndDateStartIndex(inputString));
     }
     
     // Parser method(s)
@@ -104,6 +104,9 @@ public class CommandParser {
     	    currentKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
     	    currentKeywords.get(currentKeywords.size() - 1).setWord("end");
         }
+    	for (int i = 0; i < currentKeywords.size(); i++) {
+    	    System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
+    	}
     	return currentKeywords;
     }
 }
