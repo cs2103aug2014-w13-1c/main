@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class LoggingService {
 
-    private static Logger logger;
+    private Logger logger;
     private static LoggingService self;
 
     private LoggingService() {

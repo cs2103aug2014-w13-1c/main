@@ -15,7 +15,6 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by jin on 8/10/14.
