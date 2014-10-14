@@ -67,6 +67,9 @@ public class InputFieldController {
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 event.consume();
+
+
+
                 if (!inputField.getText().equals("")) {
                     lastCommand = inputField.getText();
                     inputField.clear();
