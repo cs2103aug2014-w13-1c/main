@@ -36,8 +36,8 @@ public class ModelManager {
         return todoList;
     }
     
-    public void addTask(String newTaskName, Date newStartDate, Date newEndDate) throws IOException {
-        TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate);
+    public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
+        TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
         
         todoList.addTodoItem(newTodoItem);
         
