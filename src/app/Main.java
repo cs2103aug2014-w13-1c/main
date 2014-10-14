@@ -19,7 +19,7 @@ public class Main extends Application {
     private RootViewController rootViewController;
 
     @Override
-    public void start(Stage stage) throws Exception{
+    public void start(Stage stage) throws Exception {
         LoggingService.getLogger().log(Level.INFO, "Launching app");
 
         createPrimaryStage(stage);
