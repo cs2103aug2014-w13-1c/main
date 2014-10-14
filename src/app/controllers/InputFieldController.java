@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
 
 import java.util.ArrayList;
@@ -67,14 +68,11 @@ public class InputFieldController {
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 event.consume();
-
-
-
-                if (!inputField.getText().equals("")) {
-                    lastCommand = inputField.getText();
-                    inputField.clear();
-                    rootViewController.getMainApp().getCommandController().parseCommand(lastCommand);
-                    rootViewController.getMainApp().getCommandController().updateView();
+                lastCommand = inputField.getText();
+                try {
+                    checkCommandLengthAndExecute(lastCommand);
+                } catch (InvalidInputException e) {
+                    LoggingService.getLogger().log(Level.WARNING, "empty command");
                 }
             }
 //            else if (event.getCode() == KeyCode.TAB) {
@@ -82,6 +80,16 @@ public class InputFieldController {
 //                System.out.println("TAB: \"" + inputField.getText() + "\"");
 //            }
         });
+    }
+
+    private void checkCommandLengthAndExecute(String command) throws InvalidInputException {
+        if (command.length() == 0) {
+            throw new InvalidInputException("empty command");
+        } else {
+            inputField.clear();
+            rootViewController.getMainApp().getCommandController().parseCommand(command);
+            rootViewController.getMainApp().getCommandController().updateView();
+        }
     }
 
     private StyleSpans<Collection<String>> computeHighlighting(String text) {
