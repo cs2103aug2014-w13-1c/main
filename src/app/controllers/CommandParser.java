@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  * @author ryan
  */
 
-public class CommandParser {    
+public class CommandParser {
     // String manipulation methods
     public static int nextSpacePosition(String inputString, int startIndex) {
         return inputString.indexOf(" ", startIndex);
@@ -94,6 +94,7 @@ public class CommandParser {
     
     public static ArrayList<Keyword> parseKeywords(String inputString) {
     	ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
+    	System.out.println(nextSpacePosition(inputString, 0));
     	currentKeywords.add(new Keyword(0, nextSpacePosition(" ", 0)));
     	currentKeywords.get(currentKeywords.size() - 1).setWord(getCommandString(inputString));
     	if (getStartDateStartIndex(inputString) != -1) {
