@@ -1,4 +1,4 @@
-package app.viewcontrollers;
+package app.viewmanagers;
 
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 /**
  * Created by jin on 8/10/14.
  */
-public class SettingsViewController {
+public class SettingsViewManager {
 
     @FXML
     private TextField filePathTextField;
@@ -26,7 +26,7 @@ public class SettingsViewController {
     @FXML
     private Button cancelButton;
 
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     private File filePath;
 
@@ -39,20 +39,20 @@ public class SettingsViewController {
         }
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewController.closeSettings(filePath));
-        cancelButton.setOnAction((event) -> rootViewController.closeSettings(null));
+        saveButton.setOnAction((event) -> rootViewManager.closeSettings(filePath));
+        cancelButton.setOnAction((event) -> rootViewManager.closeSettings(null));
     }
 
     private void showChooser(DirectoryChooser directoryChooser) {
-        filePath = directoryChooser.showDialog(rootViewController.getMainApp().getPrimaryStage());
+        filePath = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
         filePathTextField.setText(filePath.toString());
 
         assert(filePath.length() >= 0);
         LoggingService.getLogger().log(Level.INFO, "Selected filePath: " + filePath.toString());
     }
 
-    public void setRootViewController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 
     public void focusOnButton() {

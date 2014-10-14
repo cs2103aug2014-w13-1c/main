@@ -2,7 +2,7 @@ package app;
 
 import app.controllers.*;
 import app.helpers.LoggingService;
-import app.viewcontrollers.RootViewController;
+import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -16,7 +16,7 @@ public class Main extends Application {
     private Stage primaryStage;
 
     private CommandController commandController;
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -26,7 +26,7 @@ public class Main extends Application {
         initViewComponent();
         initControllerComponent();
 
-        rootViewController.setAndFocusInputField("");
+        rootViewManager.setAndFocusInputField("");
     }
 
     private void createPrimaryStage(Stage stage) {
@@ -36,9 +36,9 @@ public class Main extends Application {
     }
 
     private void initViewComponent() {
-        rootViewController = new RootViewController();
-        rootViewController.setMainApp(this);
-        rootViewController.initLayout(primaryStage);
+        rootViewManager = new RootViewManager();
+        rootViewManager.setMainApp(this);
+        rootViewManager.initLayout(primaryStage);
     }
 
     private void initControllerComponent() {
@@ -78,8 +78,8 @@ public class Main extends Application {
         return commandController;
     }
 
-    public RootViewController getRootViewController() {
-        return rootViewController;
+    public RootViewManager getRootViewManager() {
+        return rootViewManager;
     }
 
     public static void main(String[] args) {

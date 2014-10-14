@@ -1,4 +1,4 @@
-package app.viewcontrollers;
+package app.viewmanagers;
 
 import app.Main;
 import app.helpers.LoggingService;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 /**
  * Created by jin on 8/10/14.
  */
-public class RootViewController {
+public class RootViewManager {
 
     private Main mainApp;
     private StackPane rootLayout;
@@ -29,9 +29,9 @@ public class RootViewController {
     private StyleClassedTextArea inputField;
     private ListView taskListView;
 
-    private TaskListViewController taskListViewController;
-    private SettingsViewController settingsViewController;
-    private HelpViewController helpViewController;
+    private TaskListViewManager taskListViewManager;
+    private SettingsViewManager settingsViewManager;
+    private HelpViewManager helpViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -51,7 +51,7 @@ public class RootViewController {
 
     private void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(mainApp.getResourceURL("views/RootLayout.fxml"));
+        loader.setLocation(mainApp.getResourceURL("views/RootView.fxml"));
         rootLayout = loader.load();
         borderPane = (BorderPane) rootLayout.getChildren().get(0);
 
@@ -65,8 +65,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
         settingsView = loader.load();
 
-        settingsViewController = loader.getController();
-        settingsViewController.setRootViewController(this);
+        settingsViewManager = loader.getController();
+        settingsViewManager.setRootViewManager(this);
 
         rootLayout.getChildren().add(settingsView);
         settingsView.toBack();
@@ -77,8 +77,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
         helpView = loader.load();
 
-        helpViewController = loader.getController();
-        helpViewController.setRootViewController(this);
+        helpViewManager = loader.getController();
+        helpViewManager.setRootViewManager(this);
 
         rootLayout.getChildren().add(helpView);
         helpView.toBack();
@@ -91,16 +91,16 @@ public class RootViewController {
         taskListView.getStylesheets().add("app/stylesheets/taskList.css");
         taskListView.getStyleClass().add("task-list");
 
-        taskListViewController = loader.getController();
-        taskListViewController.setRootViewController(this);
+        taskListViewManager = loader.getController();
+        taskListViewManager.setRootViewManager(this);
 
         borderPane.setCenter(taskListView);
     }
 
     private void showInputField() {
-        InputFieldViewController inputFieldViewController = new InputFieldViewController();
-        inputFieldViewController.setRootViewController(this);
-        inputField = inputFieldViewController.getInputField();
+        InputFieldViewManager inputFieldViewManager = new InputFieldViewManager();
+        inputFieldViewManager.setRootViewManager(this);
+        inputField = inputFieldViewManager.getInputField();
 
         borderPane.setBottom(new StackPane(inputField));
     }
@@ -112,8 +112,8 @@ public class RootViewController {
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarViewController controller = loader.getController();
-        controller.setRootViewController(this);
+        SidebarViewManager controller = loader.getController();
+        controller.setRootViewManager(this);
 
         borderPane.setLeft(sidebar);
     }
@@ -126,23 +126,23 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
-        settingsViewController.cancelFocusOnButton();
+        settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
     public void openSettings() {
         settingsView.toFront();
-        settingsViewController.focusOnButton();
+        settingsViewManager.focusOnButton();
     }
 
     public void openHelp() {
         helpView.toFront();
-        helpViewController.focusOnButton();
+        helpViewManager.focusOnButton();
     }
 
     public void closeHelp() {
         helpView.toBack();
-        helpViewController.cancelFocusOnButton();
+        helpViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
@@ -158,8 +158,8 @@ public class RootViewController {
         return inputField;
     }
 
-    public TaskListViewController getTaskListViewController() {
-        return taskListViewController;
+    public TaskListViewManager getTaskListViewManager() {
+        return taskListViewManager;
     }
 
     public void setAndFocusInputField(String text) {

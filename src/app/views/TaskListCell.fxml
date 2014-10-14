@@ -5,7 +5,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<GridPane fx:id="cellGrid" hgap="5.0" prefHeight="150.0" prefWidth="400.0" style="-fx-background-color: #999999;" styleClass="cell" stylesheets="@../stylesheets/taskListCell.css" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewcontrollers.TaskListCellViewController">
+<GridPane fx:id="cellGrid" hgap="5.0" prefHeight="150.0" prefWidth="400.0" style="-fx-background-color: #999999;" styleClass="cell" stylesheets="@../stylesheets/taskListCell.css" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
    <columnConstraints>
       <ColumnConstraints />
       <ColumnConstraints maxWidth="53.0" minWidth="10.0" prefWidth="24.0" />
