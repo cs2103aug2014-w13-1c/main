@@ -1,18 +1,20 @@
 package app.controllers;
 
 import app.Main;
-import javafx.application.Application;
+import app.helpers.LoggingService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
-import javax.swing.border.Border;
+import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * Created by jin on 8/10/14.
@@ -20,70 +22,122 @@ import java.io.IOException;
 public class RootViewController {
 
     private Main mainApp;
-    private BorderPane rootLayout;
+    private StackPane rootLayout;
+    private Pane settingsView;
+    private Pane helpView;
+    private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
     private TaskListViewController taskListViewController;
+    private SettingsController settingsController;
+    private HelpController helpController;
 
-    public void initLayout(Stage primaryStage) {
+    public void initLayout(Stage primaryStage) throws IOException {
+        LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
+
         this.initRootLayout(primaryStage);
+        this.initSettingsView();
+        this.initHelpView();
         this.showSidebar();
         this.showInputField();
         this.showTaskListView();
     }
 
-    private void showTaskListView() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(mainApp.getClass().getResource("views/TaskListView.fxml"));
-            taskListView = loader.load();
-            taskListView.getStylesheets().add("app/stylesheets/taskList.css");
-            taskListView.getStyleClass().add("task-list");
+    private void initRootLayout(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/RootLayout.fxml"));
+        rootLayout = loader.load();
+        borderPane = (BorderPane) rootLayout.getChildren().get(0);
 
-            rootLayout.setCenter(taskListView);
-            taskListViewController = loader.getController();
-            taskListViewController.setRootViewController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Scene scene = new Scene(rootLayout);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void initSettingsView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
+        settingsView = loader.load();
+
+        settingsController = loader.getController();
+        settingsController.setRootViewController(this);
+
+        rootLayout.getChildren().add(settingsView);
+        settingsView.toBack();
+    }
+
+    private void initHelpView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
+        helpView = loader.load();
+
+        helpController = loader.getController();
+        helpController.setRootViewController(this);
+
+        rootLayout.getChildren().add(helpView);
+        helpView.toBack();
+    }
+
+    private void showTaskListView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
+        taskListView = loader.load();
+        taskListView.getStylesheets().add("app/stylesheets/taskList.css");
+        taskListView.getStyleClass().add("task-list");
+
+        taskListViewController = loader.getController();
+        taskListViewController.setRootViewController(this);
+
+        borderPane.setCenter(taskListView);
     }
 
     private void showInputField() {
         InputFieldController inputFieldController = new InputFieldController();
         inputFieldController.setRootViewController(this);
         inputField = inputFieldController.getInputField();
-        rootLayout.setBottom(new StackPane(inputField));
+
+        borderPane.setBottom(new StackPane(inputField));
     }
 
-    private void showSidebar() {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(mainApp.getClass().getResource("views/Sidebar.fxml"));
-            VBox sidebar = loader.load();
-            sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
-            sidebar.getStyleClass().add("sidebar");
+    private void showSidebar() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/Sidebar.fxml"));
+        VBox sidebar = loader.load();
+        sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
+        sidebar.getStyleClass().add("sidebar");
 
-            rootLayout.setLeft(sidebar);
+        SidebarController controller = loader.getController();
+        controller.setRootViewController(this);
 
-            SidebarController controller = loader.getController();
-            controller.setRootViewController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        borderPane.setLeft(sidebar);
     }
 
-    private void initRootLayout(Stage primaryStage) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(mainApp.getClass().getResource("views/RootLayout.fxml"));
-            rootLayout = loader.load();
+    // Getters and Setters
 
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void closeSettings(File filePath) {
+        if (filePath != null) {
+            // Need a method call here to change the directory of watdo.json
+            System.out.println(filePath.toString());
         }
+        settingsView.toBack();
+        settingsController.cancelFocusOnButton();
+        inputField.requestFocus();
+    }
+
+    public void openSettings() {
+        settingsView.toFront();
+        settingsController.focusOnButton();
+    }
+
+    public void openHelp() {
+        helpView.toFront();
+        helpController.focusOnButton();
+    }
+
+    public void closeHelp() {
+        helpView.toBack();
+        helpController.cancelFocusOnButton();
+        inputField.requestFocus();
     }
 
     public void setMainApp(Main mainApp) {
@@ -107,4 +161,5 @@ public class RootViewController {
         inputField.positionCaret(text.length());
         inputField.requestFocus();
     }
+
 }

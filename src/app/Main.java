@@ -1,10 +1,15 @@
 package app;
 
 import app.controllers.*;
+import app.helpers.LoggingService;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import org.controlsfx.dialog.Dialogs;
+
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main extends Application {
 
@@ -13,10 +18,14 @@ public class Main extends Application {
     private CommandController commandController;
     private RootViewController rootViewController;
 
+    public static Logger logger;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
+        LoggingService.getLogger().log(Level.INFO, "Launching app");
+
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("wat do?");
+        this.primaryStage.setTitle("wat do");
         this.primaryStage.setResizable(false);
 
         rootViewController = new RootViewController();
@@ -28,9 +37,9 @@ public class Main extends Application {
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
 
-        showInfoDialog("Welcome", "wat will you do today?");
+//        showInfoDialog("Welcome", "wat will you do today?");
 
-        rootViewController.getInputField().requestFocus();
+        rootViewController.setAndFocusInputField("");
     }
 
     public void showInfoDialog(String title, String message) {
@@ -51,16 +60,20 @@ public class Main extends Application {
                 .showError();
     }
 
+    public URL getResourceURL(String relativePath) {
+        return this.getClass().getResource(relativePath);
+    }
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    public TaskListViewController getTaskListViewController() {
-        return rootViewController.getTaskListViewController();
-    }
-
     public CommandController getCommandController() {
         return commandController;
+    }
+
+    public RootViewController getRootViewController() {
+        return rootViewController;
     }
 
     public static void main(String[] args) {

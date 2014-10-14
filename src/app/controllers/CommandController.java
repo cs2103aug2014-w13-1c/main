@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 
 public class CommandController {
     protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, INVALID, SEARCH, UPDATE
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, INVALID, SEARCH, UPDATE, HELP, SETTINGS
     }
 
     // Errors
@@ -135,7 +135,7 @@ public class CommandController {
         currentList = taskList.getTodoItems();
         main.getPrimaryStage().setTitle("wat do");
         updateView();
-        return "displaying tasks";
+        return "displaying tasks\n";
     }
 
     protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
@@ -260,6 +260,26 @@ public class CommandController {
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
+    // Help method
+    protected String help(String command) {
+        int firstWordPos = firstSpacePosition(command);
+        if (firstWordPos != -1) {
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        main.getRootViewController().openHelp();
+        return "showing help\n";
+    }
+
+    // Settings method
+    protected String settings(String command) {
+        int firstWordPos = firstSpacePosition(command);
+        if (firstWordPos != -1) {
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        main.getRootViewController().openSettings();
+        return "showing settings\n";
+    }
+
     // Command processing methods
     protected COMMAND_TYPE determineCommandType(String commandWord) {
         if (commandWord.equalsIgnoreCase("add")) {
@@ -276,6 +296,10 @@ public class CommandController {
             return COMMAND_TYPE.SEARCH;
         } else if (commandWord.equalsIgnoreCase("update")) {
             return COMMAND_TYPE.UPDATE;
+        } else if (commandWord.equalsIgnoreCase("help")) {
+            return COMMAND_TYPE.HELP;
+        } else if (commandWord.equalsIgnoreCase("settings")) {
+            return COMMAND_TYPE.SETTINGS;
         } else {
             return COMMAND_TYPE.INVALID;
         }
@@ -300,6 +324,10 @@ public class CommandController {
                 return search(command);
             case UPDATE :
                 return update(command);
+            case HELP :
+                return help(command);
+            case SETTINGS :
+                return settings(command);
             default :
                 return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -316,11 +344,11 @@ public class CommandController {
     }
 
     public void updateView() {
-        main.getTaskListViewController().updateView(convertList(currentList));
+        main.getRootViewController().getTaskListViewController().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
-        main.getTaskListViewController().updateView(convertList(todoItems));
+        main.getRootViewController().getTaskListViewController().updateView(convertList(todoItems));
     }
 
     public ArrayList<TodoItem> getTaskList() {
