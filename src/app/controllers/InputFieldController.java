@@ -50,6 +50,7 @@ public class InputFieldController {
             inputField.setStyleSpans(0, computeHighlighting(newValue));
 //            inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
+                assert inputField.getText().length() > 6;
                 String query = inputField.getText().substring(7);
                 LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
                 ArrayList<TodoItem> results =
@@ -72,7 +73,7 @@ public class InputFieldController {
                 try {
                     checkCommandLengthAndExecute(lastCommand);
                 } catch (InvalidInputException e) {
-                    LoggingService.getLogger().log(Level.WARNING, "empty command");
+                    LoggingService.getLogger().log(Level.WARNING, "Invalid Input Exception: empty command");
                 }
             }
 //            else if (event.getCode() == KeyCode.TAB) {
@@ -86,7 +87,9 @@ public class InputFieldController {
         if (command.length() == 0) {
             throw new InvalidInputException("empty command");
         } else {
+            assert command.length() > 0;
             inputField.clear();
+            LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
             rootViewController.getMainApp().getCommandController().parseCommand(command);
             rootViewController.getMainApp().getCommandController().updateView();
         }
