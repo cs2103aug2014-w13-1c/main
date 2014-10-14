@@ -130,8 +130,8 @@ public class CommandController {
     }
     
     // Display command method(s)
-    protected String display(String command) {
-        int firstWordPos = firstSpacePosition(command);
+    protected String display(String inputString) {
+        int firstWordPos = CommandParser.nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -152,21 +152,25 @@ public class CommandController {
     }
 
     // Clear command method(s)
-    protected String clear() {
+    protected String clear(String inputString) {
+        int firstWordPos = CommandParser.nextSpacePosition(inputString, 0);
+        if (firstWordPos != -1) {
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
         taskList.clearTodoItems();
         resetTaskList();
         return MESSAGE_CLEAR_COMPLETE;
     }
     
     // Delete command method(s)
-    protected String deleteEntry(String command) {
-        int firstWordPos = firstSpacePosition(command);
+    protected String deleteEntry(String inputString) {
+        int firstWordPos = firstSpacePosition(inputString);
         if (firstWordPos == -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        if(isInt(command.substring(firstWordPos + 1))) {
-            index = Integer.parseInt(command.substring(firstWordPos + 1)) - 1;
+        if(isInt(inputString.substring(firstWordPos + 1))) {
+            index = Integer.parseInt(inputString.substring(firstWordPos + 1)) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
@@ -308,29 +312,29 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(String command) {
-        String commandWord = getFirstWord(command);
+    protected String processCommand(String inputString) {
+        String commandWord = CommandParser.getCommandWord(inputString);
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
             case ADD :
-                return addNewLine(command);
+                return addNewLine(inputString);
             case DELETE :
-                return deleteEntry(command);
+                return deleteEntry(inputString);
             case DISPLAY :
-                return display(command);
+                return display(inputString);
             case CLEAR :
-                return clear();
+                return clear(inputString);
             case EXIT :
                 showInfoDialog("Bye!");
                 System.exit(0);
             case SEARCH :
-                return search(command);
+                return search(inputString);
             case UPDATE :
-                return update(command);
+                return update(inputString);
             case HELP :
-                return help(commandWord);
+                return help(inputString);
             case SETTINGS :
-                return settings(commandWord);
+                return settings(inputString);
             default :
                 return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }

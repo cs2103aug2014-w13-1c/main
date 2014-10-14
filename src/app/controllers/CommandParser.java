@@ -21,6 +21,8 @@ public class CommandParser {
         return inputString.indexOf(" ", startIndex);
     }
     
+    
+    
     protected static int getMonth(String monthInput) {
         String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
         int month = -1;
@@ -66,7 +68,11 @@ public class CommandParser {
     }
     
     public static String getCommandString(String inputString) {
-        StringTokenizer st = new StringTokenizer(inputString.substring(nextSpacePosition(inputString, 0)));
+        int firstWordPos = nextSpacePosition(inputString, 0);
+        if (firstWordPos == -1) {
+            return "";
+        }
+        StringTokenizer st = new StringTokenizer(inputString.substring(0, firstWordPos));
         String commandWord = "";
         while (st.hasMoreTokens()) {
             String nextWord = st.nextToken();
