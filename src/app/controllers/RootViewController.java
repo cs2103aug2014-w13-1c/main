@@ -28,9 +28,10 @@ public class RootViewController {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
+
     private TaskListViewController taskListViewController;
     private SettingsViewController settingsViewController;
-    private HelpController helpController;
+    private HelpViewController helpViewController;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -76,8 +77,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
         helpView = loader.load();
 
-        helpController = loader.getController();
-        helpController.setRootViewController(this);
+        helpViewController = loader.getController();
+        helpViewController.setRootViewController(this);
 
         rootLayout.getChildren().add(helpView);
         helpView.toBack();
@@ -136,12 +137,12 @@ public class RootViewController {
 
     public void openHelp() {
         helpView.toFront();
-        helpController.focusOnButton();
+        helpViewController.focusOnButton();
     }
 
     public void closeHelp() {
         helpView.toBack();
-        helpController.cancelFocusOnButton();
+        helpViewController.cancelFocusOnButton();
         inputField.requestFocus();
     }
 

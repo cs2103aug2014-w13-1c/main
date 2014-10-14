@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 /**
  * Created by jolly on 10/10/14.
  */
-public class HelpController {
+public class HelpViewController {
 
     @FXML
     private Button okButton;
