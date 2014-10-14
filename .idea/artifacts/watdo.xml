@@ -3,13 +3,17 @@
     <output-path>$PROJECT_DIR$/out/artifacts/watdo</output-path>
     <properties id="javafx-properties">
       <options>
-        <option name="appClass" value="sample.Main" />
+        <option name="appClass" value="app.Main" />
+        <option name="description" value="" />
+        <option name="htmlParamFile" value="" />
+        <option name="nativeBundle" value="all" />
+        <option name="paramFile" value="" />
+        <option name="title" value="wat do" />
+        <option name="vendor" value="Dr. JJ" />
       </options>
     </properties>
     <root id="root">
-      <element id="archive" name="JavaFXApp.jar">
-        <element id="module-output" name="watdo" />
-      </element>
+      <element id="archive" name="JavaFXApp.jar" />
     </root>
   </artifact>
 </component>

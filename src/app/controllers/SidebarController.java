@@ -27,10 +27,15 @@ public class SidebarController {
      */
     @FXML
     private void initialize() {
-        displayButton.setOnAction((event) -> rootViewController.setAndFocusInputField("display"));
+        // displayButton.setOnAction((event) -> rootViewController.setAndFocusInputField("display"));
         addButton.setOnAction((event) -> rootViewController.setAndFocusInputField("add "));
         searchButton.setOnAction((event) -> rootViewController.setAndFocusInputField("search "));
         settingsButton.setOnAction((event) -> rootViewController.openSettings());
+    }
+
+    @FXML
+    private void clickDisplayButton() {
+        rootViewController.setAndFocusInputField("display");
     }
 
     public void setRootViewController(RootViewController rootViewController) {

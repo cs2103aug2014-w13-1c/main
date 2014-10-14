@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
 <VBox prefHeight="592.0" prefWidth="64.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.SidebarController">
     <children>
-        <Button fx:id="displayButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+        <Button fx:id="displayButton" mnemonicParsing="false" onAction="#clickDisplayButton" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
             <graphic>
                 <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>

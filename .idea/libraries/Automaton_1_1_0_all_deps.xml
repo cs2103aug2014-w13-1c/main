@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Automaton-1.1.0-all-deps">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/Automaton-1.1.0-all-deps.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

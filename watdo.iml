@@ -17,6 +17,7 @@
     <orderEntry type="library" name="controlsfx-8.0.6_20" level="project" />
     <orderEntry type="library" name="jintellitype-1.3.9" level="project" />
     <orderEntry type="library" name="richtextfx-fat-0.4.4" level="project" />
+    <orderEntry type="library" name="Automaton-1.1.0-all-deps" level="project" />
   </component>
 </module>
 
