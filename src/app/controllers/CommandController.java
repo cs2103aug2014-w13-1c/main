@@ -42,7 +42,7 @@ public class CommandController {
     private TodoItemList taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
-    private ArrayList<Keyword> currentKeyword;
+    private CommandObject command;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -295,7 +295,7 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(String inputString) {
+    protected String processCommand(CommandObject command) {
         String commandWord = CommandParser.getCommandWord(inputString);
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
@@ -327,17 +327,16 @@ public class CommandController {
     public CommandController() {
         taskList = new TodoItemList();
         currentList = new ArrayList<TodoItem>();
-        currentKeyword = new ArrayList<Keyword>();
     }
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        currentKeyword = CommandParser.parseKeywords(inputString);
-        printString(processCommand(inputString));
+        command = new CommandObject(inputString);
+        printString(processCommand(command));
     }
     
     public ArrayList<Keyword> getKeywords() {
-        return currentKeyword;
+        return command.getKeywords();
     }
     
     public void updateView() {
