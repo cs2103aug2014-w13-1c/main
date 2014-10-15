@@ -17,6 +17,7 @@ public class Main extends Application {
     private Stage primaryStage;
 
     private CommandController commandController;
+    private TaskController taskController;
     private RootViewManager rootViewManager;
 
     @Override
@@ -25,7 +26,7 @@ public class Main extends Application {
 
         createPrimaryStage(stage);
         initViewComponent();
-        initControllerComponent();
+        initControllerComponents();
 
         rootViewManager.setAndFocusInputField("");
     }
@@ -42,9 +43,11 @@ public class Main extends Application {
         rootViewManager.initLayout(primaryStage);
     }
 
-    private void initControllerComponent() {
+    private void initControllerComponents() {
         commandController = new CommandController();
+        taskController = taskController.getTaskController();
         commandController.setMainApp(this);
+        taskController.setMainApp(this);
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
     }
@@ -77,6 +80,10 @@ public class Main extends Application {
 
     public CommandController getCommandController() {
         return commandController;
+    }
+
+    public TaskController getTaskController() {
+        return taskController;
     }
 
     public RootViewManager getRootViewManager() {

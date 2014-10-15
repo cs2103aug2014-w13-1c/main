@@ -1,19 +1,18 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.Keyword;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.StringTokenizer;
 
 /**
  * Class CommandController
- *
+ * 
+ * This class is the main controller.
  * Skeleton based on jolly's CE2.
  *
  * @author ryan
@@ -40,6 +39,7 @@ public class CommandController {
     private TodoItemList taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
+    private CommandObject command;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -60,76 +60,18 @@ public class CommandController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(String command){
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos == -1) {
+    protected String addNewLine(CommandObject command){
+        if (command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeChecked = command.substring(firstWordPos + 1);
-        timeParser(toBeChecked);
-        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, toBeChecked));
+        taskList.addTodoItem(new TodoItem(command.getCommandString(), command.getStartDate(), command.getEndDate()));
+        resetTaskList();
+        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, command.getInputString()));
     }
 
-    protected void timeParser(String toBeChecked) {
-        StringTokenizer st = new StringTokenizer(toBeChecked);
-        String toBeInserted = "";
-        Calendar startCalendar = Calendar.getInstance();
-        Calendar endCalendar = Calendar.getInstance();
-        boolean startFlag = false;
-        boolean endFlag = false;
-        while (st.hasMoreTokens()) {
-            String check = st.nextToken();
-            if (check.equalsIgnoreCase("start")) {
-                startCalendar.setTime(getDate(st));
-                startFlag = true;
-            } else if (check.equalsIgnoreCase("end")) {
-                endCalendar.setTime(getDate(st));
-                endFlag = true;
-            } else {
-                toBeInserted = toBeInserted.concat(check + " ");
-            }
-        }
-        addTodo(toBeInserted, startCalendar, endCalendar, startFlag, endFlag);
-    }
-    
-    protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
-        if (endFlag) {
-            if (startFlag) {
-                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
-            } else {
-                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime()));
-            }
-        } else {
-            taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
-        }
-        resetTaskList();
-    }
-    
-    protected Date getDate(StringTokenizer st) {
-        int date = Integer.valueOf(st.nextToken());
-        int month = getMonth(st.nextToken());
-        int year = Integer.valueOf(st.nextToken());
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month, date);
-        return cal.getTime();
-    }
-    
-    protected int getMonth(String monthInput) {
-        String[] monthName = {"january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"};
-        int month = -1;
-        for (int i = 0; i < 12; i++) {
-            if (monthName[i].equalsIgnoreCase(monthInput)) {
-                month = i;
-                break;
-            }
-        }
-        return month;
-    }
-    
     // Display command method(s)
-    protected String display(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos != -1) {
+    protected String display(CommandObject command) {
+        if (!command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         currentList = taskList.getTodoItems();
@@ -138,7 +80,7 @@ public class CommandController {
         return "displaying tasks\n";
     }
 
-    protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+    public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
@@ -149,23 +91,27 @@ public class CommandController {
     }
 
     // Clear command method(s)
-    protected String clear() {
+    protected String clear(CommandObject command) {
+        if (!command.getCommandString().isEmpty()) {
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
         taskList.clearTodoItems();
         resetTaskList();
         return MESSAGE_CLEAR_COMPLETE;
     }
     
     // Delete command method(s)
-    protected String deleteEntry(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos == -1) {
+    protected String deleteEntry(CommandObject command) {
+        if (command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        if(isInt(command.substring(firstWordPos + 1))) {
-            index = Integer.parseInt(command.substring(firstWordPos + 1)) - 1;
+        index = Integer.parseInt(command.getCommandString()) - 1;
+        if(isInt(command.getCommandString())) {
+            index = Integer.parseInt(command.getCommandString()) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        System.out.println(index);
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -185,85 +131,52 @@ public class CommandController {
     }
 
     // Search command method(s)
-    public ArrayList<TodoItem> instantSearch(String query) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : taskList.getTodoItems()) {
-            if (todo.getTaskName().toLowerCase().
-                    contains(query.toLowerCase())) {
-                results.add(todo);
-            }
-        }
-        return results;
-    }
 
-    protected String search(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos == -1) {
+    protected String search(CommandObject command) {
+        if (command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = instantSearch(command.substring(firstWordPos + 1));
+        ArrayList<TodoItem> results = main.getTaskController().instantSearch(command.getCommandString());
         if (results.isEmpty()) {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
             currentList = results;
-            main.getPrimaryStage().setTitle("Search results for: \"" + command.substring(firstWordPos + 1) + "\"");
+            main.getPrimaryStage().setTitle("Search results for: \"" + command.getCommandString() + "\"");
             updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
-//        String returnString = searchList(command.substring(firstWordPos + 1), todoList);
-//        if (returnString.equals("") || returnString.equals(" ")) {
-//            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
-//        } else {
-//            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
-//        }
     }
 
-//    protected String searchList(String query, ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            if (todo.getTaskName().toLowerCase().
-//                    contains(query.toLowerCase())) {
-//                returnString += index + ". " + todo.getTaskName() + "\n";
-//            }
-//            index++;
-//        }
-//        return returnString;
-//    }
-
     // Update command method(s)
-    protected String update(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos == -1) {
+    protected String update(CommandObject command) {
+        if (command.getCommandString().isEmpty()) {
+            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        int nextSpacePos = CommandObject.nextSpacePosition(command.getCommandString(), 0);
+        if (nextSpacePos == -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        String secondCommand = command.substring(firstWordPos + 1);
-        int secondWordPos = firstSpacePosition(secondCommand);
-        if (secondWordPos == -1) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
-        }
-        if(isInt(secondCommand.substring(0, secondWordPos))) {
-            index = Integer.parseInt(secondCommand.substring(0, secondWordPos)) - 1;
+        if(isInt(command.getCommandString().substring(0, nextSpacePos))) {
+            index = Integer.parseInt(command.getCommandString().substring(0, nextSpacePos)) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeUpdated = command.substring(firstWordPos + secondWordPos + 2);
-        taskList.updateTodoItem(index, toBeUpdated, new Date(), new Date());
+        String toBeUpdated = command.getCommandString().substring(nextSpacePos + 1);
+        taskList.updateTodoItem(index, toBeUpdated, command.getStartDate(), command.getEndDate());
         resetTaskList();
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
     // Help method
-    protected String help(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos != -1) {
+    protected String help(CommandObject command) {
+        if (!command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
@@ -271,9 +184,8 @@ public class CommandController {
     }
 
     // Settings method
-    protected String settings(String command) {
-        int firstWordPos = firstSpacePosition(command);
-        if (firstWordPos != -1) {
+    protected String settings(CommandObject command) {
+        if (!command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
@@ -305,18 +217,18 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(String command) {
-        String commandWord = getFirstWord(command);
+    protected String processCommand() {
+        String commandWord = command.getCommandWord();
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
             case ADD :
                 return addNewLine(command);
-            case DELETE :
-                return deleteEntry(command);
             case DISPLAY :
                 return display(command);
             case CLEAR :
-                return clear();
+                return clear(command);
+            case DELETE :
+                return deleteEntry(command);
             case EXIT :
                 showInfoDialog("Bye!");
                 System.exit(0);
@@ -333,16 +245,23 @@ public class CommandController {
         }
     }
 
+    // CommandController public methods
     public CommandController() {
         taskList = new TodoItemList();
         currentList = new ArrayList<TodoItem>();
     }
 
-    public void parseCommand(String command) {
-        printString("Parsing: \"" + command + "\"\n");
-        printString(processCommand(command));
+    public void parseCommand(String inputString) {
+        printString("Parsing: \"" + inputString + "\"\n");
+        command = new CommandObject(inputString);
+        printString(processCommand());
     }
 
+    public ArrayList<Keyword> parseKeywords(String inputString) {
+        CommandParser parser = new CommandParser();
+        return parser.getKeywords(inputString);
+    }
+        
     public void updateView() {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }

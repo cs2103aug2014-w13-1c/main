@@ -1,5 +1,8 @@
 package app.helpers;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Logger;
 
 /**
@@ -17,6 +20,12 @@ public class LoggingService {
 
     private LoggingService() {
        logger = Logger.getLogger(this.getClass().getName());
+        try {
+            Handler fh = new FileHandler("./watdo.log");
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static LoggingService getInstance() {
