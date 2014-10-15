@@ -62,7 +62,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setDates(TodoItem task) {
-        LoggingService.getLogger().log(Level.INFO, "Setting labels for task type: " + task.getTodoItemType().toLowerCase());
+//        LoggingService.getLogger().log(Level.INFO, "Setting labels for task type: " + task.getTodoItemType().toLowerCase());
         switch (task.getTodoItemType().toLowerCase()) {
             case "event":
                 topDateLabel.setText("START " + task.getStartDateString());
