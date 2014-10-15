@@ -62,7 +62,7 @@ public class InputFieldViewManager {
                 }
             } else {
                 LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
-                rootViewManager.getMainApp().getCommandController().updateView();
+//                rootViewManager.getMainApp().getCommandController().updateView();
                 rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
             }
         });
