@@ -18,6 +18,9 @@ public class SidebarViewManager {
     private Button searchButton;
 
     @FXML
+    private Button helpButton;
+
+    @FXML
     private Button settingsButton;
 
     private RootViewManager rootViewManager;
@@ -28,7 +31,7 @@ public class SidebarViewManager {
      */
     @FXML
     private void initialize() {
-        Button[] buttons = {displayButton, addButton, searchButton, settingsButton};
+        Button[] buttons = {displayButton, addButton, searchButton, helpButton, settingsButton};
         for (Button button : buttons) {
             button.setOnAction((e) -> clickedButton(button));
         }
@@ -45,6 +48,9 @@ public class SidebarViewManager {
                 break;
             case "searchButton":
                 rootViewManager.setAndFocusInputField("search ");
+                break;
+            case "helpButton":
+                rootViewManager.openHelp();
                 break;
             case "settingsButton":
                 rootViewManager.openSettings();
