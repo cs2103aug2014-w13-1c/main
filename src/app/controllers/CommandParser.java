@@ -104,9 +104,9 @@ public class CommandParser {
     	    currentKeywords.add(new Keyword(getEndDateStartIndex(inputString), getEndDateEndIndex(inputString)));
     	    currentKeywords.get(currentKeywords.size() - 1).setWord("end");
         }
-    	for (int i = 0; i < currentKeywords.size(); i++) {
-    	    System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-    	}
+//    	for (int i = 0; i < currentKeywords.size(); i++) {
+//    	    System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
+//    	}
     	return currentKeywords;
     }
 }

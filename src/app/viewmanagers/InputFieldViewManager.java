@@ -74,7 +74,7 @@ public class InputFieldViewManager {
                 try {
                     checkCommandLengthAndExecute(lastCommand);
                 } catch (InvalidInputException e) {
-                    LoggingService.getLogger().log(Level.WARNING, "Invalid Input Exception: empty command");
+                    LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
                 }
             }
 //            else if (event.getCode() == KeyCode.TAB) {
@@ -86,6 +86,7 @@ public class InputFieldViewManager {
 
     private void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
+
             throw new InvalidInputException("empty command");
         } else {
             assert command.length() > 0;
