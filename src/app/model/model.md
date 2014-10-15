@@ -11,6 +11,8 @@ Constructors
  * Everything can be null
  * Use priority as TodoItem.HIGH, TodoItem.MEDIUM and TodoItem.LOW
  * If no priority is specified, automatically assumed to be Medium
+* public TodoItem (String taskName, Date startDate, Date endDate)
+ * Calls above method with MEDIUM priority and false doneStatus
 * public TodoItemList() _creates empty list of todo items with file name watdo.txt_
 * public TodoItemList(String fileName) _loads todo items from provided file name_
 

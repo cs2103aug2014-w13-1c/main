@@ -95,12 +95,12 @@ public class CommandController {
     protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
         if (endFlag) {
             if (startFlag) {
-                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime(), null, null));
+                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
             } else {
-                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime(), null, null));
+                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime()));
             }
         } else {
-            taskList.addTodoItem(new TodoItem(toBeInserted, null, null, null, null));
+            taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
         }
         resetTaskList();
     }

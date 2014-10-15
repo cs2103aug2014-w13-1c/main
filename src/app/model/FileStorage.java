@@ -151,7 +151,7 @@ public class FileStorage {
             writer.write(fileArray.toString());
             writer.flush();
         } catch (Exception e) {
-            LoggingService.getLogger().log(Level.INFO, fileName + WRITE_FAILED);
+            LoggingService.getLogger().log(Level.SEVERE, fileName + WRITE_FAILED);
             throw new IOException(fileName + WRITE_FAILED);
         }
         
@@ -230,7 +230,7 @@ public class FileStorage {
             writer.write(settingsObject.toJSONString());
             writer.flush();
         } catch (Exception e) {
-            LoggingService.getLogger().log(Level.INFO, SETTINGS_FILE_NAME + WRITE_FAILED);
+            LoggingService.getLogger().log(Level.SEVERE, SETTINGS_FILE_NAME + WRITE_FAILED);
             throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
         }
         

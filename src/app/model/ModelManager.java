@@ -26,10 +26,10 @@ public class ModelManager {
         try {
             dataStorage.loadFile(todoList);
         } catch (ParseException e) {
-            LoggingService.getLogger().log(Level.INFO, "Failed to parse JSON data.");
+            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse JSON data.");
             throw new IOException("Failed to parse JSON data.");
         } catch (IOException e) {
-            LoggingService.getLogger().log(Level.INFO, "Failed to load file at " + dataStorage.getFullFileName() + ".");
+            LoggingService.getLogger().log(Level.SEVERE, "Failed to load file at " + dataStorage.getFullFileName() + ".");
             throw new IOException("Failed to load file at " + dataStorage.getFullFileName() + ".");
         }
         

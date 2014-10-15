@@ -74,6 +74,10 @@ public class TodoItem {
 	    this.itemID = UUID.randomUUID();
 	}
 	
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
+	    this(newTaskName, newStartDate, newEndDate, MEDIUM, false);
+	}
+	
 	// Attribute getters and setters 
     public String getTaskName() {
         return taskName;
