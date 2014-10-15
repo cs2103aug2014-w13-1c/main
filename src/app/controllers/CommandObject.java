@@ -13,7 +13,6 @@ public class CommandObject {
     private String commandString;
     private Date startDate;
     private Date endDate;
-    private ArrayList<Keyword> currentKeywords;
     
     private ArrayList<String> keywords = new ArrayList<String>();
     private ArrayList<String> startDateKeywords = new ArrayList<String>();
@@ -43,7 +42,6 @@ public class CommandObject {
         commandString = "";
         startDate = null;
         endDate = null;
-        currentKeywords = new ArrayList<Keyword>();
         setKeywords();
     }
     
@@ -71,7 +69,6 @@ public class CommandObject {
     public CommandObject(String inputString) {
         init();
         this.inputString = inputString;
-        setKeywords(inputString);
         setCommandWord(inputString);
         setCommandString(inputString);
         setDates(inputString);
@@ -156,22 +153,5 @@ public class CommandObject {
         return endDate;
     }
     
-    private void setKeywords(String inputString) {
-        String inputStringArray[] = inputString.trim().split(" ");
-        int startIndex = 0, endIndex = 0;
-        for (int i = 0; i < inputStringArray.length; i++) {
-            endIndex = startIndex + inputStringArray[i].length();
-            if (keywords.contains(inputStringArray[i])) {
-                currentKeywords.add(new Keyword(startIndex, endIndex));
-            }
-            startIndex = endIndex + 1;
-        }
-//        for (int i = 0; i < currentKeywords.size(); i++) {
-//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-//        }
-    }
     
-    public ArrayList<Keyword> getKeywords() {
-        return currentKeywords;
-    }
 }
