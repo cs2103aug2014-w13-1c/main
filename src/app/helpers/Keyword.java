@@ -1,7 +1,7 @@
 package app.helpers;
 
 /**
- * Created by jolly on 10/10/14. Edited by Ryan on 14/10/14.
+ * Created by jolly on 10/10/14.
  */
 public class Keyword {
 

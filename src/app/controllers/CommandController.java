@@ -80,7 +80,7 @@ public class CommandController {
         return "displaying tasks\n";
     }
 
-    protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+    public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
@@ -131,16 +131,6 @@ public class CommandController {
     }
 
     // Search command method(s)
-    public ArrayList<TodoItem> instantSearch(String query) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : taskList.getTodoItems()) {
-            if (todo.getTaskName().toLowerCase().
-                    contains(query.toLowerCase())) {
-                results.add(todo);
-            }
-        }
-        return results;
-    }
 
     protected String search(CommandObject command) {
         if (command.getCommandString().isEmpty()) {
@@ -150,7 +140,7 @@ public class CommandController {
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = instantSearch(command.getCommandString());
+        ArrayList<TodoItem> results = main.getTaskController().instantSearch(command.getCommandString());
         if (results.isEmpty()) {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
@@ -159,26 +149,7 @@ public class CommandController {
             updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
-//        String returnString = searchList(command.substring(firstWordPos + 1), todoList);
-//        if (returnString.equals("") || returnString.equals(" ")) {
-//            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
-//        } else {
-//            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
-//        }
     }
-
-//    protected String searchList(String query, ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            if (todo.getTaskName().toLowerCase().
-//                    contains(query.toLowerCase())) {
-//                returnString += index + ". " + todo.getTaskName() + "\n";
-//            }
-//            index++;
-//        }
-//        return returnString;
-//    }
 
     // Update command method(s)
     protected String update(CommandObject command) {
@@ -284,6 +255,11 @@ public class CommandController {
         printString("Parsing: \"" + inputString + "\"\n");
         command = new CommandObject(inputString);
         printString(processCommand());
+    }
+
+    public ArrayList<Keyword> parseKeywords(String command) {
+        CommandObject commandObject = new CommandObject(command);
+        return commandObject.getKeywords();
     }
     
     public ArrayList<Keyword> getKeywords() {

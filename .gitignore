@@ -10,10 +10,10 @@ out/
 out/**
 .idea/workspace.xml
 .idea/tasks.xml
-watdo.json
-testfile.json
 .DS_Store
 .classpath
-=======
+*.json
+.idea/artifacts
+src/META-INF/
 *.log
 *.log.lck
