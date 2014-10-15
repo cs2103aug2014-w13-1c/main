@@ -22,23 +22,15 @@ import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
 /**
- * Created by jolly on 24/9/14.
+ * InputFieldViewManager
  *
- * computeHighlighting code taken from:
- * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
- * will rewrite/refactor later
+ * Created by jolly on 24/9/14.
  */
 public class InputFieldViewManager {
 
     private String lastCommand;
     private StyleClassedTextArea inputField;
     private RootViewManager rootViewManager;
-
-    private final String[] KEYWORDS = new String[] {
-        "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings", "start", "end"
-    };
-
-    private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
 
     public InputFieldViewManager() {
         inputField = new StyleClassedTextArea();
@@ -48,7 +40,6 @@ public class InputFieldViewManager {
         inputField.setWrapText(true);
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            inputField.setStyleSpans(0, computeHighlighting(newValue));
             inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 assert inputField.getText().length() > 6;
@@ -86,7 +77,6 @@ public class InputFieldViewManager {
 
     private void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
-
             throw new InvalidInputException("empty command");
         } else {
             assert command.length() > 0;
@@ -97,24 +87,10 @@ public class InputFieldViewManager {
         }
     }
 
-    private StyleSpans<Collection<String>> computeHighlighting(String text) {
-        Matcher matcher = KEYWORD_PATTERN.matcher(text);
-        int lastKwEnd = 0;
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        while(matcher.find()) {
-            spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
-            spansBuilder.add(Collections.singleton("keyword"), matcher.end() - matcher.start());
-            lastKwEnd = matcher.end();
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
-        return spansBuilder.create();
-    }
-
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = CommandParser.parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
-
 
     public StyleClassedTextArea getInputField() {
         return inputField;
