@@ -257,15 +257,11 @@ public class CommandController {
         printString(processCommand());
     }
 
-    public ArrayList<Keyword> parseKeywords(String command) {
-        CommandObject commandObject = new CommandObject(command);
-        return commandObject.getKeywords();
+    public ArrayList<Keyword> parseKeywords(String inputString) {
+        CommandParser parser = new CommandParser();
+        return parser.getKeywords(inputString);
     }
-    
-    public ArrayList<Keyword> getKeywords() {
-        return command.getKeywords();
-    }
-    
+        
     public void updateView() {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
