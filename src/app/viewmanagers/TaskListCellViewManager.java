@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
-    private GridPane cellGrid;
+    private AnchorPane anchorPane;
 
     @FXML
     private Label taskNameLabel;
@@ -41,7 +41,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
-        setGraphic(cellGrid);
+        setGraphic(anchorPane);
         if (empty) {
             clearContent();
         } else {
@@ -108,7 +108,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setRandomBackgroundColor() {
-        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
+        anchorPane.setStyle("-fx-background-color: " + getRandomColor() + ";");
     }
 
     private void initColors() {

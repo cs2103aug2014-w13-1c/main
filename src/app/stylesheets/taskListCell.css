@@ -1,15 +1,6 @@
 .cell {
-    /*-fx-border-style: solid;*/
+    -fx-border-style: solid;
     -fx-border-color: white;
-    -fx-border-width: 5 10 5 10;
-}
-
-.task-name-label {
-    -fx-font: 22px Helvetica;
-    -fx-font-weight: bold;
-}
-
-.date-label {
-    -fx-font: 16px Helvetica;
+    -fx-border-width: 5 5 5 5;
 }
 
