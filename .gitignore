@@ -16,3 +16,4 @@ watdo.json
 .idea/artifacts
 src/META-INF/
 *.log
+*.log.lck
