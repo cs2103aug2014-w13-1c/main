@@ -52,7 +52,7 @@ public class InputFieldViewManager {
                     rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
                 }
             } else {
-                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
+//                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
 //                rootViewManager.getMainApp().getCommandController().updateView();
                 rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
             }
