@@ -1,0 +1,60 @@
+package app.viewmanagers;
+
+import app.helpers.LoggingService;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+
+import java.util.logging.Level;
+
+public class SidebarViewManager {
+
+    @FXML
+    private Button displayButton;
+
+    @FXML
+    private Button addButton;
+
+    @FXML
+    private Button searchButton;
+
+    @FXML
+    private Button settingsButton;
+
+    private RootViewManager rootViewManager;
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    private void initialize() {
+        Button[] buttons = {displayButton, addButton, searchButton, settingsButton};
+        for (Button button : buttons) {
+            button.setOnAction((e) -> clickedButton(button));
+        }
+    }
+
+    private void clickedButton(Button button) {
+        LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
+        switch (button.getId()) {
+            case "displayButton":
+                rootViewManager.setAndFocusInputField("display");
+                break;
+            case "addButton":
+                rootViewManager.setAndFocusInputField("add ");
+                break;
+            case "searchButton":
+                rootViewManager.setAndFocusInputField("search ");
+                break;
+            case "settingsButton":
+                rootViewManager.openSettings();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+}

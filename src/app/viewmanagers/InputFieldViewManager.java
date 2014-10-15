@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewmanagers;
 
 import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
@@ -26,12 +26,12 @@ import org.fxmisc.richtext.StyleSpansBuilder;
  * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
  * will rewrite/refactor later
  */
-public class InputFieldController {
+public class InputFieldViewManager {
 
     private String lastCommand;
     private StyleClassedTextArea inputField;
 
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     private final String[] KEYWORDS = new String[] {
         "add", "delete", "display", "clear", "exit", "search", "update", "help", "settings", "start", "end"
@@ -39,7 +39,7 @@ public class InputFieldController {
 
     private final Pattern KEYWORD_PATTERN = Pattern.compile("\\b(" + String.join("|", KEYWORDS) + ")\\b");
 
-    public InputFieldController() {
+    public InputFieldViewManager() {
         inputField = new StyleClassedTextArea();
         inputField.setPrefHeight(100);
         inputField.getStylesheets().add("app/stylesheets/inputField.css");
@@ -54,15 +54,15 @@ public class InputFieldController {
                 String query = inputField.getText().substring(7);
                 LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
                 ArrayList<TodoItem> results =
-                        rootViewController.getMainApp().getCommandController().instantSearch(query);
-                rootViewController.getMainApp().getCommandController().updateView(results);
+                        rootViewManager.getMainApp().getCommandController().instantSearch(query);
+                rootViewManager.getMainApp().getCommandController().updateView(results);
                 if (results.isEmpty()) {
-                    rootViewController.getTaskListViewController().setEmptySearchPlaceholder();
+                    rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
                 }
             } else {
                 LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
-                rootViewController.getMainApp().getCommandController().updateView();
-                rootViewController.getTaskListViewController().setUserGuidePlaceholder();
+                rootViewManager.getMainApp().getCommandController().updateView();
+                rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
             }
         });
 
@@ -90,8 +90,8 @@ public class InputFieldController {
             assert command.length() > 0;
             inputField.clear();
             LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
-            rootViewController.getMainApp().getCommandController().parseCommand(command);
-            rootViewController.getMainApp().getCommandController().updateView();
+            rootViewManager.getMainApp().getCommandController().parseCommand(command);
+            rootViewManager.getMainApp().getCommandController().updateView();
         }
     }
 
@@ -145,7 +145,7 @@ public class InputFieldController {
         return inputField;
     }
 
-    public void setRootViewController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 }
