@@ -111,7 +111,6 @@ public class CommandController {
             index = Integer.parseInt(command.getCommandString()) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
-        System.out.println(index);
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
