@@ -11,16 +11,9 @@ out/**
 .idea/workspace.xml
 .idea/tasks.xml
 watdo.json
+testfile.json
 .DS_Store
 .classpath
-<<<<<<< HEAD
-*.json
-=======
-.idea/artifacts
-src/META-INF/
-<<<<<<< HEAD
->>>>>>> staging
 =======
 *.log
 *.log.lck
->>>>>>> staging
