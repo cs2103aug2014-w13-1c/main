@@ -43,32 +43,26 @@ public class TodoItem {
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
 	    if (newTaskName != null) {
 	        this.taskName = newTaskName; 
-	    } else {
-	        assert this.taskName == null;
 	    }
 	    
 	    if (newStartDate != null) {
 	        this.startDate = newStartDate;
-	    } else {
-	        assert this.startDate == null;
 	    }
 	    
 	    if (newEndDate != null) {
 	        this.endDate = newEndDate;
-	    } else {
-	        assert this.endDate == null;
 	    }
 	    
-	    if (priority != null) {
+	    if (newPriority != null && newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
 	        this.priority = newPriority;
 	    } else {
-	        assert this.priority == null;
+	        this.priority = MEDIUM;
 	    }
 	    
 	    if (newDoneStatus != null) {
 	        this.doneStatus = newDoneStatus; 
 	    } else {
-	        assert this.doneStatus == null;
+	        this.doneStatus = false;
 	    }
 	    
 	    this.itemID = UUID.randomUUID();

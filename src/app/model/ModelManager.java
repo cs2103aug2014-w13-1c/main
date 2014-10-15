@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import org.json.JSONException;
 import org.json.simple.parser.ParseException;
 
 import app.helpers.LoggingService;
@@ -17,7 +18,7 @@ public class ModelManager {
     private FileStorage dataStorage;
     private Boolean displayStatus;
     
-    public ModelManager() throws ParseException, IOException {
+    public ModelManager() throws IOException {
         this.dataStorage = new FileStorage();
         this.todoList = new TodoItemList();
         
@@ -25,7 +26,7 @@ public class ModelManager {
         
         try {
             dataStorage.loadFile(todoList);
-        } catch (ParseException e) {
+        } catch (JSONException e) {
             LoggingService.getLogger().log(Level.SEVERE, "Failed to parse JSON data.");
             throw new IOException("Failed to parse JSON data.");
         } catch (IOException e) {
@@ -97,14 +98,29 @@ public class ModelManager {
 
         LoggingService.getLogger().log(Level.INFO, "Deleting task " + deletedItem.getTaskName());
         
-        dataStorage.updateFile(todoList.getTodoItems());
+        try {
+            dataStorage.updateFile(todoList.getTodoItems());
+        } catch (IOException e) {
+            throw new IOException("Failed to write to file.");
+        }
         
         return deletedItem;
     }
     
+    public void clearTasks() throws IOException {
+        todoList.clearTodoItems();
+
+        LoggingService.getLogger().log(Level.INFO, "Clearing all tasks.");
+        
+        try {
+            dataStorage.updateFile(todoList.getTodoItems());
+        } catch (IOException e) {
+            throw new IOException("Failed to write to file.");
+        }
+    }
+    
     public void changeFileDirectory(String fileDirectory) throws IOException {
         dataStorage.changeDirectory(fileDirectory, todoList);
-        assert dataStorage.getFileDirectory().equals(fileDirectory);
     }
     
     public Boolean getDoneDisplay() {

@@ -12,16 +12,14 @@ import java.util.Date;
 import java.util.ListIterator;
 import java.util.logging.Level;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONException;
 
 import app.helpers.LoggingService;
 
 public class FileStorage {
-    
-    private static FileStorage currentInstance;
     
     private String fileName;
     private String fileDirectory;
@@ -43,7 +41,7 @@ public class FileStorage {
         this.fileName = DEFAULT_FILE_NAME;
     }
     
-    public void loadFile(TodoItemList todoItems) throws IOException, ParseException {
+    public void loadFile(TodoItemList todoItems) throws IOException, JSONException {
         LoggingService.getLogger().log(Level.INFO, "Loading file.");
         FileReader fileToRead;
         try {
@@ -52,6 +50,7 @@ public class FileStorage {
             LoggingService.getLogger().log(Level.INFO, "No file found at target destination.");
             return;
         }
+        
         BufferedReader reader = new BufferedReader(fileToRead);
         
         String fileString = "";
@@ -60,40 +59,39 @@ public class FileStorage {
             fileString += line;
         }
         
-        JSONParser parser = new JSONParser();
+        JSONArray fileArray = new JSONArray(new JSONTokener(fileString));
         
-        JSONArray fileArray = (JSONArray) parser.parse(fileString);
-        
-        for (int i = 0; i < fileArray.size(); i++) {
-            JSONObject currentJSONObject = (JSONObject) fileArray.get(i);
+        for (int i = 0; i < fileArray.length(); i++) {
+            JSONObject currentJSONObject = fileArray.getJSONObject(i);
+            
             String currentTaskName = null;
             Date currentStartDate = null;
             Date currentEndDate = null;
             String currentPriority = null;
-            Boolean currentDoneStatus = null;
+            Boolean currentDoneStatus = false;
             
-            Object JSONTaskName = currentJSONObject.get("taskName");
-            Object JSONStartDate = currentJSONObject.get("startDate");
-            Object JSONEndDate = currentJSONObject.get("endDate");
-            Object JSONPriority = currentJSONObject.get("priority"); 
-            Object JSONDoneStatus = currentJSONObject.get("doneStatus");
+            String JSONTaskName = currentJSONObject.optString("taskName");
+            Long JSONStartDate = currentJSONObject.optLong("startDate");
+            Long JSONEndDate = currentJSONObject.optLong("endDate");
+            String JSONPriority = currentJSONObject.optString("priority"); 
+            Boolean JSONDoneStatus = currentJSONObject.optBoolean("doneStatus");
             
-            if (JSONTaskName != null) {
-                currentTaskName = (String) JSONTaskName;
+            if (JSONTaskName.length() > 0) {
+                currentTaskName = JSONTaskName;
             }
-            if (JSONStartDate != null) {
-                currentStartDate = new Date((Long) JSONStartDate);
+            if (JSONStartDate > 0) {
+                currentStartDate = new Date(JSONStartDate);
             }
-            if (JSONEndDate != null) {
-                currentEndDate = new Date((Long) JSONEndDate);
+            if (JSONEndDate > 0) {
+                currentEndDate = new Date(JSONEndDate);
             }
-            if (JSONPriority != null) {
-                currentPriority = (String) JSONPriority;
+            if (JSONPriority.length() > 0) {
+                currentPriority = JSONPriority;
             }
-            if (JSONDoneStatus != null) {
-                currentDoneStatus = (Boolean) JSONDoneStatus;
+            if (JSONDoneStatus) {
+                currentDoneStatus = JSONDoneStatus;
             }
-            
+                
             todoItems.addTodoItem(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
         }
         
@@ -118,38 +116,42 @@ public class FileStorage {
         
         ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
         
-        while (todoListIterator.hasNext()) {
-            TodoItem currentTodoItem = todoListIterator.next();
-            JSONObject fileObject = new JSONObject();
-            
-            String currentTaskName = currentTodoItem.getTaskName();
-            Date currentStartDate = currentTodoItem.getStartDate();
-            Date currentEndDate = currentTodoItem.getEndDate();
-            String currentPriority = currentTodoItem.getPriority();
-            Boolean currentDoneStatus = currentTodoItem.isDone();
-            if (currentTaskName != null) {
-                fileObject.put("taskName", currentTaskName);
+        try {
+            while (todoListIterator.hasNext()) {
+                TodoItem currentTodoItem = todoListIterator.next();
+                JSONObject fileObject = new JSONObject();
+                
+                String currentTaskName = currentTodoItem.getTaskName();
+                Date currentStartDate = currentTodoItem.getStartDate();
+                Date currentEndDate = currentTodoItem.getEndDate();
+                String currentPriority = currentTodoItem.getPriority();
+                Boolean currentDoneStatus = currentTodoItem.isDone();
+                if (currentTaskName != null) {
+                    fileObject.put("taskName", currentTaskName);
+                }
+                if (currentStartDate != null) {
+                    fileObject.put("startDate", currentStartDate.getTime());
+                }
+                if (currentEndDate != null) {
+                    fileObject.put("endDate", currentEndDate.getTime());
+                }
+                if (currentPriority != null) {
+                    fileObject.put("priority", currentPriority);
+                }
+                if (currentDoneStatus != null) {
+                    fileObject.put("doneStatus", currentDoneStatus);
+                }
+                fileArray.put(fileObject);
             }
-            if (currentStartDate != null) {
-                fileObject.put("startDate", currentStartDate.getTime());
-            }
-            if (currentEndDate != null) {
-                fileObject.put("endDate", currentEndDate.getTime());
-            }
-            if (currentPriority != null) {
-                fileObject.put("priority", currentPriority);
-            }
-            if (currentDoneStatus != null) {
-                fileObject.put("doneStatus", currentDoneStatus);
-            }
-            fileArray.add(fileObject);
+        } catch (JSONException e) {
+            throw new IOException("Failed to write JSON data.");
         }
-        
         LoggingService.getLogger().log(Level.INFO, "Updating file.");
         
         try {
-            writer.write(fileArray.toString());
+            writer.write(fileArray.toString(2));
             writer.flush();
+            writer.close();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.SEVERE, fileName + WRITE_FAILED);
             throw new IOException(fileName + WRITE_FAILED);
@@ -165,17 +167,19 @@ public class FileStorage {
     }
     
     public void changeDirectory(String fileDirectory, TodoItemList todoItems) throws IOException {
+        String temp = fileDirectory;
         this.fileDirectory = fileDirectory;
         try {
             loadFile(todoItems);
             this.loadStatus = LOAD_SUCCESS;
         } catch (Exception e) {
+            this.fileDirectory = temp;
             this.loadStatus = LOAD_FAILED;
             throw new IOException(fileName + LOAD_FAILED);
         }
     }
     
-    public void loadSettings() throws IOException, ParseException {
+    public void loadSettings() throws IOException, JSONException {
         LoggingService.getLogger().log(Level.INFO, "Loading settings file.");
         FileReader fileToRead;
         try {
@@ -192,24 +196,18 @@ public class FileStorage {
             fileString += line;
         }
         
-        JSONParser parser = new JSONParser();
-        JSONObject settingsObject = (JSONObject) parser.parse(fileString);
+        JSONObject settingsObject = new JSONObject(fileString);
         
-        Object JSONfileDirectory = settingsObject.get("fileDirectory");
-        Object JSONdisplayStatus = settingsObject.get("displayStatus");
+        String JSONfileDirectory = settingsObject.optString("fileDirectory");
+        Boolean JSONdisplayStatus = settingsObject.optBoolean("displayStatus");
         
-        if (JSONfileDirectory != null) {
-            fileDirectory = (String) JSONfileDirectory;
-        }
-        
-        if (JSONdisplayStatus != null) {
-            Boolean displayStatus = (Boolean) JSONdisplayStatus;
-        }
+        fileDirectory = JSONfileDirectory;
+        Boolean displayStatus = JSONdisplayStatus;
         
         reader.close();
     }
     
-    public void updateSettings(Boolean newDisplayStatus) throws IOException {
+    public void updateSettings(Boolean newDisplayStatus) throws IOException, JSONException {
         FileWriter fileToWrite;
         
         try {
@@ -227,7 +225,7 @@ public class FileStorage {
         LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
         
         try {
-            writer.write(settingsObject.toJSONString());
+            writer.write(settingsObject.toString(2));
             writer.flush();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.SEVERE, SETTINGS_FILE_NAME + WRITE_FAILED);
