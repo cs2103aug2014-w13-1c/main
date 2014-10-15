@@ -175,16 +175,6 @@ public class CommandController {
     }
 
     // Search command method(s)
-    public ArrayList<TodoItem> instantSearch(String query) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : taskList.getTodoItems()) {
-            if (todo.getTaskName().toLowerCase().
-                    contains(query.toLowerCase())) {
-                results.add(todo);
-            }
-        }
-        return results;
-    }
 
     protected String search(String command) {
         int firstWordPos = firstSpacePosition(command);
@@ -195,7 +185,7 @@ public class CommandController {
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = instantSearch(command.substring(firstWordPos + 1));
+        ArrayList<TodoItem> results = main.getTaskController().instantSearch(command.substring(firstWordPos + 1));
         if (results.isEmpty()) {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
@@ -204,26 +194,7 @@ public class CommandController {
             updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
-//        String returnString = searchList(command.substring(firstWordPos + 1), todoList);
-//        if (returnString.equals("") || returnString.equals(" ")) {
-//            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
-//        } else {
-//            return showInfoDialog(String.format(MESSAGE_SEARCH_COMPLETE, returnString));
-//        }
     }
-
-//    protected String searchList(String query, ArrayList<TodoItem> todoList) {
-//        String returnString = "";
-//        int index = 1;
-//        for (TodoItem todo : todoList) {
-//            if (todo.getTaskName().toLowerCase().
-//                    contains(query.toLowerCase())) {
-//                returnString += index + ". " + todo.getTaskName() + "\n";
-//            }
-//            index++;
-//        }
-//        return returnString;
-//    }
 
     // Update command method(s)
     protected String update(String command) {
