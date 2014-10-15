@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewmanagers;
 
 import app.helpers.LoggingService;
 import app.helpers.UserGuide;
@@ -13,7 +13,7 @@ import javafx.scene.control.ListView;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class TaskListViewController {
+public class TaskListViewManager {
 
     @FXML
     public ListView<TodoItem> taskListView;
@@ -21,7 +21,7 @@ public class TaskListViewController {
     @FXML
     private Label placeholder;
 
-    private RootViewController rootViewController;
+    private RootViewManager rootViewManager;
 
     @FXML
     private Label emptySearch;
@@ -34,13 +34,13 @@ public class TaskListViewController {
         taskListView.setCellFactory(taskListView -> {
             try {
                 FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(rootViewController.getMainApp().getResourceURL("views/TaskListCell.fxml"));
+                loader.setLocation(rootViewManager.getMainApp().getResourceURL("views/TaskListCellView.fxml"));
                 loader.load();
-                TaskListCellController controller = loader.getController();
-                controller.setRootViewController(rootViewController);
+                TaskListCellViewManager controller = loader.getController();
+                controller.setRootViewManager(rootViewManager);
                 return controller;
             } catch (IOException e) {
-                e.printStackTrace();
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
                 return null;
             }
         });
@@ -77,8 +77,8 @@ public class TaskListViewController {
     }
 
 
-    public void setRootViewController(RootViewController rootViewController) {
-        this.rootViewController = rootViewController;
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 
 }

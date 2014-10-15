@@ -208,7 +208,7 @@ public class CommandController {
         if (!command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        main.getRootViewController().openHelp();
+        main.getRootViewManager().openHelp();
         return "showing help\n";
     }
 
@@ -217,7 +217,7 @@ public class CommandController {
         if (!command.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        main.getRootViewController().openSettings();
+        main.getRootViewManager().openSettings();
         return "showing settings\n";
     }
 
@@ -291,11 +291,11 @@ public class CommandController {
     }
     
     public void updateView() {
-        main.getRootViewController().getTaskListViewController().updateView(convertList(currentList));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
-        main.getRootViewController().getTaskListViewController().updateView(convertList(todoItems));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
     }
 
     public ArrayList<TodoItem> getTaskList() {

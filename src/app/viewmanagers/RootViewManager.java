@@ -1,4 +1,4 @@
-package app.controllers;
+package app.viewmanagers;
 
 import app.Main;
 import app.helpers.LoggingService;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
 /**
  * Created by jin on 8/10/14.
  */
-public class RootViewController {
+public class RootViewManager {
 
     private Main mainApp;
     private StackPane rootLayout;
@@ -28,24 +28,30 @@ public class RootViewController {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
-    private TaskListViewController taskListViewController;
-    private SettingsController settingsController;
-    private HelpController helpController;
 
-    public void initLayout(Stage primaryStage) throws IOException {
+    private TaskListViewManager taskListViewManager;
+    private SettingsViewManager settingsViewManager;
+    private HelpViewManager helpViewManager;
+
+    public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
 
-        this.initRootLayout(primaryStage);
-        this.initSettingsView();
-        this.initHelpView();
-        this.showSidebar();
-        this.showInputField();
-        this.showTaskListView();
+        try {
+            this.initRootLayout(primaryStage);
+            this.initSettingsView();
+            this.initHelpView();
+            this.showSidebar();
+            this.showInputField();
+            this.showTaskListView();
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+        }
+
     }
 
     private void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(mainApp.getResourceURL("views/RootLayout.fxml"));
+        loader.setLocation(mainApp.getResourceURL("views/RootView.fxml"));
         rootLayout = loader.load();
         borderPane = (BorderPane) rootLayout.getChildren().get(0);
 
@@ -59,8 +65,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
         settingsView = loader.load();
 
-        settingsController = loader.getController();
-        settingsController.setRootViewController(this);
+        settingsViewManager = loader.getController();
+        settingsViewManager.setRootViewManager(this);
 
         rootLayout.getChildren().add(settingsView);
         settingsView.toBack();
@@ -71,8 +77,8 @@ public class RootViewController {
         loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
         helpView = loader.load();
 
-        helpController = loader.getController();
-        helpController.setRootViewController(this);
+        helpViewManager = loader.getController();
+        helpViewManager.setRootViewManager(this);
 
         rootLayout.getChildren().add(helpView);
         helpView.toBack();
@@ -85,29 +91,29 @@ public class RootViewController {
         taskListView.getStylesheets().add("app/stylesheets/taskList.css");
         taskListView.getStyleClass().add("task-list");
 
-        taskListViewController = loader.getController();
-        taskListViewController.setRootViewController(this);
+        taskListViewManager = loader.getController();
+        taskListViewManager.setRootViewManager(this);
 
         borderPane.setCenter(taskListView);
     }
 
     private void showInputField() {
-        InputFieldController inputFieldController = new InputFieldController();
-        inputFieldController.setRootViewController(this);
-        inputField = inputFieldController.getInputField();
+        InputFieldViewManager inputFieldViewManager = new InputFieldViewManager();
+        inputFieldViewManager.setRootViewManager(this);
+        inputField = inputFieldViewManager.getInputField();
 
         borderPane.setBottom(new StackPane(inputField));
     }
 
     private void showSidebar() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(mainApp.getResourceURL("views/Sidebar.fxml"));
+        loader.setLocation(mainApp.getResourceURL("views/SidebarView.fxml"));
         VBox sidebar = loader.load();
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarController controller = loader.getController();
-        controller.setRootViewController(this);
+        SidebarViewManager controller = loader.getController();
+        controller.setRootViewManager(this);
 
         borderPane.setLeft(sidebar);
     }
@@ -120,23 +126,23 @@ public class RootViewController {
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
-        settingsController.cancelFocusOnButton();
+        settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
     public void openSettings() {
         settingsView.toFront();
-        settingsController.focusOnButton();
+        settingsViewManager.focusOnButton();
     }
 
     public void openHelp() {
         helpView.toFront();
-        helpController.focusOnButton();
+        helpViewManager.focusOnButton();
     }
 
     public void closeHelp() {
         helpView.toBack();
-        helpController.cancelFocusOnButton();
+        helpViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
@@ -152,8 +158,8 @@ public class RootViewController {
         return inputField;
     }
 
-    public TaskListViewController getTaskListViewController() {
-        return taskListViewController;
+    public TaskListViewManager getTaskListViewManager() {
+        return taskListViewManager;
     }
 
     public void setAndFocusInputField(String text) {

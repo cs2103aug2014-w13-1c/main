@@ -18,4 +18,9 @@ watdo.json
 =======
 .idea/artifacts
 src/META-INF/
+<<<<<<< HEAD
+>>>>>>> staging
+=======
+*.log
+*.log.lck
 >>>>>>> staging
