@@ -1,13 +1,15 @@
 package app.viewmanagers;
 
+import app.helpers.LoggingService;
 import app.model.TodoItem;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Created by jin on 28/9/14.
@@ -15,7 +17,7 @@ import java.util.*;
 public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
-    private GridPane cellGrid;
+    private AnchorPane anchorPane;
 
     @FXML
     private Label taskNameLabel;
@@ -39,7 +41,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
-        setGraphic(cellGrid);
+        setGraphic(anchorPane);
         if (empty) {
             clearContent();
         } else {
@@ -60,18 +62,28 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setDates(TodoItem task) {
-        if (task.getTodoItemType().equalsIgnoreCase("Event")) {
-            topDateLabel.setText("START " + task.getStartDateString());
-            bottomDateLabel.setText("END " + task.getEndDateString());
-            topDateLabel.setVisible(true);
-            bottomDateLabel.setVisible(true);
-        } else if (task.getTodoItemType().equalsIgnoreCase("Deadline")) {
-            topDateLabel.setText("DUE " + task.getEndDateString());
-            topDateLabel.setVisible(true);
-            bottomDateLabel.setVisible(false);
-        } else {
-            topDateLabel.setVisible(false);
-            bottomDateLabel.setVisible(false);
+//        LoggingService.getLogger().log(Level.INFO, "Setting labels for task type: " + task.getTodoItemType().toLowerCase());
+        switch (task.getTodoItemType().toLowerCase()) {
+            case "event":
+                topDateLabel.setText("START " + task.getStartDateString());
+                bottomDateLabel.setText("END " + task.getEndDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(true);
+                break;
+            case "deadline":
+                topDateLabel.setText("DUE " + task.getEndDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(false);
+                break;
+            case "endless":
+                topDateLabel.setText("START " + task.getStartDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(false);
+                break;
+            default:
+                topDateLabel.setVisible(false);
+                bottomDateLabel.setVisible(false);
+                break;
         }
     }
 
@@ -96,7 +108,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setRandomBackgroundColor() {
-        cellGrid.setStyle("-fx-background-color: " + getRandomColor() + ";");
+        anchorPane.setStyle("-fx-background-color: " + getRandomColor() + ";");
     }
 
     private void initColors() {
