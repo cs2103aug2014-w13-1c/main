@@ -26,14 +26,17 @@ ModelManager
  * etc.
  * parameters should always be 5 elements long
 * public TodoItem deleteTask(UUID itemID) throws IOException
+
 ### File storage
 * public void changeFileDirectory(String fileDirectory) throws IOException
+
 ### Sorting
 * public void setSortingStyle(int newSortingStyle)
  * 1 = task name
  * 2 = start date
  * 3 = end date
  * 4 = priority
+ 
 ### Getters
 * public ArrayList<TodoItem> getTodoItemList() {
 * public ListIterator<TodoItem> getTodoItemIterator() {
@@ -77,7 +80,6 @@ TodoItemList (MAJOR OVERHAUL INCOMING)
  * public void clearTodoItems()
 
 ### GET methods: TodoItemList
------------
 * public ArrayList<TodoItem> getTodoItems() 
 * public ListIterator<TodoItem> getTodoItemIterator()
 * public String getFileName()

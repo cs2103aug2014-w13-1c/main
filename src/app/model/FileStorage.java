@@ -148,7 +148,7 @@ public class FileStorage {
         LoggingService.getLogger().log(Level.INFO, "Updating file.");
         
         try {
-            writer.write(fileArray.toJSONString());
+            writer.write(fileArray.toString());
             writer.flush();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.INFO, fileName + WRITE_FAILED);
@@ -164,9 +164,6 @@ public class FileStorage {
         }
     }
     
-    /**
-     * When file is changed, load not save. Pretty much that.
-     */
     public void changeDirectory(String fileDirectory, TodoItemList todoItems) throws IOException {
         this.fileDirectory = fileDirectory;
         try {
@@ -175,6 +172,74 @@ public class FileStorage {
         } catch (Exception e) {
             this.loadStatus = LOAD_FAILED;
             throw new IOException(fileName + LOAD_FAILED);
+        }
+    }
+    
+    public void loadSettings() throws IOException, ParseException {
+        LoggingService.getLogger().log(Level.INFO, "Loading settings file.");
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(SETTINGS_FILE_NAME);
+        } catch (FileNotFoundException e) { // if no file found at stated path, return
+            LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
+            return;
+        }
+        BufferedReader reader = new BufferedReader(fileToRead);
+        
+        String fileString = "";
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            fileString += line;
+        }
+        
+        JSONParser parser = new JSONParser();
+        JSONObject settingsObject = (JSONObject) parser.parse(fileString);
+        
+        Object JSONfileDirectory = settingsObject.get("fileDirectory");
+        Object JSONdisplayStatus = settingsObject.get("displayStatus");
+        
+        if (JSONfileDirectory != null) {
+            fileDirectory = (String) JSONfileDirectory;
+        }
+        
+        if (JSONdisplayStatus != null) {
+            Boolean displayStatus = (Boolean) JSONdisplayStatus;
+        }
+        
+        reader.close();
+    }
+    
+    public void updateSettings(Boolean newDisplayStatus) throws IOException {
+        FileWriter fileToWrite;
+        
+        try {
+            fileToWrite = new FileWriter(SETTINGS_FILE_NAME);
+        } catch (Exception e) {
+            throw new IOException(SETTINGS_FILE_NAME + LOAD_FAILED);
+        }
+
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        
+        JSONObject settingsObject = new JSONObject();
+        settingsObject.put("fileDirectory", fileDirectory);
+        settingsObject.put("displayStatus", newDisplayStatus);
+        
+        LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
+        
+        try {
+            writer.write(settingsObject.toJSONString());
+            writer.flush();
+        } catch (Exception e) {
+            LoggingService.getLogger().log(Level.INFO, SETTINGS_FILE_NAME + WRITE_FAILED);
+            throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
+        }
+        
+        LoggingService.getLogger().log(Level.INFO, "Successfully updated file.");
+        
+        try {
+            fileToWrite.close();
+        } catch (Exception e) {
+            throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
         }
     }
     

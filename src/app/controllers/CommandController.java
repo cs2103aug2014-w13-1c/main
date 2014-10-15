@@ -95,12 +95,12 @@ public class CommandController {
     protected void addTodo(String toBeInserted, Calendar startCalendar, Calendar endCalendar, boolean startFlag, boolean endFlag) {
         if (endFlag) {
             if (startFlag) {
-                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime()));
+                taskList.addTodoItem(new TodoItem(toBeInserted, startCalendar.getTime(), endCalendar.getTime(), null, null));
             } else {
-                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime()));
+                taskList.addTodoItem(new TodoItem(toBeInserted, null, endCalendar.getTime(), null, null));
             }
         } else {
-            taskList.addTodoItem(new TodoItem(toBeInserted, null, null));
+            taskList.addTodoItem(new TodoItem(toBeInserted, null, null, null, null));
         }
         resetTaskList();
     }
@@ -142,7 +142,7 @@ public class CommandController {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate()));
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), null, null));
             index++;
         }
         return taskData;

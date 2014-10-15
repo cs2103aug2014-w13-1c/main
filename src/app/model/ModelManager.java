@@ -15,10 +15,13 @@ public class ModelManager {
     
     private TodoItemList todoList;
     private FileStorage dataStorage;
+    private Boolean displayStatus;
     
     public ModelManager() throws ParseException, IOException {
         this.dataStorage = new FileStorage();
         this.todoList = new TodoItemList();
+        
+        // load from settings.json to set the filename and file directory
         
         try {
             dataStorage.loadFile(todoList);
@@ -102,6 +105,16 @@ public class ModelManager {
     public void changeFileDirectory(String fileDirectory) throws IOException {
         dataStorage.changeDirectory(fileDirectory, todoList);
         assert dataStorage.getFileDirectory().equals(fileDirectory);
+    }
+    
+    public Boolean getDoneDisplay() {
+        return displayStatus;
+    }
+    
+    public void setDoneDisplay(Boolean newDisplayStatus) {
+        this.displayStatus = newDisplayStatus;
+        
+        // save to settings.json here
     }
     
     public void setSortingStyle(int newSortingStyle) {
