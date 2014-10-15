@@ -46,7 +46,7 @@ public class InputFieldViewManager {
                 String query = inputField.getText().substring(7);
                 LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
                 ArrayList<TodoItem> results =
-                        rootViewManager.getMainApp().getCommandController().instantSearch(query);
+                        rootViewManager.getMainApp().getTaskController().instantSearch(query);
                 rootViewManager.getMainApp().getCommandController().updateView(results);
                 if (results.isEmpty()) {
                     rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();

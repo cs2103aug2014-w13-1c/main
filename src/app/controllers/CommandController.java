@@ -124,7 +124,7 @@ public class CommandController {
         return "displaying tasks\n";
     }
 
-    protected ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+    public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
