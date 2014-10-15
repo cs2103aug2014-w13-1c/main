@@ -88,7 +88,7 @@ public class InputFieldViewManager {
     }
 
     private StyleSpans<Collection<String>> keywordDetection(String command) {
-        ArrayList<Keyword> keywords = CommandParser.parseKeywords(command);
+        ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
 

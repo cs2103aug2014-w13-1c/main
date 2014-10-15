@@ -256,6 +256,11 @@ public class CommandController {
         command = new CommandObject(inputString);
         printString(processCommand());
     }
+
+    public ArrayList<Keyword> parseKeywords(String command) {
+        CommandObject commandObject = new CommandObject(command);
+        return commandObject.getKeywords();
+    }
     
     public ArrayList<Keyword> getKeywords() {
         return command.getKeywords();

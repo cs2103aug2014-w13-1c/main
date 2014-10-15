@@ -36,7 +36,7 @@ public class KeywordDetector {
             System.out.println("no keywords");
         }
         for (Keyword keyword : keywords) {
-            System.out.println(keyword.getWord() + " " + keyword.getStartIndex() + " " + keyword.getEndIndex());
+            System.out.println("keyword: " + keyword.getStartIndex() + " " + keyword.getEndIndex());
         }
 
         int lastWordEnd = 0;
