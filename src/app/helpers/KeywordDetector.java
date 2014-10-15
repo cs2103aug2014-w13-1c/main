@@ -32,19 +32,19 @@ public class KeywordDetector {
 //        }
 
         // for debugging
-        if (keywords.size() == 0) {
-            System.out.println("no keywords");
-        }
-        for (Keyword keyword : keywords) {
-            System.out.println("keyword indexes: " + keyword.getStartIndex() + ", " + keyword.getEndIndex());
-        }
+//        if (keywords.size() == 0) {
+//            System.out.println("no keywords");
+//        }
+//        for (Keyword keyword : keywords) {
+//            System.out.println("keyword indexes: " + keyword.getStartIndex() + ", " + keyword.getEndIndex());
+//        }
 
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
             spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
-            System.out.println("keyword length: " + (keyword.getEndIndex() - keyword.getStartIndex()));
-            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex());
-            lastWordEnd = keyword.getEndIndex();
+//            System.out.println("keyword length: " + (keyword.getEndIndex() - keyword.getStartIndex() + 1));
+            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
+            lastWordEnd = keyword.getEndIndex() + 1;
         }
         spansBuilder.add(Collections.emptyList(), command.length() - lastWordEnd);
         return spansBuilder.create();
