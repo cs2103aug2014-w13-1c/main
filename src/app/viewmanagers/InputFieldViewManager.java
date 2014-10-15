@@ -1,6 +1,7 @@
 package app.viewmanagers;
 
 import app.helpers.InvalidInputException;
+import app.helpers.KeywordDetector;
 import app.helpers.LoggingService;
 import app.controllers.*;
 
@@ -31,7 +32,6 @@ public class InputFieldViewManager {
 
     private String lastCommand;
     private StyleClassedTextArea inputField;
-
     private RootViewManager rootViewManager;
 
     private final String[] KEYWORDS = new String[] {
@@ -110,36 +110,9 @@ public class InputFieldViewManager {
         return spansBuilder.create();
     }
 
-    private StyleSpans<Collection<String>> keywordDetection(String text) {
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        ArrayList<Keyword> keywords = CommandParser.parseKeywords(text);
-        if (keywords.size() == 0) {
-            System.out.println("no keywords");
-        }
-        for (Keyword keyword : keywords) {
-            System.out.println(keyword.getWord() + " " + keyword.getStartIndex() + " " + keyword.getEndIndex());
-        }
-
-//        if (text.length() >= 3) {
-//            keywords.add(new Keyword(0, 2));
-//        }
-//
-//        if (text.length() >= 5) {
-//            keywords.add(new Keyword(3, 4));
-//        }
-//
-//        if (text.length() >= 10) {
-//            keywords.add(new Keyword(7, 9));
-//        }
-
-        int lastWordEnd = 0;
-        for (Keyword keyword : keywords) {
-            spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
-            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
-            lastWordEnd = keyword.getEndIndex() + 1;
-        }
-        spansBuilder.add(Collections.emptyList(), text.length() - lastWordEnd);
-        return spansBuilder.create();
+    private StyleSpans<Collection<String>> keywordDetection(String command) {
+        ArrayList<Keyword> keywords = CommandParser.parseKeywords(command);
+        return KeywordDetector.getStyleSpans(keywords, command);
     }
 
 
