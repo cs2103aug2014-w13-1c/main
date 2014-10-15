@@ -98,16 +98,14 @@ public class CommandObject {
     private void setCommandString(String inputString) {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
-            StringTokenizer st = new StringTokenizer(inputString.substring(0, firstWordPos));
-            String commandWord = "";
-            while (st.hasMoreTokens()) {
-                String nextWord = st.nextToken();
-                if (keywords.contains(nextWord)) {
-                    break;
-                }
-                commandWord = commandWord.concat(nextWord + " ");
+            String inputStringArray[] = inputString.trim().split(" ");
+            int i = 1;
+            while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
+                commandString = commandString.concat(inputStringArray[i] + " ");
+                i++;
             }
         }
+        commandString = commandString.trim();
     }
     
     public String getCommandString() {
@@ -117,7 +115,6 @@ public class CommandObject {
     private void setDates(String inputString) {
         String inputStringArray[] = inputString.trim().split(" ");
         for (int i = 0; i < inputStringArray.length; i++) {
-            System.out.println(inputStringArray[i]);
             if (startDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
                 i++;
@@ -169,9 +166,9 @@ public class CommandObject {
             }
             startIndex = endIndex + 1;
         }
-        for (int i = 0; i < currentKeywords.size(); i++) {
-            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-        }
+//        for (int i = 0; i < currentKeywords.size(); i++) {
+//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
+//        }
     }
     
     public ArrayList<Keyword> getKeywords() {
