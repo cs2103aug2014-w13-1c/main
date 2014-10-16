@@ -41,7 +41,6 @@ public class TodoItem {
 	
 	// Constructor
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
-	    
 	    if (newTaskName != null) {
 	        this.taskName = newTaskName; 
 	    }
@@ -54,10 +53,11 @@ public class TodoItem {
 	        this.endDate = newEndDate;
 	    }
 	    
-	    if (newPriority != null && newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
-	        this.priority = newPriority;
-	    } else {
-	        this.priority = MEDIUM;
+	    this.priority = MEDIUM;
+	    if (newPriority != null) {
+	        if (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
+	            this.priority = newPriority;
+	        }
 	    }
 	    
 	    if (newDoneStatus != null) {

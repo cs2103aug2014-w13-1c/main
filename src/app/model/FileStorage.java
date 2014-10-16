@@ -40,6 +40,7 @@ public class FileStorage {
     public FileStorage() {
         this.fileDirectory = DEFAULT_FILE_DIRECTORY;
         this.fileName = DEFAULT_FILE_NAME;
+        this.displayStatus = false;
     }
     
     public ArrayList<TodoItem> loadFile() throws IOException, JSONException {
@@ -201,7 +202,8 @@ public class FileStorage {
             LoggingService.getLogger().log(Level.INFO, "Loaded settings file.");
         } catch (FileNotFoundException e) { // if no file found at stated path, return
             LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
-            return;
+            updateSettings(displayStatus);
+            fileToRead = new FileReader(SETTINGS_FILE_NAME);
         }
         BufferedReader reader = new BufferedReader(fileToRead);
         

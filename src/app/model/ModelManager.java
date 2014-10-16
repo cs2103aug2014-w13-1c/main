@@ -28,8 +28,6 @@ public class ModelManager {
             throw new IOException("Failed to parse settings JSON data.");
         }
         
-        // load from settings.json to set the filename and file directory
-        
         try {
             this.todoList = new TodoItemList(dataStorage.loadFile());
         } catch (JSONException e) {
@@ -45,6 +43,7 @@ public class ModelManager {
     }
     
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
+        
         TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
         
         todoList.addTodoItem(newTodoItem);
@@ -104,11 +103,7 @@ public class ModelManager {
 
         LoggingService.getLogger().log(Level.INFO, "Deleting task " + deletedItem.getTaskName());
         
-        try {
-            dataStorage.updateFile(todoList.getTodoItems());
-        } catch (IOException e) {
-            throw new IOException("Failed to write to file.");
-        }
+        dataStorage.updateFile(todoList.getTodoItems());
         
         return deletedItem;
     }
@@ -118,11 +113,7 @@ public class ModelManager {
 
         LoggingService.getLogger().log(Level.INFO, "Clearing all tasks.");
         
-        try {
-            dataStorage.updateFile(todoList.getTodoItems());
-        } catch (IOException e) {
-            throw new IOException("Failed to write to file.");
-        }
+        dataStorage.updateFile(todoList.getTodoItems());
     }
     
     public void changeFileDirectory(String fileDirectory) throws IOException {
@@ -141,6 +132,7 @@ public class ModelManager {
     
     public void setSortingStyle(int newSortingStyle) {
         TodoItemSorter.sortingStyle = newSortingStyle;
+        TodoItemSorter.resortTodoList(todoList);
     }
 
     public ArrayList<TodoItem> getTodoItemList() {
@@ -149,5 +141,13 @@ public class ModelManager {
     
     public ListIterator<TodoItem> getTodoItemIterator() {
         return todoList.getTodoItems().listIterator();
+    }
+    
+    public String getFullFileName() {
+        return dataStorage.getFullFileName();
+    }
+    
+    public int countTasks() {
+        return todoList.countTodoItems();
     }
 }

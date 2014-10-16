@@ -1,15 +1,10 @@
 package app.tests;
 
-import app.helpers.LoggingService;
 import app.model.FileStorage;
+import app.model.ModelManager;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 import app.model.TodoItemSorter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,6 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
+
+import org.json.JSONObject;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -378,6 +376,106 @@ public class ModelUnits {
     // Everyone together now!
     @Test
     public void testModelManager() {
+        ModelManager testManager1;
+        try {
+            testManager1 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
         
+        try {
+            testManager1.changeFileDirectory("testDirectory/");
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Create
+        String testInput1 = "Test String 1";
+        String testInput2 = "Test String 2";
+        String testInput3 = "Test String 3";
+        String testInput4 = "Test String 4";
+        Date earlyDate = new Date();
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
+        
+        try {
+            testManager1.addTask(testInput1, earlyDate, lateDate, TodoItem.HIGH, true);
+            testManager1.addTask(testInput2, null, null, null, null);
+            testManager1.addTask(testInput3, earlyDate, null, TodoItem.MEDIUM, null);
+            testManager1.addTask(testInput4, null, earlyDate, TodoItem.LOW, false);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        ModelManager testManager2;
+        try {
+            testManager2 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        assertEquals(4, testManager2.countTasks());
+        
+        testManager2.setSortingStyle(0);
+        
+        assertEquals(testInput1, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(3).getTaskName());
+        
+        // Sort
+        testManager2.setSortingStyle(3);
+        
+        // Remember, collections.sort is stable.
+        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(3).getTaskName());
+
+        //Update
+        Boolean[] testParameters = {false, false, false, true, true};
+        
+        try {
+            testManager2.updateTask(testManager2.getTodoItemList().get(0).getUUID(), testParameters, null, null, null, TodoItem.HIGH, true);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(testInput2, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(3).getTaskName());
+        
+        // Delete
+        try {
+            testManager2.deleteTask(testManager2.getTodoItemList().get(1).getUUID());
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(3, testManager2.countTasks());
+        
+        assertEquals(testInput2, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(2).getTaskName());
+        
+        // Clear
+        try {
+            testManager2.clearTasks();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        ModelManager testManager3;
+        try {
+            testManager3 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        assertEquals("testDirectory/watdo.json", testManager3.getFullFileName());
+        assertEquals(0, testManager3.countTasks());
     }
 }

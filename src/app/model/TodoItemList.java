@@ -41,7 +41,11 @@ public class TodoItemList {
 	}
 	
 	public TodoItemList(ArrayList<TodoItem> newTodoItems) {
-	    this.todoItems = newTodoItems;
+	    if (newTodoItems != null) {
+	        this.todoItems = newTodoItems;
+	    } else {
+	        this.todoItems = new ArrayList<TodoItem>();
+	    }
 	}
 	
 	public ArrayList<TodoItem> getTodoItems() {
