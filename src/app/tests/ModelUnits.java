@@ -374,4 +374,10 @@ public class ModelUnits {
         assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
         assertEquals("", testStorage.getFileDirectory());
     }
+    
+    // Everyone together now!
+    @Test
+    public void testModelManager() {
+        
+    }
 }
