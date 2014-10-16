@@ -14,7 +14,7 @@ Constructors
 * public TodoItem (String taskName, Date startDate, Date endDate)
  * Calls above method with MEDIUM priority and false doneStatus
 * public TodoItemList() _creates empty list of todo items with file name watdo.txt_
-* public TodoItemList(String fileName) _loads todo items from provided file name_
+* public TodoItemList(ArrayList<TodoItem> todoItemArrayList) _initializes to todoItemArrayList_
 
 ModelManager
 -----------
@@ -28,6 +28,7 @@ ModelManager
  * etc.
  * parameters should always be 5 elements long
 * public TodoItem deleteTask(UUID itemID) throws IOException
+* public void clearTasks() throws IOException
 
 ### File storage
 * public void changeFileDirectory(String fileDirectory) throws IOException
@@ -42,6 +43,9 @@ ModelManager
 ### Getters
 * public ArrayList<TodoItem> getTodoItemList() {
 * public ListIterator<TodoItem> getTodoItemIterator() {
+
+### Count
+* public int countTasks()
 
 TodoItem
 -----------
@@ -68,30 +72,3 @@ TodoItem
 * public String getStartDateString() - getEndDateString()
  * returns the start date as a string
  * if not set, returns null
-
-TodoItemList (MAJOR OVERHAUL INCOMING)
------------
-### CRUD methods: TodoItemList
-* TodoItem
- * public void addTodoItem(TodoItem newItem)
- * public TodoItem readTodoItem(int index) _returns null if index out of bounds_
- * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate)
- * public void updateTodoItem(int index, String taskName, Date startDate, Date endDate, String priority)
-  * If specified priority is not TodoItem.HIGH/MEDIUM/LOW, current priority will not be changed
- * public TodoItem deleteTodoItem(int index) _returns null if index out of bounds_
- * public void clearTodoItems()
-
-### GET methods: TodoItemList
-* public ArrayList<TodoItem> getTodoItems() 
-* public ListIterator<TodoItem> getTodoItemIterator()
-* public String getFileName()
-* public String getLoadStatus()
-* public String getWriteStatus()
-
-### Other methods: TodoItemList
-* public void changeFile()
- * Switches the current file in use to a different file
-* public int countTodoItems()
- * Gets the number of TodoItems
-* public void markDoneStatus(int index, Boolean doneStatus)
- * Marks the TodoItem's doneStatus based on the doneStatus in the argument

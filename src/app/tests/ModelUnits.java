@@ -477,5 +477,11 @@ public class ModelUnits {
         
         assertEquals("testDirectory/watdo.json", testManager3.getFullFileName());
         assertEquals(0, testManager3.countTasks());
+        
+        try {
+            testManager3.changeFileDirectory("");
+        } catch (Exception e) {
+            fail();
+        }
     }
 }
