@@ -29,17 +29,17 @@ public class CommandController {
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
 
     // Messages
-    private final String MESSAGE_ADD_COMPLETE = "added: \"%1$s\"\n";
-    private final String MESSAGE_CLEAR_COMPLETE = "todo cleared\n";
-    private final String MESSAGE_DELETE_COMPLETE = "deleted: \"%1$s\"\n";
+    private final String MESSAGE_ADD_COMPLETE = "Added: \"%1$s\"\n";
+    private final String MESSAGE_CLEAR_COMPLETE = "Todo cleared\n";
+    private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
-    private final String MESSAGE_UPDATE_COMPLETE = "updated: \"%1$s\"\n";
+    private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
 
     // Class variables
     private TodoItemList taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
-    private CommandObject command;
+    private CommandParser parsedCommand;
 
     // String manipulation methods
     protected void printString(String message) {
@@ -60,18 +60,18 @@ public class CommandController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(CommandObject command){
-        if (command.getCommandString().isEmpty()) {
+    protected String addNewLine(CommandParser parsedCommand){
+        if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        taskList.addTodoItem(new TodoItem(command.getCommandString(), command.getStartDate(), command.getEndDate()));
+        taskList.addTodoItem(new TodoItem(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate()));
         resetTaskList();
-        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, command.getInputString()));
+        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
     // Display command method(s)
-    protected String display(CommandObject command) {
-        if (!command.getCommandString().isEmpty()) {
+    protected String display(CommandParser parsedCommand) {
+        if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         currentList = taskList.getTodoItems();
@@ -91,8 +91,8 @@ public class CommandController {
     }
 
     // Clear command method(s)
-    protected String clear(CommandObject command) {
-        if (!command.getCommandString().isEmpty()) {
+    protected String clear(CommandParser parsedCommand) {
+        if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         taskList.clearTodoItems();
@@ -101,14 +101,14 @@ public class CommandController {
     }
     
     // Delete command method(s)
-    protected String deleteEntry(CommandObject command) {
-        if (command.getCommandString().isEmpty()) {
+    protected String deleteEntry(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        index = Integer.parseInt(command.getCommandString()) - 1;
-        if(isInt(command.getCommandString())) {
-            index = Integer.parseInt(command.getCommandString()) - 1;
+        index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        if(isInt(parsedCommand.getCommandString())) {
+            index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
@@ -130,52 +130,51 @@ public class CommandController {
     }
 
     // Search command method(s)
-
-    protected String search(CommandObject command) {
-        if (command.getCommandString().isEmpty()) {
+    protected String search(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = main.getTaskController().instantSearch(command.getCommandString());
+        ArrayList<TodoItem> results = main.getTaskController().instantSearch(parsedCommand.getCommandString());
         if (results.isEmpty()) {
             return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
             currentList = results;
-            main.getPrimaryStage().setTitle("Search results for: \"" + command.getCommandString() + "\"");
+            main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
             updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
 
     // Update command method(s)
-    protected String update(CommandObject command) {
-        if (command.getCommandString().isEmpty()) {
+    protected String update(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        int nextSpacePos = CommandObject.nextSpacePosition(command.getCommandString(), 0);
+        int nextSpacePos = parsedCommand.getCommandString().indexOf(" ");
         if (nextSpacePos == -1) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        if(isInt(command.getCommandString().substring(0, nextSpacePos))) {
-            index = Integer.parseInt(command.getCommandString().substring(0, nextSpacePos)) - 1;
+        if(isInt(parsedCommand.getCommandString().substring(0, nextSpacePos))) {
+            index = Integer.parseInt(parsedCommand.getCommandString().substring(0, nextSpacePos)) - 1;
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItems();
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeUpdated = command.getCommandString().substring(nextSpacePos + 1);
-        taskList.updateTodoItem(index, toBeUpdated, command.getStartDate(), command.getEndDate());
+        String toBeUpdated = parsedCommand.getCommandString().substring(nextSpacePos + 1);
+        taskList.updateTodoItem(index, toBeUpdated, parsedCommand.getStartDate(), parsedCommand.getEndDate());
         resetTaskList();
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
     // Help method
-    protected String help(CommandObject command) {
-        if (!command.getCommandString().isEmpty()) {
+    protected String help(CommandParser parsedCommand) {
+        if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
@@ -183,8 +182,8 @@ public class CommandController {
     }
 
     // Settings method
-    protected String settings(CommandObject command) {
-        if (!command.getCommandString().isEmpty()) {
+    protected String settings(CommandParser parsedCommand) {
+        if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
@@ -216,29 +215,29 @@ public class CommandController {
         }
     }
 
-    protected String processCommand() {
-        String commandWord = command.getCommandWord();
+    protected String processCommand(CommandParser parsedCommand) {
+        String commandWord = parsedCommand.getCommandWord();
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
             case ADD :
-                return addNewLine(command);
+                return addNewLine(parsedCommand);
             case DISPLAY :
-                return display(command);
+                return display(parsedCommand);
             case CLEAR :
-                return clear(command);
+                return clear(parsedCommand);
             case DELETE :
-                return deleteEntry(command);
+                return deleteEntry(parsedCommand);
             case EXIT :
                 showInfoDialog("Bye!");
                 System.exit(0);
             case SEARCH :
-                return search(command);
+                return search(parsedCommand);
             case UPDATE :
-                return update(command);
+                return update(parsedCommand);
             case HELP :
-                return help(command);
+                return help(parsedCommand);
             case SETTINGS :
-                return settings(command);
+                return settings(parsedCommand);
             default :
                 return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -252,13 +251,12 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        command = new CommandObject(inputString);
-        printString(processCommand());
+        parsedCommand = new CommandParser(inputString);
+        printString(processCommand(parsedCommand));
     }
 
     public ArrayList<Keyword> parseKeywords(String inputString) {
-        CommandParser parser = new CommandParser();
-        return parser.getKeywords(inputString);
+        return CommandParser.getKeywords(inputString);
     }
         
     public void updateView() {
