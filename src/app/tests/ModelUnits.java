@@ -1,13 +1,25 @@
 package app.tests;
 
+import app.helpers.LoggingService;
+import app.model.FileStorage;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 import app.model.TodoItemSorter;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -103,6 +115,7 @@ public class ModelUnits {
     }
     
     // Tests TodoItemSorter
+    // Thou who trieth to debug this crawling horror, surrender.
     @Test
     public void testTodoItemSorter() {
         String testInput1 = "Test String 1";
@@ -112,7 +125,7 @@ public class ModelUnits {
         String testInput5 = "Test String 5";
         String testInput6 = "Test String 6";
         Date earlyDate = new Date();
-        Date lateDate = new Date();
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
         
         TodoItemList testedList1 = new TodoItemList();
         testedList1.addTodoItem(new TodoItem(testInput1, null, lateDate, TodoItem.HIGH, false));
@@ -131,7 +144,6 @@ public class ModelUnits {
         for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
             TodoItem nextTodoItem = currentTodoItems.get(i + 1);
-            System.out.println(currentTodoItem.getTaskName() + " " + nextTodoItem.getTaskName() + " " + currentTodoItem.getStartDate() + " " + nextTodoItem.getStartDate());
             if (currentTodoItem.getTaskName() == null) {
                 if (nextTodoItem.getTaskName() == null) {
                    if (currentTodoItem.getEndDate() != null) {
@@ -155,233 +167,211 @@ public class ModelUnits {
         TodoItemSorter.sortingStyle = 1;
         TodoItemSorter.resortTodoList(testedList1);
         currentTodoItems = testedList1.getTodoItems();
+        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            if (currentTodoItem.getStartDate() == null) {
+                if (nextTodoItem.getStartDate() == null) {
+                   if (currentTodoItem.getPriority() != null) {
+                       if (nextTodoItem.getPriority() == null) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getStartDate() == null) fail();
+                if (currentTodoItem.getStartDate().getTime() > nextTodoItem.getStartDate().getTime()) fail();
+                if (currentTodoItem.getStartDate().getTime() == nextTodoItem.getStartDate().getTime()) {
+                    if (currentTodoItem.getPriority() != null) {
+                        if (nextTodoItem.getPriority() == null) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                    }
+                }
+            }
+        }
         
         // EndDate then Priority
         TodoItemSorter.sortingStyle = 2;
         TodoItemSorter.resortTodoList(testedList1);
+        currentTodoItems = testedList1.getTodoItems();
+        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            if (currentTodoItem.getEndDate() == null) {
+                if (nextTodoItem.getEndDate() == null) {
+                   if (currentTodoItem.getPriority() != null) {
+                       if (nextTodoItem.getPriority() == null) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getEndDate() == null) fail();
+                if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                if (currentTodoItem.getEndDate().getTime() == nextTodoItem.getEndDate().getTime()) {
+                    if (currentTodoItem.getPriority() != null) {
+                        if (nextTodoItem.getPriority() == null) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                    }
+                }
+            }
+        }
         
         // Priority then EndDate
         TodoItemSorter.sortingStyle = 3;
         TodoItemSorter.resortTodoList(testedList1);
-    }
-/*
-    // Tests delete operation
-    @Test
-    public void testDelete() {
-        TodoItemList testedList = new TodoItemList();
-        testedList.clearTodoItems();
-        
-        String testInput1 = "Test String 1";
-        Date startDate1 = new Date();
-        Date endDate1 = new Date();
-        String testInput2 = "Test String 2";
-        Date endDate2 = new Date();
-        String testInput3 = "Test String 3";
-        String testInput4 = "Test String 4";
-        
-        testedList.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
-        testedList.addTodoItem(new TodoItem(testInput2, null, endDate2));
-        testedList.addTodoItem(new TodoItem(testInput3, null, null));
-        testedList.addTodoItem(new TodoItem(testInput4, null, null));
-        
-        TodoItem result = testedList.deleteTodoItem(1);
-        
-        assertEquals(testInput2, result.getTaskName());
-        assertEquals(3, testedList.countTodoItems());
-        assertEquals(testInput1, testedList.readTodoItem(0).getTaskName());
-        assertEquals(testInput3, testedList.readTodoItem(1).getTaskName());
-        assertEquals(testInput4, testedList.readTodoItem(2).getTaskName());
-        
-        result = testedList.deleteTodoItem(0);
-        
-        assertEquals(testInput1, result.getTaskName());
-        assertEquals(2, testedList.countTodoItems());
-        assertEquals(testInput3, testedList.readTodoItem(0).getTaskName());
-        assertEquals(testInput4, testedList.readTodoItem(1).getTaskName());
-        
-        result = testedList.deleteTodoItem(1);
-        
-        assertEquals(testInput4, result.getTaskName());
-        assertEquals(1, testedList.countTodoItems());
-        assertEquals(testInput3, testedList.readTodoItem(0).getTaskName());
-        
-        result = testedList.deleteTodoItem(1);
-        
-        assertEquals(null, result);
-        assertEquals(1, testedList.countTodoItems());
-        assertEquals(testInput3, testedList.readTodoItem(0).getTaskName());
-        
-        result = testedList.deleteTodoItem(0);
-        
-        assertEquals(testInput3, result.getTaskName());
-        assertEquals(0, testedList.countTodoItems());
-        
-        testedList.clearTodoItems();
+        currentTodoItems = testedList1.getTodoItems();
+        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            if (currentTodoItem.getPriority() == null) {
+                if (nextTodoItem.getPriority() == null) {
+                   if (currentTodoItem.getEndDate() != null) {
+                       if (nextTodoItem.getEndDate() == null) fail();
+                       if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getPriority() == null) fail();
+                if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                if (currentTodoItem.getPriority().equals(nextTodoItem.getPriority())) {
+                    if (currentTodoItem.getEndDate() != null) {
+                        if (nextTodoItem.getEndDate() == null) fail();
+                        if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                    }
+                }
+            }
+        }
     }
     
-
-    // Tests add and delete in tandem
+    // Tests FileStorage
     @Test
-    public void testAddAndDelete() {
-        TodoItemList testedList = new TodoItemList();
-        testedList.clearTodoItems();
+    public void testFileStorage() {
+        FileStorage testStorage = new FileStorage();
+        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
+        assertEquals(FileStorage.DEFAULT_FILE_DIRECTORY, testStorage.getFileDirectory());
         
+        // Settings file fixture
+        FileWriter fileToWrite;
+        try {
+            fileToWrite = new FileWriter(FileStorage.SETTINGS_FILE_NAME);
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        JSONObject settingsObject = new JSONObject();
+        try {
+            settingsObject.put("fileDirectory", "testDirectory/");
+            settingsObject.put("displayStatus", false);
+        } catch (Exception e) {
+            fail();
+        }
+        try {
+            writer.write(settingsObject.toString(2));
+            writer.flush();
+            fileToWrite.close();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Try to load settings file
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
+        assertEquals("testDirectory/", testStorage.getFileDirectory());
+        
+        // Yay! Successfully loaded settings file!
+        // Now we set up an empty watdo.json
+        ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Now we try to load it.
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader("testDirectory/watdo.json");
+        } catch (FileNotFoundException e) {
+            fail();
+            return;
+        }
+        BufferedReader reader = new BufferedReader(fileToRead);
+        String fileString = "";
+        String line = "";
+        try {
+            while ((line = reader.readLine()) != null) {
+                fileString += line;
+            }
+            fileToRead.close();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("[]", fileString);
+        
+        // Yay! Now we insert actual data inside!
         String testInput1 = "Test String 1";
-        Date startDate1 = new Date();
-        Date endDate1 = new Date();
-        String testInput2 = "Test String 2";
-        Date endDate2 = new Date();
-        String testInput3 = "Test String 3";
-        String testInput4 = "Test String 4";
+        Date earlyDate = new Date();
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
+        testTodoItems.add(new TodoItem(null, null, null));
+        testTodoItems.add(new TodoItem(null, earlyDate, lateDate));
+        testTodoItems.add(new TodoItem(testInput1, null, lateDate));
+        testTodoItems.add(new TodoItem(testInput1, earlyDate, null));
+        testTodoItems.add(new TodoItem(testInput1, earlyDate, lateDate, TodoItem.HIGH, true));
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
         
-        testedList.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
-        testedList.addTodoItem(new TodoItem(testInput2, null, endDate2));
-        testedList.addTodoItem(new TodoItem(testInput3, null, null));
-        testedList.addTodoItem(new TodoItem(testInput4, null, null));
+        // Now we extract the data and see if it's the same.
+        ArrayList<TodoItem> extractedResult;
+        try {
+            extractedResult = testStorage.loadFile();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
         
-        TodoItem result = testedList.deleteTodoItem(1);
-        testedList.addTodoItem(result);
+        assertEquals(5, extractedResult.size());
+        assertEquals(null, extractedResult.get(0).getTaskName());
+        assertEquals(null, extractedResult.get(0).getStartDate());
+        assertEquals(null, extractedResult.get(0).getEndDate());
+        assertEquals(TodoItem.MEDIUM, extractedResult.get(0).getPriority());
+        assertEquals(false, extractedResult.get(0).isDone());
+        assertEquals(null, extractedResult.get(1).getTaskName());
+        assertEquals(earlyDate.getTime(), extractedResult.get(1).getStartDate().getTime());
+        assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
+        assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
+        assertEquals(TodoItem.HIGH, extractedResult.get(4).getPriority());
+        assertEquals(true, extractedResult.get(4).isDone());
         
-        assertEquals(4, testedList.countTodoItems());
-        assertEquals(testInput1, testedList.readTodoItem(0).getTaskName());
-        assertEquals(testInput3, testedList.readTodoItem(1).getTaskName());
-        assertEquals(testInput4, testedList.readTodoItem(2).getTaskName());
-        assertEquals(testInput2, testedList.readTodoItem(3).getTaskName());
+        // Yay! We're done! Time to clean up.
+        try {
+            testStorage.updateFile(new ArrayList<TodoItem>());
+        } catch (Exception e) {
+            fail();
+        }
         
-        testedList.clearTodoItems();
+        // Switch back to old directory!
+        try {
+            testStorage.changeDirectory("");
+        } catch (Exception e) {
+            fail();
+        }
+        
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
+        assertEquals("", testStorage.getFileDirectory());
     }
-    
-    // Tests update operation
-    @Test
-    public void testUpdate() {
-        TodoItemList testedList = new TodoItemList();
-        testedList.clearTodoItems();
-        
-        String testInput1 = "Test String 1";
-        Date startDate1 = new Date();
-        Date endDate1 = new Date();
-        String testInput2 = "Test String 2";
-        String testInput3 = "Test String 3";
-        
-        testedList.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
-        testedList.addTodoItem(new TodoItem(testInput2, null, endDate1));
-        testedList.addTodoItem(new TodoItem(testInput3, null, null));
-        
-        String testInput5 = "Test String 5";
-        String testInput6 = "Test String 6";
-        String testInput7 = "Test String 7";
-        
-        testedList.updateTodoItem(0, testInput5, null, null);
-        testedList.updateTodoItem(1, testInput6, startDate1, endDate1);
-        testedList.updateTodoItem(2, testInput7, null, endDate1);
-        
-        assertEquals(3, testedList.countTodoItems());
-        assertEquals(testInput5, testedList.readTodoItem(0).getTaskName());
-        assertEquals(testInput6, testedList.readTodoItem(1).getTaskName());
-        assertEquals(testInput7, testedList.readTodoItem(2).getTaskName());
-        assertEquals(TodoItem.FLOATING, testedList.readTodoItem(0).getTodoItemType());
-        assertEquals(TodoItem.EVENT, testedList.readTodoItem(1).getTodoItemType());
-        assertEquals(TodoItem.DEADLINE, testedList.readTodoItem(2).getTodoItemType());
-        
-        testedList.clearTodoItems();
-    }
-    
-    // Tests file loading
-    @Test
-    public void testFileLoad() {
-        TodoItemList testedList = new TodoItemList();
-        
-        assertEquals(TodoItemList.LOAD_SUCCESS, testedList.getLoadStatus());
-    }
-    
-    // Tests file writing and loading in tandem
-    @Test
-    public void testMultiFileWriteAndLoad() {
-        TodoItemList testedList1 = new TodoItemList("testfile.json");
-        testedList1.clearTodoItems();
-
-        assertEquals(TodoItemList.LOAD_SUCCESS, testedList1.getLoadStatus());
-        assertEquals(0, testedList1.countTodoItems());
-        
-        String testInput1 = "Test String 1";
-        Date startDate1 = new Date();
-        Date endDate1 = new Date();
-        String testInput2 = "Test String 2";
-        String testInput3 = "Test String 3";
-        
-        testedList1.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
-        assertEquals(TodoItemList.WRITE_SUCCESS, testedList1.getWriteStatus());
-        testedList1.addTodoItem(new TodoItem(testInput2, null, endDate1));
-        assertEquals(TodoItemList.WRITE_SUCCESS, testedList1.getWriteStatus());
-        testedList1.addTodoItem(new TodoItem(testInput3, null, null));
-        assertEquals(TodoItemList.WRITE_SUCCESS, testedList1.getWriteStatus());
-        
-        TodoItemList testedList2 = new TodoItemList("testfile.json");
-        
-        assertEquals(3, testedList2.countTodoItems());
-        
-        assertEquals(testInput1, testedList2.readTodoItem(0).getTaskName());
-        assertEquals(testInput2, testedList2.readTodoItem(1).getTaskName());
-        assertEquals(testInput3, testedList2.readTodoItem(2).getTaskName());
-        
-        assertEquals(startDate1.getTime(), testedList2.readTodoItem(0).getStartDate().getTime());
-        assertEquals(endDate1.getTime(), testedList2.readTodoItem(0).getEndDate().getTime());
-        assertEquals(null, testedList2.readTodoItem(1).getStartDate());
-        assertEquals(endDate1.getTime(), testedList2.readTodoItem(0).getEndDate().getTime());
-        assertEquals(null, testedList2.readTodoItem(2).getStartDate());
-        assertEquals(null, testedList2.readTodoItem(2).getEndDate());
-        
-        testedList2.deleteTodoItem(1);
-        
-        TodoItemList testedList3 = new TodoItemList("testfile.json");
-        
-        assertEquals(2, testedList3.countTodoItems());
-        assertEquals(testInput1, testedList3.readTodoItem(0).getTaskName());
-        assertEquals(testInput3, testedList3.readTodoItem(1).getTaskName());
-        
-        testedList1.clearTodoItems();
-    }
-    
- // Tests priorities
-    @Test
-    public void testPriorities() {
-        TodoItemList testedList = new TodoItemList();
-        testedList.clearTodoItems();
-        
-        String testInput1 = "Test String 1";
-        Date startDate1 = new Date();
-        Date endDate1 = new Date();
-        
-        testedList.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
-        
-        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(0).getPriority());
-        
-        String testInput2 = "Test String 2";
-        Date startDate2 = new Date();
-        
-        testedList.addTodoItem(new TodoItem(testInput2, startDate2, null, TodoItem.HIGH));
-        
-        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
-        
-        String testInput3 = "Test Stringy 3";
-        String dummyInput1 = "Very high";
-        
-        testedList.addTodoItem(new TodoItem(testInput3, null, null, dummyInput1));
-        
-        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(2).getPriority());
-        
-        testedList.addTodoItem(new TodoItem(testInput3, null, null, null));
-        
-        assertEquals(TodoItem.MEDIUM, testedList.readTodoItem(3).getPriority());
-        
-        testedList.updateTodoItem(1, testInput2, startDate2, null, TodoItem.HIGH);
-        
-        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
-        
-        testedList.updateTodoItem(1, testInput1, startDate1, endDate1, dummyInput1);
-        
-        assertEquals(TodoItem.HIGH, testedList.readTodoItem(1).getPriority());
-        
-        testedList.clearTodoItems();
-    }*/
 }

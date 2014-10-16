@@ -41,6 +41,7 @@ public class TodoItem {
 	
 	// Constructor
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
+	    
 	    if (newTaskName != null) {
 	        this.taskName = newTaskName; 
 	    }

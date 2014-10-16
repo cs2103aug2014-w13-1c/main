@@ -20,12 +20,18 @@ public class ModelManager {
     
     public ModelManager() throws IOException {
         this.dataStorage = new FileStorage();
-        this.todoList = new TodoItemList();
+        
+        try {
+            dataStorage.loadSettings();
+        } catch (JSONException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse settings data.");
+            throw new IOException("Failed to parse settings JSON data.");
+        }
         
         // load from settings.json to set the filename and file directory
         
         try {
-            dataStorage.loadFile(todoList);
+            this.todoList = new TodoItemList(dataStorage.loadFile());
         } catch (JSONException e) {
             LoggingService.getLogger().log(Level.SEVERE, "Failed to parse JSON data.");
             throw new IOException("Failed to parse JSON data.");
@@ -120,7 +126,7 @@ public class ModelManager {
     }
     
     public void changeFileDirectory(String fileDirectory) throws IOException {
-        dataStorage.changeDirectory(fileDirectory, todoList);
+        todoList = new TodoItemList(dataStorage.changeDirectory(fileDirectory));
     }
     
     public Boolean getDoneDisplay() {

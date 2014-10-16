@@ -23,6 +23,7 @@ public class FileStorage {
     
     private String fileName;
     private String fileDirectory;
+    private Boolean displayStatus;
     
     private String loadStatus;
     private String writeStatus;
@@ -41,14 +42,14 @@ public class FileStorage {
         this.fileName = DEFAULT_FILE_NAME;
     }
     
-    public void loadFile(TodoItemList todoItems) throws IOException, JSONException {
-        LoggingService.getLogger().log(Level.INFO, "Loading file.");
+    public ArrayList<TodoItem> loadFile() throws IOException, JSONException {
+        LoggingService.getLogger().log(Level.INFO, "Loading file " + fileDirectory + fileName);
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(fileDirectory + fileName);
         } catch (FileNotFoundException e) { // if no file found at stated path, return
             LoggingService.getLogger().log(Level.INFO, "No file found at target destination.");
-            return;
+            return null;
         }
         
         BufferedReader reader = new BufferedReader(fileToRead);
@@ -60,6 +61,8 @@ public class FileStorage {
         }
         
         JSONArray fileArray = new JSONArray(new JSONTokener(fileString));
+        
+        ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();  
         
         for (int i = 0; i < fileArray.length(); i++) {
             JSONObject currentJSONObject = fileArray.getJSONObject(i);
@@ -75,27 +78,32 @@ public class FileStorage {
             Long JSONEndDate = currentJSONObject.optLong("endDate");
             String JSONPriority = currentJSONObject.optString("priority"); 
             Boolean JSONDoneStatus = currentJSONObject.optBoolean("doneStatus");
-            
+
             if (JSONTaskName.length() > 0) {
                 currentTaskName = JSONTaskName;
             }
+
             if (JSONStartDate > 0) {
                 currentStartDate = new Date(JSONStartDate);
             }
+            
             if (JSONEndDate > 0) {
                 currentEndDate = new Date(JSONEndDate);
             }
+            
             if (JSONPriority.length() > 0) {
                 currentPriority = JSONPriority;
             }
+            
             if (JSONDoneStatus) {
                 currentDoneStatus = JSONDoneStatus;
             }
-                
-            todoItems.addTodoItem(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
+            
+            todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
         }
-        
         reader.close();
+        
+        return todoItems;
     }
     
     /**
@@ -105,6 +113,10 @@ public class FileStorage {
         FileWriter fileToWrite;
         
         try {
+            File targetFile = new File(fileDirectory);
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
             fileToWrite = new FileWriter(fileDirectory + fileName);
         } catch (Exception e) {
             throw new IOException(fileName + LOAD_FAILED);
@@ -146,7 +158,7 @@ public class FileStorage {
         } catch (JSONException e) {
             throw new IOException("Failed to write JSON data.");
         }
-        LoggingService.getLogger().log(Level.INFO, "Updating file.");
+        LoggingService.getLogger().log(Level.INFO, "Updating file " + fileDirectory + fileName);
         
         try {
             writer.write(fileArray.toString(2));
@@ -157,7 +169,7 @@ public class FileStorage {
             throw new IOException(fileName + WRITE_FAILED);
         }
         
-        LoggingService.getLogger().log(Level.INFO, "Successfully updated file.");
+        LoggingService.getLogger().log(Level.INFO, "Successfully updated file " + fileDirectory + fileName);
         
         try {
             fileToWrite.close();
@@ -166,12 +178,14 @@ public class FileStorage {
         }
     }
     
-    public void changeDirectory(String fileDirectory, TodoItemList todoItems) throws IOException {
-        String temp = fileDirectory;
+    public ArrayList<TodoItem> changeDirectory(String fileDirectory) throws IOException {
+        String temp = this.fileDirectory;
         this.fileDirectory = fileDirectory;
         try {
-            loadFile(todoItems);
+            ArrayList<TodoItem> loadResult = loadFile();
+            updateSettings(displayStatus);
             this.loadStatus = LOAD_SUCCESS;
+            return loadResult;
         } catch (Exception e) {
             this.fileDirectory = temp;
             this.loadStatus = LOAD_FAILED;
@@ -184,6 +198,7 @@ public class FileStorage {
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(SETTINGS_FILE_NAME);
+            LoggingService.getLogger().log(Level.INFO, "Loaded settings file.");
         } catch (FileNotFoundException e) { // if no file found at stated path, return
             LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
             return;
@@ -202,7 +217,7 @@ public class FileStorage {
         Boolean JSONdisplayStatus = settingsObject.optBoolean("displayStatus");
         
         fileDirectory = JSONfileDirectory;
-        Boolean displayStatus = JSONdisplayStatus;
+        displayStatus = JSONdisplayStatus;
         
         reader.close();
     }
@@ -232,7 +247,7 @@ public class FileStorage {
             throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
         }
         
-        LoggingService.getLogger().log(Level.INFO, "Successfully updated file.");
+        LoggingService.getLogger().log(Level.INFO, "Successfully updated settings file.");
         
         try {
             fileToWrite.close();
@@ -251,6 +266,10 @@ public class FileStorage {
     
     public String getFileDirectory() {
         return this.fileDirectory;
+    }
+
+    public Boolean getDisplayStatus() {
+        return this.displayStatus;
     }
 
     public String getLoadStatus() {
