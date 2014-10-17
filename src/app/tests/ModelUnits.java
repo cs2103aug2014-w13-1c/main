@@ -449,9 +449,6 @@ public class ModelUnits {
         assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
         assertEquals(testInput1, testManager2.getTodoItemList().get(3).getTaskName());
         
-        
-        
-        
         // Delete
         try {
             testManager2.deleteTask(testManager2.getTodoItemList().get(1).getUUID());
