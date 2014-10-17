@@ -7,6 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ListIterator;
@@ -23,7 +27,6 @@ public class FileStorage {
     
     private String fileName;
     private String fileDirectory;
-    private Boolean displayStatus;
     
     private String loadStatus;
     private String writeStatus;
@@ -40,10 +43,9 @@ public class FileStorage {
     public FileStorage() {
         this.fileDirectory = DEFAULT_FILE_DIRECTORY;
         this.fileName = DEFAULT_FILE_NAME;
-        this.displayStatus = false;
     }
     
-    public ArrayList<TodoItem> loadFile() throws IOException, JSONException {
+    public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
         LoggingService.getLogger().log(Level.INFO, "Loading file " + fileDirectory + fileName);
         FileReader fileToRead;
         try {
@@ -64,7 +66,7 @@ public class FileStorage {
         JSONArray fileArray = new JSONArray(new JSONTokener(fileString));
         
         ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();  
-        
+
         for (int i = 0; i < fileArray.length(); i++) {
             JSONObject currentJSONObject = fileArray.getJSONObject(i);
             
@@ -75,21 +77,23 @@ public class FileStorage {
             Boolean currentDoneStatus = false;
             
             String JSONTaskName = currentJSONObject.optString("taskName");
-            Long JSONStartDate = currentJSONObject.optLong("startDate");
-            Long JSONEndDate = currentJSONObject.optLong("endDate");
+            String JSONStartDate = currentJSONObject.optString("startDate");
+            String JSONEndDate = currentJSONObject.optString("endDate");
             String JSONPriority = currentJSONObject.optString("priority"); 
             Boolean JSONDoneStatus = currentJSONObject.optBoolean("doneStatus");
-
+            
+            SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            
             if (JSONTaskName.length() > 0) {
                 currentTaskName = JSONTaskName;
             }
 
-            if (JSONStartDate > 0) {
-                currentStartDate = new Date(JSONStartDate);
+            if (JSONStartDate.length() > 0) {
+                currentStartDate = df.parse(JSONStartDate);
             }
             
-            if (JSONEndDate > 0) {
-                currentEndDate = new Date(JSONEndDate);
+            if (JSONEndDate.length() > 0) {
+                currentEndDate = df.parse(JSONEndDate);
             }
             
             if (JSONPriority.length() > 0) {
@@ -128,6 +132,8 @@ public class FileStorage {
         JSONArray fileArray = new JSONArray();
         
         ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
+
+        SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
         
         try {
             while (todoListIterator.hasNext()) {
@@ -143,10 +149,10 @@ public class FileStorage {
                     fileObject.put("taskName", currentTaskName);
                 }
                 if (currentStartDate != null) {
-                    fileObject.put("startDate", currentStartDate.getTime());
+                    fileObject.put("startDate", df.format(currentStartDate).toString());
                 }
                 if (currentEndDate != null) {
-                    fileObject.put("endDate", currentEndDate.getTime());
+                    fileObject.put("endDate", df.format(currentEndDate).toString());
                 }
                 if (currentPriority != null) {
                     fileObject.put("priority", currentPriority);
@@ -184,7 +190,7 @@ public class FileStorage {
         this.fileDirectory = fileDirectory;
         try {
             ArrayList<TodoItem> loadResult = loadFile();
-            updateSettings(displayStatus);
+            updateSettings();
             this.loadStatus = LOAD_SUCCESS;
             return loadResult;
         } catch (Exception e) {
@@ -202,7 +208,7 @@ public class FileStorage {
             LoggingService.getLogger().log(Level.INFO, "Loaded settings file.");
         } catch (FileNotFoundException e) { // if no file found at stated path, return
             LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
-            updateSettings(displayStatus);
+            updateSettings();
             fileToRead = new FileReader(SETTINGS_FILE_NAME);
         }
         BufferedReader reader = new BufferedReader(fileToRead);
@@ -216,15 +222,13 @@ public class FileStorage {
         JSONObject settingsObject = new JSONObject(fileString);
         
         String JSONfileDirectory = settingsObject.optString("fileDirectory");
-        Boolean JSONdisplayStatus = settingsObject.optBoolean("displayStatus");
         
         fileDirectory = JSONfileDirectory;
-        displayStatus = JSONdisplayStatus;
         
         reader.close();
     }
     
-    public void updateSettings(Boolean newDisplayStatus) throws IOException, JSONException {
+    public void updateSettings() throws IOException, JSONException {
         FileWriter fileToWrite;
         
         try {
@@ -237,7 +241,6 @@ public class FileStorage {
         
         JSONObject settingsObject = new JSONObject();
         settingsObject.put("fileDirectory", fileDirectory);
-        settingsObject.put("displayStatus", newDisplayStatus);
         
         LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
         
@@ -268,10 +271,6 @@ public class FileStorage {
     
     public String getFileDirectory() {
         return this.fileDirectory;
-    }
-
-    public Boolean getDisplayStatus() {
-        return this.displayStatus;
     }
 
     public String getLoadStatus() {

@@ -1,6 +1,7 @@
 package app.model;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ListIterator;
@@ -8,7 +9,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import org.json.JSONException;
-import org.json.simple.parser.ParseException;
 
 import app.helpers.LoggingService;
 
@@ -30,6 +30,9 @@ public class ModelManager {
         
         try {
             this.todoList = new TodoItemList(dataStorage.loadFile());
+        } catch (ParseException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse date format at " + dataStorage.getFullFileName() + " at position " + e.getErrorOffset() + ".");
+            throw new IOException("Failed to parse date format at " + dataStorage.getFullFileName() + ".");
         } catch (JSONException e) {
             LoggingService.getLogger().log(Level.SEVERE, "Failed to parse JSON data.");
             throw new IOException("Failed to parse JSON data.");
