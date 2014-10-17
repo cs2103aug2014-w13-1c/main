@@ -2,12 +2,16 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.Keyword;
+import app.helpers.LoggingService;
+import app.model.ModelManager;
 import app.model.TodoItem;
 import app.model.TodoItemList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  * Class CommandController
@@ -36,7 +40,7 @@ public class CommandController {
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
 
     // Class variables
-    private TodoItemList taskList;
+    private ModelManager taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
     private CommandParser parsedCommand;
@@ -64,7 +68,12 @@ public class CommandController {
         if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        taskList.addTodoItem(new TodoItem(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate()));
+        try {
+            taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), null, null);
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
         resetTaskList();
         return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
@@ -74,7 +83,7 @@ public class CommandController {
         if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        currentList = taskList.getTodoItems();
+        currentList = taskList.getTodoItemList();
         main.getPrimaryStage().setTitle("wat do");
         updateView();
         return "displaying tasks\n";
@@ -84,7 +93,7 @@ public class CommandController {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate()));
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), null, null));
             index++;
         }
         return taskData;
@@ -95,7 +104,12 @@ public class CommandController {
         if (!parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        taskList.clearTodoItems();
+        try {
+            taskList.clearTasks();
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
         resetTaskList();
         return MESSAGE_CLEAR_COMPLETE;
     }
@@ -110,12 +124,17 @@ public class CommandController {
         if(isInt(parsedCommand.getCommandString())) {
             index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeDeleted = todoList.get(index).getTaskName();
-        taskList.deleteTodoItem(index);
+        try {
+            taskList.deleteTask(todoList.get(index).getUUID());
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
         resetTaskList();
         return showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
@@ -134,7 +153,7 @@ public class CommandController {
         if (parsedCommand.getCommandString().isEmpty()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (todoList.isEmpty()) {
             return showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
@@ -162,12 +181,19 @@ public class CommandController {
         if(isInt(parsedCommand.getCommandString().substring(0, nextSpacePos))) {
             index = Integer.parseInt(parsedCommand.getCommandString().substring(0, nextSpacePos)) - 1;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItems();
+        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeUpdated = parsedCommand.getCommandString().substring(nextSpacePos + 1);
-        taskList.updateTodoItem(index, toBeUpdated, parsedCommand.getStartDate(), parsedCommand.getEndDate());
+        Boolean[] parameters = {true, true, true, false, false};
+        try {
+            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
+                                parameters, toBeUpdated, parsedCommand.getStartDate(), parsedCommand.getEndDate(), null, null);
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
         resetTaskList();
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
@@ -245,7 +271,12 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        taskList = new TodoItemList();
+        try {
+            taskList = new ModelManager();
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
         currentList = new ArrayList<TodoItem>();
     }
 
@@ -268,7 +299,7 @@ public class CommandController {
     }
 
     public ArrayList<TodoItem> getTaskList() {
-        return taskList.getTodoItems();
+        return taskList.getTodoItemList();
     }
 
     public void setTaskList(ArrayList<TodoItem> todoList) {

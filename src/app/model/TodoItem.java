@@ -7,8 +7,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Class TodoItem
@@ -19,13 +21,13 @@ import java.util.Calendar;
  */
 
 public class TodoItem {
-	private StringProperty taskName;
-	private ObjectProperty<Date> startDate;
-	private ObjectProperty<Date> endDate;
+	private String taskName;
+	private Date startDate;
+	private Date endDate;
 	private String priority;
 	private Boolean doneStatus;
 	
-	private Long epochTag;
+	private UUID itemID;
 	
 	public static final String EVENT = "Event";
 	public static final String DEADLINE = "Deadline";
@@ -33,137 +35,101 @@ public class TodoItem {
 	public static final String ENDLESS = "Endless";
 	public static final String INVALID = "Invalid";
 	
-	public static final String HIGH = "High";
-	public static final String MEDIUM = "Medium";
-	public static final String LOW = "Low";
+	public static final String HIGH = "3. High";
+	public static final String MEDIUM = "2. Medium";
+	public static final String LOW = "1. Low";
 	
-	// Constructors
+	// Constructor
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
+	    if (newTaskName != null) {
+	        this.taskName = newTaskName; 
+	    }
+	    
+	    if (newStartDate != null) {
+	        this.startDate = newStartDate;
+	    }
+	    
+	    if (newEndDate != null) {
+	        this.endDate = newEndDate;
+	    }
+	    
+	    this.priority = MEDIUM;
+	    if (newPriority != null) {
+	        if (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
+	            this.priority = newPriority;
+	        }
+	    }
+	    
+	    if (newDoneStatus != null) {
+	        this.doneStatus = newDoneStatus; 
+	    } else {
+	        this.doneStatus = false;
+	    }
+	    
+	    this.itemID = UUID.randomUUID();
+	}
+	
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
-        if (newTaskName != null) { 
-            this.taskName = new SimpleStringProperty(newTaskName);
-        } else {
-            this.taskName = null;
-        }
-        
-        // Error check, to see if start date is later than end date
-        if (newStartDate != null && newEndDate != null) {
-            if (newStartDate.getTime() > newEndDate.getTime()) {
-                throw new IllegalArgumentException();
-            }
-        }
-        
-        if (newStartDate != null) {
-            this.startDate = new SimpleObjectProperty<Date>(newStartDate);
-        } else {
-            this.startDate = null;
-        }
-        if (newEndDate != null) {
-            this.endDate = new SimpleObjectProperty<Date>(newEndDate);
-        } else {
-            this.endDate = null;
-        }
-        
-        this.priority = MEDIUM;
-        
-        this.doneStatus = false;
-        
-        this.epochTag = (new Date()).getTime();
-    }
-	
-	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority) {
-		if (newTaskName != null) { 
-			this.taskName = new SimpleStringProperty(newTaskName);
-		} else {
-			this.taskName = null;
-		}
-		
-		if (newStartDate != null) {
-			this.startDate = new SimpleObjectProperty<Date>(newStartDate);
-		} else {
-			this.startDate = null;
-		}
-		if (newEndDate != null) {
-			this.endDate = new SimpleObjectProperty<Date>(newEndDate);
-		} else {
-			this.endDate = null;
-		}
-		
-		if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
-		    this.priority = newPriority;
-		} else {
-		    this.priority = MEDIUM;
-		}
-		
-		this.doneStatus = false;
-		
-		this.epochTag = (new Date()).getTime();
+	    this(newTaskName, newStartDate, newEndDate, MEDIUM, false);
 	}
-
-    public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
-        if (newTaskName != null) { 
-            this.taskName = new SimpleStringProperty(newTaskName);
-        } else {
-            this.taskName = null;
-        }
-        
-        if (newStartDate != null) {
-            this.startDate = new SimpleObjectProperty<Date>(newStartDate);
-        } else {
-            this.startDate = null;
-        }
-        if (newEndDate != null) {
-            this.endDate = new SimpleObjectProperty<Date>(newEndDate);
-        } else {
-            this.endDate = null;
-        }
-        
-        if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW))) {
-            this.priority = newPriority;
-        } else {
-            this.priority = MEDIUM;
-        }
-        
-        if (newDoneStatus != null) {
-            this.doneStatus = newDoneStatus;
-        } else {
-            this.doneStatus = false;
-        }
-        
-        this.epochTag = (new Date()).getTime();
-    }
 	
-	public String getTodoItemType() {
-		if (startDate == null) {
-			if (endDate == null) {
-				return FLOATING;
-			} else {
-				return DEADLINE;
-			}
-		} else {
-			if (endDate == null) {
-				return ENDLESS;
-			} else {
-				return EVENT;
-			}
-		}
-	}
+	// Attribute getters and setters 
+    public String getTaskName() {
+        return taskName;
+    }
+    
+    public void setTaskName(String newTaskName) {
+        this.taskName = newTaskName;
+    }
+    
+    public Date getStartDate() {
+        return startDate;
+    }
+    
+    public void setStartDate(Date newStartDate) {
+        this.startDate = newStartDate;
+    }
+    
+    public Date getEndDate() {
+        return endDate;
+    }
+    
+    public void setEndDate(Date newEndDate) {
+        this.endDate = newEndDate;
+    }
 	
 	public String getPriority() {
 	    return this.priority;
 	}
 	
 	public void setPriority(String newPriority) {
-	    if (newPriority != null && (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM))) {
-            this.priority = newPriority;
-	    }
+	    assert newPriority != null;
+	    assert (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM));
+	    
+	    this.priority = newPriority;
 	}
+
+    public Boolean isDone() {
+        return doneStatus;
+    }
+    
+    public void setDoneStatus(Boolean newDoneStatus) {
+        assert newDoneStatus != null;
+        
+        this.doneStatus = newDoneStatus;
+    }
+    
+    public UUID getUUID() {
+        return itemID;
+    }
 	
+    // Miscellaneous convenience methods requested by View and Controller
 	public String getStartDateString() {
-	    return getDateString(getStartDate());
+	    return getDateString(startDate);
 	}
 	
 	public String getEndDateString() {
-	    return getDateString(getEndDate());
+	    return getDateString(endDate);
 	}
 	
 	private String getDateString(Date date) {
@@ -179,13 +145,28 @@ public class TodoItem {
         String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
         return monthNames[month].toUpperCase();
     }
+
+    public String getTodoItemType() {
+        if (startDate == null) {
+            if (endDate == null) {
+                return FLOATING;
+            } else {
+                return DEADLINE;
+            }
+        } else {
+            if (endDate == null) {
+                return ENDLESS;
+            } else {
+                return EVENT;
+            }
+        }
+    }
     
     public boolean isOverdue() {
-        Date endDate = getEndDate();
-        
         if (endDate == null) {
             return false;
         }
+        
         Date currentDate = new Date();
         if (currentDate.getTime() > endDate.getTime()) {
             return true;
@@ -194,98 +175,4 @@ public class TodoItem {
         return false;
     }
     
-    public Long getEpochTag() {
-        return epochTag;
-    }
-	
-	// RESTful (lel)
-	// Not recommended to use the set[..]Property methods. Just use the set methods.
-	public String getTaskName() {
-		if (taskName != null) {
-			return taskName.get();
-		}
-		return null;
-	}
-	
-	public StringProperty gettaskNameProperty() {
-		return taskName;
-	}
-	
-	public void setTaskName(String newTaskName) {
-	    if (newTaskName == null) {
-	        this.taskName = null;
-	    } else {
-	        if (this.taskName != null) {
-	            this.taskName.set(newTaskName);
-	        } else {
-	            this.taskName = new SimpleStringProperty(newTaskName);
-		    }
-		}
-	}
-	
-	public void setTaskNameProperty(StringProperty taskName) {
-		this.taskName = taskName;
-	}
-	
-	public Date getStartDate() {
-		if (startDate != null) {
-			return startDate.get();
-		}
-		return null;
-	}
-	
-	public ObjectProperty<Date> getStartDateProperty() {
-		return startDate;
-	}
-	
-	public boolean isDone() {
-	    return doneStatus;
-	}
-	
-	public void setStartDate(Date newStartDate) {
-	    if (newStartDate == null) {
-	        this.startDate = null;
-	    } else {
-	        if (this.startDate != null) {
-	            this.startDate.set(newStartDate);
-	        } else {
-		        this.startDate = new SimpleObjectProperty<Date>(newStartDate);
-		    }
-		}
-	}
-	
-	public void setStartDateProperty(ObjectProperty<Date> startDate) {
-		this.startDate = startDate;
-	}
-	
-	public Date getEndDate() {
-		if (endDate != null) {
-			return endDate.get();
-		}
-		return null;
-	}
-	
-	public ObjectProperty<Date> getEndDateProperty() {
-		return endDate;
-	}
-	
-	public void setEndDate(Date newEndDate) {
-	    if (newEndDate == null) {
-	        this.endDate = null;
-	    } else {
-	        if (this.endDate != null) {
-	            this.endDate.set(newEndDate);
-	        } else {
-		        this.endDate = new SimpleObjectProperty<Date>(newEndDate);
-		    }
-		}
-	}
-	
-	public void setEndDateProperty(ObjectProperty<Date> endDate) {
-		this.endDate = endDate;
-	}
-	
-	public void setDoneStatus(Boolean newDoneStatus) {
-	    this.doneStatus = newDoneStatus;
-	}
 }

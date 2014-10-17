@@ -1,13 +1,5 @@
-*.suo
-*.user
-*.ncb
-Debug/
-Release/
-CodeAnalyst/
 out/
 .project
-/bin/
-out/**
 .idea/workspace.xml
 .idea/tasks.xml
 .DS_Store
@@ -16,5 +8,6 @@ out/**
 .idea/artifacts
 src/META-INF/
 *.log
-*.log.lck
 *.log.*
+testDirectory/
+/bin/
