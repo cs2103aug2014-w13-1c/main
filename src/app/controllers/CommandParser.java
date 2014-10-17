@@ -46,6 +46,9 @@ public class CommandParser {
         setCommandString(inputString);
         if (commandKeywords.contains(commandWord)) {
         	setDates(inputString);
+        	if (startDate != null && endDate != null) {
+        	    checkDate();
+        	}
         }
     }
 
@@ -181,5 +184,11 @@ public class CommandParser {
     
     public Date getEndDate() {
         return endDate;
+    }
+    
+    private void checkDate() {
+        if (endDate.before(startDate)) {
+            commandWord = "error";
+        }
     }
 }
