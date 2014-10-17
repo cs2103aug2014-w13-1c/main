@@ -34,6 +34,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     @FXML
     private Button deleteButton;
 
+    @FXML
+    private Button doneButton;
+
     private RootViewManager rootViewManager;
 
     List<String> colors;
@@ -48,6 +51,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
             populateContent(task);
             setUpdateButtonEventHandler(task);
             setDeleteButtonEventHandler(task);
+            setDoneButtonEventHandler(task);
         }
     }
 
@@ -97,6 +101,10 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setUpdateButtonEventHandler(TodoItem task) {
         updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+    }
+
+    private void setDoneButtonEventHandler(TodoItem task) {
+        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex(task)));
     }
 
     public String getRandomColor() {
