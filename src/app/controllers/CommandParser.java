@@ -15,6 +15,7 @@ public class CommandParser {
     private Date endDate;
     
     private static ArrayList<String> keywords = new ArrayList<String>();
+    private static ArrayList<String> commandKeywords = new ArrayList<String>();
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
     
@@ -36,14 +37,16 @@ public class CommandParser {
         }
         return month;
     }
-    
+
     // Constructor and initialization
     public CommandParser(String inputString) {
         init();
         this.inputString = inputString;
         setCommandWord(inputString);
         setCommandString(inputString);
-        setDates(inputString);
+        if (commandKeywords.contains(commandWord)) {
+        	setDates(inputString);
+        }
     }
 
     private void init() {
@@ -52,6 +55,49 @@ public class CommandParser {
         startDate = null;
         endDate = null;
         setKeywords();
+    }
+
+ // Keywords parser
+    private static void setKeywords() {
+        commandKeywords.clear();
+        commandKeywords.add("add");
+        commandKeywords.add("delete");
+        commandKeywords.add("display");
+        commandKeywords.add("clear");
+        commandKeywords.add("exit");
+        commandKeywords.add("search");
+        commandKeywords.add("update");
+        commandKeywords.add("help");
+        commandKeywords.add("settings");
+    	  
+    	startDateKeywords.clear();
+        startDateKeywords.add("start");
+        
+        endDateKeywords.clear();
+        endDateKeywords.add("end");
+        
+        keywords.clear();
+        keywords.addAll(commandKeywords);
+        keywords.addAll(startDateKeywords);
+        keywords.addAll(endDateKeywords);
+    }
+    
+    public static ArrayList<Keyword> getKeywords(String inputString) {
+        setKeywords();
+        ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
+        String inputStringArray[] = inputString.trim().split(" ");
+        int startIndex = 0, endIndex = 0;
+        for (int i = 0; i < inputStringArray.length; i++) {
+            endIndex = startIndex + inputStringArray[i].length() - 1;
+            if (keywords.contains(inputStringArray[i])) {
+                currentKeywords.add(new Keyword(startIndex, endIndex));
+            }
+            startIndex = endIndex + 2;
+        }
+//        for (int i = 0; i < currentKeywords.size(); i++) {
+//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
+//        }
+        return currentKeywords;
     }
 
     // Return the unparsed input string
@@ -135,45 +181,5 @@ public class CommandParser {
     
     public Date getEndDate() {
         return endDate;
-    }
-    
-    // Keywords parser
-    private static void setKeywords() {
-        startDateKeywords.clear();
-        startDateKeywords.add("start");
-        
-        endDateKeywords.clear();
-        endDateKeywords.add("end");
-        
-        keywords.clear();
-        keywords.add("add");
-        keywords.add("delete");
-        keywords.add("display");
-        keywords.add("clear");
-        keywords.add("exit");
-        keywords.add("search");
-        keywords.add("update");
-        keywords.add("help");
-        keywords.add("settings");
-        keywords.addAll(startDateKeywords);
-        keywords.addAll(endDateKeywords);
-    }
-    
-    public static ArrayList<Keyword> getKeywords(String inputString) {
-        setKeywords();
-        ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
-        String inputStringArray[] = inputString.trim().split(" ");
-        int startIndex = 0, endIndex = 0;
-        for (int i = 0; i < inputStringArray.length; i++) {
-            endIndex = startIndex + inputStringArray[i].length() - 1;
-            if (keywords.contains(inputStringArray[i])) {
-                currentKeywords.add(new Keyword(startIndex, endIndex));
-            }
-            startIndex = endIndex + 2;
-        }
-//        for (int i = 0; i < currentKeywords.size(); i++) {
-//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-//        }
-        return currentKeywords;
     }
 }
