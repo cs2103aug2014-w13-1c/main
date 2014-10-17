@@ -85,10 +85,13 @@ public class TodoItemSorter {
         if (todoItem1Invalidity && todoItem2Invalidity) {
             return 0;
         }
-        if (todoItem1Invalidity) {
+        
+        // Push all 'null' to the end.
+        // More intuitive UX.
+        if (todoItem2Invalidity) {
             return -1;
         }
-        if (todoItem2Invalidity) {
+        if (todoItem1Invalidity) {
             return 1;
         }
         

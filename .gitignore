@@ -10,3 +10,4 @@ src/META-INF/
 *.log
 *.log.*
 testDirectory/
+/bin/

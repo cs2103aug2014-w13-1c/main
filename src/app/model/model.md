@@ -35,10 +35,12 @@ ModelManager
 
 ### Sorting
 * public void setSortingStyle(int newSortingStyle)
- * 1 = task name
- * 2 = start date
- * 3 = end date
- * 4 = priority
+ * 1 = taskName then endDate
+ * 2 = startDate then priority
+ * 3 = endDate then priority
+ * 4 = priority then endDate
+ * Sort is stable.
+ * Null values are pushed to the end of the list.
  
 ### Getters
 * public ArrayList<TodoItem> getTodoItemList() {

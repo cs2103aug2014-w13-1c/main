@@ -139,23 +139,23 @@ public class ModelUnits {
         TodoItemSorter.sortingStyle = 0;
         TodoItemSorter.resortTodoList(testedList1);
         ArrayList<TodoItem> currentTodoItems = testedList1.getTodoItems();
-        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
-            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
             if (currentTodoItem.getTaskName() == null) {
                 if (nextTodoItem.getTaskName() == null) {
                    if (currentTodoItem.getEndDate() != null) {
                        if (nextTodoItem.getEndDate() == null) fail();
-                       if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                       if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
                    }
                 }
             } else {
                 if (nextTodoItem.getTaskName() == null) fail();
-                if (currentTodoItem.getTaskName().compareTo(nextTodoItem.getTaskName()) > 0) fail();
+                if (currentTodoItem.getTaskName().compareTo(nextTodoItem.getTaskName()) < 0) fail();
                 if (currentTodoItem.getTaskName().equals(nextTodoItem.getTaskName())) {
                     if (currentTodoItem.getEndDate() != null) {
                         if (nextTodoItem.getEndDate() == null) fail();
-                        if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                        if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
                     }
                 }
             }
@@ -165,23 +165,23 @@ public class ModelUnits {
         TodoItemSorter.sortingStyle = 1;
         TodoItemSorter.resortTodoList(testedList1);
         currentTodoItems = testedList1.getTodoItems();
-        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
-            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
             if (currentTodoItem.getStartDate() == null) {
                 if (nextTodoItem.getStartDate() == null) {
                    if (currentTodoItem.getPriority() != null) {
                        if (nextTodoItem.getPriority() == null) fail();
-                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
                    }
                 }
             } else {
                 if (nextTodoItem.getStartDate() == null) fail();
-                if (currentTodoItem.getStartDate().getTime() > nextTodoItem.getStartDate().getTime()) fail();
+                if (currentTodoItem.getStartDate().getTime() < nextTodoItem.getStartDate().getTime()) fail();
                 if (currentTodoItem.getStartDate().getTime() == nextTodoItem.getStartDate().getTime()) {
                     if (currentTodoItem.getPriority() != null) {
                         if (nextTodoItem.getPriority() == null) fail();
-                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
                     }
                 }
             }
@@ -191,23 +191,23 @@ public class ModelUnits {
         TodoItemSorter.sortingStyle = 2;
         TodoItemSorter.resortTodoList(testedList1);
         currentTodoItems = testedList1.getTodoItems();
-        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
-            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
             if (currentTodoItem.getEndDate() == null) {
                 if (nextTodoItem.getEndDate() == null) {
                    if (currentTodoItem.getPriority() != null) {
                        if (nextTodoItem.getPriority() == null) fail();
-                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
                    }
                 }
             } else {
                 if (nextTodoItem.getEndDate() == null) fail();
-                if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
                 if (currentTodoItem.getEndDate().getTime() == nextTodoItem.getEndDate().getTime()) {
                     if (currentTodoItem.getPriority() != null) {
                         if (nextTodoItem.getPriority() == null) fail();
-                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
                     }
                 }
             }
@@ -217,23 +217,25 @@ public class ModelUnits {
         TodoItemSorter.sortingStyle = 3;
         TodoItemSorter.resortTodoList(testedList1);
         currentTodoItems = testedList1.getTodoItems();
-        for (int i = 0; i < testedList1.countTodoItems() - 1; i++) {
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
-            TodoItem nextTodoItem = currentTodoItems.get(i + 1);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
             if (currentTodoItem.getPriority() == null) {
                 if (nextTodoItem.getPriority() == null) {
                    if (currentTodoItem.getEndDate() != null) {
                        if (nextTodoItem.getEndDate() == null) fail();
-                       if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                       if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
                    }
                 }
             } else {
                 if (nextTodoItem.getPriority() == null) fail();
-                if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) > 0) fail();
+                if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) {
+                    fail();
+                }
                 if (currentTodoItem.getPriority().equals(nextTodoItem.getPriority())) {
                     if (currentTodoItem.getEndDate() != null) {
                         if (nextTodoItem.getEndDate() == null) fail();
-                        if (currentTodoItem.getEndDate().getTime() > nextTodoItem.getEndDate().getTime()) fail();
+                        if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
                     }
                 }
             }
