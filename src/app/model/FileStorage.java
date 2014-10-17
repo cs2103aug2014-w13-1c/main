@@ -249,7 +249,7 @@ public class FileStorage {
             writer.flush();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.SEVERE, SETTINGS_FILE_NAME + WRITE_FAILED);
-            throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
+            throw new IOException(SETTINGS_FILE_NAME + LOAD_FAILED);
         }
         
         LoggingService.getLogger().log(Level.INFO, "Successfully updated settings file.");
