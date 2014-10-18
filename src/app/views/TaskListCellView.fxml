@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="435.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
    <children>
@@ -17,11 +17,11 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="updateButton" layoutX="392.0" layoutY="7.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
+      <Button fx:id="updateButton" layoutX="392.0" layoutY="35.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/compose-3.png" />
+                  <Image url="@../resources/compose.png" />
                </image>
             </ImageView>
          </graphic>
@@ -41,5 +41,14 @@
             <Font size="16.0" />
          </font>
       </Label>
+      <Button fx:id="doneButton" layoutX="392.0" layoutY="7.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/tick.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>
