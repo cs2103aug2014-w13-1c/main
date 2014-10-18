@@ -12,7 +12,7 @@
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/cross-white.png" />
+                  <Image url="@../resources/cross.png" />
                </image>
             </ImageView>
          </graphic>
@@ -21,7 +21,7 @@
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/compose-white.png" />
+                  <Image url="@../resources/compose.png" />
                </image>
             </ImageView>
          </graphic>
@@ -45,7 +45,7 @@
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../resources/tick-white.png" />
+                  <Image url="@../resources/tick.png" />
                </image>
             </ImageView>
          </graphic>
