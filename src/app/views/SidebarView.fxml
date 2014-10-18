@@ -34,7 +34,16 @@
                 </ImageView>
             </graphic>
         </Button>
-      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="210.0">
+        <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+            <graphic>
+                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                    <image>
+                        <Image url="@../resources/tick.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="150.0">
          <graphic>
             <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                <image>
@@ -43,7 +52,7 @@
             </ImageView>
          </graphic>
       </Button>
-        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="210.0">
+        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="150.0">
             <graphic>
                 <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
