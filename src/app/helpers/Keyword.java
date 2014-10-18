@@ -7,14 +7,14 @@ public class Keyword {
 
     private int startIndex;
     private int endIndex;
-
+    
     // do we want odd the ability to specify colour of keyword?
 
     public Keyword(int start, int end) {
         startIndex = start;
         endIndex = end;
     }
-
+        
     public int getStartIndex() {
         return startIndex;
     }
@@ -22,5 +22,4 @@ public class Keyword {
     public int getEndIndex() {
         return endIndex;
     }
-
 }
