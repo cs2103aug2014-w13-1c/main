@@ -31,6 +31,7 @@ public class InputFieldViewManager {
     private String lastCommand;
     private StyleClassedTextArea inputField;
     private RootViewManager rootViewManager;
+    private Boolean searchState;
 
     public InputFieldViewManager() {
         inputField = new StyleClassedTextArea();
@@ -38,10 +39,12 @@ public class InputFieldViewManager {
         inputField.getStylesheets().add("app/stylesheets/inputField.css");
         inputField.getStyleClass().add("input-field");
         inputField.setWrapText(true);
+        searchState = false;
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
             inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
+                searchState = true;
                 assert inputField.getText().length() > 6;
                 String query = inputField.getText().substring(7);
                 LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
@@ -53,7 +56,10 @@ public class InputFieldViewManager {
                 }
             } else {
 //                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
-//                rootViewManager.getMainApp().getCommandController().updateView();
+                if (searchState) {
+                    rootViewManager.getMainApp().getCommandController().updateView();
+                    searchState = false;
+                }
                 rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
             }
         });
