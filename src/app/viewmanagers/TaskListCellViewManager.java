@@ -29,6 +29,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label bottomDateLabel;
 
     @FXML
+    private Label priorityLevelLabel;
+
+    @FXML
     private Button updateButton;
 
     @FXML
