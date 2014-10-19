@@ -52,10 +52,14 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
             clearContent();
         } else {
             populateContent(task);
-            setUpdateButtonEventHandler(task);
-            setDeleteButtonEventHandler(task);
-            setDoneButtonEventHandler(task);
+            setButtonEventHandlers(task);
         }
+    }
+
+    private void setButtonEventHandlers(TodoItem task) {
+        setUpdateButtonEventHandler(task);
+        setDeleteButtonEventHandler(task);
+        setDoneButtonEventHandler(task);
     }
 
     private void clearContent() {
@@ -65,11 +69,15 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void populateContent(TodoItem task) {
         setTaskName(task);
+        setPriorityLevel(task);
         setDates(task);
     }
 
+    private void setPriorityLevel(TodoItem task) {
+        priorityLevelLabel.setText("PRIORITY: " + task.getPriority().toUpperCase());
+    }
+
     private void setDates(TodoItem task) {
-//        LoggingService.getLogger().log(Level.INFO, "Setting labels for task type: " + task.getTodoItemType().toLowerCase());
         switch (task.getTodoItemType().toLowerCase()) {
             case "event":
                 topDateLabel.setText("START " + task.getStartDateString());

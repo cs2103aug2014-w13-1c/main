@@ -8,7 +8,7 @@
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="435.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
    <children>
-      <Button fx:id="deleteButton" layoutX="392.0" layoutY="62.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
+      <Button fx:id="deleteButton" layoutX="391.0" layoutY="68.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -17,7 +17,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button fx:id="updateButton" layoutX="392.0" layoutY="35.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
+      <Button fx:id="updateButton" layoutX="391.0" layoutY="37.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -26,27 +26,27 @@
             </ImageView>
          </graphic>
       </Button>
-      <Label fx:id="bottomDateLabel" layoutX="14.0" layoutY="58.0" prefHeight="14.0" prefWidth="110.0" text="bottomDateLabel" textFill="WHITE">
+      <Label fx:id="bottomDateLabel" layoutX="218.0" layoutY="69.0" prefHeight="14.0" prefWidth="110.0" text="bottomDateLabel" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="topDateLabel" layoutX="14.0" layoutY="43.0" prefHeight="14.0" prefWidth="110.0" text="topDateLabel" textFill="WHITE">
+      <Label fx:id="topDateLabel" layoutX="218.0" layoutY="50.0" prefHeight="14.0" prefWidth="110.0" text="topDateLabel" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="priorityLevelLabel" layoutX="14.0" layoutY="79.0" prefHeight="14.0" prefWidth="70.0" text="High priority" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label fx:id="priorityLevelLabel" layoutX="14.0" layoutY="50.0" prefHeight="14.0" prefWidth="110.0" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
          <font>
-            <Font size="11.0" />
+            <Font name="System Italic" size="11.0" />
          </font>
       </Label>
-      <Label fx:id="taskNameLabel" layoutX="14.0" layoutY="-1.0" prefHeight="46.0" prefWidth="337.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
+      <Label fx:id="taskNameLabel" layoutX="14.0" layoutY="6.0" prefHeight="46.0" prefWidth="337.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Button fx:id="doneButton" layoutX="392.0" layoutY="7.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
+      <Button fx:id="doneButton" layoutX="391.0" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
