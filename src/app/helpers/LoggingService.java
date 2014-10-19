@@ -21,7 +21,7 @@ public class LoggingService {
     private LoggingService() {
        logger = Logger.getLogger(this.getClass().getName());
         try {
-            Handler fh = new FileHandler("./watdo.log");
+            Handler fh = new FileHandler("./logs/watdo.log");
             logger.addHandler(fh);
         } catch (IOException e) {
             e.printStackTrace();
