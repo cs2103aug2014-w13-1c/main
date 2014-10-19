@@ -72,7 +72,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setPriorityLevel(TodoItem task) {
-        priorityLevelLabel.setText("PRIORITY: " + task.getPriority().toUpperCase());
+        priorityLevelLabel.setText("PRIORITY: " + task.getPriority().substring(3).toUpperCase());
         setBackgroundColor(task.getPriority());
     }
 
@@ -127,15 +127,14 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setBackgroundColor(String priority) {
         String alphaValue;
-
-        switch(priority) {
-            case TodoItem.HIGH:
+        switch(priority.substring(3)) {
+            case "High":
                 alphaValue = "1";
                 break;
-            case TodoItem.MEDIUM:
+            case "Medium":
                 alphaValue = "0.75";
                 break;
-            case TodoItem.LOW:
+            case "Low":
                 alphaValue = "0.35";
                 break;
             default:

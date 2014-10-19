@@ -52,7 +52,7 @@ public class TodoItem {
 	    if (newEndDate != null) {
 	        this.endDate = newEndDate;
 	    }
-	    
+
 	    this.priority = MEDIUM;
 	    if (newPriority != null) {
 	        if (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
