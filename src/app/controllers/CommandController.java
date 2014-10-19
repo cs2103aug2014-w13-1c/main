@@ -24,11 +24,12 @@ import java.util.logging.Level;
 
 public class CommandController {
     protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, INVALID, SEARCH, UPDATE, HELP, SETTINGS
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, INVALID, INVALID_DATE,
     }
 
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
+    private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
 
@@ -236,6 +237,8 @@ public class CommandController {
             return COMMAND_TYPE.HELP;
         } else if (commandWord.equalsIgnoreCase("settings")) {
             return COMMAND_TYPE.SETTINGS;
+        } else if (commandWord.equalsIgnoreCase("dateError")) {
+            return COMMAND_TYPE.INVALID_DATE;
         } else {
             return COMMAND_TYPE.INVALID;
         }
@@ -264,6 +267,8 @@ public class CommandController {
                 return help(parsedCommand);
             case SETTINGS :
                 return settings(parsedCommand);
+            case INVALID_DATE :
+                return showErrorDialog(ERROR_INVALID_DATE);
             default :
                 return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
