@@ -129,13 +129,13 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         String alphaValue;
 
         switch(priority) {
-            case "High":
+            case TodoItem.HIGH:
                 alphaValue = "1";
                 break;
-            case "Medium":
+            case TodoItem.MEDIUM:
                 alphaValue = "0.75";
                 break;
-            case "Low":
+            case TodoItem.LOW:
                 alphaValue = "0.35";
                 break;
             default:
