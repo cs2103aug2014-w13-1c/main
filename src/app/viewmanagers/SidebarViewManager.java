@@ -18,6 +18,9 @@ public class SidebarViewManager {
     private Button searchButton;
 
     @FXML
+    private Button showDoneButton;
+
+    @FXML
     private Button helpButton;
 
     @FXML
@@ -31,7 +34,7 @@ public class SidebarViewManager {
      */
     @FXML
     private void initialize() {
-        Button[] buttons = {displayButton, addButton, searchButton, helpButton, settingsButton};
+        Button[] buttons = {displayButton, addButton, searchButton, helpButton, settingsButton, showDoneButton};
         for (Button button : buttons) {
             button.setOnAction((e) -> clickedButton(button));
         }
@@ -41,13 +44,16 @@ public class SidebarViewManager {
         LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
         switch (button.getId()) {
             case "displayButton":
-                rootViewManager.setAndFocusInputField("display");
+                rootViewManager.setAndFocusInputField("display all");
                 break;
             case "addButton":
                 rootViewManager.setAndFocusInputField("add ");
                 break;
             case "searchButton":
                 rootViewManager.setAndFocusInputField("search ");
+                break;
+            case "showDoneButton":
+                rootViewManager.setAndFocusInputField("display done");
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
