@@ -70,7 +70,15 @@ public class CommandController {
             return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), null, null);
+            if (parsedCommand.getPriority().equals("high")) {
+                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.HIGH, null);
+            }
+            else if (parsedCommand.getPriority().equals("low")) {
+                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.LOW, null);
+            }
+            else {
+                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.MEDIUM, null);
+            }
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -94,7 +102,7 @@ public class CommandController {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), todo.getPriority(), null));
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), null, null));
             index++;
         }
         return taskData;
