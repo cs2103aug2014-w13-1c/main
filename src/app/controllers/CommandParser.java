@@ -215,7 +215,15 @@ public class CommandParser {
         for (int i = 0; i < inputStringArray.length; i++) {
             if (inputStringArray[i].equalsIgnoreCase("priority")) {
                 i++;
-                priority = inputStringArray[i];
+                if (inputStringArray[i].equalsIgnoreCase("low")) {
+                    priority = "low";
+                }
+                if (inputStringArray[i].equalsIgnoreCase("medium")) {
+                    priority = "medium";
+                }
+                if (inputStringArray[i].equalsIgnoreCase("high")) {
+                    priority = "high";
+                }
             }
         }
     }
