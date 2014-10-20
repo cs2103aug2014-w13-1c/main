@@ -49,6 +49,12 @@ ModelManager
 ### Count
 * public int countTasks()
 
+### Display done tasks
+* public void setDoneDisplay(Boolean displayDone)
+ * If _True_, subsequent getTodoItemList()/getTodoItemIterator() calls will return the entire list of tasks
+ * If _False_, subsequent getTodoItemList()/getTodoItemIterator() calls will return just the not-done list of tasks
+ * At program startup, displayDone is false. You will not see the entire list of tasks unless "display all" is typed.
+
 TodoItem
 -----------
 ### Attribute getters and setters
