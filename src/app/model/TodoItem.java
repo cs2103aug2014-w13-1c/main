@@ -35,9 +35,9 @@ public class TodoItem {
 	public static final String ENDLESS = "Endless";
 	public static final String INVALID = "Invalid";
 	
-	public static final String HIGH = "High";
-	public static final String MEDIUM = "Medium";
-	public static final String LOW = "Low";
+	public static final String HIGH = "3. High";
+	public static final String MEDIUM = "2. Medium";
+	public static final String LOW = "1. Low";
 	
 	// Constructor
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
@@ -52,7 +52,7 @@ public class TodoItem {
 	    if (newEndDate != null) {
 	        this.endDate = newEndDate;
 	    }
-	    
+
 	    this.priority = MEDIUM;
 	    if (newPriority != null) {
 	        if (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
