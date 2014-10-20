@@ -1,9 +1,10 @@
 package app.controllers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.StringTokenizer;
 
 import app.helpers.Keyword;
 
@@ -13,6 +14,9 @@ public class CommandParser {
     private String commandString;
     private Date startDate;
     private Date endDate;
+    private String priority;
+    
+    private String[] inputStringArray;
     
     private static ArrayList<String> keywords = new ArrayList<String>();
     private static ArrayList<String> commandKeywords = new ArrayList<String>();
@@ -42,11 +46,13 @@ public class CommandParser {
     public CommandParser(String inputString) {
         init();
         this.inputString = inputString;
+        this.inputStringArray = inputString.trim().split(" ");
         setCommandWord(inputString);
-        setCommandString(inputString);
         if (commandKeywords.contains(commandWord)) {
+            setCommandString(inputString);
         	setDates(inputString);
         	checkDate();
+        	setPriority();
         }
     }
 
@@ -55,6 +61,7 @@ public class CommandParser {
         commandString = "";
         startDate = null;
         endDate = null;
+        priority = "medium";
         setKeywords();
     }
 
@@ -78,6 +85,7 @@ public class CommandParser {
         endDateKeywords.add("end");
         
         keywords.clear();
+        keywords.add("priority");
         keywords.addAll(commandKeywords);
         keywords.addAll(startDateKeywords);
         keywords.addAll(endDateKeywords);
@@ -86,7 +94,7 @@ public class CommandParser {
     public static ArrayList<Keyword> getKeywords(String inputString) {
         setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
-        String inputStringArray[] = inputString.trim().split(" ");
+        String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0, endIndex = 0;
         for (int i = 0; i < inputStringArray.length; i++) {
             endIndex = startIndex + inputStringArray[i].length() - 1;
@@ -125,7 +133,6 @@ public class CommandParser {
     private void setCommandString(String inputString) {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
-            String inputStringArray[] = inputString.trim().split(" ");
             int i = 1;
             while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
                 commandString = commandString.concat(inputStringArray[i] + " ");
@@ -141,7 +148,6 @@ public class CommandParser {
     
     // Date parser
     private void setDates(String inputString) {
-        String inputStringArray[] = inputString.trim().split(" ");
         for (int i = 0; i < inputStringArray.length; i++) {
             if (startDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
@@ -166,24 +172,6 @@ public class CommandParser {
         }
     }
     
-    private Date getDate(String toBeParsed) {
-        StringTokenizer st = new StringTokenizer(toBeParsed);
-        int date = Integer.valueOf(st.nextToken());
-        int month = getMonth(st.nextToken());
-        int year = Integer.valueOf(st.nextToken());
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month, date);
-        return cal.getTime();
-    }
-    
-    public Date getStartDate() {
-        return startDate;
-    }
-    
-    public Date getEndDate() {
-        return endDate;
-    }
-    
     private void checkDate() {
         if (startDate != null) {
             if (startDate.before(new Date())) {
@@ -200,6 +188,47 @@ public class CommandParser {
                 commandWord = "dateError";
             }
         }
-        
+    }
+    
+    private Date getDate(String toBeParsed) {
+        try {
+            DateFormat df = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+            System.out.println(df.parseObject(toBeParsed));
+            return df.parse(toBeParsed);
+        }
+        catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Date getStartDate() {
+        return startDate;
+    }
+    
+    public Date getEndDate() {
+        return endDate;
+    }
+    
+    // Priority parser
+    private void setPriority() {
+        for (int i = 0; i < inputStringArray.length; i++) {
+            if (inputStringArray[i].equalsIgnoreCase("priority")) {
+                i++;
+                if (inputStringArray[i].equalsIgnoreCase("low")) {
+                    priority = "low";
+                }
+                if (inputStringArray[i].equalsIgnoreCase("medium")) {
+                    priority = "medium";
+                }
+                if (inputStringArray[i].equalsIgnoreCase("high")) {
+                    priority = "high";
+                }
+            }
+        }
+    }
+    
+    public String getPriority() {
+        return priority;
     }
 }

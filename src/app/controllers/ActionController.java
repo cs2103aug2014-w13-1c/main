@@ -1,28 +1,18 @@
 package app.controllers;
 
-import app.Main;
-import app.helpers.Keyword;
-import app.helpers.LoggingService;
-import app.model.ModelManager;
-import app.model.TodoItem;
-import app.model.TodoItemList;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-/**
- * Class CommandController
- * 
- * This class is the main controller.
- * Skeleton based on jolly's CE2.
- *
- * @author ryan
- */
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import app.Main;
+import app.controllers.CommandController.COMMAND_TYPE;
+import app.helpers.LoggingService;
+import app.model.ModelManager;
+import app.model.TodoItem;
 
-public class CommandController {
+public class ActionController {
     protected enum COMMAND_TYPE {
         ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, INVALID, INVALID_DATE,
     }
@@ -46,12 +36,12 @@ public class CommandController {
     private ArrayList<TodoItem> currentList;
     private CommandParser parsedCommand;
 
-    // String manipulation methods
+    // Print string methods
     protected void printString(String message) {
         System.out.print(message);
     }
-
-    // Individual command methods
+    
+ // Individual command methods
     // Add command method(s)
     protected String addNewLine(CommandParser parsedCommand){
         if (parsedCommand.getCommandString().isEmpty()) {
@@ -90,7 +80,7 @@ public class CommandController {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), null, null));
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), todo.getPriority(), null));
             index++;
         }
         return taskData;
@@ -270,27 +260,6 @@ public class CommandController {
         }
     }
 
-    // CommandController public methods
-    public CommandController() {
-        try {
-            taskList = new ModelManager();
-        } catch (IOException e) {
-            // do something here?
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-        }
-        currentList = new ArrayList<TodoItem>();
-    }
-
-    public void parseCommand(String inputString) {
-        printString("Parsing: \"" + inputString + "\"\n");
-        parsedCommand = new CommandParser(inputString);
-        printString(processCommand(parsedCommand));
-    }
-
-    public ArrayList<Keyword> parseKeywords(String inputString) {
-        return CommandParser.getKeywords(inputString);
-    }
-        
     public void updateView() {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
@@ -319,9 +288,6 @@ public class CommandController {
      */
     public void setMainApp(Main main) {
         this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
     }
 
     public String showErrorDialog(String error) {
