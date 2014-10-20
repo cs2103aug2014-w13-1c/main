@@ -20,6 +20,7 @@ public class ModelManager {
     
     public ModelManager() throws IOException {
         this.dataStorage = new FileStorage();
+        this.displayStatus = false;
         
         try {
             dataStorage.loadSettings();
@@ -129,8 +130,6 @@ public class ModelManager {
     
     public void setDoneDisplay(Boolean newDisplayStatus) {
         this.displayStatus = newDisplayStatus;
-        
-        // save to settings.json here
     }
     
     public void setSortingStyle(int newSortingStyle) {
@@ -139,11 +138,15 @@ public class ModelManager {
     }
 
     public ArrayList<TodoItem> getTodoItemList() {
-        return todoList.getTodoItems();
+        if (getDoneDisplay()) {
+            return todoList.getTodoItems();
+        } else {
+            return todoList.getUndoneTodoItems();
+        }
     }
     
     public ListIterator<TodoItem> getTodoItemIterator() {
-        return todoList.getTodoItems().listIterator();
+        return getTodoItemList().listIterator();
     }
     
     public String getFullFileName() {

@@ -52,6 +52,16 @@ public class TodoItemList {
 		return todoItems;
 	}
 	
+	public ArrayList<TodoItem> getUndoneTodoItems() {
+	    ArrayList<TodoItem> undoneTodoItems = new ArrayList<TodoItem>();
+	    for (TodoItem task : todoItems) {
+	        if (!task.isDone()) {
+	            undoneTodoItems.add(task);
+	        }
+	    }
+	    return undoneTodoItems;
+	}
+	
 	public TodoItem getByUUID(UUID itemID) {
 	    for (int i = 0; i < todoItems.size(); i++) {
 	        TodoItem currentItem = todoItems.get(i);
