@@ -20,8 +20,6 @@
     <orderEntry type="library" name="org.json-20120521" level="project" />
     <orderEntry type="library" name="natty-0.9" level="project" />
     <orderEntry type="library" name="antlr-runtime-3.2" level="project" />
-    <orderEntry type="library" name="gunit-3.2" level="project" />
-    <orderEntry type="library" name="ical4j-1.0.2" level="project" />
   </component>
 </module>
 
