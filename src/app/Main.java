@@ -1,6 +1,7 @@
 package app;
 
 import app.controllers.*;
+import app.helpers.HotkeyActivator;
 import app.helpers.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
@@ -9,7 +10,6 @@ import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
-import java.util.Date;
 import java.util.logging.Level;
 
 public class Main extends Application {
@@ -50,6 +50,9 @@ public class Main extends Application {
         taskController.setMainApp(this);
         commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
+
+        HotkeyActivator hotkeyActivator = new HotkeyActivator();
+        hotkeyActivator.setMainApp(this);
     }
 
     public void showInfoDialog(String title, String message) {
