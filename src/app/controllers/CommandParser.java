@@ -43,7 +43,7 @@ public class CommandParser {
     }
 
     // Constructor and initialization
-    public CommandParser(String inputString) {
+    protected CommandParser(String inputString) {
         init();
         this.inputString = inputString;
         this.inputStringArray = inputString.trim().split(" ");
@@ -91,7 +91,7 @@ public class CommandParser {
         keywords.addAll(endDateKeywords);
     }
     
-    public static ArrayList<Keyword> getKeywords(String inputString) {
+    protected static ArrayList<Keyword> getKeywords(String inputString) {
         setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
@@ -110,7 +110,7 @@ public class CommandParser {
     }
 
     // Return the unparsed input string
-    public String getInputString() {
+    protected String getInputString() {
         return inputString;
     }
     
@@ -125,7 +125,7 @@ public class CommandParser {
         }
     }
     
-    public String getCommandWord() {
+    protected String getCommandWord() {
         return commandWord;
     }
     
@@ -142,7 +142,7 @@ public class CommandParser {
         commandString = commandString.trim();
     }
     
-    public String getCommandString() {
+    protected String getCommandString() {
         return commandString;
     }
     
@@ -202,11 +202,11 @@ public class CommandParser {
         return null;
     }
     
-    public Date getStartDate() {
+    protected Date getStartDate() {
         return startDate;
     }
     
-    public Date getEndDate() {
+    protected Date getEndDate() {
         return endDate;
     }
     
@@ -228,7 +228,7 @@ public class CommandParser {
         }
     }
     
-    public String getPriority() {
+    protected String getPriority() {
         return priority;
     }
 }

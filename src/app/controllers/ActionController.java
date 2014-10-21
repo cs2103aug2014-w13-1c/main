@@ -1,17 +1,14 @@
 package app.controllers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import app.Main;
-import app.controllers.ActionController.COMMAND_TYPE;
 import app.helpers.Keyword;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class ActionController {
     protected enum COMMAND_TYPE {
@@ -35,14 +32,8 @@ public class ActionController {
     private ModelManager taskList;
     private Main main;
     private ArrayList<TodoItem> currentList;
-    private CommandParser parsedCommand;
 
-    // Print string methods
-    protected void printString(String message) {
-        System.out.print(message);
-    }
-    
- // Individual command methods
+    // Individual command methods
     // Add command method(s)
     protected String addNewLine(CommandParser parsedCommand){
         if (parsedCommand.getCommandString().isEmpty()) {
@@ -62,7 +53,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        resetTaskList();
         return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
@@ -73,18 +63,7 @@ public class ActionController {
         }
         currentList = taskList.getTodoItemList();
         main.getPrimaryStage().setTitle("wat do");
-        updateView();
         return "displaying tasks\n";
-    }
-
-    public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
-        ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
-        int index = 1;
-        for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), todo.getPriority(), null));
-            index++;
-        }
-        return taskData;
     }
 
     // Clear command method(s)
@@ -98,7 +77,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        resetTaskList();
         return MESSAGE_CLEAR_COMPLETE;
     }
     
@@ -123,7 +101,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        resetTaskList();
         return showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
@@ -151,7 +128,6 @@ public class ActionController {
         } else {
             currentList = results;
             main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
-            updateView();
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
@@ -182,7 +158,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        resetTaskList();
         return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
@@ -204,67 +179,8 @@ public class ActionController {
         return "showing settings\n";
     }
 
-    // Command processing methods
-    protected COMMAND_TYPE determineCommandType(String commandWord) {
-        if (commandWord.equalsIgnoreCase("add")) {
-            return COMMAND_TYPE.ADD;
-        } else if (commandWord.equalsIgnoreCase("delete")) {
-            return COMMAND_TYPE.DELETE;
-        } else if (commandWord.equalsIgnoreCase("display")) {
-            return COMMAND_TYPE.DISPLAY;
-        } else if (commandWord.equalsIgnoreCase("clear")) {
-            return COMMAND_TYPE.CLEAR;
-        } else if (commandWord.equalsIgnoreCase("exit")) {
-            return COMMAND_TYPE.EXIT;
-        } else if (commandWord.equalsIgnoreCase("search")) {
-            return COMMAND_TYPE.SEARCH;
-        } else if (commandWord.equalsIgnoreCase("update")) {
-            return COMMAND_TYPE.UPDATE;
-        } else if (commandWord.equalsIgnoreCase("help")) {
-            return COMMAND_TYPE.HELP;
-        } else if (commandWord.equalsIgnoreCase("settings")) {
-            return COMMAND_TYPE.SETTINGS;
-        } else if (commandWord.equalsIgnoreCase("dateError")) {
-            return COMMAND_TYPE.INVALID_DATE;
-        } else {
-            return COMMAND_TYPE.INVALID;
-        }
-    }
 
-    public String processCommand(CommandParser parsedCommand) {
-        String commandWord = parsedCommand.getCommandWord();
-        COMMAND_TYPE commandType = determineCommandType(commandWord);
-        switch (commandType) {
-            case ADD :
-                return addNewLine(parsedCommand);
-            case DISPLAY :
-                return display(parsedCommand);
-            case CLEAR :
-                return clear(parsedCommand);
-            case DELETE :
-                return deleteEntry(parsedCommand);
-            case EXIT :
-                showInfoDialog("Bye!");
-                System.exit(0);
-            case SEARCH :
-                return search(parsedCommand);
-            case UPDATE :
-                return update(parsedCommand);
-            case HELP :
-                return help(parsedCommand);
-            case SETTINGS :
-                return settings(parsedCommand);
-            case INVALID_DATE :
-                return showErrorDialog(ERROR_INVALID_DATE);
-            default :
-                return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
-        }
-    }
-
-
-
-
-    public ActionController() {
+    protected ActionController() {
         try {
             taskList = new ModelManager();
         } catch (IOException e) {
@@ -273,30 +189,17 @@ public class ActionController {
         }
         currentList = new ArrayList<TodoItem>();
     }
+    
+    protected ArrayList<TodoItem> getCurrentList() {
+        return currentList;
+    }
+    
+    protected ModelManager getTaskList() {
+        return taskList;
+    }
 
-    public ArrayList<Keyword> parseKeywords(String inputString) {
+    private ArrayList<Keyword> parseKeywords(String inputString) {
         return CommandParser.getKeywords(inputString);
-    }
-        
-    public void updateView() {
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
-    }
-
-    public void updateView(ArrayList<TodoItem> todoItems) {
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
-    }
-
-    public ArrayList<TodoItem> getTaskList() {
-        return taskList.getTodoItemList();
-    }
-
-    public void setTaskList(ArrayList<TodoItem> todoList) {
-        currentList = todoList;
-    }
-
-    public void resetTaskList() {
-        main.getPrimaryStage().setTitle("wat do");
-        setTaskList(getTaskList());
     }
 
     /**
@@ -304,16 +207,16 @@ public class ActionController {
      *
      * @param main
      */
-    public void setMainApp(Main main) {
+    protected void setMainApp(Main main) {
         this.main = main;
     }
 
-    public String showErrorDialog(String error) {
+    protected String showErrorDialog(String error) {
         main.showErrorDialog("Error", error);
         return error;
     }
 
-    public String showInfoDialog(String message) {
+    protected String showInfoDialog(String message) {
         main.showInfoDialog("Information", message);
         return message;
     }
