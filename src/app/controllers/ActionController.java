@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class ActionController {
-    protected enum COMMAND_TYPE {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, INVALID, INVALID_DATE,
-    }
-
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
     private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
@@ -37,7 +33,7 @@ public class ActionController {
     // Add command method(s)
     protected String addNewLine(CommandParser parsedCommand){
         if (parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
             if (parsedCommand.getPriority().equals("high")) {
@@ -53,13 +49,13 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
+        return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
     // Display command method(s)
     protected String display(CommandParser parsedCommand) {
         if (!parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         currentList = taskList.getTodoItemList();
         main.getPrimaryStage().setTitle("wat do");
@@ -69,7 +65,7 @@ public class ActionController {
     // Clear command method(s)
     protected String clear(CommandParser parsedCommand) {
         if (!parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
             taskList.clearTasks();
@@ -83,7 +79,7 @@ public class ActionController {
     // Delete command method(s)
     protected String deleteEntry(CommandParser parsedCommand) {
         if (parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
         index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
@@ -92,7 +88,7 @@ public class ActionController {
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         try {
@@ -101,7 +97,7 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
+        return CommandController.showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
     protected boolean isInt(String number) {
@@ -116,15 +112,15 @@ public class ActionController {
     // Search command method(s)
     protected String search(CommandParser parsedCommand) {
         if (parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (todoList.isEmpty()) {
-            return showErrorDialog(String.format(ERROR_FILE_EMPTY));
+            return CommandController.showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
         ArrayList<TodoItem> results = main.getTaskController().instantSearch(parsedCommand.getCommandString());
         if (results.isEmpty()) {
-            return showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
+            return CommandController.showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
             currentList = results;
             main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
@@ -135,11 +131,11 @@ public class ActionController {
     // Update command method(s)
     protected String update(CommandParser parsedCommand) {
         if (parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int nextSpacePos = parsedCommand.getCommandString().indexOf(" ");
         if (nextSpacePos == -1) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
         if(isInt(parsedCommand.getCommandString().substring(0, nextSpacePos))) {
@@ -147,7 +143,7 @@ public class ActionController {
         }
         ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeUpdated = parsedCommand.getCommandString().substring(nextSpacePos + 1);
         Boolean[] parameters = {true, true, true, false, false};
@@ -158,13 +154,13 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
+        return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
     }
 
     // Help method
     protected String help(CommandParser parsedCommand) {
         if (!parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
         return "showing help\n";
@@ -173,7 +169,7 @@ public class ActionController {
     // Settings method
     protected String settings(CommandParser parsedCommand) {
         if (!parsedCommand.getCommandString().isEmpty()) {
-            return showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
         return "showing settings\n";
@@ -203,21 +199,11 @@ public class ActionController {
     }
 
     /**
-     * Is called by the main application to give a reference back to itself.
+     * Is called by the CommandController to set the main app for ActionController.
      *
      * @param main
      */
     protected void setMainApp(Main main) {
         this.main = main;
-    }
-
-    protected String showErrorDialog(String error) {
-        main.showErrorDialog("Error", error);
-        return error;
-    }
-
-    protected String showInfoDialog(String message) {
-        main.showInfoDialog("Information", message);
-        return message;
     }
 }

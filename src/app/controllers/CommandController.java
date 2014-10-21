@@ -32,7 +32,7 @@ public class CommandController {
 
     // Class variables
     private ModelManager taskList;
-    private Main main;
+    private static Main main;
     private ArrayList<TodoItem> currentList;
     private CommandParser parsedCommand;
 
@@ -122,10 +122,10 @@ public class CommandController {
                 showInfoDialog("Bye!");
                 System.exit(0);
             case INVALID_DATE :
-                feedback = action.showErrorDialog(ERROR_INVALID_DATE);
+                feedback = showErrorDialog(ERROR_INVALID_DATE);
                 return feedback;
             default :
-                feedback = action.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+                feedback = showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
                 return feedback;
         }
     }
@@ -188,15 +188,15 @@ public class CommandController {
      * @param main
      */
     public void setMainApp(Main main) {
-        this.main = main;
+        CommandController.main = main;
     }
 
-    public String showErrorDialog(String error) {
+    public static String showErrorDialog(String error) {
         main.showErrorDialog("Error", error);
         return error;
     }
 
-    public String showInfoDialog(String message) {
+    public static String showInfoDialog(String message) {
         main.showInfoDialog("Information", message);
         return message;
     }
