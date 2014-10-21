@@ -11,4 +11,5 @@ src/META-INF/
 *.log.*
 testDirectory/
 /bin/
+watdo.log.*
 logs/

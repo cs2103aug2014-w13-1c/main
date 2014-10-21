@@ -42,4 +42,34 @@ public class TaskController {
         return results;
     }
 
+    public ArrayList<TodoItem> getDoneTasks() {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (todo.isDone()) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<TodoItem> getUndoneTasks() {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.isDone()) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
+    public ArrayList<TodoItem> getOverdueTasks() {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (todo.isOverdue()) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
 }

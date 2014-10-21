@@ -90,7 +90,7 @@ public class CommandController {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
         int index = 1;
         for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), null, null));
+            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), todo.getPriority(), null));
             index++;
         }
         return taskData;
@@ -127,7 +127,7 @@ public class CommandController {
         }
         String toBeDeleted = todoList.get(index).getTaskName();
         try {
-            taskList.deleteTask(todoList.get(index).getUUID());
+            taskList.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -185,7 +185,7 @@ public class CommandController {
         String toBeUpdated = parsedCommand.getCommandString().substring(nextSpacePos + 1);
         Boolean[] parameters = {true, true, true, false, false};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
+            taskList.updateTask(currentList.get(index).getUUID(),
                                 parameters, toBeUpdated, parsedCommand.getStartDate(), parsedCommand.getEndDate(), null, null);
         } catch (IOException e) {
             // do something here?
