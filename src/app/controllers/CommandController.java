@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 public class CommandController {
     protected enum CommandType {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, INVALID, INVALID_DATE,
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
     }
 
     // Errors
@@ -61,6 +61,8 @@ public class CommandController {
             return CommandType.HELP;
         } else if (commandWord.equalsIgnoreCase("settings")) {
             return CommandType.SETTINGS;
+        } else if (commandWord.equalsIgnoreCase("saveto")) {
+            return CommandType.SAVETO;
         } else if (commandWord.equalsIgnoreCase("dateError")) {
             return CommandType.INVALID_DATE;
         } else {

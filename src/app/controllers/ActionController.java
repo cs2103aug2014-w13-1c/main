@@ -180,6 +180,20 @@ public class ActionController {
         main.getRootViewManager().openSettings();
         return "showing settings\n";
     }
+    
+    // Change save file location (for .json)
+    public String changeSaveLocation(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        try {
+            taskList.changeFileDirectory(parsedCommand.getCommandString());
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        return "changed save location\n";
+    }
 
 
     protected ActionController() {
