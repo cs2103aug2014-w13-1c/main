@@ -213,6 +213,12 @@ public class CommandController {
         return "showing settings\n";
     }
 
+    // sort style method
+    protected void setSortStyle(int sortStyle) {
+        // add some input validation here
+        taskList.setSortingStyle(sortStyle);
+    }
+
     // Command processing methods
     protected COMMAND_TYPE determineCommandType(String commandWord) {
         if (commandWord.equalsIgnoreCase("add")) {
