@@ -284,7 +284,9 @@ public class CommandController {
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
         parsedCommand = new CommandParser(inputString);
-        printString(processCommand(parsedCommand));
+        ActionController logic = new ActionController();
+        logic.setMainApp(main);
+        printString(logic.processCommand(parsedCommand));
     }
 
     public ArrayList<Keyword> parseKeywords(String inputString) {

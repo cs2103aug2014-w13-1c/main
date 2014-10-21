@@ -7,7 +7,8 @@ import java.util.logging.Level;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import app.Main;
-import app.controllers.CommandController.COMMAND_TYPE;
+import app.controllers.ActionController.COMMAND_TYPE;
+import app.helpers.Keyword;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
@@ -230,7 +231,7 @@ public class ActionController {
         }
     }
 
-    protected String processCommand(CommandParser parsedCommand) {
+    public String processCommand(CommandParser parsedCommand) {
         String commandWord = parsedCommand.getCommandWord();
         COMMAND_TYPE commandType = determineCommandType(commandWord);
         switch (commandType) {
@@ -260,6 +261,23 @@ public class ActionController {
         }
     }
 
+
+
+
+    public ActionController() {
+        try {
+            taskList = new ModelManager();
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        currentList = new ArrayList<TodoItem>();
+    }
+
+    public ArrayList<Keyword> parseKeywords(String inputString) {
+        return CommandParser.getKeywords(inputString);
+    }
+        
     public void updateView() {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
