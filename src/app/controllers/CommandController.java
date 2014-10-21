@@ -120,6 +120,9 @@ public class CommandController {
             case SETTINGS :
                 feedback = action.settings(parsedCommand);
                 return feedback;
+            case SAVETO :
+                feedback = action.changeSaveLocation(parsedCommand);
+                return feedback;
             case EXIT :
                 showInfoDialog("Bye!");
                 System.exit(0);
