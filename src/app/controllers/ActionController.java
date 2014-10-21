@@ -182,7 +182,7 @@ public class ActionController {
     }
     
     // Change save file location (for .json)
-    public String changeSaveLocation(CommandParser parsedCommand) {
+    protected String changeSaveLocation(CommandParser parsedCommand) {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
