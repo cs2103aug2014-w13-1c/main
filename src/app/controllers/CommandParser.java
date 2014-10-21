@@ -1,12 +1,17 @@
 package app.controllers;
 
+import app.helpers.Keyword;
+
+import com.joestelmach.natty.Parser;
+import com.joestelmach.natty.DateGroup;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import app.helpers.Keyword;
+import java.util.List;
+import java.util.Map;
 
 public class CommandParser {
     private String inputString;
@@ -191,15 +196,25 @@ public class CommandParser {
     }
     
     private Date getDate(String toBeParsed) {
-        try {
-            DateFormat df = new SimpleDateFormat("dd MMMM yyyy HH:mm");
-            System.out.println(df.parseObject(toBeParsed));
-            return df.parse(toBeParsed);
+        Parser dateParser = new Parser();
+        List<Date> dateList = new ArrayList<Date>();
+        List<DateGroup> groups = dateParser.parse(toBeParsed);
+        for (DateGroup group : groups) {
+            List<Date> dates = group.getDates();
+            int line = group.getLine();
+            int column = group.getPosition();
+            String matchingValue = group.getText();
+            String syntaxTree = group.getSyntaxTree().toStringTree();
+            Map parseMap = group.getParseLocations();
+            boolean isRecurreing = group.isRecurring();
+            Date recursUntil = group.getRecursUntil();
+
+            /* if any Dates are present in current group then add them to dateList */
+            if (group.getDates() != null) {
+                    dateList.addAll(group.getDates());
+            }
         }
-        catch (ParseException pe) {
-            pe.printStackTrace();
-        }
-        return null;
+        return dateList.get(0);
     }
     
     protected Date getStartDate() {
