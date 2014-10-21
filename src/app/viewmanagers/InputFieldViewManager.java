@@ -34,6 +34,7 @@ public class InputFieldViewManager {
     private Boolean searchState;
 
     public InputFieldViewManager() {
+        lastCommand = "";
         inputField = new StyleClassedTextArea();
         inputField.setPrefHeight(100);
         inputField.getStylesheets().add("app/stylesheets/inputField.css");
@@ -73,6 +74,9 @@ public class InputFieldViewManager {
                 } catch (InvalidInputException e) {
                     LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
                 }
+            } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("")) {
+                event.consume();
+                inputField.replaceText(lastCommand);
             }
 //            else if (event.getCode() == KeyCode.TAB) {
 //                event.consume();

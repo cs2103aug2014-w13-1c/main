@@ -35,9 +35,9 @@ public class TodoItem {
 	public static final String ENDLESS = "Endless";
 	public static final String INVALID = "Invalid";
 	
-	public static final String HIGH = "3. High";
+	public static final String HIGH = "1. High";
 	public static final String MEDIUM = "2. Medium";
-	public static final String LOW = "1. Low";
+	public static final String LOW = "3. Low";
 	
 	// Constructor
 	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
