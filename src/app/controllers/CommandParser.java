@@ -214,7 +214,13 @@ public class CommandParser {
                     dateList.addAll(group.getDates());
             }
         }
-        return dateList.get(0);
+        if (!dateList.isEmpty()) {
+            return dateList.get(0);
+        }
+        else {
+            commandWord = "dateError";
+            return null;
+        }
     }
     
     protected Date getStartDate() {
