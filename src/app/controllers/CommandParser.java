@@ -1,12 +1,16 @@
 package app.controllers;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
+import app.helpers.Keyword;
+import app.model.TodoItem;
+
+import com.joestelmach.natty.ParseLocation;
+import com.joestelmach.natty.Parser;
+import com.joestelmach.natty.DateGroup;
+
 import java.util.ArrayList;
 import java.util.Date;
-
-import app.helpers.Keyword;
+import java.util.List;
+import java.util.Map;
 
 public class CommandParser {
     private String inputString;
@@ -28,22 +32,22 @@ public class CommandParser {
         return inputString.indexOf(" ", startIndex);
     }
 
-    private int getMonth(String monthInput) {
-        String[] monthName = {
-            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
-        };
-        int month = -1;
-        for (int i = 0; i < 12; i++) {
-            if (monthName[i].equalsIgnoreCase(monthInput)) {
-                month = i;
-                break;
-            }
-        }
-        return month;
-    }
+//    private int getMonth(String monthInput) {
+//        String[] monthName = {
+//            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
+//        };
+//        int month = -1;
+//        for (int i = 0; i < 12; i++) {
+//            if (monthName[i].equalsIgnoreCase(monthInput)) {
+//                month = i;
+//                break;
+//            }
+//        }
+//        return month;
+//    }
 
     // Constructor and initialization
-    public CommandParser(String inputString) {
+    protected CommandParser(String inputString) {
         init();
         this.inputString = inputString;
         this.inputStringArray = inputString.trim().split(" ");
@@ -61,7 +65,7 @@ public class CommandParser {
         commandString = "";
         startDate = null;
         endDate = null;
-        priority = "medium";
+        priority = null;
         setKeywords();
     }
 
@@ -77,7 +81,8 @@ public class CommandParser {
         commandKeywords.add("update");
         commandKeywords.add("help");
         commandKeywords.add("settings");
-    	  
+    	commandKeywords.add("saveto");
+        
     	startDateKeywords.clear();
         startDateKeywords.add("start");
         
@@ -91,7 +96,7 @@ public class CommandParser {
         keywords.addAll(endDateKeywords);
     }
     
-    public static ArrayList<Keyword> getKeywords(String inputString) {
+    protected static ArrayList<Keyword> getKeywords(String inputString) {
         setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
@@ -110,7 +115,7 @@ public class CommandParser {
     }
 
     // Return the unparsed input string
-    public String getInputString() {
+    protected String getInputString() {
         return inputString;
     }
     
@@ -125,7 +130,7 @@ public class CommandParser {
         }
     }
     
-    public String getCommandWord() {
+    protected String getCommandWord() {
         return commandWord;
     }
     
@@ -142,7 +147,7 @@ public class CommandParser {
         commandString = commandString.trim();
     }
     
-    public String getCommandString() {
+    protected String getCommandString() {
         return commandString;
     }
     
@@ -173,16 +178,6 @@ public class CommandParser {
     }
     
     private void checkDate() {
-        if (startDate != null) {
-            if (startDate.before(new Date())) {
-                commandWord = "dateError";
-            }
-        }
-        if (endDate != null) {
-            if (endDate.before(new Date())) {
-                commandWord = "dateError";
-            }
-        }
         if (startDate != null && endDate != null) {
             if (endDate.before(startDate)) {
                 commandWord = "dateError";
@@ -190,23 +185,40 @@ public class CommandParser {
         }
     }
     
+    @SuppressWarnings("unused")
     private Date getDate(String toBeParsed) {
-        try {
-            DateFormat df = new SimpleDateFormat("dd MMMM yyyy HH:mm");
-            System.out.println(df.parseObject(toBeParsed));
-            return df.parse(toBeParsed);
+        Parser dateParser = new Parser();
+        List<Date> dateList = new ArrayList<Date>();
+        List<DateGroup> groups = dateParser.parse(toBeParsed);
+        for (DateGroup group : groups) {
+            List<Date> dates = group.getDates();
+            int line = group.getLine();
+            int column = group.getPosition();
+            String matchingValue = group.getText();
+            String syntaxTree = group.getSyntaxTree().toStringTree();
+            Map<String, List<ParseLocation>> parseMap = group.getParseLocations();
+            boolean isRecurreing = group.isRecurring();
+            Date recursUntil = group.getRecursUntil();
+
+            /* if any Dates are present in current group then add them to dateList */
+            if (group.getDates() != null) {
+                    dateList.addAll(group.getDates());
+            }
         }
-        catch (ParseException pe) {
-            pe.printStackTrace();
+        if (!dateList.isEmpty()) {
+            return dateList.get(0);
         }
-        return null;
+        else {
+            commandWord = "dateError";
+            return null;
+        }
     }
     
-    public Date getStartDate() {
+    protected Date getStartDate() {
         return startDate;
     }
     
-    public Date getEndDate() {
+    protected Date getEndDate() {
         return endDate;
     }
     
@@ -216,19 +228,19 @@ public class CommandParser {
             if (inputStringArray[i].equalsIgnoreCase("priority")) {
                 i++;
                 if (inputStringArray[i].equalsIgnoreCase("low")) {
-                    priority = "low";
+                    priority = TodoItem.LOW;
                 }
                 if (inputStringArray[i].equalsIgnoreCase("medium")) {
-                    priority = "medium";
+                    priority = TodoItem.MEDIUM;
                 }
                 if (inputStringArray[i].equalsIgnoreCase("high")) {
-                    priority = "high";
+                    priority = TodoItem.HIGH;
                 }
             }
         }
     }
     
-    public String getPriority() {
+    protected String getPriority() {
         return priority;
     }
 }
