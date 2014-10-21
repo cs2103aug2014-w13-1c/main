@@ -169,10 +169,16 @@ public class ActionController {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
+        // To check that the index input is an integer
         if (!isInt(parsedCommand.getCommandString())) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        // To check that the index is valid
+        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        if (index < 0 || index >= todoList.size()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
         Boolean[] parameters = {false, false, false, false, true};
         try {
             taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
