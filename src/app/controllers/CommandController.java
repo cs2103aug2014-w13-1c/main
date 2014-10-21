@@ -46,7 +46,7 @@ public class CommandController {
     private ArrayList<TodoItem> currentList;
     private CommandParser parsedCommand;
 
-    // String manipulation methods
+    // Print string methods
     protected void printString(String message) {
         System.out.print(message);
     }
@@ -319,9 +319,6 @@ public class CommandController {
      */
     public void setMainApp(Main main) {
         this.main = main;
-
-        // Add observable list data to the table
-        // personTable.setItems(mainApp.getPersonData());
     }
 
     public String showErrorDialog(String error) {
