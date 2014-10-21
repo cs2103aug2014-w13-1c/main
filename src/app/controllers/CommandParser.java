@@ -178,16 +178,6 @@ public class CommandParser {
     }
     
     private void checkDate() {
-        if (startDate != null) {
-            if (startDate.before(new Date())) {
-                commandWord = "dateError";
-            }
-        }
-        if (endDate != null) {
-            if (endDate.before(new Date())) {
-                commandWord = "dateError";
-            }
-        }
         if (startDate != null && endDate != null) {
             if (endDate.before(startDate)) {
                 commandWord = "dateError";
