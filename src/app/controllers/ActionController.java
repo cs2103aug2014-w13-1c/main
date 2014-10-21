@@ -23,6 +23,7 @@ public class ActionController {
     private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
+    private final String MESSAGE_DONE_COMPLETE = "Marked as done: \"%1$s\"\n";
 
     // Class variables
     private ModelManager taskList;
@@ -161,6 +162,25 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
+    }
+
+    // Done method
+    protected String done(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (!isInt(parsedCommand.getCommandString())) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        Boolean[] parameters = {false, false, false, false, true};
+        try {
+            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        return CommandController.showInfoDialog(String.format(MESSAGE_DONE_COMPLETE, parsedCommand.getCommandString()));
     }
 
     // Help method

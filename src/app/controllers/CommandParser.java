@@ -79,6 +79,7 @@ public class CommandParser {
         commandKeywords.add("exit");
         commandKeywords.add("search");
         commandKeywords.add("update");
+        commandKeywords.add("done");
         commandKeywords.add("help");
         commandKeywords.add("settings");
     	commandKeywords.add("saveto");
