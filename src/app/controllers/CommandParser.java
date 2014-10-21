@@ -1,13 +1,12 @@
 package app.controllers;
 
 import app.helpers.Keyword;
+import app.model.TodoItem;
 
+import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
 import com.joestelmach.natty.DateGroup;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,19 +32,19 @@ public class CommandParser {
         return inputString.indexOf(" ", startIndex);
     }
 
-    private int getMonth(String monthInput) {
-        String[] monthName = {
-            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
-        };
-        int month = -1;
-        for (int i = 0; i < 12; i++) {
-            if (monthName[i].equalsIgnoreCase(monthInput)) {
-                month = i;
-                break;
-            }
-        }
-        return month;
-    }
+//    private int getMonth(String monthInput) {
+//        String[] monthName = {
+//            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
+//        };
+//        int month = -1;
+//        for (int i = 0; i < 12; i++) {
+//            if (monthName[i].equalsIgnoreCase(monthInput)) {
+//                month = i;
+//                break;
+//            }
+//        }
+//        return month;
+//    }
 
     // Constructor and initialization
     protected CommandParser(String inputString) {
@@ -66,7 +65,7 @@ public class CommandParser {
         commandString = "";
         startDate = null;
         endDate = null;
-        priority = "medium";
+        priority = null;
         setKeywords();
     }
 
@@ -185,6 +184,7 @@ public class CommandParser {
         }
     }
     
+    @SuppressWarnings("unused")
     private Date getDate(String toBeParsed) {
         Parser dateParser = new Parser();
         List<Date> dateList = new ArrayList<Date>();
@@ -195,7 +195,7 @@ public class CommandParser {
             int column = group.getPosition();
             String matchingValue = group.getText();
             String syntaxTree = group.getSyntaxTree().toStringTree();
-            Map parseMap = group.getParseLocations();
+            Map<String, List<ParseLocation>> parseMap = group.getParseLocations();
             boolean isRecurreing = group.isRecurring();
             Date recursUntil = group.getRecursUntil();
 
@@ -227,13 +227,13 @@ public class CommandParser {
             if (inputStringArray[i].equalsIgnoreCase("priority")) {
                 i++;
                 if (inputStringArray[i].equalsIgnoreCase("low")) {
-                    priority = "low";
+                    priority = TodoItem.LOW;
                 }
                 if (inputStringArray[i].equalsIgnoreCase("medium")) {
-                    priority = "medium";
+                    priority = TodoItem.MEDIUM;
                 }
                 if (inputStringArray[i].equalsIgnoreCase("high")) {
-                    priority = "high";
+                    priority = TodoItem.HIGH;
                 }
             }
         }

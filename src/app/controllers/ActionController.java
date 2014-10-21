@@ -1,13 +1,13 @@
 package app.controllers;
 
 import app.Main;
-import app.helpers.Keyword;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 public class ActionController {
@@ -36,15 +36,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            if (parsedCommand.getPriority().equals("high")) {
-                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.HIGH, null);
-            }
-            else if (parsedCommand.getPriority().equals("low")) {
-                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.LOW, null);
-            }
-            else {
-                taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), TodoItem.MEDIUM, null);
-            }
+            taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -133,28 +125,42 @@ public class ActionController {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        int nextSpacePos = parsedCommand.getCommandString().indexOf(" ");
-        if (nextSpacePos == -1) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
-        }
+        Boolean[] parameters = {false, false, false, false, false};
+        
+        StringTokenizer st = new StringTokenizer(parsedCommand.getCommandString());
+        String check = st.nextToken();
         int index = -1;
-        if(isInt(parsedCommand.getCommandString().substring(0, nextSpacePos))) {
-            index = Integer.parseInt(parsedCommand.getCommandString().substring(0, nextSpacePos)) - 1;
+        // To check that the index input is an integer
+        if(isInt(check)) {
+            index = Integer.parseInt(check) - 1;
         }
+        // To check that the index is valid
         ArrayList<TodoItem> todoList = taskList.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeUpdated = parsedCommand.getCommandString().substring(nextSpacePos + 1);
-        Boolean[] parameters = {true, true, true, false, false};
+        String toBeUpdated = "";
+        while (st.hasMoreTokens()) {
+            toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
+            parameters[0] = true;
+        }
+        if (parsedCommand.getStartDate() != null) {
+            parameters[1] = true;
+        }
+        if (parsedCommand.getEndDate() != null) {
+            parameters[2] = true;
+        }
+        if (parsedCommand.getPriority() != null) {
+            parameters[3] = true;
+        }
         try {
             taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
-                                parameters, toBeUpdated, parsedCommand.getStartDate(), parsedCommand.getEndDate(), null, null);
+                                parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, toBeUpdated));
+        return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
     }
 
     // Help method
@@ -192,10 +198,6 @@ public class ActionController {
     
     protected ModelManager getTaskList() {
         return taskList;
-    }
-
-    private ArrayList<Keyword> parseKeywords(String inputString) {
-        return CommandParser.getKeywords(inputString);
     }
 
     /**
