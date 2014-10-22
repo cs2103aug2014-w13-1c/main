@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 public class CommandController {
     protected enum CommandType {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
     }
 
     // Errors
@@ -31,10 +31,10 @@ public class CommandController {
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
 
     // Class variables
+    ActionController action;
     private static ModelManager taskList;
     private static Main main;
     private ArrayList<TodoItem> currentList;
-    private CommandParser parsedCommand;
 
     // Print string methods
     protected void printString(String message) {
@@ -57,6 +57,10 @@ public class CommandController {
             return CommandType.SEARCH;
         } else if (commandWord.equalsIgnoreCase("update")) {
             return CommandType.UPDATE;
+        } else if (commandWord.equalsIgnoreCase("done")) {
+            return CommandType.DONE;
+        } else if (commandWord.equalsIgnoreCase("undone")) {
+            return CommandType.UNDONE;
         } else if (commandWord.equalsIgnoreCase("help")) {
             return CommandType.HELP;
         } else if (commandWord.equalsIgnoreCase("settings")) {
@@ -70,10 +74,7 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(CommandParser parsedCommand) {
-        ActionController action = new ActionController();
-        action.setMainApp(main);
-        
+    protected String processCommand(CommandParser parsedCommand) {        
         String commandWord = parsedCommand.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
@@ -114,6 +115,16 @@ public class CommandController {
                 taskList = action.getTaskList();
                 resetTaskList();
                 return feedback;
+            case DONE :
+                feedback = action.done(parsedCommand);
+                currentList = action.getCurrentList();
+                taskList = action.getTaskList();
+                return feedback;
+            case UNDONE :
+                feedback = action.undone(parsedCommand);
+                currentList = action.getCurrentList();
+                taskList = action.getTaskList();
+                return feedback;
             case HELP :
                 feedback = action.help(parsedCommand);
                 return feedback;
@@ -137,18 +148,15 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        try {
-            taskList = new ModelManager();
-        } catch (IOException e) {
-            // do something here?
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-        }
+        action = new ActionController();
+        action.setMainApp(main);
+        taskList = action.getTaskList();
         currentList = new ArrayList<TodoItem>();
     }
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        parsedCommand = new CommandParser(inputString);
+        CommandParser parsedCommand = new CommandParser(inputString);
         printString(processCommand(parsedCommand));
     }
 
@@ -181,6 +189,13 @@ public class CommandController {
     public void resetTaskList() {
         main.getPrimaryStage().setTitle("wat do");
         setTaskList(getTaskList());
+    }
+
+    public void changeSaveLocation(String filePath) {
+        String newInputString = "saveto ";
+        newInputString = newInputString.concat(filePath);
+        CommandParser parsedCommand = new CommandParser(newInputString);
+        printString(processCommand(parsedCommand));
     }
 
     /**

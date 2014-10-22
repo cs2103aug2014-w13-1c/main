@@ -29,8 +29,8 @@ public class CommandParser {
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
-        return inputString.indexOf(" ", startIndex);
-    }
+       return inputString.indexOf(" ", startIndex);
+   }
 
 //    private int getMonth(String monthInput) {
 //        String[] monthName = {
@@ -47,18 +47,18 @@ public class CommandParser {
 //    }
 
     // Constructor and initialization
-    protected CommandParser(String inputString) {
-        init();
-        this.inputString = inputString;
-        this.inputStringArray = inputString.trim().split(" ");
-        setCommandWord(inputString);
-        if (commandKeywords.contains(commandWord)) {
-            setCommandString(inputString);
-        	setDates(inputString);
-        	checkDate();
-        	setPriority();
-        }
-    }
+   protected CommandParser(String inputString) {
+       init();
+       this.inputString = inputString;
+       this.inputStringArray = inputString.trim().split(" ");
+       setCommandWord(inputString);
+       if (commandKeywords.contains(commandWord)) {
+           setCommandString(inputString);
+           setDates(inputString);
+           checkDate();
+           setPriority();
+           }
+   }
 
     private void init() {
         commandWord = "";
@@ -79,6 +79,8 @@ public class CommandParser {
         commandKeywords.add("exit");
         commandKeywords.add("search");
         commandKeywords.add("update");
+        commandKeywords.add("done");
+        commandKeywords.add("undone");
         commandKeywords.add("help");
         commandKeywords.add("settings");
     	commandKeywords.add("saveto");
@@ -88,9 +90,11 @@ public class CommandParser {
         
         endDateKeywords.clear();
         endDateKeywords.add("end");
+        endDateKeywords.add("due");
         
         keywords.clear();
         keywords.add("priority");
+        keywords.add("all");
         keywords.addAll(commandKeywords);
         keywords.addAll(startDateKeywords);
         keywords.addAll(endDateKeywords);
