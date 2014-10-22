@@ -31,7 +31,7 @@ public class CommandController {
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
 
     // Class variables
-    private ModelManager taskList;
+    private static ModelManager taskList;
     private static Main main;
     private ArrayList<TodoItem> currentList;
     private CommandParser parsedCommand;
@@ -174,7 +174,7 @@ public class CommandController {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
     }
 
-    public ArrayList<TodoItem> getTaskList() {
+    public static ArrayList<TodoItem> getTaskList() {
         return taskList.getTodoItemList();
     }
 
@@ -204,5 +204,9 @@ public class CommandController {
     public static String showInfoDialog(String message) {
         main.showInfoDialog("Information", message);
         return message;
+    }
+
+    protected static ModelManager getModelManager() {
+        return taskList;
     }
 }
