@@ -21,3 +21,6 @@ CommandController
 * public ArrayList<TodoItem> getTaskList()
 * public void setTaskList(ArrayList<TodoItem> todoList)
 * public void resetTaskList()
+
+### Save location
+* public void changeSaveLocation(String filePath)
