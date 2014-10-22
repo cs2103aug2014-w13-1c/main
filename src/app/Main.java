@@ -67,11 +67,6 @@ public class Main extends Application {
                 .showInformation();
     }
 
-//    public void showInfoDialog(String title, String message) {
-//        rootViewManager.getNotificationPane().setGraphic(new Label(message));
-//        rootViewManager.getNotificationPane().show();
-//    }
-
     public void showErrorDialog(String title, String error) {
         Dialogs.create()
                 .owner(primaryStage)
