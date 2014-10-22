@@ -23,7 +23,7 @@ public class ActionController {
     private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
-    private final String MESSAGE_DONE_COMPLETE = "Marked as done: \"%1$s\"\n";
+    private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
 
     // Class variables
     private ModelManager taskList;
@@ -186,7 +186,32 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_DONE_COMPLETE, parsedCommand.getCommandString()));
+        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
+    }
+    
+    // Undone method
+    protected String undone(CommandParser parsedCommand) {
+        if (parsedCommand.getCommandString().isEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        // To check that the index input is an integer
+        if (!isInt(parsedCommand.getCommandString())) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        // To check that the index is valid
+        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        if (index < 0 || index >= todoList.size()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        Boolean[] parameters = {false, false, false, false, true};
+        try {
+            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
     }
 
     // Help method

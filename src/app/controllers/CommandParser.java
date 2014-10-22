@@ -80,6 +80,7 @@ public class CommandParser {
         commandKeywords.add("search");
         commandKeywords.add("update");
         commandKeywords.add("done");
+        commandKeywords.add("undone");
         commandKeywords.add("help");
         commandKeywords.add("settings");
     	commandKeywords.add("saveto");
