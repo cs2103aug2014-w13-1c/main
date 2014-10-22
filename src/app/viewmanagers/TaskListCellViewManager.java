@@ -33,6 +33,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label overdueLabel;
 
     @FXML
+    private Label indexLabel;
+
+    @FXML
     private Button updateButton;
 
     @FXML
@@ -69,6 +72,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void populateContent(TodoItem task) {
+        setIndex();
         setTaskName(task);
         setPriorityLevel(task);
         setDates(task);
@@ -104,6 +108,10 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
                 bottomDateLabel.setVisible(false);
                 break;
         }
+    }
+
+    private void setIndex() {
+        indexLabel.setText(String.valueOf(getIndex() + 1));
     }
 
     private void setTaskName(TodoItem task) {
