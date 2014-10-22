@@ -30,6 +30,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label priorityLevelLabel;
 
     @FXML
+    private Label overdueLabel;
+
+    @FXML
     private Button updateButton;
 
     @FXML
@@ -69,6 +72,8 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         setTaskName(task);
         setPriorityLevel(task);
         setDates(task);
+
+        overdueLabel.setVisible(task.isOverdue());
     }
 
     private void setPriorityLevel(TodoItem task) {
