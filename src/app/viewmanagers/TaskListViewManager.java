@@ -57,10 +57,13 @@ public class TaskListViewManager {
         assert(taskData.size() >= 0);
         assert(taskData.size() <= Integer.MAX_VALUE);
 
-        scrollToLastModifiedTask();
-
         this.taskData = taskData;
         taskListView.setItems(taskData);
+
+        if (this.taskData.size() > 0) {
+            scrollToLastModifiedTask();
+        }
+
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
