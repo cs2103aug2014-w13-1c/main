@@ -19,15 +19,12 @@ public class TaskListViewManager {
     public ListView<TodoItem> taskListView;
 
     @FXML
-    private Label placeholder;
-
-    private RootViewManager rootViewManager;
-
-    @FXML
     private Label emptySearch;
 
     private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
     private UserGuide userGuide;
+
+    private RootViewManager rootViewManager;
 
     @FXML
     public void initialize() {
