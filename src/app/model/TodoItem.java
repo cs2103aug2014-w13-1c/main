@@ -70,7 +70,7 @@ public class TodoItem {
         return taskName;
     }
     
-    public void setTaskName(String newTaskName) {
+    protected void setTaskName(String newTaskName) {
         this.taskName = newTaskName;
     }
     
@@ -78,7 +78,7 @@ public class TodoItem {
         return startDate;
     }
     
-    public void setStartDate(Date newStartDate) {
+    protected void setStartDate(Date newStartDate) {
         this.startDate = newStartDate;
     }
     
@@ -86,7 +86,7 @@ public class TodoItem {
         return endDate;
     }
     
-    public void setEndDate(Date newEndDate) {
+    protected void setEndDate(Date newEndDate) {
         this.endDate = newEndDate;
     }
 	
@@ -94,7 +94,7 @@ public class TodoItem {
 	    return this.priority;
 	}
 	
-	public void setPriority(String newPriority) {
+	protected void setPriority(String newPriority) {
 	    assert newPriority != null;
 	    assert (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM));
 	    
@@ -105,7 +105,7 @@ public class TodoItem {
         return doneStatus;
     }
     
-    public void setDoneStatus(Boolean newDoneStatus) {
+    protected void setDoneStatus(Boolean newDoneStatus) {
         assert newDoneStatus != null;
         
         this.doneStatus = newDoneStatus;

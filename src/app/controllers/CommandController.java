@@ -157,12 +157,8 @@ public class CommandController {
     }
 
     public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
-        ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
-        int index = 1;
-        for (TodoItem todo : todoList) {
-            taskData.add(new TodoItem(index + ". " + todo.getTaskName(), todo.getStartDate(), todo.getEndDate(), todo.getPriority(), null));
-            index++;
-        }
+        ObservableList<TodoItem> taskData = FXCollections.observableArrayList(todoList);
+        
         return taskData;
     }
 
