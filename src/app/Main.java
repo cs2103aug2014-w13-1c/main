@@ -5,10 +5,8 @@ import app.helpers.HotkeyActivator;
 import app.helpers.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import org.controlsfx.control.NotificationPane;
 import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
