@@ -17,10 +17,12 @@ public class ModelManager {
     private TodoItemList todoList;
     private FileStorage dataStorage;
     private Boolean displayStatus;
+    private UUID latestModified;
     
     public ModelManager() throws IOException {
         this.dataStorage = new FileStorage();
         this.displayStatus = false;
+        this.latestModified = null;
         
         try {
             dataStorage.loadSettings();
@@ -56,6 +58,8 @@ public class ModelManager {
         LoggingService.getLogger().log(Level.INFO, "Adding new task " + newTaskName);
         
         dataStorage.updateFile(todoList.getTodoItems());
+        
+        latestModified = newTodoItem.getUUID();
     }
     
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
@@ -98,6 +102,8 @@ public class ModelManager {
         LoggingService.getLogger().log(Level.INFO, "Updating task " + toChange.getTaskName());
         
         dataStorage.updateFile(todoList.getTodoItems());
+        
+        latestModified = toChange.getUUID();
     }
     
     public TodoItem deleteTask(UUID itemID) throws IOException {
@@ -155,5 +161,9 @@ public class ModelManager {
     
     public int countTasks() {
         return todoList.countTodoItems();
+    }
+    
+    public int getLastModifiedIndex() {
+        return todoList.searchIndexByUUID(latestModified);
     }
 }
