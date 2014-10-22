@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class TaskController {
 
     private static TaskController self;
-    private Main main;
 
     private TaskController() {
         // nothing to do here
@@ -27,13 +26,9 @@ public class TaskController {
         return self;
     }
 
-    public void setMainApp(Main main) {
-        this.main = main;
-    }
-
     public ArrayList<TodoItem> instantSearch(String query) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.getTaskName().toLowerCase().
                     contains(query.toLowerCase())) {
                 results.add(todo);
@@ -44,7 +39,7 @@ public class TaskController {
 
     public ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.isDone()) {
                 results.add(todo);
             }
@@ -54,7 +49,7 @@ public class TaskController {
 
     public ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (!todo.isDone()) {
                 results.add(todo);
             }
@@ -64,12 +59,16 @@ public class TaskController {
 
     public ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.isOverdue()) {
                 results.add(todo);
             }
         }
         return results;
+    }
+
+    public int getLastModifiedIndex() {
+        return CommandController.getModelManager().getLastModifiedIndex();
     }
 
 }
