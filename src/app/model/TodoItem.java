@@ -1,13 +1,5 @@
 package app.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.UUID;
@@ -133,12 +125,17 @@ public class TodoItem {
 	}
 	
 	private String getDateString(Date date) {
+	    if (date == null) {
+	        return null;
+	    }
+	    
 	    Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int day = cal.get(Calendar.DAY_OF_MONTH);
         String month = theMonth(cal.get(Calendar.MONTH));
         int year = cal.get(Calendar.YEAR);
-        return day + " " + month + " " + year;
+        String hoursAndMinutes = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        return day + " " + month + " " + year + " " + hoursAndMinutes;
     }
 
     public static String theMonth(int month){

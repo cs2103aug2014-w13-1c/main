@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="550.0" style="-fx-background-color: rgba(0, 0, 0, 0.3);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.SettingsViewManager">
    <children>
       <AnchorPane layoutX="50.0" layoutY="150.0" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: black;">
          <children>
             <Label layoutX="32.0" layoutY="103.0" prefHeight="53.0" prefWidth="386.0" text="CHOOSE YOUR SAVEFILE LOCATION." textFill="WHITE">
                <font>
-                  <Font size="22.0" />
+                  <Font size="20.0" />
                </font>
             </Label>
             <TextField fx:id="filePathTextField" layoutX="32.0" layoutY="156.0" prefHeight="44.0" prefWidth="294.0" promptText="watdo.json">
@@ -18,7 +22,10 @@
                   <Font size="20.0" />
                </font>
             </TextField>
-            <Button fx:id="browseButton" layoutX="336.0" layoutY="156.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="82.0" text="BROWSE?" />
+            <Button fx:id="browseButton" layoutX="336.0" layoutY="156.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="82.0" text="BROWSE?">
+               <font>
+                  <Font size="12.0" />
+               </font></Button>
             <Button fx:id="saveButton" layoutX="217.0" layoutY="351.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="OK, SAVE" />
             <Button fx:id="cancelButton" layoutX="326.0" layoutY="351.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="NEVERMIND" />
          </children>

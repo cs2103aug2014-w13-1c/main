@@ -55,6 +55,9 @@ ModelManager
  * If _False_, subsequent getTodoItemList()/getTodoItemIterator() calls will return just the not-done list of tasks
  * At program startup, displayDone is false. You will not see the entire list of tasks unless "display all" is typed.
 
+### Last modified
+* public int getLastModifiedIndex()
+
 TodoItem
 -----------
 ### Attribute getters and setters
@@ -78,5 +81,5 @@ TodoItem
  * no _startDate_ +  no _endDate_ = **"Floating"**
  * _startDate_ + no _endDate_ = **"Endless"**
 * public String getStartDateString() - getEndDateString()
- * returns the start date as a string
+ * returns the start/end date as a string
  * if not set, returns null

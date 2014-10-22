@@ -15,6 +15,9 @@
                     </image>
                 </ImageView>
             </graphic>
+         <tooltip>
+            <Tooltip text="Display all tasks" />
+         </tooltip>
         </Button>
         <Button fx:id="addButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
             <graphic>
@@ -24,6 +27,9 @@
                     </image>
                 </ImageView>
             </graphic>
+         <tooltip>
+            <Tooltip text="Add a task" />
+         </tooltip>
         </Button>
         <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
             <graphic>
@@ -33,6 +39,9 @@
                     </image>
                 </ImageView>
             </graphic>
+         <tooltip>
+            <Tooltip text="Search for a task" />
+         </tooltip>
         </Button>
         <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
             <graphic>
@@ -42,6 +51,9 @@
                     </image>
                 </ImageView>
             </graphic>
+         <tooltip>
+            <Tooltip text="Show completed tasks" />
+         </tooltip>
         </Button>
       <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="140.0">
          <graphic>
@@ -51,6 +63,9 @@
                </image>
             </ImageView>
          </graphic>
+         <tooltip>
+            <Tooltip text="Help" />
+         </tooltip>
       </Button>
         <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="140.0">
             <graphic>
@@ -60,6 +75,9 @@
                     </image>
                 </ImageView>
             </graphic>
+         <tooltip>
+            <Tooltip text="Settings" />
+         </tooltip>
         </Button>
     </children>
     <opaqueInsets>
