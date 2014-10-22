@@ -122,7 +122,6 @@ public class RootViewManager {
 
     public void closeSettings(File filePath) {
         if (filePath != null) {
-            // Need a method call here to change the directory of watdo.json
             System.out.println(filePath.toString());
         }
         settingsView.toBack();
