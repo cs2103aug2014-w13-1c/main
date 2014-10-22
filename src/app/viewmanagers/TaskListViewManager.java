@@ -60,23 +60,18 @@ public class TaskListViewManager {
         assert(taskData.size() >= 0);
         assert(taskData.size() <= Integer.MAX_VALUE);
 
-        if (newTaskAdded(taskData, this.taskData)) {
-            scrollToLast();
-        }
+        scrollToLastModifiedTask();
+
         this.taskData = taskData;
         taskListView.setItems(taskData);
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
-    private boolean newTaskAdded(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
-        return _new.size() > _old.size();
-    }
-
-    private void scrollToLast() {
-        taskListView.scrollTo(taskData.size());
-    }
-
-    private void scrollToAddedTask() {
+    private void scrollToLastModifiedTask() {
+        int index = rootViewManager.getMainApp().getTaskController().getLastModifiedIndex();
+        taskListView.scrollTo(index);
+        taskListView.getSelectionModel().select(index);
+        taskListView.getFocusModel().focus(index);
     }
 
 
