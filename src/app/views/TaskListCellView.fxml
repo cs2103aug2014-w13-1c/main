@@ -71,5 +71,7 @@
             <Tooltip text="Mark as done" />
          </tooltip>
       </Button>
+      <Label fx:id="hexLabel" layoutX="14.0" layoutY="75.0" text="#" textFill="WHITE" />
+      <Label fx:id="indexLabel" layoutX="22.0" layoutY="75.0" prefHeight="16.0" prefWidth="110.0" text="42" textFill="WHITE" />
    </children>
 </AnchorPane>

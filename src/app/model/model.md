@@ -61,15 +61,12 @@ ModelManager
 TodoItem
 -----------
 ### Attribute getters and setters
-* getTaskName() - setTaskName(String newTaskName)
-* getStartDate() - setStartDate(Date newStartDate)
-* getEndDate() - setEndDate(Date newEndDate)
-* getPriority() - setPriority(String newPriority)
- * newPriority must be TodoItem.HIGH/MID/LOW
-* isDone() - setDoneStatus(Boolean newDoneStatus)
- * newDoneStatus must not be null
+* getTaskName()
+* getStartDate()
+* getEndDate()
+* getPriority()
+* isDone()
 * getUUID()
- * No setter for UUID (defensive coding)
 
 ### Convenience methods for View & Controller
 * public boolean isOverdue()
