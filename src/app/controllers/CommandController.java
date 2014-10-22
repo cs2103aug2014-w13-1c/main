@@ -31,6 +31,7 @@ public class CommandController {
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
 
     // Class variables
+    ActionController action;
     private ModelManager taskList;
     private static Main main;
     private ArrayList<TodoItem> currentList;
@@ -71,10 +72,7 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(CommandParser parsedCommand) {
-        ActionController action = new ActionController();
-        action.setMainApp(main);
-        
+    protected String processCommand(CommandParser parsedCommand) {        
         String commandWord = parsedCommand.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
@@ -143,12 +141,9 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        try {
-            taskList = new ModelManager();
-        } catch (IOException e) {
-            // do something here?
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-        }
+        action = new ActionController();
+        action.setMainApp(main);
+        taskList = action.getTaskList();
         currentList = new ArrayList<TodoItem>();
     }
 
