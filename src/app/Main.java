@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import org.controlsfx.control.NotificationPane;
 import org.controlsfx.dialog.Dialogs;
 
-import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -74,15 +73,6 @@ public class Main extends Application {
                 .masthead(null)
                 .message(error)
                 .showError();
-    }
-
-    public File getSaveLocation() {
-        // call TaskController/FileStorage getter
-        return new File("");
-    }
-
-    public void setSaveLocation(File file) {
-        // call TaskController/FileStorage setter
     }
 
     public URL getResourceURL(String relativePath) {
