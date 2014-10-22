@@ -16,12 +16,10 @@ public class ModelManager {
     
     private TodoItemList todoList;
     private FileStorage dataStorage;
-    private Boolean displayStatus;
     private UUID latestModified;
     
     public ModelManager() throws IOException {
         this.dataStorage = new FileStorage();
-        this.displayStatus = false;
         this.latestModified = null;
         
         try {
@@ -130,25 +128,13 @@ public class ModelManager {
         todoList = new TodoItemList(dataStorage.changeDirectory(fileDirectory));
     }
     
-    public Boolean getDoneDisplay() {
-        return displayStatus;
-    }
-    
-    public void setDoneDisplay(Boolean newDisplayStatus) {
-        this.displayStatus = newDisplayStatus;
-    }
-    
     public void setSortingStyle(int newSortingStyle) {
         TodoItemSorter.sortingStyle = newSortingStyle;
         TodoItemSorter.resortTodoList(todoList);
     }
 
     public ArrayList<TodoItem> getTodoItemList() {
-        if (getDoneDisplay()) {
-            return todoList.getTodoItems();
-        } else {
-            return todoList.getUndoneTodoItems();
-        }
+        return todoList.getTodoItems();
     }
     
     public ListIterator<TodoItem> getTodoItemIterator() {
