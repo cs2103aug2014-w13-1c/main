@@ -33,7 +33,6 @@ public class SettingsViewManager {
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        filePath = rootViewManager.getMainApp().getSaveLocation();
 
         if (filePath != null) {
             filePathTextField.setText(filePath.toString());

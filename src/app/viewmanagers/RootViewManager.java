@@ -123,7 +123,7 @@ public class RootViewManager {
 
     public void closeSettings(File filePath) {
         if (filePath != null) {
-            getMainApp().getCommandController().changeSaveLocation(filePath.toString());
+            System.out.println(filePath.toString());
         }
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();

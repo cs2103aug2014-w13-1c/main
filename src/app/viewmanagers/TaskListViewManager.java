@@ -3,7 +3,6 @@ package app.viewmanagers;
 import app.helpers.LoggingService;
 import app.helpers.UserGuide;
 import app.model.TodoItem;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,6 +17,9 @@ public class TaskListViewManager {
 
     @FXML
     public ListView<TodoItem> taskListView;
+
+    @FXML
+    private Label placeholder;
 
     private RootViewManager rootViewManager;
 
@@ -58,19 +60,25 @@ public class TaskListViewManager {
         assert(taskData.size() >= 0);
         assert(taskData.size() <= Integer.MAX_VALUE);
 
+        if (newTaskAdded(taskData, this.taskData)) {
+            scrollToLast();
+        }
         this.taskData = taskData;
         taskListView.setItems(taskData);
-
-        scrollToLastModifiedTask();
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
-    private void scrollToLastModifiedTask() {
-        int index = rootViewManager.getMainApp().getTaskController().getLastModifiedIndex();
-        taskListView.scrollTo(index);
-        taskListView.getSelectionModel().select(index);
-        taskListView.getFocusModel().focus(index);
+    private boolean newTaskAdded(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
+        return _new.size() > _old.size();
     }
+
+    private void scrollToLast() {
+        taskListView.scrollTo(taskData.size());
+    }
+
+    private void scrollToAddedTask() {
+    }
+
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
