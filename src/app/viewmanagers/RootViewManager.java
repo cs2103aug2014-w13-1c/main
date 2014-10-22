@@ -2,15 +2,15 @@ package app.viewmanagers;
 
 import app.Main;
 import app.helpers.LoggingService;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import org.controlsfx.control.NotificationPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.File;
@@ -29,6 +29,7 @@ public class RootViewManager {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
+    private NotificationPane notificationPane;
 
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
@@ -39,6 +40,7 @@ public class RootViewManager {
 
         try {
             this.initRootLayout(primaryStage);
+            this.initNotificationPane();
             this.initSettingsView();
             this.initHelpView();
             this.showSidebar();
@@ -48,6 +50,13 @@ public class RootViewManager {
             LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
         }
 
+    }
+
+    private void initNotificationPane() {
+        notificationPane = new NotificationPane();
+        notificationPane.setShowFromTop(true);
+//        notificationPane.getStyleClass().add(NotificationPane.STYLE_CLASS_DARK);
+        rootLayout.getChildren().add(notificationPane);
     }
 
     private void initRootLayout(Stage primaryStage) throws IOException {
@@ -123,7 +132,7 @@ public class RootViewManager {
 
     public void closeSettings(File filePath) {
         if (filePath != null) {
-            getMainApp().getCommandController().changeSaveLocation(filePath.toString());
+            getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
         }
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();
@@ -160,6 +169,10 @@ public class RootViewManager {
 
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
+    }
+
+    public NotificationPane getNotificationPane() {
+        return notificationPane;
     }
 
     public void setAndFocusInputField(String text) {

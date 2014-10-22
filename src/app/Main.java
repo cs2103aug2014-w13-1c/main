@@ -5,8 +5,10 @@ import app.helpers.HotkeyActivator;
 import app.helpers.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import org.controlsfx.control.NotificationPane;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
@@ -64,6 +66,11 @@ public class Main extends Application {
                 .message(message)
                 .showInformation();
     }
+
+//    public void showInfoDialog(String title, String message) {
+//        rootViewManager.getNotificationPane().setGraphic(new Label(message));
+//        rootViewManager.getNotificationPane().show();
+//    }
 
     public void showErrorDialog(String title, String error) {
         Dialogs.create()
