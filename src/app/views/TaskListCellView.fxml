@@ -16,6 +16,9 @@
                </image>
             </ImageView>
          </graphic>
+         <tooltip>
+            <Tooltip text="Delete this task" />
+         </tooltip>
       </Button>
       <Button fx:id="updateButton" layoutX="391.0" layoutY="37.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
@@ -25,6 +28,9 @@
                </image>
             </ImageView>
          </graphic>
+         <tooltip>
+            <Tooltip text="Update this task" />
+         </tooltip>
       </Button>
       <Label fx:id="bottomDateLabel" layoutX="176.0" layoutY="76.0" prefHeight="14.0" prefWidth="152.0" text="END 1 JANUARY 2015" textFill="WHITE">
          <font>
@@ -54,6 +60,9 @@
                </image>
             </ImageView>
          </graphic>
+         <tooltip>
+            <Tooltip text="Mark as done" />
+         </tooltip>
       </Button>
    </children>
 </AnchorPane>
