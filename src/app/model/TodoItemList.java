@@ -1,29 +1,10 @@
 package app.model;
 
-//import javafx.beans.property.IntegerProperty;
-//import javafx.beans.property.ObjectProperty;
-//import javafx.beans.property.SimpleIntegerProperty;
-//import javafx.beans.property.SimpleObjectProperty;
-//import javafx.beans.property.SimpleStringProperty;
-//import javafx.beans.property.StringProperty;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.ListIterator;
 import java.util.UUID;
-
-import org.json.simple.*;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * Class TodoItemList
@@ -72,6 +53,15 @@ public class TodoItemList {
 	    return null;
 	}
 	
+    public int searchIndexByUUID(UUID itemID) {
+        for (int i = 0; i < todoItems.size(); i++) {
+            TodoItem currentItem = todoItems.get(i);
+            if (currentItem.getUUID().equals(itemID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 	
 	public ListIterator<TodoItem> getTodoItemsIterator() {
 	    return todoItems.listIterator();
