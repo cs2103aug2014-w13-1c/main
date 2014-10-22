@@ -111,7 +111,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setIndex() {
-        indexLabel.setText(String.valueOf(getIndex() + 1));
+        indexLabel.setText(String.valueOf(getTaskIndex()));
     }
 
     private void setTaskName(TodoItem task) {
@@ -119,23 +119,23 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setDeleteButtonEventHandler(TodoItem task) {
-        deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex(task)));
+        deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
     }
 
     private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex(task) + " "));
+        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " "));
     }
 
     private void setDoneButtonEventHandler(TodoItem task) {
-        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex(task)));
+        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
     }
 
     public String getRandomColor() {
         return colors.get(new Random().nextInt(colors.size()));
     }
 
-    private int getTaskIndex(TodoItem task) {
-        return new Scanner(task.getTaskName()).useDelimiter("\\D+").nextInt();
+    private int getTaskIndex() {
+        return getIndex() + 1;
     }
 
     private void setBackgroundColor(String priority) {
