@@ -32,7 +32,7 @@ public class CommandController {
 
     // Class variables
     ActionController action;
-    private ModelManager taskList;
+    private static ModelManager taskList;
     private static Main main;
     private ArrayList<TodoItem> currentList;
 
@@ -182,7 +182,7 @@ public class CommandController {
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
     }
 
-    public ArrayList<TodoItem> getTaskList() {
+    public static ArrayList<TodoItem> getTaskList() {
         return taskList.getTodoItemList();
     }
 
@@ -219,5 +219,9 @@ public class CommandController {
     public static String showInfoDialog(String message) {
         main.showInfoDialog("Information", message);
         return message;
+    }
+
+    protected static ModelManager getModelManager() {
+        return taskList;
     }
 }

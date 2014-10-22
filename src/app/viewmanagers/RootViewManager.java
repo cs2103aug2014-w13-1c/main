@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.File;
@@ -162,6 +163,13 @@ public class RootViewManager {
     }
 
     public void setAndFocusInputField(String text) {
+//        mainApp.getPrimaryStage().hide();
+//        mainApp.getPrimaryStage().show();
+
+        mainApp.getPrimaryStage().requestFocus();
+//        rootLayout.requestFocus();
+//        borderPane.requestFocus();
+
         inputField.replaceText(text);
         inputField.positionCaret(text.length());
         inputField.requestFocus();

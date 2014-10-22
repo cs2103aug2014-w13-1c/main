@@ -39,12 +39,12 @@
             <Tooltip text="Update this task" />
          </tooltip>
       </Button>
-      <Label fx:id="bottomDateLabel" layoutX="176.0" layoutY="76.0" prefHeight="14.0" prefWidth="152.0" text="END 1 JANUARY 2015" textFill="WHITE">
+      <Label fx:id="bottomDateLabel" layoutX="144.0" layoutY="76.0" prefHeight="14.0" prefWidth="184.0" text="END 1 JANUARY 2015" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="topDateLabel" layoutX="176.0" layoutY="57.0" prefHeight="14.0" prefWidth="152.0" text="START 31 DECEMBER 2014" textFill="WHITE">
+      <Label fx:id="topDateLabel" layoutX="144.0" layoutY="57.0" prefHeight="14.0" prefWidth="184.0" text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
