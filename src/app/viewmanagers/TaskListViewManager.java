@@ -61,7 +61,6 @@ public class TaskListViewManager {
         assert(taskData.size() <= Integer.MAX_VALUE);
 
         if (newTaskAdded(taskData, this.taskData)) {
-            // scrollToAddedTask(taskData, this.taskData);
             scrollToLast();
         }
         this.taskData = taskData;
@@ -77,10 +76,7 @@ public class TaskListViewManager {
         taskListView.scrollTo(taskData.size());
     }
 
-    private void scrollToAddedTask(ObservableList<TodoItem> _new, ObservableList<TodoItem> _old) {
-        _new.removeAll(_old);
-        System.out.println(_new);
-        taskListView.scrollTo(_new.get(0));
+    private void scrollToAddedTask() {
     }
 
 
