@@ -188,7 +188,7 @@ public class ActionController {
         }
         return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
     }
-    
+
     // Undone method
     protected String undone(CommandParser parsedCommand) {
         if (parsedCommand.getCommandString().isEmpty()) {

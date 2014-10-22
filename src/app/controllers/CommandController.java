@@ -194,7 +194,7 @@ public class CommandController {
         main.getPrimaryStage().setTitle("wat do");
         setTaskList(getTaskList());
     }
-    
+
     public void changeSaveLocation(String filePath) {
         String newInputString = "saveto ";
         newInputString = newInputString.concat(filePath);
