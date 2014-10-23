@@ -35,10 +35,10 @@ ModelManager
 
 ### Sorting
 * public void setSortingStyle(int newSortingStyle)
- * 1 = taskName then endDate
- * 2 = startDate then priority
- * 3 = endDate then priority
- * 4 = priority then endDate
+ * 0 = taskName then endDate
+ * 1 = startDate then priority
+ * 2 = endDate then priority
+ * 3 = priority then endDate
  * Sort is stable.
  * Null values are pushed to the end of the list.
  
@@ -61,15 +61,12 @@ ModelManager
 TodoItem
 -----------
 ### Attribute getters and setters
-* getTaskName() - setTaskName(String newTaskName)
-* getStartDate() - setStartDate(Date newStartDate)
-* getEndDate() - setEndDate(Date newEndDate)
-* getPriority() - setPriority(String newPriority)
- * newPriority must be TodoItem.HIGH/MID/LOW
-* isDone() - setDoneStatus(Boolean newDoneStatus)
- * newDoneStatus must not be null
+* getTaskName()
+* getStartDate()
+* getEndDate()
+* getPriority()
+* isDone()
 * getUUID()
- * No setter for UUID (defensive coding)
 
 ### Convenience methods for View & Controller
 * public boolean isOverdue()
