@@ -179,7 +179,7 @@ public class CommandController {
     }
 
     public void resetTaskList() {
-        main.getPrimaryStage().setTitle("wat do");
+//        main.getPrimaryStage().setTitle("wat do");
         setTaskList(getTaskList());
     }
 
