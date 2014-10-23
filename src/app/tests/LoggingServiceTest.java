@@ -47,8 +47,13 @@ public class LoggingServiceTest {
         log.delete();
         assertThat(log.exists(), is(false));
 
+        /* First test that the boundary case for empty file is true */
+        assertThat(log.length() == 0, is(true));
+
         LoggingService.getLogger().log(Level.INFO, "foo");
-        assertThat(log.length() == 0, is(false));
+
+        /* Then test that the boundary case for non-empty file is true */
+        assertThat(log.length() > 0, is(true));
     }
 
 
