@@ -7,7 +7,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
+/** test class for TaskController, tests filtering of done/undone/overdue tasks
+ *
  * Created by jolly on 21/10/14.
  */
 public class TaskControllerTest extends Main {
