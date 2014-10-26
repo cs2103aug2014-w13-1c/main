@@ -88,7 +88,9 @@ public class CommandParser {
         
         endDateKeywords.clear();
         endDateKeywords.add("end");
-        
+        endDateKeywords.add("due");
+        endDateKeywords.add("by");
+
         keywords.clear();
         keywords.add("priority");
         keywords.addAll(commandKeywords);
