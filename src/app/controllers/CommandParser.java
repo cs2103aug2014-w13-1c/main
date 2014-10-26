@@ -93,6 +93,7 @@ public class CommandParser {
 
         keywords.clear();
         keywords.add("priority");
+        keywords.add("all");
         keywords.addAll(commandKeywords);
         keywords.addAll(startDateKeywords);
         keywords.addAll(endDateKeywords);
