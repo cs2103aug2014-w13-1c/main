@@ -35,7 +35,6 @@ public class CommandController {
     private static ModelManager taskList;
     private static Main main;
     private ArrayList<TodoItem> currentList;
-    private CommandParser parsedCommand;
 
     // Print string methods
     protected void printString(String message) {
@@ -146,7 +145,7 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        parsedCommand = new CommandParser(inputString);
+        CommandParser parsedCommand = new CommandParser(inputString);
         printString(processCommand(parsedCommand));
     }
 
