@@ -192,6 +192,13 @@ public class CommandController {
         CommandController.main = main;
     }
 
+    public void changeSaveLocation(String filePath) {
+        String newInputString = "saveto ";
+        newInputString = newInputString.concat(filePath);
+        CommandParser parsedCommand = new CommandParser(newInputString);
+        printString(processCommand(parsedCommand));
+    }
+
     public static String showErrorDialog(String error) {
         main.showErrorDialog("Error", error);
         return error;
