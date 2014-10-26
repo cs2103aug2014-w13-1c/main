@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 public class CommandController {
     protected enum CommandType {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
     }
 
     // Errors
@@ -57,6 +57,10 @@ public class CommandController {
             return CommandType.SEARCH;
         } else if (commandWord.equalsIgnoreCase("update")) {
             return CommandType.UPDATE;
+        } else if (commandWord.equalsIgnoreCase("done")) {
+            return CommandType.DONE;
+        } else if (commandWord.equalsIgnoreCase("undone")) {
+            return CommandType.UNDONE;
         } else if (commandWord.equalsIgnoreCase("help")) {
             return CommandType.HELP;
         } else if (commandWord.equalsIgnoreCase("settings")) {
@@ -113,6 +117,16 @@ public class CommandController {
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
+                return feedback;
+            case DONE :
+                feedback = action.done(parsedCommand);
+                currentList = action.getCurrentList();
+                taskList = action.getTaskList();
+                return feedback;
+            case UNDONE :
+                feedback = action.undone(parsedCommand);
+                currentList = action.getCurrentList();
+                taskList = action.getTaskList();
                 return feedback;
             case HELP :
                 feedback = action.help(parsedCommand);
