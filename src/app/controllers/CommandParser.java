@@ -54,9 +54,9 @@ public class CommandParser {
         setCommandWord(inputString);
         if (commandKeywords.contains(commandWord)) {
             setCommandString(inputString);
-        	setDates(inputString);
-        	checkDate();
-        	setPriority();
+            setDates(inputString);
+            checkDate();
+            setPriority();
         }
     }
 
