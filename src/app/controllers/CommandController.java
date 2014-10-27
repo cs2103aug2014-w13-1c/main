@@ -82,27 +82,27 @@ public class CommandController {
         switch (commandType) {
             case ADD :
                 feedback = action.addNewLine(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
                 feedback = action.display(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 updateView();
                 return feedback;
             case CLEAR :
                 feedback = action.clear(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
                 feedback = action.deleteEntry(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
@@ -115,21 +115,21 @@ public class CommandController {
                 return feedback;
             case UPDATE :
                 feedback = action.update(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
                 feedback = action.done(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
                 feedback = action.undone(parsedCommand);
-                currentList = action.getCurrentList();
+//                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
                 updateView();
