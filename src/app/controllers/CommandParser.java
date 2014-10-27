@@ -2,10 +2,9 @@ package app.controllers;
 
 import app.helpers.Keyword;
 import app.model.TodoItem;
-
+import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
-import com.joestelmach.natty.DateGroup;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -189,7 +188,7 @@ public class CommandParser {
             }
         }
     }
-    
+
     @SuppressWarnings("unused")
     private Date getDate(String toBeParsed) {
         Parser dateParser = new Parser();

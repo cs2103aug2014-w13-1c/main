@@ -1,11 +1,14 @@
+package app.tests;
+
 import app.helpers.LoggingService;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
-import java.io.*;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by jin on 23/10/14.

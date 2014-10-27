@@ -1,14 +1,8 @@
 package app.helpers;
 
 import javafx.geometry.Pos;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.*;
 
 /**
  * Created by jolly on 10/10/14.

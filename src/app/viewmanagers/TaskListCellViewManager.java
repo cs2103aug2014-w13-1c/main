@@ -5,9 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.TextAlignment;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by jin on 28/9/14.
@@ -33,6 +37,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label overdueLabel;
 
     @FXML
+    private Label tickLabel;
+
+    @FXML
     private Label indexLabel;
 
     @FXML
@@ -43,6 +50,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
     private Button doneButton;
+
+    @FXML
+    private Tooltip taskNameTooltip;
 
     private RootViewManager rootViewManager;
 
@@ -77,7 +87,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         setPriorityLevel(task);
         setDates(task);
 
-        overdueLabel.setVisible(task.isOverdue());
+        taskNameTooltip.setText(task.getTaskName());
+        tickLabel.setVisible(task.isDone());
+        overdueLabel.setVisible(task.isOverdue() && !task.isDone());
     }
 
     private void setPriorityLevel(TodoItem task) {
@@ -127,15 +139,17 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setDoneButtonEventHandler(TodoItem task) {
-        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
+        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField(getDoneAction(task) + getTaskIndex()));
     }
 
     public String getRandomColor() {
         return colors.get(new Random().nextInt(colors.size()));
     }
 
-    private int getTaskIndex() {
-        return getIndex() + 1;
+    private int getTaskIndex() { return getIndex() + 1; }
+
+    private String getDoneAction(TodoItem task) {
+        return (task.isDone()) ? "undone " : "done ";
     }
 
     private void setBackgroundColor(String priority) {

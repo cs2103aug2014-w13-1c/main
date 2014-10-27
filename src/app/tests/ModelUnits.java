@@ -1,26 +1,14 @@
 package app.tests;
 
-import app.model.FileStorage;
-import app.model.ModelManager;
-import app.model.TodoItem;
-import app.model.TodoItemList;
-import app.model.TodoItemSorter;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.Level;
-
+import app.model.*;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ModelUnits {
@@ -35,7 +23,6 @@ public class ModelUnits {
         String testInput3 = "3. High";
         Boolean testBoolean1 = true;
         
-        // This is a normal case for the 'five arguments' partition.
         TodoItem testedTodoItem1 = new TodoItem(testInput1, startDate1, endDate1, testInput3, testBoolean1);
         assertEquals(testInput1, testedTodoItem1.getTaskName());
         assertEquals(startDate1.getTime(), testedTodoItem1.getStartDate().getTime());
@@ -43,7 +30,6 @@ public class ModelUnits {
         assertEquals(TodoItem.HIGH, testedTodoItem1.getPriority());
         assertEquals(testBoolean1, testedTodoItem1.isDone());
         
-        // This is a normal case for the 'three arguments' partition.
         TodoItem testedTodoItem2 = new TodoItem(testInput1, startDate1, endDate1);
         assertEquals(testInput1, testedTodoItem2.getTaskName());
         assertEquals(startDate1.getTime(), testedTodoItem2.getStartDate().getTime());
@@ -51,7 +37,6 @@ public class ModelUnits {
         assertEquals(TodoItem.MEDIUM, testedTodoItem2.getPriority());
         assertEquals(false, testedTodoItem2.isDone());
         
-        // This is a boundary case for the 'null arguments' partition.
         TodoItem testedTodoItem3 = new TodoItem(null, null, null, testInput2, null);
         assertEquals(null, testedTodoItem3.getTaskName());
         assertEquals(null, testedTodoItem3.getStartDate());
@@ -63,16 +48,13 @@ public class ModelUnits {
     // Tests TodoItemList constructor
     @Test
     public void testTodoItemListConstructor() {
-        // This is a normal case for the 'no arguments' partition.
         TodoItemList testedList1 = new TodoItemList();
         assertEquals(0, testedList1.countTodoItems());
         
-        // This is a normal case for the 'arraylist argument' partition.
         ArrayList<TodoItem> inputArrayList1 = new ArrayList<TodoItem>();
         TodoItemList testedList2 = new TodoItemList(inputArrayList1);
         assertEquals(0, testedList2.countTodoItems());
         
-        // This is a normal case for the 'arraylist argument' partition.
         ArrayList<TodoItem> inputArrayList2 = new ArrayList<TodoItem>();
         inputArrayList2.add(new TodoItem(null, null, null));
         TodoItemList testedList3 = new TodoItemList(inputArrayList2);
@@ -89,9 +71,6 @@ public class ModelUnits {
         Date endDate1 = new Date();
         
         TodoItemList testedList1 = new TodoItemList();
-        
-        // The following is to test the 'valid argument' partition.
-        // Also, it sets up the fixture for the delete function.
         testedList1.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
         assertEquals(1, testedList1.countTodoItems());
         
@@ -110,7 +89,6 @@ public class ModelUnits {
         assertEquals(TodoItem.DEADLINE, currentTestedList.get(2).getTodoItemType());
         assertEquals(TodoItem.FLOATING, currentTestedList.get(3).getTodoItemType());
         
-        // This is the normal case for the 'valid input' partition. 
         testedList1.deleteByUUID(currentTestedList.get(2).getUUID());
         assertEquals(3, testedList1.countTodoItems());
         currentTestedList = testedList1.getTodoItems();
@@ -118,20 +96,12 @@ public class ModelUnits {
         assertEquals(null, currentTestedList.get(1).getEndDate());
         assertEquals(null, currentTestedList.get(2).getEndDate());
         
-        // This is the boundary case for the 'valid input' partition.
-        testedList1.deleteByUUID(currentTestedList.get(2).getUUID());
-        assertEquals(2, testedList1.countTodoItems());
-        currentTestedList = testedList1.getTodoItems();
-        assertEquals(testInput1, currentTestedList.get(0).getTaskName());
-        assertEquals(null, currentTestedList.get(1).getEndDate());
-        
         testedList1.clearTodoItems();
         assertEquals(0, testedList1.countTodoItems());
     }
     
     // Tests TodoItemSorter
     // Thou who trieth to debug this crawling horror, surrender.
-    // For sorting there's really no 'invalid input'.
     @Test
     public void testTodoItemSorter() {
         String testInput1 = "Test String 1";
@@ -303,8 +273,6 @@ public class ModelUnits {
         
         // Yay! Successfully loaded settings file!
         // Now we set up an empty watdo.json
-        
-        // This is the normal case for the 'empty target file' partition.
         ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
         try {
             testStorage.updateFile(testTodoItems);
@@ -358,7 +326,6 @@ public class ModelUnits {
             return;
         }
         
-        // This is the normal case for the 'proper input' partition.
         assertEquals(5, extractedResult.size());
         assertEquals(null, extractedResult.get(0).getTaskName());
         assertEquals(null, extractedResult.get(0).getStartDate());
@@ -369,8 +336,6 @@ public class ModelUnits {
         assertEquals(earlyDate.getTime(), extractedResult.get(1).getStartDate().getTime());
         assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
         assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
-        
-        // This is the boundary case for the 'proper input' partition.
         assertEquals(TodoItem.HIGH, extractedResult.get(4).getPriority());
         assertEquals(true, extractedResult.get(4).isDone());
         
@@ -399,7 +364,6 @@ public class ModelUnits {
     }
     
     // Everyone together now!
-    // The following is the normal case for the 'proper use' partition.
     @Test
     public void testModelManager() {
         ModelManager testManager1;
