@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextAlignment;
 
@@ -48,6 +49,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     @FXML
     private Button doneButton;
 
+    @FXML
+    private Tooltip taskNameTooltip;
+
     private RootViewManager rootViewManager;
 
     List<String> colors;
@@ -81,6 +85,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         setPriorityLevel(task);
         setDates(task);
 
+        taskNameTooltip.setText(task.getTaskName());
         tickLabel.setVisible(task.isDone());
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
     }

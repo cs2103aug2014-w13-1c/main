@@ -63,6 +63,9 @@
          <font>
             <Font size="16.0" />
          </font>
+         <tooltip>
+            <Tooltip fx:id="taskNameTooltip" />
+         </tooltip>
       </Label>
       <Button fx:id="doneButton" layoutX="391.0" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
