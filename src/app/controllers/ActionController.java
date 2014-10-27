@@ -80,7 +80,8 @@ public class ActionController {
         if(isInt(parsedCommand.getCommandString())) {
             index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = currentList;
+//        System.out.println("currentlist size: " + todoList.size());
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -137,7 +138,7 @@ public class ActionController {
             index = Integer.parseInt(check) - 1;
         }
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = currentList;
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -156,7 +157,7 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
+            taskList.updateTask(currentList.get(index).getUUID(),
                                 parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
@@ -176,13 +177,13 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = currentList;
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
+            taskList.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -201,13 +202,13 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = currentList;
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
+            taskList.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -255,7 +256,10 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = new ArrayList<TodoItem>();
+    }
+
+    protected void initCurrentList() {
+        currentList = main.getCommandController().getCurrentList();
     }
     
     protected ArrayList<TodoItem> getCurrentList() {
