@@ -155,4 +155,13 @@ public class ModelManager {
     public int getLastModifiedIndex() {
         return todoList.searchIndexByUUID(latestModified);
     }
+    
+    public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
+        dataStorage.updateFile(newTodoItems);
+        
+        this.todoList = new TodoItemList(newTodoItems);
+        this.latestModified = null;
+        
+        TodoItemSorter.resortTodoList(this.todoList);
+    }
 }

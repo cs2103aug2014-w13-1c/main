@@ -32,6 +32,7 @@ ModelManager
 
 ### File storage
 * public void changeFileDirectory(String fileDirectory) throws IOException
+* public String getFileDirectory()
 
 ### Sorting
 * public void setSortingStyle(int newSortingStyle)
@@ -57,6 +58,9 @@ ModelManager
 
 ### Last modified
 * public int getLastModifiedIndex()
+
+### Undo
+* public void loadTodoItems(ArrayList<TodoItem> todoItems)
 
 TodoItem
 -----------
