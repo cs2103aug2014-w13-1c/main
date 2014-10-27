@@ -1,25 +1,18 @@
 package app.viewmanagers;
 
 import app.helpers.InvalidInputException;
+import app.helpers.Keyword;
 import app.helpers.KeywordDetector;
 import app.helpers.LoggingService;
-import app.controllers.*;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import app.helpers.Keyword;
 import app.model.TodoItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.StyleSpans;
-import org.fxmisc.richtext.StyleSpansBuilder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
 
 /**
  * InputFieldViewManager

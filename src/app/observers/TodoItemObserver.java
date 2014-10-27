@@ -1,7 +1,5 @@
 package app.observers;
 
-import app.model.TodoItem;
-
 import java.util.Observable;
 import java.util.Observer;
 

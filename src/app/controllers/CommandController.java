@@ -2,15 +2,13 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.Keyword;
-import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
+
 
 /**
  * Class CommandController

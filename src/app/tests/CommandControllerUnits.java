@@ -2,7 +2,6 @@ package app.tests;
 
 import app.controllers.CommandController;
 import app.model.TodoItemList;
-import org.junit.Test;
 
 import java.util.Calendar;
 
