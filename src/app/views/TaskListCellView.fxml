@@ -6,6 +6,11 @@
 <?import javafx.scene.text.*?>
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="435.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
    <children>
+      <Label fx:id="tickLabel" layoutX="322.0" layoutY="-35.0" prefHeight="165.0" prefWidth="110.0" text="✓" textAlignment="CENTER" textFill="#d0cece">
+         <font>
+            <Font size="140.0" />
+         </font>
+      </Label>
       <Label fx:id="overdueLabel" layoutX="259.0" layoutY="-2.0" prefHeight="100.0" prefWidth="184.0" text="ಠ_ಠ" textAlignment="CENTER" textFill="#616161">
          <font>
             <Font size="87.0" />
@@ -35,25 +40,28 @@
             <Tooltip text="Update this task" />
          </tooltip>
       </Button>
-      <Label fx:id="bottomDateLabel" layoutX="144.0" layoutY="76.0" prefHeight="14.0" prefWidth="184.0" text="END 1 JANUARY 2015" textFill="WHITE">
+      <Label fx:id="bottomDateLabel" layoutX="144.0" layoutY="79.0" prefHeight="14.0" prefWidth="184.0" text="END 1 JANUARY 2015" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="topDateLabel" layoutX="144.0" layoutY="57.0" prefHeight="14.0" prefWidth="184.0" text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
+      <Label fx:id="topDateLabel" layoutX="144.0" layoutY="64.0" prefHeight="14.0" prefWidth="184.0" text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
          <font>
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="priorityLevelLabel" layoutX="14.0" layoutY="57.0" prefHeight="14.0" prefWidth="110.0" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+      <Label fx:id="priorityLevelLabel" layoutX="14.0" layoutY="64.0" prefHeight="14.0" prefWidth="110.0" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
          <font>
             <Font name="System Italic" size="11.0" />
          </font>
       </Label>
-      <Label fx:id="taskNameLabel" layoutX="14.0" layoutY="6.0" prefHeight="46.0" prefWidth="337.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
+      <Label fx:id="taskNameLabel" layoutX="14.0" layoutY="-2.0" prefHeight="58.0" prefWidth="337.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum dolor sit amet," textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
          <font>
             <Font size="16.0" />
          </font>
+         <tooltip>
+            <Tooltip fx:id="taskNameTooltip" />
+         </tooltip>
       </Label>
       <Button fx:id="doneButton" layoutX="391.0" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
@@ -67,7 +75,10 @@
             <Tooltip text="Mark as done" />
          </tooltip>
       </Button>
-      <Label fx:id="hexLabel" layoutX="14.0" layoutY="75.0" text="#" textFill="WHITE" />
-      <Label fx:id="indexLabel" layoutX="22.0" layoutY="75.0" prefHeight="16.0" prefWidth="110.0" text="42" textFill="WHITE" />
+      <Label fx:id="hexLabel" layoutX="10.0" layoutY="78.0" text="#" textFill="WHITE" />
+      <Label fx:id="indexLabel" layoutX="18.0" layoutY="78.0" prefHeight="16.0" prefWidth="110.0" text="42" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Label>
    </children>
 </AnchorPane>
