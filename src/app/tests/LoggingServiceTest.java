@@ -1,3 +1,5 @@
+package app.tests;
+
 import app.helpers.LoggingService;
 import org.junit.Test;
 
