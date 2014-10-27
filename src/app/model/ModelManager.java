@@ -140,6 +140,10 @@ public class ModelManager {
         return getTodoItemList().listIterator();
     }
     
+    public String getFileDirectory() {
+        return dataStorage.getFileDirectory();
+    }
+    
     public String getFullFileName() {
         return dataStorage.getFullFileName();
     }
