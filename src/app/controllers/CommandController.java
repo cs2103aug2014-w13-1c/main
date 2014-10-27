@@ -111,7 +111,7 @@ public class CommandController {
                 feedback = action.search(parsedCommand);
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
-                updateView();
+                updateView(currentList);
                 return feedback;
             case UPDATE :
                 feedback = action.update(parsedCommand);
@@ -180,6 +180,7 @@ public class CommandController {
     }
 
     public void updateView() {
+        main.getPrimaryStage().setTitle("wat do");
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(getTaskList()));
     }
 
