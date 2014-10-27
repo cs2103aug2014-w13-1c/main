@@ -85,6 +85,7 @@ public class CommandController {
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
+                updateView();
                 return feedback;
             case DISPLAY :
                 feedback = action.display(parsedCommand);
@@ -97,12 +98,14 @@ public class CommandController {
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
+                updateView();
                 return feedback;
             case DELETE :
                 feedback = action.deleteEntry(parsedCommand);
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
+                updateView();
                 return feedback;
             case SEARCH :
                 feedback = action.search(parsedCommand);
@@ -115,16 +118,21 @@ public class CommandController {
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
                 resetTaskList();
+                updateView();
                 return feedback;
             case DONE :
                 feedback = action.done(parsedCommand);
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
+                resetTaskList();
+                updateView();
                 return feedback;
             case UNDONE :
                 feedback = action.undone(parsedCommand);
                 currentList = action.getCurrentList();
                 taskList = action.getTaskList();
+                resetTaskList();
+                updateView();
                 return feedback;
             case HELP :
                 feedback = action.help(parsedCommand);
