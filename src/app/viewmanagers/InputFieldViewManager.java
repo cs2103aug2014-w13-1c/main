@@ -86,7 +86,7 @@ public class InputFieldViewManager {
             inputField.clear();
             LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
             rootViewManager.getMainApp().getCommandController().parseCommand(command);
-//            rootViewManager.getMainApp().getCommandController().updateView();
+            rootViewManager.getMainApp().getCommandController().updateView();
         }
     }
 
