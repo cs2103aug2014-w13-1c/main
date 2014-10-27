@@ -1,26 +1,14 @@
 package app.tests;
 
-import app.model.FileStorage;
-import app.model.ModelManager;
-import app.model.TodoItem;
-import app.model.TodoItemList;
-import app.model.TodoItemSorter;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.Level;
-
+import app.model.*;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ModelUnits {

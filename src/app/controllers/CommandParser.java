@@ -2,10 +2,9 @@ package app.controllers;
 
 import app.helpers.Keyword;
 import app.model.TodoItem;
-
+import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
-import com.joestelmach.natty.DateGroup;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,9 +53,9 @@ public class CommandParser {
         setCommandWord(inputString);
         if (commandKeywords.contains(commandWord)) {
             setCommandString(inputString);
-        	setDates(inputString);
-        	checkDate();
-        	setPriority();
+            setDates(inputString);
+            checkDate();
+            setPriority();
         }
     }
 
@@ -82,15 +81,20 @@ public class CommandParser {
         commandKeywords.add("help");
         commandKeywords.add("settings");
     	commandKeywords.add("saveto");
+        commandKeywords.add("done");
+        commandKeywords.add("undone");
         
     	startDateKeywords.clear();
         startDateKeywords.add("start");
         
         endDateKeywords.clear();
         endDateKeywords.add("end");
-        
+        endDateKeywords.add("due");
+        endDateKeywords.add("by");
+
         keywords.clear();
         keywords.add("priority");
+        keywords.add("all");
         keywords.addAll(commandKeywords);
         keywords.addAll(startDateKeywords);
         keywords.addAll(endDateKeywords);
@@ -184,7 +188,7 @@ public class CommandParser {
             }
         }
     }
-    
+
     @SuppressWarnings("unused")
     private Date getDate(String toBeParsed) {
         Parser dateParser = new Parser();

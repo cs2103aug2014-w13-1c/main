@@ -5,9 +5,11 @@ import app.helpers.LoggingService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import org.fxmisc.richtext.StyleClassedTextArea;
 
 import java.io.File;
@@ -120,7 +122,7 @@ public class RootViewManager {
 
     public void closeSettings(File filePath) {
         if (filePath != null) {
-            // getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
+            getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
         }
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();

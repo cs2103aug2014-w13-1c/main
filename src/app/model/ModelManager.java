@@ -1,5 +1,8 @@
 package app.model;
 
+import app.helpers.LoggingService;
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -7,10 +10,6 @@ import java.util.Date;
 import java.util.ListIterator;
 import java.util.UUID;
 import java.util.logging.Level;
-
-import org.json.JSONException;
-
-import app.helpers.LoggingService;
 
 public class ModelManager {
     
