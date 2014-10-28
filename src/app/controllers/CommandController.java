@@ -102,8 +102,8 @@ public class CommandController {
                 return feedback;
             case SEARCH :
                 feedback = action.search(parsedCommand);
-                currentList = action.getCurrentList();
                 taskList = action.getTaskList();
+                currentList = action.getCurrentList();
                 updateView(currentList);
                 return feedback;
             case UPDATE :

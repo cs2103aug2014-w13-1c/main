@@ -21,10 +21,11 @@ public class CommandParser {
     
     private String[] inputStringArray;
     
-    private static ArrayList<String> keywords = new ArrayList<String>();
     private static ArrayList<String> commandKeywords = new ArrayList<String>();
+    private static ArrayList<String> addUpdateKeywords = new ArrayList<String>();
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
+    private static ArrayList<String> displayKeywords = new ArrayList<String>();
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
@@ -91,26 +92,44 @@ public class CommandParser {
         endDateKeywords.add("end");
         endDateKeywords.add("due");
         endDateKeywords.add("by");
-
-        keywords.clear();
-        keywords.add("priority");
-        keywords.add("all");
-        keywords.addAll(commandKeywords);
-        keywords.addAll(startDateKeywords);
-        keywords.addAll(endDateKeywords);
+        
+        addUpdateKeywords.clear();
+        addUpdateKeywords.add("priority");
+        addUpdateKeywords.addAll(startDateKeywords);
+        addUpdateKeywords.addAll(endDateKeywords);
+        
+        displayKeywords.clear();
+        displayKeywords.add("all");
+        displayKeywords.add("done");
     }
-    
+
     protected static ArrayList<Keyword> getKeywords(String inputString) {
         setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
-        int startIndex = 0, endIndex = 0;
-        for (int i = 0; i < inputStringArray.length; i++) {
-            endIndex = startIndex + inputStringArray[i].length() - 1;
-            if (keywords.contains(inputStringArray[i])) {
-                currentKeywords.add(new Keyword(startIndex, endIndex));
-            }
+        int startIndex = 0;
+        int endIndex = inputStringArray[0].length() - 1;;
+        if (commandKeywords.contains(inputStringArray[0])) {
+            currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;
+        }
+        if (inputStringArray[0].equalsIgnoreCase("add") || inputStringArray[0].equalsIgnoreCase("update")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (addUpdateKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("display")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (displayKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
         }
 //        for (int i = 0; i < currentKeywords.size(); i++) {
 //            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
@@ -143,7 +162,7 @@ public class CommandParser {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
             int i = 1;
-            while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
+            while (i < inputStringArray.length && !addUpdateKeywords.contains(inputStringArray[i])) {
                 commandString = commandString.concat(inputStringArray[i] + " ");
                 i++;
             }
@@ -161,7 +180,7 @@ public class CommandParser {
             if (startDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
                 i++;
-                while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
+                while (i < inputStringArray.length && !addUpdateKeywords.contains(inputStringArray[i])) {
                     toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
                     i++;
                 }
@@ -171,7 +190,7 @@ public class CommandParser {
             else if (endDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
                 i++;
-                while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
+                while (i < inputStringArray.length && !addUpdateKeywords.contains(inputStringArray[i])) {
                     toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
                     i++;
                 }
