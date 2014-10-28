@@ -73,9 +73,6 @@ public class CommandController {
     }
 
     protected String processCommand(CommandParser parsedCommand) {
-        ActionController action = new ActionController();
-        action.setMainApp(main);
-        
         String commandWord = parsedCommand.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
