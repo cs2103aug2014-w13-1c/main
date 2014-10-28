@@ -30,7 +30,7 @@ public class CommandController {
 
     // Class variables
     ActionController action;
-    private static ModelManager taskList;
+    private static ModelManager modelManager;
     private static Main main;
     private ArrayList<TodoItem> currentList;
 
@@ -79,48 +79,48 @@ public class CommandController {
         switch (commandType) {
             case ADD :
                 feedback = action.addNewLine(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
                 feedback = action.display(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 updateView();
                 return feedback;
             case CLEAR :
                 feedback = action.clear(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
                 feedback = action.deleteEntry(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
                 feedback = action.search(parsedCommand);
-                taskList = action.getTaskList();
                 currentList = action.getCurrentList();
+                modelManager = action.getModelManager();
                 updateView(currentList);
                 return feedback;
             case UPDATE :
                 feedback = action.update(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
                 feedback = action.done(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
                 feedback = action.undone(parsedCommand);
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -148,7 +148,7 @@ public class CommandController {
     // CommandController public methods
     public CommandController() {
         action = new ActionController();
-        taskList = action.getTaskList();
+        modelManager = action.getModelManager();
         currentList = action.getCurrentList();
     }
 
@@ -178,7 +178,7 @@ public class CommandController {
     }
 
     public static ArrayList<TodoItem> getTaskList() {
-        return taskList.getTodoItemList();
+        return modelManager.getTodoItemList();
     }
 
     public void setTaskList(ArrayList<TodoItem> todoList) {
@@ -218,6 +218,6 @@ public class CommandController {
     }
 
     protected static ModelManager getModelManager() {
-        return taskList;
+        return modelManager;
     }
 }

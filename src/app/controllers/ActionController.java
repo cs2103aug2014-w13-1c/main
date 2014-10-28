@@ -27,7 +27,7 @@ public class ActionController {
 
 
     // Class variables
-    private ModelManager taskList;
+    private ModelManager modelManager;
     private Main main;
     private ArrayList<TodoItem> currentList;
 
@@ -38,12 +38,12 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+            modelManager.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = taskList.getTodoItemList();
+        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
@@ -52,7 +52,7 @@ public class ActionController {
         if (!parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        currentList = taskList.getTodoItemList();
+        currentList = modelManager.getTodoItemList();
         main.getPrimaryStage().setTitle("wat do");
         return "displaying tasks\n";
     }
@@ -63,7 +63,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            taskList.clearTasks();
+            modelManager.clearTasks();
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -86,12 +86,12 @@ public class ActionController {
         }
         String toBeDeleted = currentList.get(index).getTaskName();
         try {
-            taskList.deleteTask(currentList.get(index).getUUID());
+            modelManager.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = taskList.getTodoItemList();
+        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
@@ -109,7 +109,7 @@ public class ActionController {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
         if (todoList.isEmpty()) {
             return CommandController.showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
@@ -155,13 +155,13 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
-            taskList.updateTask(currentList.get(index).getUUID(),
-                                parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(),
+                                    parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = taskList.getTodoItemList();
+        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
     }
 
@@ -176,13 +176,13 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
+            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -201,13 +201,13 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
+        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
         if (index < 0 || index >= todoList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
+            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -239,7 +239,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            taskList.changeFileDirectory(parsedCommand.getCommandString());
+            modelManager.changeFileDirectory(parsedCommand.getCommandString());
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -250,20 +250,20 @@ public class ActionController {
 
     protected ActionController() {
         try {
-            taskList = new ModelManager();
+            modelManager = new ModelManager();
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = taskList.getTodoItemList();
+        currentList = modelManager.getTodoItemList();
     }
     
     protected ArrayList<TodoItem> getCurrentList() {
         return currentList;
     }
     
-    protected ModelManager getTaskList() {
-        return taskList;
+    protected ModelManager getModelManager() {
+        return modelManager;
     }
 
     /**
