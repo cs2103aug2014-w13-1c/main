@@ -85,8 +85,8 @@ public class CommandController {
                 return feedback;
             case DISPLAY :
                 feedback = action.display(parsedCommand);
-                modelManager = action.getModelManager();
-                updateView();
+                currentList = action.getCurrentList();
+                updateView(currentList);
                 return feedback;
             case CLEAR :
                 feedback = action.clear(parsedCommand);

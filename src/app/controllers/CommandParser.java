@@ -101,6 +101,7 @@ public class CommandParser {
         displayKeywords.clear();
         displayKeywords.add("all");
         displayKeywords.add("done");
+        displayKeywords.add("overdue");
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {

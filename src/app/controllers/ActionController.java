@@ -50,9 +50,24 @@ public class ActionController {
     // Display command method(s)
     protected String display(CommandParser parsedCommand) {
         if (!parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            System.out.println(parsedCommand.getCommandString());
+            if (parsedCommand.getCommandString().equals("all")) {
+                currentList = main.getTaskController().getDoneTasks();
+                currentList.addAll(main.getTaskController().getUndoneTasks());
+            }
+            else if (parsedCommand.getCommandString().equals("done")) {
+                currentList = main.getTaskController().getDoneTasks();
+            }
+            else if (parsedCommand.getCommandString().equals("overdue")) {
+                currentList = main.getTaskController().getOverdueTasks();
+            }
+            else {
+                return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            }
         }
-        currentList = modelManager.getTodoItemList();
+        else {
+            currentList = main.getTaskController().getUndoneTasks();
+        }
         main.getPrimaryStage().setTitle("wat do");
         return "displaying tasks\n";
     }
