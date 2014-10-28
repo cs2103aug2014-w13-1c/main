@@ -80,13 +80,12 @@ public class ActionController {
         if(isInt(parsedCommand.getCommandString())) {
             index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
+        if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        String toBeDeleted = todoList.get(index).getTaskName();
+        String toBeDeleted = currentList.get(index).getTaskName();
         try {
-            taskList.deleteTask(todoList.get(index).getUUID());
+            taskList.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -137,8 +136,7 @@ public class ActionController {
             index = Integer.parseInt(check) - 1;
         }
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
+        if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         String toBeUpdated = "";
@@ -156,7 +154,7 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
+            taskList.updateTask(currentList.get(index).getUUID(),
                                 parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
