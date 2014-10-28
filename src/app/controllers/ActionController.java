@@ -43,6 +43,7 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
+        currentList = taskList.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
@@ -90,6 +91,7 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
+        currentList = taskList.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
@@ -135,7 +137,6 @@ public class ActionController {
         if(isInt(check)) {
             index = Integer.parseInt(check) - 1;
         }
-        // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -160,6 +161,7 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
+        currentList = taskList.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
     }
 
@@ -253,7 +255,7 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = new ArrayList<TodoItem>();
+        currentList = taskList.getTodoItemList();
     }
     
     protected ArrayList<TodoItem> getCurrentList() {
