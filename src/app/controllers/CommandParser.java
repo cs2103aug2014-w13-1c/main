@@ -179,22 +179,24 @@ public class CommandParser {
         for (int i = 0; i < inputStringArray.length; i++) {
             if (startDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
+                String dateKeyword = inputStringArray[i];
                 i++;
                 while (i < inputStringArray.length && !addUpdateKeywords.contains(inputStringArray[i])) {
                     toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
                     i++;
                 }
-                startDate = getDate(toBeParsed.trim());
+                startDate = getDate(dateKeyword, toBeParsed.trim());
                 i--;
             }
             else if (endDateKeywords.contains(inputStringArray[i])) {
                 String toBeParsed = "";
+                String dateKeyword = inputStringArray[i];
                 i++;
                 while (i < inputStringArray.length && !addUpdateKeywords.contains(inputStringArray[i])) {
                     toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
                     i++;
                 }
-                endDate = getDate(toBeParsed.trim());
+                endDate = getDate(dateKeyword, toBeParsed.trim());
                 i--;
             }
         }
@@ -209,7 +211,7 @@ public class CommandParser {
     }
 
     @SuppressWarnings("unused")
-    private Date getDate(String toBeParsed) {
+    private Date getDate(String dateKeyword, String toBeParsed) {
         Parser dateParser = new Parser();
         List<Date> dateList = new ArrayList<Date>();
         List<DateGroup> groups = dateParser.parse(toBeParsed);
@@ -232,7 +234,7 @@ public class CommandParser {
             return dateList.get(0);
         }
         else {
-            commandWord = "dateError";
+            commandString = commandString.concat(" " + dateKeyword + " " + toBeParsed);
             return null;
         }
     }
