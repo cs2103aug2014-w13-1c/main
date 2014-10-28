@@ -21,7 +21,6 @@ public class TaskListViewManager {
     @FXML
     private Label emptySearch;
 
-    private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
     private UserGuide userGuide;
 
     private RootViewManager rootViewManager;
@@ -57,10 +56,9 @@ public class TaskListViewManager {
         assert(taskData.size() >= 0);
         assert(taskData.size() <= Integer.MAX_VALUE);
 
-        this.taskData = taskData;
         taskListView.setItems(taskData);
 
-        if (this.taskData.size() > 0) {
+        if (taskData.size() > 0) {
             scrollToLastModifiedTask();
         }
 
