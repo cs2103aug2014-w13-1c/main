@@ -30,7 +30,7 @@ public class CommandController {
 
     // Class variables
     ActionController action;
-    private static ModelManager taskList;
+    private static ModelManager modelManager;
     private static Main main;
     private ArrayList<TodoItem> currentList;
 
@@ -73,9 +73,6 @@ public class CommandController {
     }
 
     protected String processCommand(CommandParser parsedCommand) {
-        ActionController action = new ActionController();
-        action.setMainApp(main);
-        
         String commandWord = parsedCommand.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
@@ -83,54 +80,54 @@ public class CommandController {
             case ADD :
                 feedback = action.addNewLine(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
                 feedback = action.display(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 updateView();
                 return feedback;
             case CLEAR :
                 feedback = action.clear(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
                 feedback = action.deleteEntry(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
                 feedback = action.search(parsedCommand);
                 currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 updateView(currentList);
                 return feedback;
             case UPDATE :
                 feedback = action.update(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
                 feedback = action.done(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
                 feedback = action.undone(parsedCommand);
 //                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                modelManager = action.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -159,7 +156,7 @@ public class CommandController {
     public CommandController() {
         action = new ActionController();
         action.setMainApp(main);
-        taskList = action.getTaskList();
+        modelManager = action.getModelManager();
         currentList = new ArrayList<TodoItem>();
     }
 
@@ -189,7 +186,7 @@ public class CommandController {
     }
 
     public static ArrayList<TodoItem> getTaskList() {
-        return taskList.getTodoItemList();
+        return modelManager.getTodoItemList();
     }
 
     public void setTaskList(ArrayList<TodoItem> todoList) {
@@ -228,6 +225,6 @@ public class CommandController {
     }
 
     protected static ModelManager getModelManager() {
-        return taskList;
+        return modelManager;
     }
 }
