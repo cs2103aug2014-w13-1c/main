@@ -103,7 +103,6 @@ public class CommandController {
             case SEARCH :
                 feedback = action.search(parsedCommand);
                 currentList = action.getCurrentList();
-                modelManager = action.getModelManager();
                 updateView(currentList);
                 return feedback;
             case UPDATE :

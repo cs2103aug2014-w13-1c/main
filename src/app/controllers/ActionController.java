@@ -155,7 +155,7 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
-            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(),
+            modelManager.updateTask(currentList.get(index).getUUID(),
                                     parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
         } catch (IOException e) {
             // do something here?
@@ -176,13 +176,12 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
+        if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
+            modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -201,13 +200,12 @@ public class ActionController {
         }
         int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
+        if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            modelManager.updateTask(modelManager.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
+            modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
