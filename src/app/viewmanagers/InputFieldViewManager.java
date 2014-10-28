@@ -78,7 +78,7 @@ public class InputFieldViewManager {
         });
     }
 
-    private void checkCommandLengthAndExecute(String command) throws InvalidInputException {
+    public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
             throw new InvalidInputException("empty command");
         } else {

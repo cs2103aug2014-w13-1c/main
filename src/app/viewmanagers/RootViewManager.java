@@ -32,6 +32,7 @@ public class RootViewManager {
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
     private HelpViewManager helpViewManager;
+    private InputFieldViewManager inputFieldViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -98,7 +99,7 @@ public class RootViewManager {
     }
 
     private void showInputField() {
-        InputFieldViewManager inputFieldViewManager = new InputFieldViewManager();
+        inputFieldViewManager = new InputFieldViewManager();
         inputFieldViewManager.setRootViewManager(this);
         inputField = inputFieldViewManager.getInputField();
 
@@ -159,6 +160,10 @@ public class RootViewManager {
 
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
+    }
+    
+    public InputFieldViewManager getInputFieldViewManager() {
+        return inputFieldViewManager;
     }
 
     public void setAndFocusInputField(String text) {

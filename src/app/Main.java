@@ -13,6 +13,8 @@ import java.util.logging.Level;
 
 public class Main extends Application {
 
+    private static String[] commandArguments;
+    
     private Stage primaryStage;
 
     private CommandController commandController;
@@ -26,8 +28,17 @@ public class Main extends Application {
         createPrimaryStage(stage);
         initViewComponent();
         initControllerComponents();
-
-        rootViewManager.setAndFocusInputField("");
+        
+        if (commandArguments.length == 0) {
+            // Actual use case
+            rootViewManager.setAndFocusInputField("");
+        } else {
+            // Testing
+            for (String command : commandArguments) {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute(command);
+            }
+            rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("exit");
+        }
     }
 
     private void createPrimaryStage(Stage stage) {
@@ -52,12 +63,16 @@ public class Main extends Application {
     }
 
     public void showInfoDialog(String title, String message) {
-        Dialogs.create()
-                .owner(primaryStage)
-                .title(title)
-                .masthead(null)
-                .message(message)
-                .showInformation();
+        // Actual use case.
+        if (commandArguments.length == 0) { 
+            Dialogs.create()
+                    .owner(primaryStage)
+                    .title(title)
+                    .masthead(null)
+                    .message(message)
+                    .showInformation();
+        }
+        // If false, currently in test mode so no dialogs are used.
     }
 
     public void showErrorDialog(String title, String error) {
@@ -90,6 +105,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        commandArguments = args;
         launch(args);
     }
 }
