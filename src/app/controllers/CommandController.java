@@ -133,7 +133,6 @@ public class CommandController {
                 updateView();
                 return feedback;
             case EXIT :
-                showInfoDialog("Bye!");
                 System.exit(0);
             case INVALID_DATE :
                 feedback = showErrorDialog(ERROR_INVALID_DATE);
@@ -167,7 +166,6 @@ public class CommandController {
 
     public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList(todoList);
-        
         return taskData;
     }
 
