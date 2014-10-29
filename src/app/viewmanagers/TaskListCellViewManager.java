@@ -37,9 +37,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label overdueLabel;
 
     @FXML
-    private Label tickLabel;
-
-    @FXML
     private Label indexLabel;
 
     @FXML
@@ -50,6 +47,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
     private Button doneButton;
+
+    @FXML
+    private Button undoneButton;
 
     @FXML
     private Tooltip taskNameTooltip;
@@ -88,12 +88,13 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         setDates(task);
 
         taskNameTooltip.setText(task.getTaskName());
-        tickLabel.setVisible(task.isDone());
+        doneButton.setVisible(task.isDone());
+        undoneButton.setVisible(!task.isDone());
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
     }
 
     private void setPriorityLevel(TodoItem task) {
-        priorityLevelLabel.setText("PRIORITY: " + task.getPriority().substring(3).toUpperCase());
+        priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
         setBackgroundColor(task.getPriority());
     }
 
@@ -139,7 +140,8 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setDoneButtonEventHandler(TodoItem task) {
-        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField(getDoneAction(task) + getTaskIndex()));
+        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("undone " + getTaskIndex()));
+        undoneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
     }
 
     public String getRandomColor() {

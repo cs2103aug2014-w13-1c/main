@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.VBox?>
-<VBox prefHeight="592.0" prefWidth="64.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.SidebarViewManager">
+
+<VBox prefHeight="592.0" prefWidth="32.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.SidebarViewManager">
     <children>
-        <Button fx:id="displayButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+        <Button fx:id="displayButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
             <graphic>
-                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
                         <Image url="@../resources/list.png" />
                     </image>
@@ -17,9 +20,9 @@
             <Tooltip text="Display all tasks" />
          </tooltip>
         </Button>
-        <Button fx:id="addButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+        <Button fx:id="addButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
             <graphic>
-                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
                         <Image url="@../resources/add.png" />
                     </image>
@@ -29,9 +32,9 @@
             <Tooltip text="Add a task" />
          </tooltip>
         </Button>
-        <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+        <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
             <graphic>
-                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
                         <Image url="@../resources/search.png" />
                     </image>
@@ -41,9 +44,9 @@
             <Tooltip text="Search for a task" />
          </tooltip>
         </Button>
-        <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="64.0" prefWidth="64.0" style="-fx-background-color: transparent;">
+        <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
             <graphic>
-                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
                         <Image url="@../resources/tick.png" />
                     </image>
@@ -53,9 +56,9 @@
             <Tooltip text="Show completed tasks" />
          </tooltip>
         </Button>
-      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="140.0">
+      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="340.0">
          <graphic>
-            <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                <image>
                   <Image url="@../resources/bulb.png" />
                </image>
@@ -65,9 +68,9 @@
             <Tooltip text="Help" />
          </tooltip>
       </Button>
-        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="80.0" prefWidth="80.0" style="-fx-background-color: transparent;" translateY="140.0">
+        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="340.0">
             <graphic>
-                <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+                <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>
                         <Image url="@../resources/settings.png" />
                     </image>
