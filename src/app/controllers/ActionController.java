@@ -52,17 +52,17 @@ public class ActionController {
         if (!parsedCommand.getCommandString().isEmpty()) {
             System.out.println(parsedCommand.getCommandString());
             if (parsedCommand.getCommandString().equals("all")) {
-                returnList = main.getTaskController().getDoneTasks();
-                returnList.addAll(main.getTaskController().getUndoneTasks());
+                returnList = taskController.getDoneTasks();
+                returnList.addAll(taskController.getUndoneTasks());
             } else if (parsedCommand.getCommandString().equals("done")) {
-                returnList = main.getTaskController().getDoneTasks();
+                returnList = taskController.getDoneTasks();
             } else if (parsedCommand.getCommandString().equals("overdue")) {
-                returnList = main.getTaskController().getOverdueTasks();
+                returnList = taskController.getOverdueTasks();
             } else {
                 return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
             }
         } else {
-            returnList = main.getTaskController().getUndoneTasks();
+            returnList = taskController.getUndoneTasks();
         }
         main.getPrimaryStage().setTitle("wat do");
         return "displaying tasks\n";
@@ -124,7 +124,7 @@ public class ActionController {
         if (todoList.isEmpty()) {
             return CommandController.showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = main.getTaskController().instantSearch(parsedCommand.getCommandString());
+        ArrayList<TodoItem> results = taskController.instantSearch(parsedCommand.getCommandString());
         if (results.isEmpty()) {
             return CommandController.showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
