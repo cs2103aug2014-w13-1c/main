@@ -249,39 +249,6 @@ public class ModelUnits {
         Boolean tempRandomColorsEnabled = false;
         Boolean tempNotificationsEnabled = false;
         
-        /*
-        // Settings file fixture
-        FileWriter fileToWrite;
-        try {
-            fileToWrite = new FileWriter(FileStorage.SETTINGS_FILE_NAME);
-        } catch (Exception e) {
-            fail();
-            return;
-        }
-        BufferedWriter writer = new BufferedWriter(fileToWrite);
-        JSONObject settingsObject = new JSONObject();
-        try {
-            settingsObject.put("fileDirectory", "testDirectory/");
-            settingsObject.put("displayStatus", false);
-        } catch (Exception e) {
-            fail();
-        }
-        try {
-            writer.write(settingsObject.toString(2));
-            writer.flush();
-            fileToWrite.close();
-        } catch (Exception e) {
-            fail();
-        }
-        
-        // Try to load settings file
-        try {
-            testStorage.loadSettings();
-        } catch (Exception e) {
-            fail();
-        }
-        */
-        
         if (!testStorage.getFileDirectory().equals(tempFileDirectory)) {
             tempFileDirectory = testStorage.getFileDirectory();
         }
@@ -307,7 +274,7 @@ public class ModelUnits {
             fail();
         }
         
-        assertEquals("testDirectory", testStorage.getFileDirectory());
+        assertEquals("testDirectory/", testStorage.getFileDirectory()); // Trailing slash added!
         assertEquals(false, testStorage.areRandomColorsEnabled());
         assertEquals(false, testStorage.areNotificationsEnabled());
         
@@ -524,14 +491,39 @@ public class ModelUnits {
     @Test
     public void testChangeSettings() {
         FileStorage testStorage = new FileStorage();
-        
+
+        // Saves old working directory settings 
         try {
             testStorage.loadSettings();
         } catch (Exception e) {
             fail();
         }
+        
+        String tempFileDirectory = testStorage.getFileDirectory();
+        Boolean tempRandomColorsEnabled = testStorage.areRandomColorsEnabled();
+        Boolean tempNotificationsEnabled = testStorage.areNotificationsEnabled();
+
+        // Tests for correct use case
+        try {
+            testStorage.changeSettings("testDirectory", false, true);
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("testDirectory/", testStorage.getFileDirectory());
+        assertEquals(false, testStorage.areRandomColorsEnabled());
+        assertEquals(true, testStorage.areNotificationsEnabled());
+        
+        // Revert back to working directory
+        try {
+            testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
+        } catch (Exception e) {
+            fail();
+        }
     }
     
+    // Minor test for sorting in todoItemList
     @Test
     public void testTodoItemListSort() {
         TodoItemList testList = new TodoItemList();
