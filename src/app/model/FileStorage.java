@@ -28,7 +28,7 @@ public class FileStorage {
     public static final String WRITE_FAILED = " file write failed";
 
     public static final String DEFAULT_FILE_NAME = "watdo.json";
-    public static final String DEFAULT_FILE_DIRECTORY = "";
+    public static final String DEFAULT_FILE_DIRECTORY = ".";
     public static final String SETTINGS_FILE_NAME = "settings.json";
     
     public FileStorage() {
@@ -177,8 +177,14 @@ public class FileStorage {
     }
     
     public ArrayList<TodoItem> changeDirectory(String fileDirectory) throws IOException {
+        if (fileDirectory.length() > 0) {
+            if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
+                fileDirectory = fileDirectory + "/";
+            }
+        }
+        
         String temp = this.fileDirectory;
-        this.fileDirectory = fileDirectory;
+        this.fileDirectory = fileDirectory; 
         try {
             ArrayList<TodoItem> loadResult = loadFile();
             updateSettings();
