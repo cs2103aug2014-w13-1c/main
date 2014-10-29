@@ -30,8 +30,19 @@ public class UndoController {
     }
 
     protected void saveUndo(ArrayList<TodoItem> list) {
-        undoStack.push(list);
-        redoStack = new Stack<ArrayList<TodoItem>>();
+        ArrayList<TodoItem> undo = new ArrayList<TodoItem>();
+        for (TodoItem todo : list) {
+            undo.add(todo);
+        }
+        undoStack.push(undo);
+    }
+
+    protected void saveRedo(ArrayList<TodoItem> list) {
+        ArrayList<TodoItem> redo = new ArrayList<TodoItem>();
+        for (TodoItem todo : list) {
+            redo.add(todo);
+        }
+        redoStack.push(redo);
     }
 
     protected boolean isUndoEmpty() {
@@ -43,13 +54,16 @@ public class UndoController {
     }
 
     protected ArrayList<TodoItem> loadUndo() {
-        redoStack.push(undoStack.peek());
         return undoStack.pop();
     }
 
     protected ArrayList<TodoItem> loadRedo() {
-        undoStack.push(redoStack.peek());
         return redoStack.pop();
+    }
+
+    protected void clear() {
+        undoStack.clear();
+        redoStack.clear();
     }
 
 }

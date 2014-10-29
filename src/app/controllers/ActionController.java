@@ -255,6 +255,43 @@ public class ActionController {
         return "changed save location\n";
     }
 
+    // undo and redo
+    protected String undo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (main.getCommandController().getUndoController().isUndoEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            main.getCommandController().getUndoController().saveRedo(modelManager.getTodoItemList());
+            try {
+                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadUndo());
+            } catch (IOException e) {
+                // do something here?
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            }
+            return "undo\n";
+        }
+    }
+
+    protected String redo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (main.getCommandController().getUndoController().isRedoEmpty()) {
+            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            main.getCommandController().getUndoController().saveUndo(modelManager.getTodoItemList());
+            try {
+                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadRedo());
+            } catch (IOException e) {
+                // do something here?
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            }
+            return "redo\n";
+        }
+    }
+
 
     protected ActionController(ModelManager manager) {
         modelManager = manager;

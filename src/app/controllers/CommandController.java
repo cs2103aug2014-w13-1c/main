@@ -25,7 +25,9 @@ import java.util.logging.Level;
 
 public class CommandController {
     protected enum CommandType {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, DONE,
+        UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        UNDO, REDO
     }
 
     // Errors
@@ -38,6 +40,7 @@ public class CommandController {
     private static Main main;
     private static TaskController taskController;
     private static CommandParser commandParser;
+    private static UndoController undoController;
     private ArrayList<TodoItem> currentList;
 
     // Print string methods
@@ -73,6 +76,10 @@ public class CommandController {
             return CommandType.SAVETO;
         } else if (commandWord.equalsIgnoreCase("dateError")) {
             return CommandType.INVALID_DATE;
+        } else if (commandWord.equalsIgnoreCase("undo")) {
+            return CommandType.UNDO;
+        } else if (commandWord.equalsIgnoreCase("redo")) {
+            return CommandType.REDO;
         } else {
             return CommandType.INVALID;
         }
@@ -84,6 +91,7 @@ public class CommandController {
         String feedback;
         switch (commandType) {
             case ADD :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.addNewLine(commandObject);
                 resetTaskList();
                 updateView();
@@ -94,11 +102,13 @@ public class CommandController {
                 updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.clear(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.deleteEntry(commandObject, currentList);
                 resetTaskList();
                 updateView();
@@ -109,16 +119,19 @@ public class CommandController {
                 updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.update(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.done(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
+                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.undone(commandObject, currentList);
                 resetTaskList();
                 updateView();
@@ -131,6 +144,7 @@ public class CommandController {
                 return feedback;
             case SAVETO :
                 feedback = actionController.changeSaveLocation(commandObject);
+                undoController.clear();
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -138,6 +152,16 @@ public class CommandController {
                 System.exit(0);
             case INVALID_DATE :
                 feedback = showErrorDialog(ERROR_INVALID_DATE);
+                return feedback;
+            case UNDO :
+                feedback = actionController.undo(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case REDO :
+                feedback = actionController.redo(commandObject);
+                resetTaskList();
+                updateView();
                 return feedback;
             default :
                 feedback = showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -155,6 +179,7 @@ public class CommandController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
+        undoController = UndoController.getUndoController();
     }
 
     public void parseCommand(String inputString) {
@@ -219,6 +244,10 @@ public class CommandController {
 
     public String getSaveDirectory() {
         return modelManager.getFileDirectory();
+    }
+
+    public UndoController getUndoController() {
+        return undoController;
     }
 
     protected static ModelManager getModelManager() {

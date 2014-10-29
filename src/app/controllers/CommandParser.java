@@ -58,6 +58,8 @@ public class CommandParser {
     	commandKeywords.add("saveto");
         commandKeywords.add("done");
         commandKeywords.add("undone");
+        commandKeywords.add("undo");
+        commandKeywords.add("redo");
         
     	startDateKeywords.clear();
         startDateKeywords.add("start");
