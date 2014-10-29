@@ -21,7 +21,7 @@ public class CommandParser {
     
     private String[] inputStringArray;
     
-    private static ArrayList<String> commandKeywords = new ArrayList<String>();
+    public static ArrayList<String> commandKeywords = new ArrayList<String>();
     private static ArrayList<String> addUpdateKeywords = new ArrayList<String>();
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
