@@ -117,7 +117,7 @@ public class TaskControllerTest extends Main {
     }
 
     @Override
-    public void showInfoDialog(String title, String message) {
+    public void showInfoNotification(String title, String message) {
         // do nothing
     }
 }
