@@ -49,7 +49,6 @@ public class InputFieldViewManager {
                     rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
                 }
             } else {
-//                LoggingService.getLogger().log(Level.INFO, "InputField text changed: \"" + newValue + "\"");
                 if (searchState) {
                     rootViewManager.getMainApp().getCommandController().updateView();
                     searchState = false;
@@ -70,11 +69,10 @@ public class InputFieldViewManager {
             } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("")) {
                 event.consume();
                 inputField.replaceText(lastCommand);
+            } else if (event.getCode() == KeyCode.TAB) {
+                event.consume();
+                System.out.println("TAB: \"" + inputField.getText() + "\"");
             }
-//            else if (event.getCode() == KeyCode.TAB) {
-//                event.consume();
-//                System.out.println("TAB: \"" + inputField.getText() + "\"");
-//            }
         });
     }
 
@@ -86,7 +84,6 @@ public class InputFieldViewManager {
             inputField.clear();
             LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
             rootViewManager.getMainApp().getCommandController().parseCommand(command);
-//            rootViewManager.getMainApp().getCommandController().updateView();
         }
     }
 
