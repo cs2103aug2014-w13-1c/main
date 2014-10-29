@@ -171,7 +171,7 @@ public class CommandController {
 
     public void updateView() {
         main.getPrimaryStage().setTitle("wat do");
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(main.getTaskController().getUndoneTasks()));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
@@ -182,13 +182,8 @@ public class CommandController {
         return modelManager.getTodoItemList();
     }
 
-    public void setTaskList(ArrayList<TodoItem> todoList) {
-        currentList = todoList;
-    }
-
     public void resetTaskList() {
-//        main.getPrimaryStage().setTitle("wat do");
-        setTaskList(getTaskList());
+        currentList = main.getTaskController().getUndoneTasks();
     }
 
     /**

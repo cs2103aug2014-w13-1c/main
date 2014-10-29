@@ -31,9 +31,6 @@ public class Main extends Application {
         initViewComponent();
         initControllerComponents();
 
-        // default: show undone tasks
-        getCommandController().parseCommand("display");
-
         if (commandArguments.length == 0) {
             // Actual use case
             rootViewManager.setAndFocusInputField("");
@@ -63,7 +60,6 @@ public class Main extends Application {
         taskController = taskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
-        commandController.setTaskList(commandController.getTaskList());
         commandController.updateView();
     }
 
