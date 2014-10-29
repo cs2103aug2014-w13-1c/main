@@ -1,3 +1,5 @@
+package tests.integration;
+
 import app.Main;
 import org.junit.Test;
 import org.loadui.testfx.utils.FXTestUtils;
