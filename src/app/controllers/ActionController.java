@@ -28,8 +28,9 @@ public class ActionController {
 
     // Class variables
     private static ModelManager modelManager;
+    private static TaskController taskController;
     private static Main main;
-    private static ArrayList<TodoItem> currentList;
+    private static ArrayList<TodoItem> returnList;
 
     // Individual command methods
     // Add command method(s)
@@ -43,7 +44,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
     }
 
@@ -52,21 +52,17 @@ public class ActionController {
         if (!parsedCommand.getCommandString().isEmpty()) {
             System.out.println(parsedCommand.getCommandString());
             if (parsedCommand.getCommandString().equals("all")) {
-                currentList = main.getTaskController().getDoneTasks();
-                currentList.addAll(main.getTaskController().getUndoneTasks());
-            }
-            else if (parsedCommand.getCommandString().equals("done")) {
-                currentList = main.getTaskController().getDoneTasks();
-            }
-            else if (parsedCommand.getCommandString().equals("overdue")) {
-                currentList = main.getTaskController().getOverdueTasks();
-            }
-            else {
+                returnList = main.getTaskController().getDoneTasks();
+                returnList.addAll(main.getTaskController().getUndoneTasks());
+            } else if (parsedCommand.getCommandString().equals("done")) {
+                returnList = main.getTaskController().getDoneTasks();
+            } else if (parsedCommand.getCommandString().equals("overdue")) {
+                returnList = main.getTaskController().getOverdueTasks();
+            } else {
                 return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
             }
-        }
-        else {
-            currentList = main.getTaskController().getUndoneTasks();
+        } else {
+            returnList = main.getTaskController().getUndoneTasks();
         }
         main.getPrimaryStage().setTitle("wat do");
         return "displaying tasks\n";
@@ -87,7 +83,7 @@ public class ActionController {
     }
     
     // Delete command method(s)
-    protected String deleteEntry(CommandParser parsedCommand) {
+    protected String deleteEntry(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -132,14 +128,14 @@ public class ActionController {
         if (results.isEmpty()) {
             return CommandController.showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
-            currentList = results;
+            returnList = results;
             main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
 
     // Update command method(s)
-    protected String update(CommandParser parsedCommand) {
+    protected String update(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -181,7 +177,7 @@ public class ActionController {
     }
 
     // Done method
-    protected String done(CommandParser parsedCommand) {
+    protected String done(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -205,7 +201,7 @@ public class ActionController {
     }
 
     // Undone method
-    protected String undone(CommandParser parsedCommand) {
+    protected String undone(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
         if (parsedCommand.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -263,6 +259,14 @@ public class ActionController {
 
     protected ActionController(ModelManager manager) {
         modelManager = manager;
+    }
+
+    protected void setTaskController(TaskController controller) {
+        taskController = controller;
+    }
+
+    protected ArrayList<TodoItem> getReturnList() {
+        return returnList;
     }
 
     protected void setMainApp(Main main) {

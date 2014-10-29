@@ -88,7 +88,7 @@ public class CommandController {
                 return feedback;
             case DISPLAY :
                 feedback = actionController.display(parsedCommand);
-                updateView(currentList);
+                updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
                 feedback = actionController.clear(parsedCommand);
@@ -96,26 +96,26 @@ public class CommandController {
                 updateView();
                 return feedback;
             case DELETE :
-                feedback = actionController.deleteEntry(parsedCommand);
+                feedback = actionController.deleteEntry(parsedCommand, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
                 feedback = actionController.search(parsedCommand);
-                updateView(currentList);
+                updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
-                feedback = actionController.update(parsedCommand);
+                feedback = actionController.update(parsedCommand, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
-                feedback = actionController.done(parsedCommand);
+                feedback = actionController.done(parsedCommand, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
-                feedback = actionController.undone(parsedCommand);
+                feedback = actionController.undone(parsedCommand, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -193,6 +193,7 @@ public class CommandController {
 
     public void setTaskController(TaskController controller) {
         taskController = controller;
+        actionController.setTaskController(taskController);
     }
 
     public void changeSaveLocation(String filePath) {
