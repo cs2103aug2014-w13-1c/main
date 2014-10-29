@@ -211,30 +211,18 @@ public class CommandParser {
         }
     }
 
-    @SuppressWarnings("unused")
     private Date getDate(String dateKeyword, String toBeParsed) {
         Parser dateParser = new Parser();
         List<Date> dateList = new ArrayList<Date>();
         List<DateGroup> groups = dateParser.parse(toBeParsed);
         for (DateGroup group : groups) {
-            List<Date> dates = group.getDates();
-            int line = group.getLine();
-            int column = group.getPosition();
-            String matchingValue = group.getText();
-            String syntaxTree = group.getSyntaxTree().toStringTree();
-            Map<String, List<ParseLocation>> parseMap = group.getParseLocations();
-            boolean isRecurreing = group.isRecurring();
-            Date recursUntil = group.getRecursUntil();
-
-            /* if any Dates are present in current group then add them to dateList */
             if (group.getDates() != null) {
                     dateList.addAll(group.getDates());
             }
         }
         if (!dateList.isEmpty()) {
             return dateList.get(0);
-        }
-        else {
+        } else {
             commandString = commandString.concat(" " + dateKeyword + " " + toBeParsed);
             return null;
         }
