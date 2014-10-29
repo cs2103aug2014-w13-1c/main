@@ -279,11 +279,6 @@ public class ActionController {
         return modelManager;
     }
 
-    /**
-     * Is called by the CommandController to set the main app for ActionController.
-     *
-     * @param main
-     */
     protected void setMainApp(Main main) {
         this.main = main;
     }

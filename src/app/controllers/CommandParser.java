@@ -118,9 +118,6 @@ public class CommandParser {
                 startIndex = endIndex + 2;
             }
         }
-//        for (int i = 0; i < currentKeywords.size(); i++) {
-//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-//        }
         return currentKeywords;
     }
 
