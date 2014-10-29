@@ -1,5 +1,6 @@
 package app.viewmanagers;
 
+import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -72,10 +73,22 @@ public class SidebarViewManager {
                 rootViewManager.setAndFocusInputField("display done");
                 break;
             case "undoButton":
-                rootViewManager.setAndFocusInputField("undo");
+                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+                    try {
+                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
+                    } catch (InvalidInputException e) {
+                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+                    }
+                }
                 break;
             case "redoButton":
-                rootViewManager.setAndFocusInputField("redo");
+                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+                    try {
+                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+                    } catch (InvalidInputException e) {
+                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+                    }
+                }
                 break;
             case "helpButton":
                 rootViewManager.openHelp();

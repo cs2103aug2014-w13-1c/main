@@ -45,11 +45,11 @@ public class UndoController {
         redoStack.push(redo);
     }
 
-    protected boolean isUndoEmpty() {
+    public boolean isUndoEmpty() {
         return undoStack.isEmpty();
     }
 
-    protected boolean isRedoEmpty() {
+    public boolean isRedoEmpty() {
         return redoStack.isEmpty();
     }
 
