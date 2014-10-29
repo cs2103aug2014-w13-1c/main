@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.LoggingService;
+import app.helpers.CommandObject;
 import app.model.ModelManager;
 import app.model.TodoItem;
 
@@ -34,29 +35,29 @@ public class ActionController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(CommandParser parsedCommand){
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String addNewLine(CommandObject commandObject){
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            modelManager.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+            modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
+        return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, commandObject.getInputString()));
     }
 
     // Display command method(s)
-    protected String display(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
-            System.out.println(parsedCommand.getCommandString());
-            if (parsedCommand.getCommandString().equals("all")) {
+    protected String display(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            System.out.println(commandObject.getCommandString());
+            if (commandObject.getCommandString().equals("all")) {
                 returnList = taskController.getDoneTasks();
                 returnList.addAll(taskController.getUndoneTasks());
-            } else if (parsedCommand.getCommandString().equals("done")) {
+            } else if (commandObject.getCommandString().equals("done")) {
                 returnList = taskController.getDoneTasks();
-            } else if (parsedCommand.getCommandString().equals("overdue")) {
+            } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getOverdueTasks();
             } else {
                 return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -69,8 +70,8 @@ public class ActionController {
     }
 
     // Clear command method(s)
-    protected String clear(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
+    protected String clear(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
@@ -83,14 +84,14 @@ public class ActionController {
     }
     
     // Delete command method(s)
-    protected String deleteEntry(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String deleteEntry(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         int index = -1;
-        index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
-        if(isInt(parsedCommand.getCommandString())) {
-            index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        index = Integer.parseInt(commandObject.getCommandString()) - 1;
+        if(isInt(commandObject.getCommandString())) {
+            index = Integer.parseInt(commandObject.getCommandString()) - 1;
         }
         if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -102,7 +103,6 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
@@ -116,32 +116,32 @@ public class ActionController {
     }
 
     // Search command method(s)
-    protected String search(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String search(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
         if (todoList.isEmpty()) {
             return CommandController.showErrorDialog(String.format(ERROR_FILE_EMPTY));
         }
-        ArrayList<TodoItem> results = taskController.instantSearch(parsedCommand.getCommandString());
+        ArrayList<TodoItem> results = taskController.instantSearch(commandObject.getCommandString());
         if (results.isEmpty()) {
             return CommandController.showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
         } else {
             returnList = results;
-            main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
+            main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
 
     // Update command method(s)
-    protected String update(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, false};
         
-        StringTokenizer st = new StringTokenizer(parsedCommand.getCommandString());
+        StringTokenizer st = new StringTokenizer(commandObject.getCommandString());
         String check = st.nextToken();
         int index = -1;
         // To check that the index input is an integer
@@ -156,36 +156,35 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (parsedCommand.getStartDate() != null) {
+        if (commandObject.getStartDate() != null) {
             parameters[1] = true;
         }
-        if (parsedCommand.getEndDate() != null) {
+        if (commandObject.getEndDate() != null) {
             parameters[2] = true;
         }
-        if (parsedCommand.getPriority() != null) {
+        if (commandObject.getPriority() != null) {
             parameters[3] = true;
         }
         try {
             modelManager.updateTask(currentList.get(index).getUUID(),
-                                    parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+                                    parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        currentList = modelManager.getTodoItemList();
         return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
     }
 
     // Done method
-    protected String done(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         // To check that the index input is an integer
-        if (!isInt(parsedCommand.getCommandString())) {
+        if (!isInt(commandObject.getCommandString())) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -197,19 +196,19 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
+        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
     // Undone method
-    protected String undone(CommandParser parsedCommand, ArrayList<TodoItem> currentList) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         // To check that the index input is an integer
-        if (!isInt(parsedCommand.getCommandString())) {
+        if (!isInt(commandObject.getCommandString())) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
-        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -221,12 +220,12 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
+        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
     // Help method
-    protected String help(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
+    protected String help(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
@@ -234,8 +233,8 @@ public class ActionController {
     }
 
     // Settings method
-    protected String settings(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
+    protected String settings(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
@@ -243,12 +242,12 @@ public class ActionController {
     }
     
     // Change save file location (for .json)
-    protected String changeSaveLocation(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
+    protected String changeSaveLocation(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            modelManager.changeFileDirectory(parsedCommand.getCommandString());
+            modelManager.changeFileDirectory(commandObject.getCommandString());
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());

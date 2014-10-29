@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.CommandObject;
 import app.helpers.Keyword;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
@@ -36,6 +37,7 @@ public class CommandController {
     private static ModelManager modelManager;
     private static Main main;
     private static TaskController taskController;
+    private static CommandParser commandParser;
     private ArrayList<TodoItem> currentList;
 
     // Print string methods
@@ -76,59 +78,59 @@ public class CommandController {
         }
     }
 
-    protected String processCommand(CommandParser parsedCommand) {
-        String commandWord = parsedCommand.getCommandWord();
+    protected String processCommand(CommandObject commandObject) {
+        String commandWord = commandObject.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
         switch (commandType) {
             case ADD :
-                feedback = actionController.addNewLine(parsedCommand);
+                feedback = actionController.addNewLine(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
-                feedback = actionController.display(parsedCommand);
+                feedback = actionController.display(commandObject);
                 currentList = actionController.getReturnList();
                 updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
-                feedback = actionController.clear(parsedCommand);
+                feedback = actionController.clear(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
-                feedback = actionController.deleteEntry(parsedCommand, currentList);
+                feedback = actionController.deleteEntry(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
-                feedback = actionController.search(parsedCommand);
+                feedback = actionController.search(commandObject);
                 currentList = actionController.getReturnList();
                 updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
-                feedback = actionController.update(parsedCommand, currentList);
+                feedback = actionController.update(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
-                feedback = actionController.done(parsedCommand, currentList);
+                feedback = actionController.done(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
-                feedback = actionController.undone(parsedCommand, currentList);
+                feedback = actionController.undone(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case HELP :
-                feedback = actionController.help(parsedCommand);
+                feedback = actionController.help(commandObject);
                 return feedback;
             case SETTINGS :
-                feedback = actionController.settings(parsedCommand);
+                feedback = actionController.settings(commandObject);
                 return feedback;
             case SAVETO :
-                feedback = actionController.changeSaveLocation(parsedCommand);
+                feedback = actionController.changeSaveLocation(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -145,6 +147,7 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
+        commandParser = new CommandParser();
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
@@ -156,8 +159,8 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandParser parsedCommand = new CommandParser(inputString);
-        printString(processCommand(parsedCommand));
+        CommandObject commandObject = commandParser.parseCommand(inputString);
+        printString(processCommand(commandObject));
     }
 
     public ArrayList<Keyword> parseKeywords(String inputString) {
@@ -171,7 +174,7 @@ public class CommandController {
 
     public void updateView() {
         main.getPrimaryStage().setTitle("wat do");
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(taskController.getUndoneTasks()));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
@@ -194,13 +197,14 @@ public class CommandController {
     public void setTaskController(TaskController controller) {
         taskController = controller;
         actionController.setTaskController(taskController);
+        resetTaskList();
     }
 
     public void changeSaveLocation(String filePath) {
         String newInputString = "saveto ";
         newInputString = newInputString.concat(filePath);
-        CommandParser parsedCommand = new CommandParser(newInputString);
-        printString(processCommand(parsedCommand));
+        CommandObject commandObject = commandParser.parseCommand(newInputString);
+                printString(processCommand(commandObject));
     }
 
     public static String showErrorDialog(String error) {

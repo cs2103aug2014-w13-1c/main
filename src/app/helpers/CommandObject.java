@@ -12,15 +12,25 @@ public class CommandObject {
     private Date startDate;
     private Date endDate;
     private String priority;
-
     private String[] inputStringArray;
 
     public CommandObject() {
-        commandWord = "";
-        commandString = "";
-        startDate = null;
-        endDate = null;
-        priority = null;
+    }
+
+    public void setInputString(String string) {
+        inputString = string;
+    }
+
+    public String getInputString() {
+        return inputString;
+    }
+
+    public void setInputStringArray(String[] array) {
+        inputStringArray = array;
+    }
+
+    public String[] getInputStringArray() {
+        return inputStringArray;
     }
 
     public void setCommandWord(String word) {
