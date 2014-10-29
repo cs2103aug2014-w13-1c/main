@@ -139,6 +139,8 @@ public class CommandController {
                 return feedback;
             case SAVETO :
                 feedback = action.changeSaveLocation(parsedCommand);
+                resetTaskList();
+                updateView();
                 return feedback;
             case EXIT :
                 showInfoDialog("Bye!");
