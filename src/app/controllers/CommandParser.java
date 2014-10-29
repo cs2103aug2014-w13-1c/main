@@ -32,20 +32,6 @@ public class CommandParser {
         return inputString.indexOf(" ", startIndex);
     }
 
-//    private int getMonth(String monthInput) {
-//        String[] monthName = {
-//            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
-//        };
-//        int month = -1;
-//        for (int i = 0; i < 12; i++) {
-//            if (monthName[i].equalsIgnoreCase(monthInput)) {
-//                month = i;
-//                break;
-//            }
-//        }
-//        return month;
-//    }
-
     // Constructor and initialization
     protected CommandParser(String inputString) {
         init();
