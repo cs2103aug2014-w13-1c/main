@@ -2,12 +2,15 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.Keyword;
+import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 
 /**
@@ -80,47 +83,39 @@ public class CommandController {
         switch (commandType) {
             case ADD :
                 feedback = actionController.addNewLine(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
                 feedback = actionController.display(parsedCommand);
-                currentList = actionController.getCurrentList();
                 updateView(currentList);
                 return feedback;
             case CLEAR :
                 feedback = actionController.clear(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
                 feedback = actionController.deleteEntry(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
                 feedback = actionController.search(parsedCommand);
-                currentList = actionController.getCurrentList();
                 updateView(currentList);
                 return feedback;
             case UPDATE :
                 feedback = actionController.update(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
                 feedback = actionController.done(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
                 feedback = actionController.undone(parsedCommand);
-                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -149,9 +144,13 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        actionController = new ActionController();
-        modelManager = actionController.getModelManager();
-        currentList = actionController.getCurrentList();
+        try {
+            modelManager = new ModelManager();
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        actionController = new ActionController(modelManager);
     }
 
     public void parseCommand(String inputString) {

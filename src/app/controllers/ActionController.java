@@ -27,9 +27,9 @@ public class ActionController {
 
 
     // Class variables
-    private ModelManager modelManager;
-    private Main main;
-    private ArrayList<TodoItem> currentList;
+    private static ModelManager modelManager;
+    private static Main main;
+    private static ArrayList<TodoItem> currentList;
 
     // Individual command methods
     // Add command method(s)
@@ -261,22 +261,8 @@ public class ActionController {
     }
 
 
-    protected ActionController() {
-        try {
-            modelManager = new ModelManager();
-        } catch (IOException e) {
-            // do something here?
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-        }
-        currentList = modelManager.getTodoItemList();
-    }
-    
-    protected ArrayList<TodoItem> getCurrentList() {
-        return currentList;
-    }
-    
-    protected ModelManager getModelManager() {
-        return modelManager;
+    protected ActionController(ModelManager manager) {
+        modelManager = manager;
     }
 
     protected void setMainApp(Main main) {
