@@ -60,6 +60,7 @@ public class Main extends Application {
         taskController = taskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
+        commandController.setTaskController(taskController);
         commandController.updateView();
     }
 

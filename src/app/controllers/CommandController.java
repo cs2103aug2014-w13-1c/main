@@ -29,9 +29,10 @@ public class CommandController {
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
 
     // Class variables
-    ActionController action;
+    private static ActionController actionController;
     private static ModelManager modelManager;
     private static Main main;
+    private static TaskController taskController;
     private ArrayList<TodoItem> currentList;
 
     // Print string methods
@@ -78,59 +79,59 @@ public class CommandController {
         String feedback;
         switch (commandType) {
             case ADD :
-                feedback = action.addNewLine(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.addNewLine(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
-                feedback = action.display(parsedCommand);
-                currentList = action.getCurrentList();
+                feedback = actionController.display(parsedCommand);
+                currentList = actionController.getCurrentList();
                 updateView(currentList);
                 return feedback;
             case CLEAR :
-                feedback = action.clear(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.clear(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
-                feedback = action.deleteEntry(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.deleteEntry(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
-                feedback = action.search(parsedCommand);
-                currentList = action.getCurrentList();
+                feedback = actionController.search(parsedCommand);
+                currentList = actionController.getCurrentList();
                 updateView(currentList);
                 return feedback;
             case UPDATE :
-                feedback = action.update(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.update(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
-                feedback = action.done(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.done(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
-                feedback = action.undone(parsedCommand);
-                modelManager = action.getModelManager();
+                feedback = actionController.undone(parsedCommand);
+                modelManager = actionController.getModelManager();
                 resetTaskList();
                 updateView();
                 return feedback;
             case HELP :
-                feedback = action.help(parsedCommand);
+                feedback = actionController.help(parsedCommand);
                 return feedback;
             case SETTINGS :
-                feedback = action.settings(parsedCommand);
+                feedback = actionController.settings(parsedCommand);
                 return feedback;
             case SAVETO :
-                feedback = action.changeSaveLocation(parsedCommand);
+                feedback = actionController.changeSaveLocation(parsedCommand);
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -148,9 +149,9 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        action = new ActionController();
-        modelManager = action.getModelManager();
-        currentList = action.getCurrentList();
+        actionController = new ActionController();
+        modelManager = actionController.getModelManager();
+        currentList = actionController.getCurrentList();
     }
 
     public void parseCommand(String inputString) {
@@ -171,7 +172,7 @@ public class CommandController {
 
     public void updateView() {
         main.getPrimaryStage().setTitle("wat do");
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(main.getTaskController().getUndoneTasks()));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(taskController.getUndoneTasks()));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
@@ -183,17 +184,16 @@ public class CommandController {
     }
 
     public void resetTaskList() {
-        currentList = main.getTaskController().getUndoneTasks();
+        currentList = taskController.getUndoneTasks();
     }
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
-     */
     public void setMainApp(Main main) {
         CommandController.main = main;
-        action.setMainApp(main);
+        actionController.setMainApp(main);
+    }
+
+    public void setTaskController(TaskController controller) {
+        taskController = controller;
     }
 
     public void changeSaveLocation(String filePath) {
