@@ -48,7 +48,7 @@
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="priorityLevelLabel" layoutX="518.0" layoutY="15.0" prefHeight="14.0" prefWidth="103.0" text="high" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+      <Label fx:id="priorityLevelLabel" layoutX="518.0" layoutY="14.0" prefHeight="14.0" prefWidth="103.0" text="high" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
          <font>
             <Font name="System Italic" size="11.0" />
          </font>
@@ -73,8 +73,8 @@
             <Tooltip text="Mark as done" />
          </tooltip>
       </Button>
-      <Label fx:id="hexLabel" layoutX="34.0" layoutY="13.0" text="#" textFill="WHITE" />
-      <Label fx:id="indexLabel" layoutX="43.0" layoutY="13.0" prefHeight="16.0" prefWidth="38.0" text="42" textFill="WHITE">
+      <Label fx:id="hexLabel" layoutX="34.0" layoutY="12.0" text="#" textFill="WHITE" />
+      <Label fx:id="indexLabel" layoutX="43.0" layoutY="12.0" prefHeight="16.0" prefWidth="38.0" text="42" textFill="WHITE">
          <font>
             <Font name="System Bold" size="13.0" />
          </font></Label>

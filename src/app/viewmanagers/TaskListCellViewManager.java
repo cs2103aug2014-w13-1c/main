@@ -57,6 +57,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private RootViewManager rootViewManager;
 
     List<String> colors;
+    private TaskListViewManager taskListViewManager;
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
@@ -144,15 +145,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         undoneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
     }
 
-    public String getRandomColor() {
-        return colors.get(new Random().nextInt(colors.size()));
-    }
-
     private int getTaskIndex() { return getIndex() + 1; }
-
-    private String getDoneAction(TodoItem task) {
-        return (task.isDone()) ? "undone " : "done ";
-    }
 
     private void setBackgroundColor(String priority) {
         String alphaValue;
@@ -170,34 +163,17 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
                 alphaValue = "0.75";
         }
 
-        anchorPane.setStyle("-fx-background-color: rgba(" + getRandomColor() + "," + alphaValue + ");");
-    }
-
-    private void initColors() {
-        colors = Arrays.asList(
-                "208, 23, 22", // red 700
-                "194, 24, 91", // pink 700
-                "123, 31, 162", // purple 700
-                "81, 45, 168", // deep purple 700
-                "57, 63, 159", // indigo 700
-                "69, 94, 222", // blue 700
-                "2, 136, 209", // light blue 700
-                "0, 151, 167", // cyan 700
-                "0, 121, 107", // teal 700
-                "10, 126, 7", // green 700
-                "85, 139, 47", // light green 800
-                "130, 119, 23", // lime 900
-                "230, 81, 0", // orange 900
-                "229, 74, 25", // deep orange 700
-                "121, 85, 72"); // brown 500
+        anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
     }
 
     @FXML
-    private void initialize() {
-        initColors();
-    }
+    private void initialize() { }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
+    }
+
+    public void setTaskListViewManager(TaskListViewManager taskListViewManager) {
+        this.taskListViewManager = taskListViewManager;
     }
 }
