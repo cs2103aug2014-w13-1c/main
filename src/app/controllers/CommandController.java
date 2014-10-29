@@ -155,7 +155,6 @@ public class CommandController {
     // CommandController public methods
     public CommandController() {
         action = new ActionController();
-        action.setMainApp(main);
         modelManager = action.getModelManager();
         currentList = new ArrayList<TodoItem>();
     }
@@ -205,6 +204,7 @@ public class CommandController {
      */
     public void setMainApp(Main main) {
         CommandController.main = main;
+        action.setMainApp(main);
     }
 
     public void changeSaveLocation(String filePath) {
