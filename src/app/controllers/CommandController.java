@@ -217,6 +217,10 @@ public class CommandController {
         return message;
     }
 
+    public String getSaveDirectory() {
+        return modelManager.getFileDirectory();
+    }
+
     protected static ModelManager getModelManager() {
         return modelManager;
     }
