@@ -1,5 +1,6 @@
 package app.viewmanagers;
 
+import app.controllers.CommandParser;
 import app.helpers.InvalidInputException;
 import app.helpers.Keyword;
 import app.helpers.KeywordDetector;
@@ -72,15 +73,35 @@ public class InputFieldViewManager {
             } else if (event.getCode() == KeyCode.TAB) {
                 event.consume();
                 System.out.println("TAB: \"" + inputField.getText() + "\"");
+                String completedString = autoComplete(inputField.getText());
+                if (completedString != null) {
+                    inputField.replaceText(completedString);
+                }
             }
         });
     }
 
     private String autoComplete(String command) {
-        
-
-
-        return null;
+        ArrayList<String> results = new ArrayList<String>();
+        for (String keyword : CommandParser.commandKeywords) {
+            if (command.equals(keyword.substring(0, command.length()))) {
+                System.out.println("Match: " + keyword);
+                results.add(keyword);
+            }
+        }
+        if (results.size() == 0) {
+            System.out.println("no keywords found");
+            return null;
+        } else if (results.size() == 1) {
+            return results.get(0);
+        } else {
+            String multipleKeywords  = "Possible keywords: ";
+            for (String result : results) {
+                multipleKeywords = multipleKeywords + result + " ";
+            }
+            rootViewManager.getMainApp().showInfoNotification("AutoComplete", multipleKeywords);
+            return null;
+        }
     }
 
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
