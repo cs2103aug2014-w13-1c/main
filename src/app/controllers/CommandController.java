@@ -88,6 +88,7 @@ public class CommandController {
                 return feedback;
             case DISPLAY :
                 feedback = actionController.display(parsedCommand);
+                currentList = actionController.getReturnList();
                 updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
@@ -102,6 +103,7 @@ public class CommandController {
                 return feedback;
             case SEARCH :
                 feedback = actionController.search(parsedCommand);
+                currentList = actionController.getReturnList();
                 updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
