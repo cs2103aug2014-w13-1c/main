@@ -20,7 +20,7 @@ public class ModelUnits {
         Date startDate1 = new Date();
         Date endDate1 = new Date();
         String testInput2 = "Dummy priority";
-        String testInput3 = "3. High";
+        String testInput3 = "1. High";
         Boolean testBoolean1 = true;
         
         TodoItem testedTodoItem1 = new TodoItem(testInput1, startDate1, endDate1, testInput3, testBoolean1);
@@ -389,6 +389,7 @@ public class ModelUnits {
         Date lateDate = new Date(earlyDate.getTime() + 100000);
         
         try {
+            testManager1.clearTasks();
             testManager1.addTask(testInput1, earlyDate, lateDate, TodoItem.HIGH, true);
             testManager1.addTask(testInput2, null, null, null, null);
             testManager1.addTask(testInput3, earlyDate, null, TodoItem.MEDIUM, null);
