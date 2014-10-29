@@ -93,7 +93,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setPriorityLevel(TodoItem task) {
-        priorityLevelLabel.setText("PRIORITY: " + task.getPriority().substring(3).toUpperCase());
+        priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
         setBackgroundColor(task.getPriority());
     }
 
