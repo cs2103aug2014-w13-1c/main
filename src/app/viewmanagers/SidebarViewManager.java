@@ -1,5 +1,6 @@
 package app.viewmanagers;
 
+import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,6 +22,12 @@ public class SidebarViewManager {
     private Button showDoneButton;
 
     @FXML
+    private Button undoButton;
+
+    @FXML
+    private Button redoButton;
+
+    @FXML
     private Button helpButton;
 
     @FXML
@@ -34,7 +41,17 @@ public class SidebarViewManager {
      */
     @FXML
     private void initialize() {
-        Button[] buttons = {displayButton, addButton, searchButton, helpButton, settingsButton, showDoneButton};
+        Button[] buttons = {
+                displayButton,
+                addButton,
+                searchButton,
+                helpButton,
+                undoButton,
+                redoButton,
+                settingsButton,
+                showDoneButton
+        };
+
         for (Button button : buttons) {
             button.setOnAction((e) -> clickedButton(button));
         }
@@ -54,6 +71,24 @@ public class SidebarViewManager {
                 break;
             case "showDoneButton":
                 rootViewManager.setAndFocusInputField("display done");
+                break;
+            case "undoButton":
+                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+                    try {
+                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
+                    } catch (InvalidInputException e) {
+                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+                    }
+                }
+                break;
+            case "redoButton":
+                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+                    try {
+                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+                    } catch (InvalidInputException e) {
+                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+                    }
+                }
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
