@@ -72,9 +72,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setButtonEventHandlers(TodoItem task) {
-        setUpdateButtonEventHandler(task);
-        setDeleteButtonEventHandler(task);
-        setDoneButtonEventHandler(task);
+        setUpdateButtonEventHandler();
+        setDeleteButtonEventHandler();
+        setDoneButtonEventHandler();
     }
 
     private void clearContent() {
@@ -132,15 +132,15 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
-    private void setDeleteButtonEventHandler(TodoItem task) {
+    private void setDeleteButtonEventHandler() {
         deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
     }
 
-    private void setUpdateButtonEventHandler(TodoItem task) {
+    private void setUpdateButtonEventHandler() {
         updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " "));
     }
 
-    private void setDoneButtonEventHandler(TodoItem task) {
+    private void setDoneButtonEventHandler() {
         doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("undone " + getTaskIndex()));
         undoneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
     }

@@ -24,6 +24,7 @@ public class IntegrationTests {
        try {
            testStorage.loadSettings();
        } catch (Exception e) {
+           e.printStackTrace();
            fail();
        }
        String previousDirectory = testStorage.getFileDirectory();
@@ -49,6 +50,7 @@ public class IntegrationTests {
                    testStorage.loadSettings();
                    testTodoItems = testStorage.loadFile();
                } catch (Exception e) {
+                   e.printStackTrace();
                    fail();
                    return;
                }
@@ -63,13 +65,15 @@ public class IntegrationTests {
                assertEquals(testInput1, testTodoItems.get(3).getTaskName());
 
                testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeDirectory(previousDirectory);
+               testStorage.changeSettings(previousDirectory, null, null);
            }
        });
 
        // Carry out commands
        try {
            Main.main(testCommands);
-       } catch (Exception e) {}
+       } catch (Exception e) {
+//           e.printStackTrace();
+       }
     }
 }

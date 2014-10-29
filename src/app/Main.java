@@ -7,6 +7,7 @@ import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.Dialogs;
 
@@ -30,9 +31,6 @@ public class Main extends Application {
         createPrimaryStage(stage);
         initViewComponent();
         initControllerComponents();
-
-        // default: show undone tasks
-        getCommandController().parseCommand("display");
 
         if (commandArguments.length == 0) {
             // Actual use case
@@ -63,20 +61,20 @@ public class Main extends Application {
         taskController = taskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
-        commandController.setTaskList(commandController.getTaskList());
+        commandController.setTaskController(taskController);
         commandController.updateView();
     }
 
     public void showInfoNotification(String title, String message) {
         // Actual use case.
         if (commandArguments.length == 0) {
-            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).showInformation();
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).hideAfter(new Duration(1000)).showInformation();
         }
         // If false, currently in test mode so no dialogs are used.
     }
 
     public void showErrorNotification(String title, String error) {
-        Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).showError();
+        Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
     }
 
     public URL getResourceURL(String relativePath) {

@@ -123,8 +123,8 @@ public class ModelManager {
         dataStorage.updateFile(todoList.getTodoItems());
     }
     
-    public void changeFileDirectory(String fileDirectory) throws IOException {
-        todoList = new TodoItemList(dataStorage.changeDirectory(fileDirectory));
+    public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
+        todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
     }
     
     public void setSortingStyle(int newSortingStyle) {
@@ -142,6 +142,14 @@ public class ModelManager {
     
     public String getFileDirectory() {
         return dataStorage.getFileDirectory();
+    }
+    
+    public Boolean areRandomColorsEnabled() {
+        return dataStorage.areRandomColorsEnabled();
+    }
+    
+    public Boolean areNotificationsEnabled() {
+        return dataStorage.areNotificationsEnabled();
     }
     
     public String getFullFileName() {

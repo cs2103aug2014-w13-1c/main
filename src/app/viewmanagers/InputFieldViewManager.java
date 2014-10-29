@@ -84,7 +84,7 @@ public class InputFieldViewManager {
     private String autoComplete(String command) {
         ArrayList<String> results = new ArrayList<String>();
         for (String keyword : CommandParser.commandKeywords) {
-            if (command.equals(keyword.substring(0, command.length()))) {
+            if (command.length() < keyword.length() && command.equals(keyword.substring(0, command.length()))) {
                 System.out.println("Match: " + keyword);
                 results.add(keyword);
             }
