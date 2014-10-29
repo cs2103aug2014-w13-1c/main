@@ -56,7 +56,31 @@
             <Tooltip text="Show completed tasks" />
          </tooltip>
         </Button>
-      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="340.0">
+      <Button fx:id="undoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
+         <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+               <image>
+                  <Image url="@../resources/undo.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <tooltip>
+            <Tooltip text="Undo action" />
+         </tooltip>
+      </Button>
+      <Button fx:id="redoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;">
+         <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
+               <image>
+                  <Image url="@../resources/redo.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <tooltip>
+            <Tooltip text="Redo action" />
+         </tooltip>
+      </Button>
+      <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="250.0">
          <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                <image>
@@ -68,7 +92,7 @@
             <Tooltip text="Help" />
          </tooltip>
       </Button>
-        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="340.0">
+        <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;" translateY="250.0">
             <graphic>
                 <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8" scaleY="0.8">
                     <image>

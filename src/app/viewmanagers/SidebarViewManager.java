@@ -21,6 +21,12 @@ public class SidebarViewManager {
     private Button showDoneButton;
 
     @FXML
+    private Button undoButton;
+
+    @FXML
+    private Button redoButton;
+
+    @FXML
     private Button helpButton;
 
     @FXML
@@ -34,7 +40,17 @@ public class SidebarViewManager {
      */
     @FXML
     private void initialize() {
-        Button[] buttons = {displayButton, addButton, searchButton, helpButton, settingsButton, showDoneButton};
+        Button[] buttons = {
+                displayButton,
+                addButton,
+                searchButton,
+                helpButton,
+                undoButton,
+                redoButton,
+                settingsButton,
+                showDoneButton
+        };
+
         for (Button button : buttons) {
             button.setOnAction((e) -> clickedButton(button));
         }
@@ -54,6 +70,12 @@ public class SidebarViewManager {
                 break;
             case "showDoneButton":
                 rootViewManager.setAndFocusInputField("display done");
+                break;
+            case "undoButton":
+                rootViewManager.setAndFocusInputField("undo");
+                break;
+            case "redoButton":
+                rootViewManager.setAndFocusInputField("redo");
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
