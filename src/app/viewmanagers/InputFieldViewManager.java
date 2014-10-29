@@ -75,7 +75,7 @@ public class InputFieldViewManager {
                 System.out.println("TAB: \"" + inputField.getText() + "\"");
                 String completedString = autoComplete(inputField.getText());
                 if (completedString != null) {
-                    inputField.replaceText(completedString);
+                    inputField.replaceText(completedString + " ");
                 }
             }
         });
