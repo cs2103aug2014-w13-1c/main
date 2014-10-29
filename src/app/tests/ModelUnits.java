@@ -475,4 +475,19 @@ public class ModelUnits {
             fail();
         }
     }
+    
+    @Test
+    public void testTodoItemListSort() {
+        TodoItemList testList = new TodoItemList();
+        testList.addTodoItem(new TodoItem("2", null, null, null, null));
+        testList.addTodoItem(new TodoItem("1", null, null, null, null));
+        
+        assertEquals("2", testList.getTodoItems().get(0).getTaskName());
+        assertEquals("1", testList.getTodoItems().get(1).getTaskName());
+        
+        testList.sortTodoItems(TodoItemSorter.todoItemComparators[0]);
+        
+        assertEquals("1", testList.getTodoItems().get(0).getTaskName());
+        assertEquals("2", testList.getTodoItems().get(1).getTaskName());
+    }
 }

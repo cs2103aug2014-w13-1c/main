@@ -7,7 +7,7 @@ public class TodoItemSorter {
     public static final int DEFAULT_SORTING_STYLE = 2; // By default, sort by end date. 
     public static int sortingStyle;
     
-    private static final Comparator[] todoItemComparators = {
+    public static final Comparator[] todoItemComparators = {
             new Comparator<TodoItem>() { // TaskName
                 public int compare(TodoItem todoItem1, TodoItem todoItem2) {
                     int comparisonResult = compareByParameter(todoItem1, todoItem2, 0);
