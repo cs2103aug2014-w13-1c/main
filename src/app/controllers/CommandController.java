@@ -204,7 +204,7 @@ public class CommandController {
         String newInputString = "saveto ";
         newInputString = newInputString.concat(filePath);
         CommandObject commandObject = commandParser.parseCommand(newInputString);
-                printString(processCommand(commandObject));
+        printString(processCommand(commandObject));
     }
 
     public static String showErrorDialog(String error) {

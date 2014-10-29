@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 public class CommandParser {
-    private CommandObject currentCommandObject;
+    private static CommandObject currentCommandObject;
     
     public static ArrayList<String> commandKeywords = new ArrayList<String>();
     private static ArrayList<String> addUpdateKeywords = new ArrayList<String>();
@@ -26,6 +26,7 @@ public class CommandParser {
 
     // Constructor and initialization
     protected CommandParser() {
+        setKeywords();
     }
 
     protected CommandObject parseCommand(String inputString) {
