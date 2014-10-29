@@ -5,7 +5,9 @@ import app.controllers.TaskController;
 import app.helpers.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
@@ -28,7 +30,7 @@ public class Main extends Application {
         createPrimaryStage(stage);
         initViewComponent();
         initControllerComponents();
-        
+
         if (commandArguments.length == 0) {
             // Actual use case
             rootViewManager.setAndFocusInputField("");
@@ -62,26 +64,16 @@ public class Main extends Application {
         commandController.updateView();
     }
 
-    public void showInfoDialog(String title, String message) {
+    public void showInfoNotification(String title, String message) {
         // Actual use case.
-        if (commandArguments.length == 0) { 
-            Dialogs.create()
-                    .owner(primaryStage)
-                    .title(title)
-                    .masthead(null)
-                    .message(message)
-                    .showInformation();
+        if (commandArguments.length == 0) {
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).showInformation();
         }
         // If false, currently in test mode so no dialogs are used.
     }
 
-    public void showErrorDialog(String title, String error) {
-        Dialogs.create()
-                .owner(primaryStage)
-                .title(title)
-                .masthead(null)
-                .message(error)
-                .showError();
+    public void showErrorNotification(String title, String error) {
+        Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).showError();
     }
 
     public URL getResourceURL(String relativePath) {

@@ -209,12 +209,12 @@ public class CommandController {
     }
 
     public static String showErrorDialog(String error) {
-        main.showErrorDialog("Error", error);
+        main.showErrorNotification("Error", error);
         return error;
     }
 
     public static String showInfoDialog(String message) {
-        main.showInfoDialog("Information", message);
+        main.showInfoNotification("Information", message);
         return message;
     }
 
