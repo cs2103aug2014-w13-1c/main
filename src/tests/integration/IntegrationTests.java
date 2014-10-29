@@ -65,7 +65,7 @@ public class IntegrationTests {
                assertEquals(testInput1, testTodoItems.get(3).getTaskName());
 
                testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeDirectory(previousDirectory);
+               testStorage.changeSettings(previousDirectory, null, null);
            }
        });
 

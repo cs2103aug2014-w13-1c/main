@@ -237,6 +237,19 @@ public class ModelUnits {
         assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
         assertEquals(FileStorage.DEFAULT_FILE_DIRECTORY, testStorage.getFileDirectory());
         
+        // Try to load settings file
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Yay! Successfully loaded settings file!
+        String tempFileDirectory = FileStorage.DEFAULT_FILE_DIRECTORY;
+        Boolean tempRandomColorsEnabled = false;
+        Boolean tempNotificationsEnabled = false;
+        
+        /*
         // Settings file fixture
         FileWriter fileToWrite;
         try {
@@ -267,11 +280,39 @@ public class ModelUnits {
         } catch (Exception e) {
             fail();
         }
+        */
         
-        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
-        assertEquals("testDirectory/", testStorage.getFileDirectory());
+        if (!testStorage.getFileDirectory().equals(tempFileDirectory)) {
+            tempFileDirectory = testStorage.getFileDirectory();
+        }
         
-        // Yay! Successfully loaded settings file!
+        if (testStorage.areRandomColorsEnabled()) {
+            tempRandomColorsEnabled = true;
+        }
+        
+        if (testStorage.areNotificationsEnabled()) {
+            tempRandomColorsEnabled = true;
+        }
+        
+        // Switch to test directory!
+        try {
+            testStorage.changeSettings("testDirectory", false, false);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("testDirectory", testStorage.getFileDirectory());
+        assertEquals(false, testStorage.areRandomColorsEnabled());
+        assertEquals(false, testStorage.areNotificationsEnabled());
+        
+        // Nice! Successfully switched to test directory!
+        
         // Now we set up an empty watdo.json
         ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
         try {
@@ -348,7 +389,7 @@ public class ModelUnits {
         
         // Switch back to old directory!
         try {
-            testStorage.changeDirectory("");
+            testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
         } catch (Exception e) {
             fail();
         }
@@ -360,7 +401,9 @@ public class ModelUnits {
         }
         
         assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
-        assertEquals("", testStorage.getFileDirectory());
+        assertEquals(tempFileDirectory, testStorage.getFileDirectory());
+        assertEquals(tempRandomColorsEnabled, testStorage.areRandomColorsEnabled());
+        assertEquals(tempNotificationsEnabled, testStorage.areNotificationsEnabled());
     }
     
     // Everyone together now!
@@ -375,7 +418,7 @@ public class ModelUnits {
         }
         
         try {
-            testManager1.changeFileDirectory("testDirectory/");
+            testManager1.changeSettings("testDirectory/", null, null);
         } catch (Exception e) {
             fail();
         }
@@ -469,7 +512,19 @@ public class ModelUnits {
         assertEquals(0, testManager3.countTasks());
         
         try {
-            testManager3.changeFileDirectory("");
+            testManager3.changeSettings("", null, null);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    // Test for extra values in changeSettings
+    @Test
+    public void testChangeSettings() {
+        FileStorage testStorage = new FileStorage();
+        
+        try {
+            testStorage.loadSettings();
         } catch (Exception e) {
             fail();
         }

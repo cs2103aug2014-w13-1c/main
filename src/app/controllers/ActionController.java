@@ -247,7 +247,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            modelManager.changeFileDirectory(commandObject.getCommandString());
+            modelManager.changeSettings(commandObject.getCommandString(), null, null);
         } catch (IOException e) {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
