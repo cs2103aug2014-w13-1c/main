@@ -28,28 +28,23 @@ public class SettingsViewManager {
 
     private RootViewManager rootViewManager;
 
-    private File filePath;
+    private File directory;
 
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        // filePath = rootViewManager.getMainApp().getSaveLocation();
-
-        if (filePath != null) {
-            filePathTextField.setText(filePath.toString());
-        }
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewManager.closeSettings(filePath));
+        saveButton.setOnAction((event) -> rootViewManager.closeSettings(directory));
         cancelButton.setOnAction((event) -> rootViewManager.closeSettings(null));
     }
 
     private void showChooser(DirectoryChooser directoryChooser) {
-        filePath = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
-        filePathTextField.setText(filePath.toString());
+        directory = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
+        filePathTextField.setText(directory.toString());
 
-        assert(filePath.length() >= 0);
-        LoggingService.getLogger().log(Level.INFO, "Selected filePath: " + filePath.toString());
+        assert(directory.length() >= 0);
+        LoggingService.getLogger().log(Level.INFO, "Selected directory: " + directory.toString());
     }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
@@ -63,5 +58,9 @@ public class SettingsViewManager {
 
     public void cancelFocusOnButton() {
         cancelButton.setDefaultButton(false);
+    }
+
+    public void setAbsolutePathToDirectory(String absolutePath) {
+        filePathTextField.setText(absolutePath);
     }
 }

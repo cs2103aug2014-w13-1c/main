@@ -131,6 +131,7 @@ public class RootViewManager {
     }
 
     public void openSettings() {
+        settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
         settingsView.toFront();
         settingsViewManager.focusOnButton();
     }
