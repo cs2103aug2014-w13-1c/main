@@ -305,6 +305,7 @@ public class ModelUnits {
         // Yay! Now we insert actual data inside!
         String testInput1 = "Test String 1";
         Date earlyDate = new Date();
+        earlyDate = new Date(earlyDate.getTime() - (earlyDate.getTime() % 1000)); // This i
         Date lateDate = new Date(earlyDate.getTime() + 100000);
         testTodoItems.add(new TodoItem(null, null, null));
         testTodoItems.add(new TodoItem(null, earlyDate, lateDate));
@@ -391,7 +392,7 @@ public class ModelUnits {
         try {
             testManager1.clearTasks();
             testManager1.addTask(testInput1, earlyDate, lateDate, TodoItem.HIGH, true);
-            testManager1.addTask(testInput2, null, null, null, null);
+            testManager1.addTask(testInput2, null, null, TodoItem.LOW, null);
             testManager1.addTask(testInput3, earlyDate, null, TodoItem.MEDIUM, null);
             testManager1.addTask(testInput4, null, earlyDate, TodoItem.LOW, false);
         } catch (Exception e) {
@@ -419,24 +420,24 @@ public class ModelUnits {
         testManager2.setSortingStyle(3);
         
         // Remember, collections.sort is stable.
-        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
-        assertEquals(testInput2, testManager2.getTodoItemList().get(1).getTaskName());
-        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
-        assertEquals(testInput1, testManager2.getTodoItemList().get(3).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(3).getTaskName());
 
         //Update
         Boolean[] testParameters = {false, false, false, true, true};
         
         try {
-            testManager2.updateTask(testManager2.getTodoItemList().get(0).getUUID(), testParameters, null, null, null, TodoItem.HIGH, true);
+            testManager2.updateTask(testManager2.getTodoItemList().get(2).getUUID(), testParameters, null, null, null, TodoItem.HIGH, true);
         } catch (Exception e) {
             fail();
         }
         
-        assertEquals(testInput2, testManager2.getTodoItemList().get(0).getTaskName());
-        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
-        assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
-        assertEquals(testInput1, testManager2.getTodoItemList().get(3).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(3).getTaskName());
         
         // Delete
         try {
@@ -447,9 +448,9 @@ public class ModelUnits {
         
         assertEquals(3, testManager2.countTasks());
         
-        assertEquals(testInput2, testManager2.getTodoItemList().get(0).getTaskName());
-        assertEquals(testInput4, testManager2.getTodoItemList().get(1).getTaskName());
-        assertEquals(testInput1, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(2).getTaskName());
         
         // Clear
         try {
