@@ -37,6 +37,10 @@ public class InputFieldViewManager {
         searchState = false;
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
+                newValue = newValue.substring(1, newValue.length());
+                inputField.replaceText(newValue);
+            }
             inputField.setStyleSpans(0, keywordDetection(newValue));
             if (inputField.getText().startsWith("search ")) {
                 searchState = true;
