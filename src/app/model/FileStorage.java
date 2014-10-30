@@ -19,6 +19,9 @@ public class FileStorage {
     private String fileName;
     private String fileDirectory;
     
+    private Boolean notificationsEnabled;
+    private Boolean randomColorsEnabled;
+    
     private String loadStatus;
     private String writeStatus;
     
@@ -34,6 +37,8 @@ public class FileStorage {
     public FileStorage() {
         this.fileDirectory = DEFAULT_FILE_DIRECTORY;
         this.fileName = DEFAULT_FILE_NAME;
+        this.notificationsEnabled = true;
+        this.randomColorsEnabled = true;
     }
     
     public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
@@ -176,22 +181,38 @@ public class FileStorage {
         }
     }
     
-    public ArrayList<TodoItem> changeDirectory(String fileDirectory) throws IOException {
+    public ArrayList<TodoItem> changeSettings(String fileDirectory, Boolean newRandomColorsEnabled, Boolean newNotificationsEnabled) throws IOException {
+        assert fileDirectory != null;
+        
+        String tempFileDirectory = this.fileDirectory;
+        Boolean tempRandomColorsEnabled = this.randomColorsEnabled;
+        Boolean tempNotificationsEnabled = this.notificationsEnabled;
+        ArrayList<TodoItem> loadResult;
+
+        if (newRandomColorsEnabled != null) {
+            this.randomColorsEnabled = newRandomColorsEnabled;
+        }
+        
+        if (newNotificationsEnabled != null) {
+            this.notificationsEnabled = newNotificationsEnabled;
+        }
+    
         if (fileDirectory.length() > 0) {
             if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
                 fileDirectory = fileDirectory + "/";
             }
         }
         
-        String temp = this.fileDirectory;
         this.fileDirectory = fileDirectory; 
         try {
-            ArrayList<TodoItem> loadResult = loadFile();
-            updateSettings();
+            loadResult = loadFile();
             this.loadStatus = LOAD_SUCCESS;
+            updateSettings();
             return loadResult;
         } catch (Exception e) {
-            this.fileDirectory = temp;
+            this.fileDirectory = tempFileDirectory;
+            this.randomColorsEnabled = tempRandomColorsEnabled;
+            this.notificationsEnabled = tempNotificationsEnabled;
             this.loadStatus = LOAD_FAILED;
             throw new IOException(fileName + LOAD_FAILED);
         }
@@ -203,10 +224,10 @@ public class FileStorage {
         try {
             fileToRead = new FileReader(SETTINGS_FILE_NAME);
             LoggingService.getLogger().log(Level.INFO, "Loaded settings file.");
-        } catch (FileNotFoundException e) { // if no file found at stated path, return
+        } catch (FileNotFoundException e) { // if no file found at stated path, create new settings file
             LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
             updateSettings();
-            fileToRead = new FileReader(SETTINGS_FILE_NAME);
+            return;
         }
         BufferedReader reader = new BufferedReader(fileToRead);
         
@@ -219,8 +240,12 @@ public class FileStorage {
         JSONObject settingsObject = new JSONObject(fileString);
         
         String JSONfileDirectory = settingsObject.optString("fileDirectory");
+        Boolean JSONrandomColorsEnabled = settingsObject.optBoolean("randomColorsEnabled");
+        Boolean JSONnotificationsEnabled = settingsObject.optBoolean("notificationsEnabled");
         
         fileDirectory = JSONfileDirectory;
+        randomColorsEnabled = JSONrandomColorsEnabled;
+        notificationsEnabled = JSONnotificationsEnabled;
         
         reader.close();
     }
@@ -238,6 +263,8 @@ public class FileStorage {
         
         JSONObject settingsObject = new JSONObject();
         settingsObject.put("fileDirectory", fileDirectory);
+        settingsObject.put("randomColorsEnabled", randomColorsEnabled);
+        settingsObject.put("notificationsEnabled", notificationsEnabled);
         
         LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
         
@@ -268,6 +295,14 @@ public class FileStorage {
     
     public String getFileDirectory() {
         return this.fileDirectory;
+    }
+    
+    public Boolean areRandomColorsEnabled() {
+        return this.randomColorsEnabled;
+    }
+    
+    public Boolean areNotificationsEnabled() {
+        return this.notificationsEnabled;
     }
 
     public String getLoadStatus() {
