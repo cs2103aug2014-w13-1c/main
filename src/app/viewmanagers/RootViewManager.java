@@ -28,11 +28,13 @@ public class RootViewManager {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
+    private Pane titleBarView;
 
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
     private HelpViewManager helpViewManager;
     private InputFieldViewManager inputFieldViewManager;
+    private TitleBarViewManager titleBarViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -41,6 +43,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
+            this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();
@@ -83,6 +86,17 @@ public class RootViewManager {
 
         rootLayout.getChildren().add(helpView);
         helpView.toBack();
+    }
+
+    private void showTitleBarView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
+        titleBarView = loader.load();
+
+        titleBarViewManager = loader.getController();
+        titleBarViewManager.setRootViewManager(this);
+
+        borderPane.setTop(titleBarView);
     }
 
     private void showTaskListView() throws IOException {
