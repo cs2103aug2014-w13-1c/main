@@ -79,6 +79,8 @@ public class SidebarViewManager {
                     } catch (InvalidInputException e) {
                         LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
                     }
+                } else {
+                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
                 }
                 break;
             case "redoButton":
@@ -88,6 +90,8 @@ public class SidebarViewManager {
                     } catch (InvalidInputException e) {
                         LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
                     }
+                } else {
+                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
                 }
                 break;
             case "helpButton":
