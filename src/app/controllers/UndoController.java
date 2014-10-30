@@ -32,7 +32,11 @@ public class UndoController {
     protected void saveUndo(ArrayList<TodoItem> list) {
         ArrayList<TodoItem> undo = new ArrayList<TodoItem>();
         for (TodoItem todo : list) {
-            undo.add(todo);
+            undo.add(new TodoItem(todo.getTaskName(),
+                                  todo.getStartDate(),
+                                  todo.getEndDate(),
+                                  todo.getPriority(),
+                                  todo.isDone()));
         }
         undoStack.push(undo);
     }
@@ -40,7 +44,11 @@ public class UndoController {
     protected void saveRedo(ArrayList<TodoItem> list) {
         ArrayList<TodoItem> redo = new ArrayList<TodoItem>();
         for (TodoItem todo : list) {
-            redo.add(todo);
+            redo.add(new TodoItem(todo.getTaskName(),
+                    todo.getStartDate(),
+                    todo.getEndDate(),
+                    todo.getPriority(),
+                    todo.isDone()));
         }
         redoStack.push(redo);
     }
