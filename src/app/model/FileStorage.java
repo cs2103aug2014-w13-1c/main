@@ -25,10 +25,13 @@ public class FileStorage {
     private String loadStatus;
     private String writeStatus;
     
-    public static final String LOAD_SUCCESS = " file load success";
-    public static final String LOAD_FAILED = " file load failed";
-    public static final String WRITE_SUCCESS = " file write success";
-    public static final String WRITE_FAILED = " file write failed";
+    public static String LOAD_SUCCESS = ModelManager.LOAD_SUCCESS;
+    public static String LOAD_FAILED = ModelManager.LOAD_FAILED;
+    public static String PARSE_FAILED = ModelManager.PARSE_FAILED;
+    public static String WRITE_SUCCESS = ModelManager.WRITE_SUCCESS;
+    public static String WRITE_FAILED = ModelManager.WRITE_FAILED;
+    public static String WRITE_SETTINGS_FAILED = ModelManager.WRITE_SETTINGS_FAILED;
+    public static String LOAD_SETTINGS_FAILED = ModelManager.LOAD_SETTINGS_FAILED;
 
     public static final String DEFAULT_FILE_NAME = "watdo.json";
     public static final String DEFAULT_FILE_DIRECTORY = ".";
@@ -41,6 +44,15 @@ public class FileStorage {
         this.randomColorsEnabled = true;
     }
     
+    /**
+     * loadFile 
+     * 
+     * @return Loaded ArrayList of TodoItems from file
+     * 
+     * @throws IOException Undefined message, caught by ModelManager constructor
+     * @throws JSONException Undefined message, caught by ModelManager constructor
+     * @throws ParseException Undefined message, caught by ModelManager constructor
+     */
     public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
         LoggingService.getLogger().log(Level.INFO, "Loading file " + fileDirectory + fileName);
         FileReader fileToRead;
@@ -108,7 +120,9 @@ public class FileStorage {
     }
     
     /**
-     * @throws IOException
+     * updateFile
+     * 
+     * @throws IOException Messages are LOAD_FAILED, JSON_FAILED, WRITE_FAILED
      */
     public void updateFile(ArrayList<TodoItem> todoItems) throws IOException {
         FileWriter fileToWrite;
@@ -120,7 +134,7 @@ public class FileStorage {
             }
             fileToWrite = new FileWriter(fileDirectory + fileName);
         } catch (Exception e) {
-            throw new IOException(fileName + LOAD_FAILED);
+            throw new IOException(LOAD_FAILED);
         }
 
         BufferedWriter writer = new BufferedWriter(fileToWrite);
@@ -159,7 +173,7 @@ public class FileStorage {
                 fileArray.put(fileObject);
             }
         } catch (JSONException e) {
-            throw new IOException("Failed to write JSON data.");
+            throw new IOException(PARSE_FAILED);
         }
         LoggingService.getLogger().log(Level.INFO, "Updating file " + fileDirectory + fileName);
         
@@ -169,7 +183,7 @@ public class FileStorage {
             writer.close();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.SEVERE, fileName + WRITE_FAILED);
-            throw new IOException(fileName + WRITE_FAILED);
+            throw new IOException(WRITE_FAILED);
         }
         
         LoggingService.getLogger().log(Level.INFO, "Successfully updated file " + fileDirectory + fileName);
@@ -177,10 +191,17 @@ public class FileStorage {
         try {
             fileToWrite.close();
         } catch (Exception e) {
-            throw new IOException(fileName + LOAD_FAILED);
+            throw new IOException(LOAD_FAILED);
         }
     }
     
+    /**
+     * changeSettings 
+     * 
+     * @return ArrayList of TodoItems after loading the file
+     * 
+     * @throws IOException with WRITE_SETTINGS_FAILED
+     */
     public ArrayList<TodoItem> changeSettings(String fileDirectory, Boolean newRandomColorsEnabled, Boolean newNotificationsEnabled) throws IOException {
         assert fileDirectory != null;
         
@@ -214,10 +235,16 @@ public class FileStorage {
             this.randomColorsEnabled = tempRandomColorsEnabled;
             this.notificationsEnabled = tempNotificationsEnabled;
             this.loadStatus = LOAD_FAILED;
-            throw new IOException(fileName + LOAD_FAILED);
+            throw new IOException(WRITE_SETTINGS_FAILED);
         }
     }
     
+    /**
+     * loadSettings
+     * 
+     * @throws IOException Message undefined, caught by ModelManager.
+     * @throws JSONException Message undefined, caught by ModelManager.
+     */
     public void loadSettings() throws IOException, JSONException {
         LoggingService.getLogger().log(Level.INFO, "Loading settings file.");
         FileReader fileToRead;
@@ -250,13 +277,19 @@ public class FileStorage {
         reader.close();
     }
     
+    /**
+     * updateSettings
+     * 
+     * @throws IOException Message LOAD_SETTINGS_FAILED, WRITE_SETTINGS_FAILED
+     * @throws JSONException Messsage undefined, caught by changeSettings
+     */
     public void updateSettings() throws IOException, JSONException {
         FileWriter fileToWrite;
         
         try {
             fileToWrite = new FileWriter(SETTINGS_FILE_NAME);
         } catch (Exception e) {
-            throw new IOException(SETTINGS_FILE_NAME + LOAD_FAILED);
+            throw new IOException(LOAD_SETTINGS_FAILED);
         }
 
         BufferedWriter writer = new BufferedWriter(fileToWrite);
@@ -271,9 +304,10 @@ public class FileStorage {
         try {
             writer.write(settingsObject.toString(2));
             writer.flush();
+            writer.close();
         } catch (Exception e) {
             LoggingService.getLogger().log(Level.SEVERE, SETTINGS_FILE_NAME + WRITE_FAILED);
-            throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
+            throw new IOException(LOAD_SETTINGS_FAILED);
         }
         
         LoggingService.getLogger().log(Level.INFO, "Successfully updated settings file.");
@@ -281,7 +315,7 @@ public class FileStorage {
         try {
             fileToWrite.close();
         } catch (Exception e) {
-            throw new IOException(SETTINGS_FILE_NAME + WRITE_FAILED);
+            throw new IOException(WRITE_SETTINGS_FAILED);
         }
     }
     

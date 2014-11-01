@@ -67,6 +67,16 @@ ModelManager
 ### Undo
 * public void loadTodoItems(ArrayList<TodoItem> todoItems)
 
+### Exceptions
+* All are IOExceptions
+* Messages can be as follows:
+ * ModelManager.LOAD_FAILED (means watdo.json is not accessible)
+ * ModelManager.WRITE_FAILED (means watdo.json is not accessible)
+ * ModelManager.LOAD_SETTINGS_FAILED (means settings.json is not accessible)
+ * ModelManager.WRITE_SETTINGS_FAILED (means settings.json is not accessible)
+ * ModelManager.PARSE_FAILED (means watdo.json is corrupted)
+ * ModelManager.SETTINGS_PARSE_FAILED (means settings.json is corrupted)
+
 TodoItem
 -----------
 ### Attribute getters and setters
