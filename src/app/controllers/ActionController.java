@@ -14,19 +14,32 @@ import java.util.logging.Level;
 public class ActionController {
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
-    private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
+    private final String ERROR_INVALID_INDEX = "Error. Index is not found.\n";
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
+    private final String ERROR_WRONG_ADD_COMMAND_FORMAT = "Error. Incorrect add command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_CLEAR_COMMAND_FORMAT = "Error. Incorrect clear command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_DELETE_COMMAND_FORMAT = "Error. Incorrect delete command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_DISPLAY_COMMAND_FORMAT = "Error. Incorrect display command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_DONE_COMMAND_FORMAT = "Error. Incorrect done command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_SEARCH_COMMAND_FORMAT = "Error. Incorrect search command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_UNDONE_COMMAND_FORMAT = "Error. Incorrect undone command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_UPDATE_COMMAND_FORMAT = "Error. Incorrect update command format. Click help icon or type help for info.\n";
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
 
     // Messages
     private final String MESSAGE_ADD_COMPLETE = "Added: \"%1$s\"\n";
+    private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
     private final String MESSAGE_CLEAR_COMPLETE = "Todo cleared\n";
     private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
     private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
-    private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
-
-
+    
+    private final String MESSAGE_CHANGE_SAVE_FILE_LOCATION = "Save file location is changed\n";
+    private final String MESSAGE_OPEN_HELP = "Showing help\n";
+    private final String MESSAGE_OPEN_SETTINGS = "Showing settings\n";
+    private final String MESSAGE_REDO = "Redo\n";
+    private final String MESSAGE_UNDO = "Undo\n";
+    
     // Class variables
     private static ModelManager modelManager;
     private static TaskController taskController;
@@ -37,7 +50,7 @@ public class ActionController {
     // Add command method(s)
     protected String addNewLine(CommandObject commandObject){
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_ADD_COMMAND_FORMAT);
         }
         try {
             modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
@@ -60,7 +73,7 @@ public class ActionController {
             } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getOverdueTasks();
             } else {
-                return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+                return CommandController.showErrorDialog(ERROR_WRONG_DISPLAY_COMMAND_FORMAT);
             }
         } else {
             returnList = taskController.getUndoneTasks();
@@ -72,7 +85,7 @@ public class ActionController {
     // Clear command method(s)
     protected String clear(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_CLEAR_COMMAND_FORMAT);
         }
         try {
             modelManager.clearTasks();
@@ -86,15 +99,16 @@ public class ActionController {
     // Delete command method(s)
     protected String deleteEntry(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_DELETE_COMMAND_FORMAT);
         }
-        int index = -1;
-        index = Integer.parseInt(commandObject.getCommandString()) - 1;
-        if(isInt(commandObject.getCommandString())) {
-            index = Integer.parseInt(commandObject.getCommandString()) - 1;
+        // To check that the index input is an integer
+        if(!isInt(commandObject.getCommandString())) {
+            return CommandController.showErrorDialog(ERROR_WRONG_DELETE_COMMAND_FORMAT);
         }
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
+        // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_INVALID_INDEX);
         }
         String toBeDeleted = currentList.get(index).getTaskName();
         try {
@@ -118,7 +132,7 @@ public class ActionController {
     // Search command method(s)
     protected String search(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_SEARCH_COMMAND_FORMAT);
         }
         ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
         if (todoList.isEmpty()) {
@@ -137,19 +151,20 @@ public class ActionController {
     // Update command method(s)
     protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_UPDATE_COMMAND_FORMAT);
         }
         Boolean[] parameters = {false, false, false, false, false};
         
         StringTokenizer st = new StringTokenizer(commandObject.getCommandString());
         String check = st.nextToken();
-        int index = -1;
         // To check that the index input is an integer
-        if(isInt(check)) {
-            index = Integer.parseInt(check) - 1;
+        if(!isInt(check)) {
+            return CommandController.showErrorDialog(ERROR_WRONG_UPDATE_COMMAND_FORMAT);
         }
+        int index = Integer.parseInt(check) - 1;
+        // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_INVALID_INDEX);
         }
         String toBeUpdated = "";
         while (st.hasMoreTokens()) {
@@ -178,16 +193,16 @@ public class ActionController {
     // Done method
     protected String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_DONE_COMMAND_FORMAT);
         }
         // To check that the index input is an integer
         if (!isInt(commandObject.getCommandString())) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_DONE_COMMAND_FORMAT);
         }
         int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_INVALID_INDEX);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
@@ -202,16 +217,16 @@ public class ActionController {
     // Undone method
     protected String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_UNDONE_COMMAND_FORMAT);
         }
         // To check that the index input is an integer
         if (!isInt(commandObject.getCommandString())) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_WRONG_UNDONE_COMMAND_FORMAT);
         }
         int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
         if (index < 0 || index >= currentList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.showErrorDialog(ERROR_INVALID_INDEX);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
@@ -229,7 +244,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
-        return "showing help\n";
+        return MESSAGE_OPEN_HELP;
     }
 
     // Settings method
@@ -238,7 +253,7 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
-        return "showing settings\n";
+        return MESSAGE_OPEN_SETTINGS;
     }
     
     // Change save file location (for .json)
@@ -252,10 +267,10 @@ public class ActionController {
             // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
-        return "changed save location\n";
+        return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
-    // undo and redo
+    // Undo and redo method(s)
     protected String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
@@ -270,7 +285,7 @@ public class ActionController {
                 // do something here?
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
             }
-            return "undo\n";
+            return MESSAGE_UNDO;
         }
     }
 
@@ -288,7 +303,7 @@ public class ActionController {
                 // do something here?
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
             }
-            return "redo\n";
+            return MESSAGE_REDO;
         }
     }
 
