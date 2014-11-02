@@ -292,6 +292,18 @@ public class ActionController {
         }
     }
 
+    // Change settings from GUI - Written by Dat
+    protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+        assert filePath != null;
+        
+        try {
+            modelManager.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
+        } catch (IOException e) {
+            // do something here?
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        return "changed settings\n";
+    }
 
     protected ActionController(ModelManager manager) {
         modelManager = manager;
