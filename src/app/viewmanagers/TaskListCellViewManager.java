@@ -164,7 +164,11 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
                 alphaValue = "0.75";
         }
 
-        anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
+        if (rootViewManager.getMainApp().getCommandController().areRandomColorsEnabled()) {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getRandomColor() + "," + alphaValue + ");");
+        } else {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
+        }
     }
 
     @FXML
