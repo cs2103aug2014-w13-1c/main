@@ -43,7 +43,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
-            this.showTitleBarView();
+            // this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();

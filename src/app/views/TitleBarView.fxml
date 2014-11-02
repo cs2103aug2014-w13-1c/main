@@ -7,7 +7,7 @@
 
 <Pane fx:id="titleBarView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TitleBarViewManager">
    <children>
-      <AnchorPane prefHeight="40.0" prefWidth="1000.0" style="-fx-background-color: black;">
+      <AnchorPane prefHeight="40.0" prefWidth="1000.0" style="-fx-background-color: brown;">
          <children>
             <Label fx:id="titleBarLabel" layoutX="473.0" layoutY="6.0" text="Title" textFill="WHITE">
                <font>
