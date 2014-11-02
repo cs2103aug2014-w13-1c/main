@@ -33,6 +33,8 @@ public class ModelManager {
      * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
      */
     public ModelManager() throws IOException {
+        System.out.println("showed up");
+        
         this.dataStorage = new FileStorage();
         this.latestModified = null;
         
