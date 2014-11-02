@@ -207,6 +207,10 @@ public class CommandController {
     }
 
     public static ArrayList<TodoItem> getTaskList() {
+        if (modelManager == null) {
+            return new ArrayList<TodoItem>();
+        }
+        
         return modelManager.getTodoItemList();
     }
 
@@ -257,6 +261,14 @@ public class CommandController {
         return modelManager.getFileDirectory();
     }
 
+    public Boolean areRandomColorsEnabled() {
+        return modelManager.areRandomColorsEnabled();
+    }
+    
+    public Boolean areNotificationsEnabled() {
+        return modelManager.areNotificationsEnabled();
+    }
+    
     public UndoController getUndoController() {
         return undoController;
     }

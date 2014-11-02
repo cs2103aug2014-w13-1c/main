@@ -61,6 +61,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
+        System.out.println(task);
         super.updateItem(task, empty);
         setGraphic(anchorPane);
         if (empty) {
