@@ -67,14 +67,16 @@ public class Main extends Application {
 
     public void showInfoNotification(String title, String message) {
         // Actual use case.
-        if (commandArguments.length == 0) {
+        if (commandArguments.length == 0 && getCommandController().areNotificationsEnabled()) {
             Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).hideAfter(new Duration(1000)).showInformation();
         }
         // If false, currently in test mode so no dialogs are used.
     }
 
     public void showErrorNotification(String title, String error) {
-        Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
+        if (getCommandController().areNotificationsEnabled()) {
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
+        }
     }
 
     public URL getResourceURL(String relativePath) {

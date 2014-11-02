@@ -28,11 +28,13 @@ public class RootViewManager {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
+    private Pane titleBarView;
 
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
     private HelpViewManager helpViewManager;
     private InputFieldViewManager inputFieldViewManager;
+    private TitleBarViewManager titleBarViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -41,6 +43,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
+            // this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();
@@ -85,6 +88,17 @@ public class RootViewManager {
         helpView.toBack();
     }
 
+    private void showTitleBarView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
+        titleBarView = loader.load();
+
+        titleBarViewManager = loader.getController();
+        titleBarViewManager.setRootViewManager(this);
+
+        borderPane.setTop(titleBarView);
+    }
+
     private void showTaskListView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
@@ -121,10 +135,12 @@ public class RootViewManager {
 
     // Getters and Setters
 
-    public void closeSettings(File filePath) {
-        if (filePath != null) {
-            getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
-        }
+    public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
+        getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
+        closeSettings();
+    }
+
+    public void closeSettings() {
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
@@ -132,6 +148,8 @@ public class RootViewManager {
 
     public void openSettings() {
         settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
+        settingsViewManager.setRandomColorsEnabled(getMainApp().getCommandController().areRandomColorsEnabled());
+        settingsViewManager.setNotificationsEnabled(getMainApp().getCommandController().areNotificationsEnabled());
         settingsView.toFront();
         settingsViewManager.focusOnButton();
     }

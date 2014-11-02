@@ -150,21 +150,25 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setBackgroundColor(String priority) {
         String alphaValue;
-        switch(priority.substring(3)) {
-            case "High":
+        switch(priority.substring(3).toLowerCase()) {
+            case "high":
                 alphaValue = "1";
                 break;
-            case "Medium":
-                alphaValue = "0.75";
+            case "medium":
+                alphaValue = "0.70";
                 break;
-            case "Low":
-                alphaValue = "0.35";
+            case "low":
+                alphaValue = "0.45";
                 break;
             default:
                 alphaValue = "0.75";
         }
 
-        anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
+        if (rootViewManager.getMainApp().getCommandController().areRandomColorsEnabled()) {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getRandomColor() + "," + alphaValue + ");");
+        } else {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
+        }
     }
 
     @FXML
