@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Arrays;
@@ -23,6 +24,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
     private Label taskNameLabel;
+
+    @FXML
+    private Text taskNameText;
 
     @FXML
     private Label topDateLabel;
@@ -93,11 +97,15 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         doneButton.setVisible(task.isDone());
         undoneButton.setVisible(!task.isDone());
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
+
+        if (task.isDone()) {
+            taskNameText.setStyle("-fx-strikethrough: true;");
+        }
     }
 
     private void setPriorityLevel(TodoItem task) {
         priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
-        setBackgroundColor(task.getPriority());
+        setBackgroundColor(task);
     }
 
     private void setDates(TodoItem task) {
@@ -129,8 +137,8 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         indexLabel.setText(String.valueOf(getTaskIndex()));
     }
 
-    private void setTaskName(TodoItem task) {
-        taskNameLabel.setText(task.getTaskName().toUpperCase());
+    private void setTaskName(TodoItem task){
+        taskNameText.setText(task.getTaskName().toUpperCase());
     }
 
     private void setDeleteButtonEventHandler() {
@@ -148,9 +156,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private int getTaskIndex() { return getIndex() + 1; }
 
-    private void setBackgroundColor(String priority) {
+    private void setBackgroundColor(TodoItem task) {
         String alphaValue;
-        switch(priority.substring(3).toLowerCase()) {
+        switch(task.getPriority().substring(3).toLowerCase()) {
             case "high":
                 alphaValue = "1";
                 break;
@@ -162,6 +170,11 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
                 break;
             default:
                 alphaValue = "0.75";
+        }
+
+        // Done tasks are low priority
+        if (task.isDone()) {
+            alphaValue = "0.45";
         }
 
         if (rootViewManager.getMainApp().getCommandController().areRandomColorsEnabled()) {
