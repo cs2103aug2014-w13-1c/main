@@ -135,10 +135,12 @@ public class RootViewManager {
 
     // Getters and Setters
 
-    public void closeSettings(File filePath) {
-        if (filePath != null) {
-            getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
-        }
+    public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
+        getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
+        closeSettings();
+    }
+
+    public void closeSettings() {
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
@@ -146,6 +148,8 @@ public class RootViewManager {
 
     public void openSettings() {
         settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
+        settingsViewManager.setRandomColorsEnabled(getMainApp().getCommandController().areRandomColorsEnabled());
+        settingsViewManager.setNotificationsEnabled(getMainApp().getCommandController().areNotificationsEnabled());
         settingsView.toFront();
         settingsViewManager.focusOnButton();
     }
