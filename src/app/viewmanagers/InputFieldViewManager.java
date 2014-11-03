@@ -26,7 +26,6 @@ public class InputFieldViewManager {
     private StyleClassedTextArea inputField;
     private RootViewManager rootViewManager;
     private Boolean searchState;
-    private int selectIndex;
 
     public InputFieldViewManager() {
         lastCommand = "";
@@ -36,7 +35,6 @@ public class InputFieldViewManager {
         inputField.getStyleClass().add("input-field");
         inputField.setWrapText(true);
         searchState = false;
-        selectIndex = -1;
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
@@ -127,8 +125,6 @@ public class InputFieldViewManager {
 
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
-        KeywordDetector keywordDetector = KeywordDetector.getKeywordDetector();
-        keywordDetector.setInputFieldViewManager(this);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
 
@@ -138,13 +134,5 @@ public class InputFieldViewManager {
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
-    }
-
-    public void setSelectIndex(int index) {
-        selectIndex = index;
-    }
-
-    public int getSelectIndex() {
-        return selectIndex;
     }
 }
