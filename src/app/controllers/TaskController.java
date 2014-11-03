@@ -4,6 +4,7 @@ import app.Main;
 import app.model.TodoItem;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * in charge of sorting and searching of tasks
@@ -19,7 +20,7 @@ public class TaskController {
     private static SortingStyle sortingStyle;
 
     public static enum DisplayType {
-        ALL, DONE, UNDONE, OVERDUE
+        ALL, DONE, UNDONE, OVERDUE, SEARCH
     }
 
     public static enum SortingStyle {
@@ -86,6 +87,39 @@ public class TaskController {
         return results;
     }
 
+    protected ArrayList<TodoItem> getTasksStartingFrom(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getStartDate().before(date)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    protected ArrayList<TodoItem> getTasksEndingBy(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getEndDate().after(date)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
     protected void setSortingStyle(int newSortingStyle) {
         switch (newSortingStyle) {
             case 0 :
@@ -108,6 +142,10 @@ public class TaskController {
 
     public DisplayType getDisplayType() {
         return displayType;
+    }
+
+    public void setDisplayType(DisplayType type) {
+        displayType = type;
     }
 
     public SortingStyle getSortingStyle() {

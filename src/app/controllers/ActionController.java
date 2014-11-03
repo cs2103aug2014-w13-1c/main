@@ -137,6 +137,7 @@ public class ActionController {
         } else {
             returnList = results;
             main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
+            taskController.setDisplayType(TaskController.DisplayType.SEARCH);
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
