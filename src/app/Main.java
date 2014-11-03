@@ -74,9 +74,19 @@ public class Main extends Application {
     }
 
     public void showErrorNotification(String title, String error) {
-        //if (getCommandController().areNotificationsEnabled()) {
+        if (getCommandController().areNotificationsEnabled()) {
             Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
-        //}
+        }
+
+        //showErrorDialog(title, error);
+    }
+
+    public void showErrorDialog(String title, String error) {
+        Dialogs.create()
+                .owner(primaryStage)
+                .title(title)
+                .masthead("Error")
+                .message(error).showError();
     }
 
     public URL getResourceURL(String relativePath) {

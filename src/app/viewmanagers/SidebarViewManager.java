@@ -61,7 +61,7 @@ public class SidebarViewManager {
         LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
         switch (button.getId()) {
             case "displayButton":
-                rootViewManager.setAndFocusInputField("display all");
+                rootViewManager.setAndFocusInputField("display");
                 break;
             case "addButton":
                 rootViewManager.setAndFocusInputField("add ");
