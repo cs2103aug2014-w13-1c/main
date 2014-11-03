@@ -23,7 +23,7 @@
             </ImageView>
          </graphic>
          <tooltip>
-            <Tooltip text="Delete this task" />
+            <Tooltip text="Delete this task. Command: &quot;delete &lt;task index&gt;&quot;" />
          </tooltip>
       </Button>
       <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
@@ -35,7 +35,7 @@
             </ImageView>
          </graphic>
          <tooltip>
-            <Tooltip text="Update this task" />
+            <Tooltip text="Update this task. Command: &quot;update &lt;index number&gt; [task name | start | end | priority]&quot;" />
          </tooltip>
       </Button>
       <Label fx:id="bottomDateLabel" layoutX="628.0" layoutY="22.0" prefHeight="14.0" prefWidth="184.0" text="END 1 JANUARY 2015" textFill="WHITE">
@@ -53,20 +53,13 @@
             <Font name="System Italic" size="11.0" />
          </font>
       </Label>
-      <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="1.0" prefHeight="40.0" prefWidth="468.0" stylesheets="@../stylesheets/taskListCell.css" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
+      <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="11.0" prefHeight="16.0" prefWidth="468.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum" textFill="WHITE">
          <font>
             <Font size="15.0" />
          </font>
          <tooltip>
             <Tooltip fx:id="taskNameTooltip" />
          </tooltip>
-         <graphic>
-            <Text fx:id="taskNameText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem ipsum dolor sit amet," textAlignment="JUSTIFY" wrappingWidth="465.1890411376953">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Text>
-         </graphic>
       </Label>
       <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
@@ -77,7 +70,7 @@
             </ImageView>
          </graphic>
          <tooltip>
-            <Tooltip text="Mark as done" />
+            <Tooltip text="Mark as undone. Command: &quot;undone &lt;index number&gt;&quot;" />
          </tooltip>
       </Button>
       <Label fx:id="hexLabel" layoutX="34.0" layoutY="12.0" text="#" textFill="WHITE" />
@@ -94,7 +87,7 @@
             </ImageView>
          </graphic>
          <tooltip>
-            <Tooltip text="Mark as done" />
+            <Tooltip text="Mark as done. Command: &quot;done &lt;index number&gt;&quot;" />
          </tooltip>
       </Button>
    </children>

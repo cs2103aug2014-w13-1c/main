@@ -211,8 +211,12 @@ public class ModelManager {
         return todoList.searchIndexByUUID(latestModified);
     }
     
+    public UUID getLastModifiedUUID() {
+        return latestModified;
+    }
+    
     /**
-     * deleteTask
+     * loadTodoItems
      * 
      * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED 
      */

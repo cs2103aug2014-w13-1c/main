@@ -145,7 +145,7 @@ public class CommandController {
             case EXIT :
                 System.exit(0);
             case INVALID_DATE :
-                feedback = showErrorDialog(ERROR_INVALID_DATE);
+                feedback = notifyWithError(ERROR_INVALID_DATE);
                 return feedback;
             case UNDO :
                 feedback = actionController.undo(commandObject);
@@ -158,7 +158,7 @@ public class CommandController {
                 updateView();
                 return feedback;
             default :
-                feedback = showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+                feedback = notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
                 return feedback;
         }
     }
@@ -169,7 +169,6 @@ public class CommandController {
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
-            // do something here?
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
@@ -205,7 +204,6 @@ public class CommandController {
         if (modelManager == null) {
             return new ArrayList<TodoItem>();
         }
-        
         return modelManager.getTodoItemList();
     }
 
@@ -242,12 +240,12 @@ public class CommandController {
         printString(feedback);
     }
 
-    public static String showErrorDialog(String error) {
+    public static String notifyWithError(String error) {
         main.showErrorNotification("Error", error);
         return error;
     }
 
-    public static String showInfoDialog(String message) {
+    public static String notifyWithInfo(String message) {
         main.showInfoNotification("Information", message);
         return message;
     }
@@ -261,6 +259,9 @@ public class CommandController {
     }
     
     public Boolean areNotificationsEnabled() {
+        if (modelManager == null) {
+            return true;
+        }
         return modelManager.areNotificationsEnabled();
     }
     

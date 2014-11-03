@@ -26,9 +26,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label taskNameLabel;
 
     @FXML
-    private Text taskNameText;
-
-    @FXML
     private Label topDateLabel;
 
     @FXML
@@ -65,7 +62,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
-        System.out.println(task);
         super.updateItem(task, empty);
         setGraphic(anchorPane);
         if (empty) {
@@ -77,7 +73,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setButtonEventHandlers(TodoItem task) {
-        setUpdateButtonEventHandler();
+        setUpdateButtonEventHandler(task);
         setDeleteButtonEventHandler();
         setDoneButtonEventHandler();
     }
@@ -97,10 +93,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         doneButton.setVisible(task.isDone());
         undoneButton.setVisible(!task.isDone());
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
-
-        if (task.isDone()) {
-            taskNameText.setStyle("-fx-strikethrough: true;");
-        }
     }
 
     private void setPriorityLevel(TodoItem task) {
@@ -138,15 +130,15 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setTaskName(TodoItem task){
-        taskNameText.setText(task.getTaskName().toUpperCase());
+        taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
     private void setDeleteButtonEventHandler() {
         deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
     }
 
-    private void setUpdateButtonEventHandler() {
-        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " "));
+    private void setUpdateButtonEventHandler(TodoItem task) {
+        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task)));
     }
 
     private void setDoneButtonEventHandler() {
@@ -155,6 +147,26 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private int getTaskIndex() { return getIndex() + 1; }
+
+    private String getTaskInfo(TodoItem task) {
+        String info = "";
+
+        info = info + task.getTaskName();
+
+        if (task.getStartDate() != null) {
+           info = info + " start " + task.getStartDateString().toLowerCase();
+        }
+
+        if (task.getEndDate() != null) {
+            info = info + " end " + task.getEndDateString().toLowerCase();
+        }
+
+        if (task.getPriority() != null) {
+            info = info + " priority " + task.getPriority().substring(3).toLowerCase();
+        }
+
+        return info;
+    }
 
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
