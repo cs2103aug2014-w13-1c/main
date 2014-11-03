@@ -47,6 +47,18 @@ public class InputFieldViewManager {
                 assert inputField.getText().length() > 6;
                 searchState = true;
                 instantSearch(inputField.getText().substring(7));
+            } else if (inputField.getText().startsWith("update ")) {
+                assert inputField.getText().length() > 6;
+                highlightCell(inputField.getText().split(" ", -1)[1]);
+            } else if (inputField.getText().startsWith("delete ")) {
+                assert inputField.getText().length() > 6;
+                highlightCell(inputField.getText().split(" ", -1)[1]);
+            } else if (inputField.getText().startsWith("done ")) {
+                assert inputField.getText().length() > 4;
+                highlightCell(inputField.getText().split(" ", -1)[1]);
+            } else if (inputField.getText().startsWith("undone ")) {
+                assert inputField.getText().length() > 6;
+                highlightCell(inputField.getText().split(" ", -1)[1]);
             } else {
                 if (searchState) {
                     rootViewManager.getMainApp().getCommandController().updateView();
@@ -77,6 +89,21 @@ public class InputFieldViewManager {
                 }
             }
         });
+    }
+
+    private void highlightCell(String index) {
+//        System.out.println("index: " + index);
+        int highlightIndex;
+        try {
+            highlightIndex = Integer.parseInt(index);
+        } catch (NumberFormatException e) {
+            highlightIndex = -1;
+        }
+        if (highlightIndex > 0 ||
+            highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
+//            System.out.println("focusing on: " + highlightIndex);
+            rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1);
+        }
     }
 
     private void instantSearch(String query) {
