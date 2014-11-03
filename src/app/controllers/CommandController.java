@@ -175,7 +175,7 @@ public class CommandController {
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
-            // do something here?
+            showErrorDialog("Error. Save file is corrupted.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
@@ -207,6 +207,9 @@ public class CommandController {
     }
 
     public static ArrayList<TodoItem> getTaskList() {
+        if (modelManager == null) {
+            return new ArrayList<TodoItem>();
+        }
         return modelManager.getTodoItemList();
     }
 

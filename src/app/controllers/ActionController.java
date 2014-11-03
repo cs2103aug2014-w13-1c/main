@@ -35,6 +35,7 @@ public class ActionController {
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
     
     private final String MESSAGE_CHANGE_SAVE_FILE_LOCATION = "Save file location is changed\n";
+    private final String MESSAGE_DISPLAY = "Displaying tasks\n";
     private final String MESSAGE_OPEN_HELP = "Showing help\n";
     private final String MESSAGE_OPEN_SETTINGS = "Showing settings\n";
     private final String MESSAGE_REDO = "Redo\n";
@@ -79,7 +80,7 @@ public class ActionController {
             returnList = taskController.getUndoneTasks();
         }
         main.getPrimaryStage().setTitle("wat do");
-        return "displaying tasks\n";
+        return MESSAGE_DISPLAY;
     }
 
     // Clear command method(s)
