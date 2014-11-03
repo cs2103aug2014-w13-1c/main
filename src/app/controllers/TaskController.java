@@ -166,7 +166,7 @@ public class TaskController {
         return results;
     }
 
-    protected void setSortingStyle(int newSortingStyle) {
+    public void setSortingStyle(int newSortingStyle) {
         switch (newSortingStyle) {
             case 0 :
                 sortingStyle = SortingStyle.TASKNAME_ENDDATE;

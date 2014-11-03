@@ -1,5 +1,7 @@
 package app.viewmanagers;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -29,6 +31,13 @@ public class TitleBarViewManager {
         ));
 
         sortStyleChoiceBox.setValue("END DATE");
+
+        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number oldIndex, Number newIndex) {
+               rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex  );
+            }
+        });
     }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
