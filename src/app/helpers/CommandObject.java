@@ -14,11 +14,13 @@ public class CommandObject {
     private boolean updateStartDate;
     private boolean updateEndDate;
     private String priority;
+    private boolean oldPriority;
     private String[] inputStringArray;
 
     public CommandObject() {
         updateStartDate = false;
         updateEndDate = false;
+        oldPriority = false;
     }
 
     public void setInputString(String string) {
@@ -91,5 +93,13 @@ public class CommandObject {
 
     public void setUpdateEndDate(boolean updateEndDate) {
         this.updateEndDate = updateEndDate;
+    }
+
+    public boolean hasOldPriority() {
+        return oldPriority;
+    }
+
+    public void setOldPriority(boolean oldPriority) {
+        this.oldPriority = oldPriority;
     }
 }

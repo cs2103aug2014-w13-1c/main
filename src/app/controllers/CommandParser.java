@@ -164,8 +164,10 @@ public class CommandParser {
                 }
                 if (toBeParsed.trim().equals("remove")) {
                     currentCommandObject.setUpdateStartDate(true);
-                } else {
-                    currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed.trim()));
+                }
+                else {
+                    currentCommandObject.setUpdateStartDate(true);
+                    currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
                 }
                 i--;
             }
@@ -180,8 +182,10 @@ public class CommandParser {
                 }
                 if (toBeParsed.trim().equals("remove")) {
                     currentCommandObject.setUpdateEndDate(true);
-                } else {
-                    currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed.trim()));
+                }
+                else {
+                    currentCommandObject.setUpdateEndDate(true);
+                    currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
                 }
                 i--;
             }
@@ -219,14 +223,25 @@ public class CommandParser {
         for (int i = 0; i < currentCommandObject.getInputStringArray().length; i++) {
             if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
                 i++;
+                if (currentCommandObject.hasOldPriority()) {
+                    currentCommandObject.setCommandString(
+                            currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getPriority()));
+                }
                 if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("low")) {
                     currentCommandObject.setPriority(TodoItem.LOW);
+                    currentCommandObject.setOldPriority(true);
                 }
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("medium")) {
+                else if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("medium")) {
                     currentCommandObject.setPriority(TodoItem.MEDIUM);
+                    currentCommandObject.setOldPriority(true);
                 }
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("high")) {
+                else if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("high")) {
                     currentCommandObject.setPriority(TodoItem.HIGH);
+                    currentCommandObject.setOldPriority(true);
+                }
+                else {
+                    currentCommandObject.setCommandString(
+                            currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
                 }
             }
         }
