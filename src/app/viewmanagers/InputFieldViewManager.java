@@ -111,7 +111,7 @@ public class InputFieldViewManager {
         ArrayList<TodoItem> results =
                 rootViewManager.getMainApp().getTaskController().instantSearch(query);
         rootViewManager.getMainApp().getCommandController().updateView(results);
-        if (results.isEmpty()) {
+        if (results.isEmpty() && rootViewManager.getMainApp().getCommandController().getModelManager() != null) {
             rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
         }
     }

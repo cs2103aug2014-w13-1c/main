@@ -31,7 +31,7 @@ public class ActionController {
     private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
     private final String MESSAGE_CLEAR_COMPLETE = "Todo cleared\n";
     private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
-    private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
+    private final String MESSAGE_SEARCH_COMPLETE = "Serch complete. \n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
     
     private final String MESSAGE_CHANGE_SAVE_FILE_LOCATION = "Save file location is changed\n";
@@ -59,8 +59,10 @@ public class ActionController {
             commandController.getUndoController().clearRedo();
             modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_ADD_COMPLETE, commandObject.getInputString()));
     }
@@ -96,8 +98,10 @@ public class ActionController {
             commandController.getUndoController().clearRedo();
             modelManager.clearTasks();
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return MESSAGE_CLEAR_COMPLETE;
     }
@@ -122,8 +126,10 @@ public class ActionController {
             commandController.getUndoController().clearRedo();
             modelManager.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
@@ -142,15 +148,23 @@ public class ActionController {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_SEARCH_COMMAND_FORMAT);
         }
-        ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
-        if (todoList.isEmpty()) {
-            return CommandController.notifyWithError(String.format(ERROR_FILE_EMPTY));
+        try {
+            ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
+            if (todoList.isEmpty()) {
+                return CommandController.notifyWithError(String.format(ERROR_FILE_EMPTY));
+            }
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         ArrayList<TodoItem> results = taskController.instantSearch(commandObject.getCommandString());
+        returnList = results;
         if (results.isEmpty()) {
-            return CommandController.notifyWithError(ERROR_SEARCH_TERM_NOT_FOUND);
+            if (modelManager != null) {
+                return CommandController.notifyWithError(ERROR_SEARCH_TERM_NOT_FOUND);
+            } else {
+                return null;
+            }
         } else {
-            returnList = results;
             main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
             taskController.setDisplayType(TaskController.DisplayType.SEARCH);
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
@@ -195,8 +209,10 @@ public class ActionController {
             modelManager.updateTask(currentList.get(index).getUUID(),
                                     parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
     }
@@ -221,8 +237,10 @@ public class ActionController {
             commandController.getUndoController().clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -247,8 +265,10 @@ public class ActionController {
             commandController.getUndoController().clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -279,8 +299,14 @@ public class ActionController {
         try {
             modelManager.changeSettings(commandObject.getCommandString(), null, null);
         } catch (IOException e) {
-            // do something here?
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
@@ -293,12 +319,14 @@ public class ActionController {
         if (main.getCommandController().getUndoController().isUndoEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         } else {
-            main.getCommandController().getUndoController().saveRedo(modelManager.getTodoItemList());
             try {
+                main.getCommandController().getUndoController().saveRedo(modelManager.getTodoItemList());
                 modelManager.loadTodoItems(main.getCommandController().getUndoController().loadUndo());
             } catch (IOException e) {
-                // do something here?
+                CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
             }
             return MESSAGE_UNDO;
         }
@@ -311,12 +339,14 @@ public class ActionController {
         if (main.getCommandController().getUndoController().isRedoEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         } else {
-            main.getCommandController().getUndoController().saveUndo(modelManager.getTodoItemList());
             try {
+                main.getCommandController().getUndoController().saveUndo(modelManager.getTodoItemList());
                 modelManager.loadTodoItems(main.getCommandController().getUndoController().loadRedo());
             } catch (IOException e) {
-                // do something here?
+                CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
             }
             return MESSAGE_REDO;
         }
@@ -329,8 +359,14 @@ public class ActionController {
         try {
             modelManager.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
         } catch (IOException e) {
-            // do something here?
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return "changed settings\n";
     }

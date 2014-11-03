@@ -33,7 +33,13 @@ public class CommandController {
     // Errors
     private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
     private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
-
+    
+    private final String ERROR_SETTINGS_PARSE_FAILED = "Seems like there's a problem with your settings.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_PARSE_FAILED = "Seems like there's a problem with your watdo.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_SETTINGS_LOAD_FAILED = "Failed to load settings.json.\nPlease close the program and try again.";
+    private final String ERROR_LOAD_FAILED = "Failed to load watdo.json.\nPlease close the program and try again.";
+    private final String ERROR_UNKNOWN_MODEL_ERROR = "There has been an unexpected problem with our database.\nPlease close the program and try again.";
+    
     // Class variables
     private static ActionController actionController;
     private static ModelManager modelManager;
@@ -41,8 +47,11 @@ public class CommandController {
     private static TaskController taskController;
     private static CommandParser commandParser;
     private static UndoController undoController;
-    private ArrayList<TodoItem> currentList;
 
+    private static String modelManagerError;
+    
+    private ArrayList<TodoItem> currentList;
+    
     // Print string methods
     protected void printString(String message) {
         System.out.print(message);
@@ -169,6 +178,23 @@ public class CommandController {
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
+            switch(e.getMessage()) {
+                case ModelManager.LOAD_SETTINGS_FAILED:
+                    modelManagerError = ERROR_SETTINGS_LOAD_FAILED;
+                    break;
+                case ModelManager.SETTINGS_PARSE_FAILED:
+                    modelManagerError = ERROR_SETTINGS_PARSE_FAILED;
+                    break;
+                case ModelManager.LOAD_FAILED:
+                    modelManagerError = ERROR_LOAD_FAILED;
+                    break;
+                case ModelManager.PARSE_FAILED:
+                    modelManagerError = ERROR_PARSE_FAILED;
+                    break;
+                default:
+                    modelManagerError = ERROR_UNKNOWN_MODEL_ERROR;
+                    break;
+            }   
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
@@ -202,6 +228,7 @@ public class CommandController {
 
     public static ArrayList<TodoItem> getTaskList() {
         if (modelManager == null) {
+            main.showErrorDialog("FILE ERROR", modelManagerError);
             return new ArrayList<TodoItem>();
         }
         return modelManager.getTodoItemList();
@@ -259,9 +286,6 @@ public class CommandController {
     }
     
     public Boolean areNotificationsEnabled() {
-        if (modelManager == null) {
-            return true;
-        }
         return modelManager.areNotificationsEnabled();
     }
     
@@ -269,7 +293,7 @@ public class CommandController {
         return undoController;
     }
 
-    protected static ModelManager getModelManager() {
+    public ModelManager getModelManager() {
         return modelManager;
     }
 }
