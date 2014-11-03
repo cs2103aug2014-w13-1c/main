@@ -11,14 +11,10 @@ public class CommandObject {
     private String commandString;
     private Date startDate;
     private Date endDate;
-    private boolean updateStartDate;
-    private boolean updateEndDate;
     private String priority;
     private String[] inputStringArray;
 
     public CommandObject() {
-        updateStartDate = false;
-        updateEndDate = false;
     }
 
     public void setInputString(String string) {
@@ -42,54 +38,38 @@ public class CommandObject {
     }
 
     public String getCommandWord() {
-        return commandWord;
-    }
+            return commandWord;
+        }
 
     public void setCommandString(String string) {
         commandString = string;
     }
 
     public String getCommandString() {
-        return commandString;
-    }
+            return commandString;
+        }
 
     public void setStartDate(Date date) {
         startDate = date;
     }
 
     public Date getStartDate() {
-        return startDate;
-    }
+            return startDate;
+        }
 
     public void setEndDate(Date date) {
         endDate = date;
     }
 
     public Date getEndDate() {
-        return endDate;
-    }
+            return endDate;
+        }
 
     public void setPriority(String string) {
         priority = string;
     }
 
     public String getPriority() {
-        return priority;
-    }
-
-    public boolean isUpdateStartDate() {
-        return updateStartDate;
-    }
-
-    public void setUpdateStartDate(boolean updateStartDate) {
-        this.updateStartDate = updateStartDate;
-    }
-
-    public boolean isUpdateEndDate() {
-        return updateEndDate;
-    }
-
-    public void setUpdateEndDate(boolean updateEndDate) {
-        this.updateEndDate = updateEndDate;
-    }
+            return priority;
+        }
 }
