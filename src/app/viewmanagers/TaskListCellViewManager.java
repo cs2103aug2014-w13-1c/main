@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -59,6 +60,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     List<String> colors;
     private TaskListViewManager taskListViewManager;
+    final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
@@ -170,18 +172,32 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
-        switch(task.getPriority().substring(3).toLowerCase()) {
-            case "high":
-                alphaValue = "1";
-                break;
-            case "medium":
-                alphaValue = "0.70";
-                break;
-            case "low":
-                alphaValue = "0.45";
-                break;
-            default:
-                alphaValue = "0.75";
+        int differenceInDays = 0;
+
+        if (task.getEndDate() != null) {
+            differenceInDays = (int) (((task.getEndDate().getTime() - new Date().getTime())) / DAY_IN_MILLIS);
+        }
+
+        // Overdue tasks should be fully saturated
+        if (differenceInDays < 0) {
+            alphaValue = "1";
+        } else {
+            float factor = calculateFactor(differenceInDays);
+            // Compare by priority level
+            switch(task.getPriority().substring(3).toLowerCase()) {
+                case "high":
+                    alphaValue = String.valueOf(1 * factor);
+                    break;
+                case "medium":
+                    alphaValue = String.valueOf(0.85 * factor);
+                    break;
+                case "low":
+                    alphaValue = String.valueOf(0.7 * factor);
+                    break;
+                default:
+                    alphaValue = "1";
+            }
+
         }
 
         // Done tasks are low priority
@@ -194,6 +210,26 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         } else {
             anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
         }
+    }
+
+    // Return a value between 0.5 and 1
+    private float calculateFactor(int differenceInDays) {
+        if (differenceInDays == 0) {
+            return 1;
+        }
+
+        float normalized;
+        if (differenceInDays > 30) {
+            normalized = (float) 0.45;
+        } else {
+            normalized = (float) (((30.0 - differenceInDays) / 30.0) + 0.45);
+        }
+
+        if (normalized > 1) {
+            normalized = 1;
+        }
+
+        return normalized;
     }
 
     @FXML

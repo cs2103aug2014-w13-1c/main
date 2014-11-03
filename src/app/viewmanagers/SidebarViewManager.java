@@ -81,26 +81,10 @@ public class SidebarViewManager {
                 rootViewManager.setAndFocusInputField("display done");
                 break;
             case "undoButton":
-                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
-                    try {
-                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
-                    } catch (InvalidInputException e) {
-                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
-                    }
-                } else {
-                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
-                }
+                undo();
                 break;
             case "redoButton":
-                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
-                    try {
-                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
-                    } catch (InvalidInputException e) {
-                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
-                    }
-                } else {
-                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
-                }
+                redo();
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
@@ -110,6 +94,30 @@ public class SidebarViewManager {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void redo() {
+        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
+        }
+    }
+
+    private void undo() {
+        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
         }
     }
 
