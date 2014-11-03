@@ -175,8 +175,6 @@ public class CommandController {
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
-            System.out.println(">>> OVER HERE");
-//            notifyWithError("Error. Save file is corrupted.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
@@ -266,6 +264,9 @@ public class CommandController {
     }
     
     public Boolean areNotificationsEnabled() {
+        if (modelManager == null) {
+            return true;
+        }
         return modelManager.areNotificationsEnabled();
     }
     
