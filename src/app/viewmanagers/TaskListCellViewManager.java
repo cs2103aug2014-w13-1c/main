@@ -74,7 +74,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setButtonEventHandlers(TodoItem task) {
-        setUpdateButtonEventHandler();
+        setUpdateButtonEventHandler(task);
         setDeleteButtonEventHandler();
         setDoneButtonEventHandler();
     }
@@ -138,8 +138,8 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
     }
 
-    private void setUpdateButtonEventHandler() {
-        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " "));
+    private void setUpdateButtonEventHandler(TodoItem task) {
+        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task)));
     }
 
     private void setDoneButtonEventHandler() {
@@ -148,6 +148,26 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private int getTaskIndex() { return getIndex() + 1; }
+
+    private String getTaskInfo(TodoItem task) {
+        String info = "";
+
+        info = info + task.getTaskName();
+
+        if (task.getStartDate() != null) {
+           info = info + " start " + task.getStartDateString().toLowerCase();
+        }
+
+        if (task.getEndDate() != null) {
+            info = info + " end " + task.getEndDateString().toLowerCase();
+        }
+
+        if (task.getPriority() != null) {
+            info = info + " priority " + task.getPriority().substring(3).toLowerCase();
+        }
+
+        return info;
+    }
 
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
