@@ -72,51 +72,51 @@ public class TaskController {
 
     protected ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.isDone()) {
+                results.add(todo);
+            }
+        }
+
+//        ArrayList<TodoItem> today = new ArrayList<TodoItem>();
+//        ArrayList<TodoItem> tomorrow = new ArrayList<TodoItem>();
+//        ArrayList<TodoItem> future = new ArrayList<TodoItem>();
+//
+//        Date endToday =  dateParser.parse("today 2359h").get(0).getDates().get(0);
+//        Date endTomorrow =  dateParser.parse("tomorrow 2359h").get(0).getDates().get(0);
+//
 //        for (TodoItem todo : main.getCommandController().getTaskList()) {
-//            if (!todo.isDone()) {
+//            if (!todo.isDone() && todo.getEndDate() != null) {
+//                if (!todo.getEndDate().after(endToday)) {
+//                    today.add(todo);
+//                } else if (!todo.getEndDate().after(endTomorrow)) {
+//                    tomorrow.add(todo);
+//                } else {
+//                    future.add(todo);
+//                }
+//            } else if (!todo.isDone()) {
+//                future.add(todo);
+//            }
+//        }
+//
+//        if (!today.isEmpty()) {
+//            results.add(new TodoItem("today divider", null, null, null, null));
+//            for (TodoItem todo : today) {
 //                results.add(todo);
 //            }
 //        }
-
-        ArrayList<TodoItem> today = new ArrayList<TodoItem>();
-        ArrayList<TodoItem> tomorrow = new ArrayList<TodoItem>();
-        ArrayList<TodoItem> future = new ArrayList<TodoItem>();
-
-        Date endToday =  dateParser.parse("today 2359h").get(0).getDates().get(0);
-        Date endTomorrow =  dateParser.parse("tomorrow 2359h").get(0).getDates().get(0);
-
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.isDone() && todo.getEndDate() != null) {
-                if (!todo.getEndDate().after(endToday)) {
-                    today.add(todo);
-                } else if (!todo.getEndDate().after(endTomorrow)) {
-                    tomorrow.add(todo);
-                } else {
-                    future.add(todo);
-                }
-            } else if (!todo.isDone()) {
-                future.add(todo);
-            }
-        }
-
-        if (!today.isEmpty()) {
-            results.add(new TodoItem("today divider", null, null, null, null));
-            for (TodoItem todo : today) {
-                results.add(todo);
-            }
-        }
-        if (!tomorrow.isEmpty()) {
-            results.add(new TodoItem("tomorrow divider", null, null, null, null));
-            for (TodoItem todo : tomorrow) {
-                results.add(todo);
-            }
-        }
-        if (!future.isEmpty()) {
-            results.add(new TodoItem("future divider", null, null, null, null));
-            for (TodoItem todo : future) {
-                results.add(todo);
-            }
-        }
+//        if (!tomorrow.isEmpty()) {
+//            results.add(new TodoItem("tomorrow divider", null, null, null, null));
+//            for (TodoItem todo : tomorrow) {
+//                results.add(todo);
+//            }
+//        }
+//        if (!future.isEmpty()) {
+//            results.add(new TodoItem("future divider", null, null, null, null));
+//            for (TodoItem todo : future) {
+//                results.add(todo);
+//            }
+//        }
 
         displayType = DisplayType.UNDONE;
         return results;

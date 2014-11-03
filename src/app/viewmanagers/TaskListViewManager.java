@@ -86,10 +86,10 @@ public class TaskListViewManager {
     }
 
     private void scrollToLastModifiedTask() {
-        int index = rootViewManager.getMainApp().getTaskController().getLastModifiedIndex();
-        taskListView.scrollTo(index);
-        taskListView.getSelectionModel().select(index);
-        taskListView.getFocusModel().focus(index);
+//        int index = rootViewManager.getMainApp().getTaskController().getLastModifiedIndex();
+//        taskListView.scrollTo(index);
+//        taskListView.getSelectionModel().select(index);
+//        taskListView.getFocusModel().focus(index);
     }
 
     public String getCurrentColor() {
