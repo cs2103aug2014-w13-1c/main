@@ -1,6 +1,8 @@
 package app.viewmanagers;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
@@ -15,10 +17,19 @@ public class TitleBarViewManager {
     @FXML
     private Label titleBarLabel;
 
+    @FXML
+    private ChoiceBox sortStyleChoiceBox;
+
     private RootViewManager rootViewManager;
 
     @FXML
-    public void initialize() {  }
+    public void initialize() {
+        sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
+            "TASK NAME", "START DATE", "END DATE", "PRIORITY"
+        ));
+
+        sortStyleChoiceBox.setValue("END DATE");
+    }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

@@ -44,7 +44,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
-            // this.showTitleBarView();
+            this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();
@@ -93,6 +93,8 @@ public class RootViewManager {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
         titleBarView = loader.load();
+
+        titleBarView.getStylesheets().add("app/stylesheets/titleBarView.css");
 
         titleBarViewManager = loader.getController();
         titleBarViewManager.setRootViewManager(this);
