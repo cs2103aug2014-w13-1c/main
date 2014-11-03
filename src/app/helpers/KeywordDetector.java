@@ -17,28 +17,6 @@ public class KeywordDetector {
     public static StyleSpans<Collection<String>> getStyleSpans(ArrayList<Keyword> keywords, String command) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
 
-        // for testing
-//        ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-//        if (text.length() >= 3) {
-//            keywords.add(new Keyword(0, 2));
-//        }
-//
-//        if (text.length() >= 5) {
-//            keywords.add(new Keyword(3, 4));
-//        }
-//
-//        if (text.length() >= 10) {
-//            keywords.add(new Keyword(7, 9));
-//        }
-
-        // for debugging
-//        if (keywords.size() == 0) {
-//            System.out.println("no keywords");
-//        }
-//        for (Keyword keyword : keywords) {
-//            System.out.println("keyword indexes: " + keyword.getStartIndex() + ", " + keyword.getEndIndex());
-//        }
-
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
             spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
