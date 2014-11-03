@@ -26,9 +26,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private Label taskNameLabel;
 
     @FXML
-    private Text taskNameText;
-
-    @FXML
     private Label topDateLabel;
 
     @FXML
@@ -97,10 +94,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         doneButton.setVisible(task.isDone());
         undoneButton.setVisible(!task.isDone());
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
-
-        if (task.isDone()) {
-            taskNameText.setStyle("-fx-strikethrough: true;");
-        }
     }
 
     private void setPriorityLevel(TodoItem task) {
@@ -138,7 +131,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     private void setTaskName(TodoItem task){
-        taskNameText.setText(task.getTaskName().toUpperCase());
+        taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
     private void setDeleteButtonEventHandler() {
