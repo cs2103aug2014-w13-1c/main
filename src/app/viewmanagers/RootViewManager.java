@@ -189,16 +189,11 @@ public class RootViewManager {
     }
 
     public void setAndFocusInputField(String text) {
-//        mainApp.getPrimaryStage().hide();
-//        mainApp.getPrimaryStage().show();
-
-        mainApp.getPrimaryStage().requestFocus();
-//        rootLayout.requestFocus();
-//        borderPane.requestFocus();
-
-        inputField.replaceText(text);
-        inputField.positionCaret(text.length());
-        inputField.requestFocus();
+        if (!inputField.getText().equals(text)) {
+            inputField.replaceText(text);
+            inputField.positionCaret(text.length());
+            inputField.requestFocus();
+        }
     }
 
     public void refreshSidebar() {
