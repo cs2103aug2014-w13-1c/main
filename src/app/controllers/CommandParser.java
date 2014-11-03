@@ -19,6 +19,8 @@ public class CommandParser {
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
     private static ArrayList<String> displayKeywords = new ArrayList<String>();
+    private static ArrayList<String> sortKeywords = new ArrayList<String>();
+    private static ArrayList<String> searchKeywords = new ArrayList<String>();
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
@@ -53,6 +55,7 @@ public class CommandParser {
         commandKeywords.add("display");
         commandKeywords.add("clear");
         commandKeywords.add("exit");
+        commandKeywords.add("sort");
         commandKeywords.add("search");
         commandKeywords.add("update");
         commandKeywords.add("help");
@@ -84,6 +87,11 @@ public class CommandParser {
         displayKeywords.add("all");
         displayKeywords.add("done");
         displayKeywords.add("overdue");
+        
+        sortKeywords.clear();
+        sortKeywords.add("start");
+        sortKeywords.add("end");
+        sortKeywords.add("priority");
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
@@ -118,6 +126,15 @@ public class CommandParser {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
                 if (displayKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("sort")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (sortKeywords.contains(inputStringArray[i])) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -235,24 +252,25 @@ public class CommandParser {
 
     // Priority parser
     private void setPriority() {
-        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
-            if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
-                if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
-                    currentCommandObject.setPriority(TodoItem.LOW);
+        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update"))
+            for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
+                    if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
+                        currentCommandObject.setPriority(TodoItem.LOW);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
+                        currentCommandObject.setPriority(TodoItem.MEDIUM);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
+                        currentCommandObject.setPriority(TodoItem.HIGH);
+                    }
+                    else {
+                        currentCommandObject.setCommandString(
+                                currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
+                    }
+                    currentCommandObject.setEndIndex(i);
+                    break;
                 }
-                else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
-                    currentCommandObject.setPriority(TodoItem.MEDIUM);
-                }
-                else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
-                    currentCommandObject.setPriority(TodoItem.HIGH);
-                }
-                else {
-                    currentCommandObject.setCommandString(
-                            currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
-                }
-                currentCommandObject.setEndIndex(i);
-                break;
             }
-        }
     }
 }
