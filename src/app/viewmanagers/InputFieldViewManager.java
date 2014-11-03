@@ -44,16 +44,9 @@ public class InputFieldViewManager {
                 inputField.setStyleSpans(0, keywordDetection(newValue));
             }
             if (inputField.getText().startsWith("search ")) {
-                searchState = true;
                 assert inputField.getText().length() > 6;
-                String query = inputField.getText().substring(7);
-                LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
-                ArrayList<TodoItem> results =
-                        rootViewManager.getMainApp().getTaskController().instantSearch(query);
-                rootViewManager.getMainApp().getCommandController().updateView(results);
-                if (results.isEmpty()) {
-                    rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
-                }
+                searchState = true;
+                instantSearch(inputField.getText().substring(7));
             } else {
                 if (searchState) {
                     rootViewManager.getMainApp().getCommandController().updateView();
@@ -84,6 +77,16 @@ public class InputFieldViewManager {
                 }
             }
         });
+    }
+
+    private void instantSearch(String query) {
+        LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
+        ArrayList<TodoItem> results =
+                rootViewManager.getMainApp().getTaskController().instantSearch(query);
+        rootViewManager.getMainApp().getCommandController().updateView(results);
+        if (results.isEmpty()) {
+            rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
+        }
     }
 
     private String autoComplete(String command) {
