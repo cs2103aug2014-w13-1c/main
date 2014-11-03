@@ -40,6 +40,10 @@ public class TitleBarViewManager {
         });
     }
 
+    public void setTitle(String title) {
+        titleBarLabel.setText(title);
+    }
+
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
