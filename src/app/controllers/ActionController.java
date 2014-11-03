@@ -28,6 +28,7 @@ public class ActionController {
 
 
     // Class variables
+    private static CommandController commandController;
     private static ModelManager modelManager;
     private static TaskController taskController;
     private static Main main;
@@ -40,6 +41,8 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
             // do something here?
@@ -75,6 +78,8 @@ public class ActionController {
             return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.clearTasks();
         } catch (IOException e) {
             // do something here?
@@ -98,6 +103,8 @@ public class ActionController {
         }
         String toBeDeleted = currentList.get(index).getTaskName();
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
             // do something here?
@@ -166,6 +173,8 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(),
                                     parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
@@ -191,6 +200,8 @@ public class ActionController {
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
             // do something here?
@@ -215,6 +226,8 @@ public class ActionController {
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
             // do something here?
@@ -319,5 +332,9 @@ public class ActionController {
 
     protected void setMainApp(Main main) {
         this.main = main;
+    }
+
+    protected void setCommandController(CommandController controller) {
+        commandController = controller;
     }
 }

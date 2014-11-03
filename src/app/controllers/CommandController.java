@@ -91,7 +91,6 @@ public class CommandController {
         String feedback;
         switch (commandType) {
             case ADD :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.addNewLine(commandObject);
                 resetTaskList();
                 updateView();
@@ -102,13 +101,11 @@ public class CommandController {
                 updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.clear(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.deleteEntry(commandObject, currentList);
                 resetTaskList();
                 updateView();
@@ -119,19 +116,16 @@ public class CommandController {
                 updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.update(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.done(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
-                undoController.saveUndo(modelManager.getTodoItemList());
                 feedback = actionController.undone(commandObject, currentList);
                 resetTaskList();
                 updateView();
@@ -179,6 +173,7 @@ public class CommandController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         }
         actionController = new ActionController(modelManager);
+        actionController.setCommandController(this);
         undoController = UndoController.getUndoController();
     }
 
