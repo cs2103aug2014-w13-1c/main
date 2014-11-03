@@ -35,6 +35,7 @@ public class TaskController {
         if (self == null) {
             self = new TaskController();
             displayType = DisplayType.ALL;
+            sortingStyle = SortingStyle.ENDDATE_PRIORITY;
         }
         return self;
     }
@@ -127,6 +128,7 @@ public class TaskController {
             case 1 :
                 sortingStyle = SortingStyle.STARTDATE_PRIORITY;
             case 2 :
+                // default sorting style
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
             case 3 :
                 sortingStyle = SortingStyle.PRIORITY_ENDDATE;
@@ -134,6 +136,7 @@ public class TaskController {
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
         }
         main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        main.getCommandController().updateView();
     }
 
     public int getLastModifiedIndex() {
