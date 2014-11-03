@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
+<AnchorPane id="cell" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
    <children>
-      <Label fx:id="overdueLabel" layoutX="786.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ" textAlignment="CENTER" textFill="#616161">
+      <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ" textAlignment="CENTER" textFill="#797777">
          <font>
             <Font size="34.0" />
          </font>
@@ -26,7 +26,7 @@
             <Tooltip text="Delete this task" />
          </tooltip>
       </Button>
-      <Button fx:id="updateButton" layoutX="844.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
+      <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -48,18 +48,25 @@
             <Font size="11.0" />
          </font>
       </Label>
-      <Label fx:id="priorityLevelLabel" layoutX="518.0" layoutY="14.0" prefHeight="14.0" prefWidth="103.0" text="high" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+      <Label fx:id="priorityLevelLabel" layoutX="806.0" layoutY="12.0" prefHeight="16.0" prefWidth="57.0" text="high" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
          <font>
             <Font name="System Italic" size="11.0" />
          </font>
       </Label>
-      <Label fx:id="taskNameLabel" layoutX="81.0" prefHeight="40.0" prefWidth="434.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum dolor sit amet," textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
+      <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="1.0" prefHeight="40.0" prefWidth="468.0" stylesheets="@../stylesheets/taskListCell.css" textAlignment="JUSTIFY" textFill="WHITE" wrapText="true">
          <font>
             <Font size="15.0" />
          </font>
          <tooltip>
             <Tooltip fx:id="taskNameTooltip" />
          </tooltip>
+         <graphic>
+            <Text fx:id="taskNameText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem ipsum dolor sit amet," textAlignment="JUSTIFY" wrappingWidth="465.1890411376953">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+         </graphic>
       </Label>
       <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
          <graphic>

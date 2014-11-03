@@ -3,6 +3,7 @@ package app.viewmanagers;
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 
@@ -26,17 +27,24 @@ public class SettingsViewManager {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private CheckBox randomColorsCheckBox;
+
+    @FXML
+    private CheckBox notificationCheckBox;
+
     private RootViewManager rootViewManager;
 
     private File directory;
+    private Boolean randomColorsEnabled;
 
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewManager.closeSettings(directory));
-        cancelButton.setOnAction((event) -> rootViewManager.closeSettings(null));
+        saveButton.setOnAction((event) -> rootViewManager.saveSettings(filePathTextField.getText(), randomColorsCheckBox.isSelected(), notificationCheckBox.isSelected()));
+        cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
     }
 
     private void showChooser(DirectoryChooser directoryChooser) {
@@ -62,5 +70,13 @@ public class SettingsViewManager {
 
     public void setAbsolutePathToDirectory(String absolutePath) {
         filePathTextField.setText(absolutePath);
+    }
+
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
+        notificationCheckBox.setSelected(notificationsEnabled);
+    }
+
+    public void setRandomColorsEnabled(Boolean randomColorsEnabled) {
+        randomColorsCheckBox.setSelected(randomColorsEnabled);
     }
 }
