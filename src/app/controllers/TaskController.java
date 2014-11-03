@@ -6,6 +6,7 @@ import com.joestelmach.natty.Parser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * in charge of sorting and searching of tasks
@@ -183,8 +184,8 @@ public class TaskController {
         main.getCommandController().updateView();
     }
 
-    public int getLastModifiedIndex() {
-        return main.getCommandController().getModelManager().getLastModifiedIndex();
+    public UUID getLastModifiedUUID() {
+        return main.getCommandController().getModelManager().getLastModifiedUUID();
     }
 
     public DisplayType getDisplayType() {
