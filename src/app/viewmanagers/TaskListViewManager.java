@@ -120,4 +120,8 @@ public class TaskListViewManager {
         this.rootViewManager = rootViewManager;
     }
 
+    public ObservableList<TodoItem> getTaskData() {
+        return taskData;
+    }
+
 }
