@@ -194,10 +194,10 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (commandObject.isUpdateStartDate()) {
+        if (commandObject.getStartDate() != null) {
             parameters[1] = true;
         }
-        if (commandObject.isUpdateEndDate()) {
+        if (commandObject.getEndDate() != null) {
             parameters[2] = true;
         }
         if (commandObject.getPriority() != null) {
