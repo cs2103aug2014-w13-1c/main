@@ -81,7 +81,6 @@ public class CommandParser {
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
-        setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
