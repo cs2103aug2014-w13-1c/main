@@ -35,6 +35,7 @@ public class RootViewManager {
     private HelpViewManager helpViewManager;
     private InputFieldViewManager inputFieldViewManager;
     private TitleBarViewManager titleBarViewManager;
+    private SidebarViewManager sidebarViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -127,8 +128,8 @@ public class RootViewManager {
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarViewManager controller = loader.getController();
-        controller.setRootViewManager(this);
+        sidebarViewManager = loader.getController();
+        sidebarViewManager.setRootViewManager(this);
 
         borderPane.setLeft(sidebar);
     }
@@ -198,4 +199,8 @@ public class RootViewManager {
         inputField.requestFocus();
     }
 
+    public void refreshSidebar() {
+        sidebarViewManager.refreshUndoButton();
+        sidebarViewManager.refreshRedoButton();
+    }
 }

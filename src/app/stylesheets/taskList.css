@@ -47,3 +47,8 @@
 .task-list .scroll-bar .thumb:pressed{
     -fx-background-color: derive(black,50%);
 }
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
