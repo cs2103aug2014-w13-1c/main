@@ -80,7 +80,6 @@ public class TaskListViewManager {
             scrollToLastModifiedTask(taskData);
         }
 
-
         rootViewManager.refreshSidebar();
 
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
