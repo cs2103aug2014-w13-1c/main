@@ -31,7 +31,7 @@ public class KeywordDetector {
 
     public static StyleSpans<Collection<String>> getStyleSpans(ArrayList<Keyword> keywords, String command) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-
+        inputFieldViewManager.setSelectIndex(-1);
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
             if (keyword.getSelectIndex() == -1) {
@@ -40,7 +40,7 @@ public class KeywordDetector {
                 spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
                 lastWordEnd = keyword.getEndIndex() + 1;
             } else {
-
+                inputFieldViewManager.setSelectIndex(keyword.getSelectIndex());
             }
         }
         spansBuilder.add(Collections.emptyList(), command.length() - lastWordEnd);
