@@ -34,12 +34,13 @@ public class CommandParser {
         currentCommandObject = new CommandObject();
         currentCommandObject.setInputString(inputString);
         currentCommandObject.setInputStringArray(inputString.trim().split(" "));
+        currentCommandObject.setEndIndex(currentCommandObject.getInputStringArray().length);
         currentCommandObject.setCommandWord(parseCommandWord(inputString));
         if (commandKeywords.contains(currentCommandObject.getCommandWord())) {
-            currentCommandObject.setCommandString(parseCommandString(inputString));
             setDates();
             checkDate();
             setPriority();
+            currentCommandObject.setCommandString(parseCommandString(inputString));
         }
         return currentCommandObject;
     }
@@ -141,8 +142,7 @@ public class CommandParser {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
             int i = 1;
-            while (i < currentCommandObject.getInputStringArray().length &&
-                   !addKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+            while (i < currentCommandObject.getEndIndex()) {
                 result = result.concat(currentCommandObject.getInputStringArray()[i] + " ");
                 i++;
             }
@@ -152,42 +152,53 @@ public class CommandParser {
 
     // Date parser
     private void setDates() {
-        for (int i = 0; i < currentCommandObject.getInputStringArray().length; i++) {
+        boolean startDateFlag = false;
+        boolean endDateFlag = false;
+        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0 ; i--) {
             if (startDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                String toBeParsed = "";
-                String dateKeyword = currentCommandObject.getInputStringArray()[i];
-                i++;
-                while (i < currentCommandObject.getInputStringArray().length &&
-                       !addKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                    toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[i] + " ");
-                    i++;
+                if (!startDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateStartDate(true);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else {
+                        currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateStartDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                if (toBeParsed.trim().equals("remove")) {
-                    currentCommandObject.setUpdateStartDate(true);
-                }
-                else {
-                    currentCommandObject.setUpdateStartDate(true);
-                    currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
-                }
-                i--;
+                startDateFlag = true;
             }
             else if (endDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                String toBeParsed = "";
-                String dateKeyword = currentCommandObject.getInputStringArray()[i];
-                i++;
-                while (i < currentCommandObject.getInputStringArray().length &&
-                       !addKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                    toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[i] + " ");
-                    i++;
+                if (!endDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateEndDate(true);
+                    }
+                    else {
+                        currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateEndDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                if (toBeParsed.trim().equals("remove")) {
-                    currentCommandObject.setUpdateEndDate(true);
-                }
-                else {
-                    currentCommandObject.setUpdateEndDate(true);
-                    currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
-                }
-                i--;
+                endDateFlag = true;
             }
         }
     }
@@ -210,39 +221,37 @@ public class CommandParser {
             }
         }
         if (!dateList.isEmpty()) {
+            if (startDateKeywords.contains(dateKeyword)) {
+                currentCommandObject.setUpdateStartDate(true);
+            }
+            else {
+                currentCommandObject.setUpdateEndDate(true);
+            }
             return dateList.get(0);
         } else {
-            currentCommandObject.setCommandString(
-                    currentCommandObject.getCommandString().concat(" " + dateKeyword + " " + toBeParsed));
             return null;
         }
     }
 
     // Priority parser
     private void setPriority() {
-        for (int i = 0; i < currentCommandObject.getInputStringArray().length; i++) {
+        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
             if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
-                i++;
-                if (currentCommandObject.hasOldPriority()) {
-                    currentCommandObject.setCommandString(
-                            currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getPriority()));
-                }
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("low")) {
+                if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
                     currentCommandObject.setPriority(TodoItem.LOW);
-                    currentCommandObject.setOldPriority(true);
                 }
-                else if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("medium")) {
+                else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
                     currentCommandObject.setPriority(TodoItem.MEDIUM);
-                    currentCommandObject.setOldPriority(true);
                 }
-                else if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("high")) {
+                else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
                     currentCommandObject.setPriority(TodoItem.HIGH);
-                    currentCommandObject.setOldPriority(true);
                 }
                 else {
                     currentCommandObject.setCommandString(
                             currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
                 }
+                currentCommandObject.setEndIndex(i);
+                break;
             }
         }
     }
