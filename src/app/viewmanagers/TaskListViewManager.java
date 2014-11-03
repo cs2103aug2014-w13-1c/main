@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class TaskListViewManager {
@@ -76,7 +77,7 @@ public class TaskListViewManager {
         taskListView.setItems(taskData);
 
         if (this.taskData.size() > 0) {
-            scrollToLastModifiedTask();
+            scrollToLastModifiedTask(taskData);
         }
 
 
@@ -85,11 +86,21 @@ public class TaskListViewManager {
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
-    private void scrollToLastModifiedTask() {
-//        int index = rootViewManager.getMainApp().getTaskController().getLastModifiedIndex();
-//        taskListView.scrollTo(index);
-//        taskListView.getSelectionModel().select(index);
-//        taskListView.getFocusModel().focus(index);
+    private void scrollToLastModifiedTask(ObservableList<TodoItem> taskData) {
+        UUID uuid = rootViewManager.getMainApp().getTaskController().getLastModifiedUUID();
+        int index = convertUUIDtoIndex(uuid, taskData);
+        taskListView.scrollTo(index);
+        taskListView.getSelectionModel().select(index);
+        taskListView.getFocusModel().focus(index);
+    }
+
+    private int convertUUIDtoIndex(UUID uuid, ObservableList<TodoItem> taskData) {
+        for (TodoItem task : taskData) {
+            if (task.getUUID() == uuid) {
+                return taskData.indexOf(task);
+            }
+        }
+        return -1;
     }
 
     public String getCurrentColor() {
