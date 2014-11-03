@@ -57,11 +57,7 @@ public class Main extends Application {
     }
 
     private void initControllerComponents() {
-        try {
-            commandController = new CommandController();
-        } catch (Exception e) {
-            showErrorNotification("Error", "Save file is corrupted.");
-        }
+        commandController = new CommandController();
         taskController = taskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
