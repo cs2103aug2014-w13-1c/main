@@ -32,7 +32,7 @@ public class CommandController {
 
     // Errors
     private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
-    private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
+    private final String ERROR_INVALID_COMMAND_WORD = "Error. Unidentified command word.\n";
     
     private final String ERROR_SETTINGS_PARSE_FAILED = "Seems like there's a problem with your settings.json file.\nPlease modify it using a text editor or delete it.";
     private final String ERROR_PARSE_FAILED = "Seems like there's a problem with your watdo.json file.\nPlease modify it using a text editor or delete it.";
@@ -174,7 +174,7 @@ public class CommandController {
                 updateView();
                 return feedback;
             default :
-                feedback = notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+                feedback = notifyWithError(ERROR_INVALID_COMMAND_WORD);
                 return feedback;
         }
     }
