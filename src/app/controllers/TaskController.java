@@ -2,8 +2,11 @@ package app.controllers;
 
 import app.Main;
 import app.model.TodoItem;
+import com.joestelmach.natty.Parser;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * in charge of sorting and searching of tasks
@@ -17,9 +20,10 @@ public class TaskController {
     private static Main main;
     private static DisplayType displayType;
     private static SortingStyle sortingStyle;
+    private static Parser dateParser;
 
     public static enum DisplayType {
-        ALL, DONE, UNDONE, OVERDUE
+        ALL, DONE, UNDONE, OVERDUE, SEARCH
     }
 
     public static enum SortingStyle {
@@ -34,6 +38,8 @@ public class TaskController {
         if (self == null) {
             self = new TaskController();
             displayType = DisplayType.ALL;
+            sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+            dateParser = new Parser();
         }
         return self;
     }
@@ -71,6 +77,47 @@ public class TaskController {
                 results.add(todo);
             }
         }
+
+//        ArrayList<TodoItem> today = new ArrayList<TodoItem>();
+//        ArrayList<TodoItem> tomorrow = new ArrayList<TodoItem>();
+//        ArrayList<TodoItem> future = new ArrayList<TodoItem>();
+//
+//        Date endToday =  dateParser.parse("today 2359h").get(0).getDates().get(0);
+//        Date endTomorrow =  dateParser.parse("tomorrow 2359h").get(0).getDates().get(0);
+//
+//        for (TodoItem todo : main.getCommandController().getTaskList()) {
+//            if (!todo.isDone() && todo.getEndDate() != null) {
+//                if (!todo.getEndDate().after(endToday)) {
+//                    today.add(todo);
+//                } else if (!todo.getEndDate().after(endTomorrow)) {
+//                    tomorrow.add(todo);
+//                } else {
+//                    future.add(todo);
+//                }
+//            } else if (!todo.isDone()) {
+//                future.add(todo);
+//            }
+//        }
+//
+//        if (!today.isEmpty()) {
+//            results.add(new TodoItem("today divider", null, null, null, null));
+//            for (TodoItem todo : today) {
+//                results.add(todo);
+//            }
+//        }
+//        if (!tomorrow.isEmpty()) {
+//            results.add(new TodoItem("tomorrow divider", null, null, null, null));
+//            for (TodoItem todo : tomorrow) {
+//                results.add(todo);
+//            }
+//        }
+//        if (!future.isEmpty()) {
+//            results.add(new TodoItem("future divider", null, null, null, null));
+//            for (TodoItem todo : future) {
+//                results.add(todo);
+//            }
+//        }
+
         displayType = DisplayType.UNDONE;
         return results;
     }
@@ -86,13 +133,47 @@ public class TaskController {
         return results;
     }
 
-    protected void setSortingStyle(int newSortingStyle) {
+    protected ArrayList<TodoItem> getTasksStartingFrom(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getStartDate().before(date)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    protected ArrayList<TodoItem> getTasksEndingBy(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getEndDate().after(date)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        for (TodoItem todo : main.getCommandController().getTaskList()) {
+            if (!todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    public void setSortingStyle(int newSortingStyle) {
         switch (newSortingStyle) {
             case 0 :
                 sortingStyle = SortingStyle.TASKNAME_ENDDATE;
             case 1 :
                 sortingStyle = SortingStyle.STARTDATE_PRIORITY;
             case 2 :
+                // default sorting style
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
             case 3 :
                 sortingStyle = SortingStyle.PRIORITY_ENDDATE;
@@ -100,14 +181,19 @@ public class TaskController {
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
         }
         main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        main.getCommandController().updateView();
     }
 
-    public int getLastModifiedIndex() {
-        return main.getCommandController().getModelManager().getLastModifiedIndex();
+    public UUID getLastModifiedUUID() {
+        return main.getCommandController().getModelManager().getLastModifiedUUID();
     }
 
     public DisplayType getDisplayType() {
         return displayType;
+    }
+
+    public void setDisplayType(DisplayType type) {
+        displayType = type;
     }
 
     public SortingStyle getSortingStyle() {

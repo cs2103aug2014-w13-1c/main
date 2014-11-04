@@ -12,6 +12,7 @@ import java.util.List;
 
 public class CommandParser {
     private static CommandObject currentCommandObject;
+    private static Parser dateParser;
     
     public static ArrayList<String> commandKeywords = new ArrayList<String>();
     private static ArrayList<String> addKeywords = new ArrayList<String>();
@@ -29,6 +30,7 @@ public class CommandParser {
     // Constructor and initialization
     protected CommandParser() {
         setKeywords();
+        dateParser = new Parser();
     }
 
     protected CommandObject parseCommand(String inputString) {
@@ -94,7 +96,6 @@ public class CommandParser {
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
-        setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
@@ -228,7 +229,6 @@ public class CommandParser {
     }
 
     private Date getDate(String dateKeyword, String toBeParsed) {
-        Parser dateParser = new Parser();
         List<Date> dateList = new ArrayList<Date>();
         List<DateGroup> groups = dateParser.parse(toBeParsed);
         for (DateGroup group : groups) {
@@ -251,7 +251,7 @@ public class CommandParser {
 
     // Priority parser
     private void setPriority() {
-        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update"))
+        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
             for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
                 if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
                     if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
@@ -271,5 +271,6 @@ public class CommandParser {
                     break;
                 }
             }
+        }
     }
 }

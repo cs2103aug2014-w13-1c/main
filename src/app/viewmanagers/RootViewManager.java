@@ -35,6 +35,7 @@ public class RootViewManager {
     private HelpViewManager helpViewManager;
     private InputFieldViewManager inputFieldViewManager;
     private TitleBarViewManager titleBarViewManager;
+    private SidebarViewManager sidebarViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -43,7 +44,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
-            // this.showTitleBarView();
+            this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();
@@ -93,6 +94,8 @@ public class RootViewManager {
         loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
         titleBarView = loader.load();
 
+        titleBarView.getStylesheets().add("app/stylesheets/titleBarView.css");
+
         titleBarViewManager = loader.getController();
         titleBarViewManager.setRootViewManager(this);
 
@@ -127,8 +130,8 @@ public class RootViewManager {
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarViewManager controller = loader.getController();
-        controller.setRootViewManager(this);
+        sidebarViewManager = loader.getController();
+        sidebarViewManager.setRootViewManager(this);
 
         borderPane.setLeft(sidebar);
     }
@@ -186,16 +189,15 @@ public class RootViewManager {
     }
 
     public void setAndFocusInputField(String text) {
-//        mainApp.getPrimaryStage().hide();
-//        mainApp.getPrimaryStage().show();
-
-        mainApp.getPrimaryStage().requestFocus();
-//        rootLayout.requestFocus();
-//        borderPane.requestFocus();
-
-        inputField.replaceText(text);
-        inputField.positionCaret(text.length());
-        inputField.requestFocus();
+        if (!inputField.getText().equals(text)) {
+            inputField.replaceText(text);
+            inputField.positionCaret(text.length());
+            inputField.requestFocus();
+        }
     }
 
+    public void refreshSidebar() {
+        sidebarViewManager.refreshUndoButton();
+        sidebarViewManager.refreshRedoButton();
+    }
 }

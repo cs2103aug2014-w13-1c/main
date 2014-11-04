@@ -74,4 +74,8 @@ public class UndoController {
         redoStack.clear();
     }
 
+    protected void clearRedo() {
+        redoStack.clear();
+    }
+
 }

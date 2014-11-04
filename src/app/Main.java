@@ -77,8 +77,6 @@ public class Main extends Application {
         if (getCommandController().areNotificationsEnabled()) {
             Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
         }
-
-        showErrorDialog(title, error);
     }
 
     public void showErrorDialog(String title, String error) {

@@ -68,7 +68,7 @@ public class ModelManager {
     /**
      * addTask
      * 
-     * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
      */
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         
@@ -87,7 +87,7 @@ public class ModelManager {
     /**
      * updateTask
      * 
-     * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         
@@ -136,7 +136,7 @@ public class ModelManager {
     /**
      * deleteTask
      * 
-     * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public TodoItem deleteTask(UUID itemID) throws IOException {
         TodoItem deletedItem = todoList.deleteByUUID(itemID);
@@ -155,7 +155,7 @@ public class ModelManager {
     /**
      * clearTasks
      * 
-     * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void clearTasks() throws IOException {
         todoList.clearTodoItems();
@@ -172,6 +172,7 @@ public class ModelManager {
      */
     public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
         todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
+        latestModified = null;
     }
     
     public void setSortingStyle(int newSortingStyle) {
@@ -211,10 +212,14 @@ public class ModelManager {
         return todoList.searchIndexByUUID(latestModified);
     }
     
+    public UUID getLastModifiedUUID() {
+        return latestModified;
+    }
+    
     /**
-     * deleteTask
+     * loadTodoItems
      * 
-     * @throws IOException with LOAD_FAILED, JSON_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
         dataStorage.updateFile(newTodoItems);

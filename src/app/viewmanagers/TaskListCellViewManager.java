@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -57,25 +58,21 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private RootViewManager rootViewManager;
 
-    List<String> colors;
+    private TodoItem task;
+
     private TaskListViewManager taskListViewManager;
+    final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
+        this.task = task;
         setGraphic(anchorPane);
         if (empty) {
             clearContent();
         } else {
             populateContent(task);
-            setButtonEventHandlers(task);
         }
-    }
-
-    private void setButtonEventHandlers(TodoItem task) {
-        setUpdateButtonEventHandler(task);
-        setDeleteButtonEventHandler();
-        setDoneButtonEventHandler();
     }
 
     private void clearContent() {
@@ -133,19 +130,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
-    private void setDeleteButtonEventHandler() {
-        deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
-    }
-
-    private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task)));
-    }
-
-    private void setDoneButtonEventHandler() {
-        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("undone " + getTaskIndex()));
-        undoneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
-    }
-
     private int getTaskIndex() { return getIndex() + 1; }
 
     private String getTaskInfo(TodoItem task) {
@@ -170,18 +154,32 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
-        switch(task.getPriority().substring(3).toLowerCase()) {
-            case "high":
-                alphaValue = "1";
-                break;
-            case "medium":
-                alphaValue = "0.70";
-                break;
-            case "low":
-                alphaValue = "0.45";
-                break;
-            default:
-                alphaValue = "0.75";
+        int differenceInDays = 0;
+
+        if (task.getEndDate() != null) {
+            differenceInDays = (int) (((task.getEndDate().getTime() - new Date().getTime())) / DAY_IN_MILLIS);
+        }
+
+        // Overdue tasks should be fully saturated
+        if (differenceInDays < 0) {
+            alphaValue = "1";
+        } else {
+            float factor = calculateFactor(differenceInDays);
+            // Compare by priority level
+            switch(task.getPriority().substring(3).toLowerCase()) {
+                case "high":
+                    alphaValue = String.valueOf(1 * factor);
+                    break;
+                case "medium":
+                    alphaValue = String.valueOf(0.85 * factor);
+                    break;
+                case "low":
+                    alphaValue = String.valueOf(0.7 * factor);
+                    break;
+                default:
+                    alphaValue = "1";
+            }
+
         }
 
         // Done tasks are low priority
@@ -196,8 +194,56 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
+    // Return a value between 0.5 and 1
+    private float calculateFactor(int differenceInDays) {
+        if (differenceInDays == 0) {
+            return 1;
+        }
+
+        float normalized;
+        if (differenceInDays > 30) {
+            normalized = (float) 0.45;
+        } else {
+            normalized = (float) (((30.0 - differenceInDays) / 30.0) + 0.45);
+        }
+
+        if (normalized > 1) {
+            normalized = 1;
+        }
+
+        return normalized;
+    }
+
     @FXML
-    private void initialize() { }
+    private void initialize() {
+        Button[] buttons = {
+                updateButton,
+                deleteButton,
+                doneButton,
+                undoneButton
+        };
+
+        for (Button button : buttons) {
+            button.setOnAction((e) -> clickedButton(button) );
+        }
+    }
+
+    private void clickedButton(Button button) {
+        switch (button.getId()) {
+            case "updateButton":
+                rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task));
+                break;
+            case "deleteButton":
+                rootViewManager.setAndFocusInputField("delete " + getTaskIndex());
+                break;
+            case "doneButton":
+                rootViewManager.setAndFocusInputField("undone " + getTaskIndex());
+                break;
+            case "undoneButton":
+                rootViewManager.setAndFocusInputField("done " + getTaskIndex());
+                break;
+        }
+    }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

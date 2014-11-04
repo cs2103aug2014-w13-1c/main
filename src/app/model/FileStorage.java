@@ -122,7 +122,7 @@ public class FileStorage {
     /**
      * updateFile
      * 
-     * @throws IOException Messages are LOAD_FAILED, JSON_FAILED, WRITE_FAILED
+     * @throws IOException Messages are LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
      */
     public void updateFile(ArrayList<TodoItem> todoItems) throws IOException {
         FileWriter fileToWrite;

@@ -4,6 +4,8 @@ import app.helpers.InvalidInputException;
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.logging.Level;
 
@@ -25,7 +27,13 @@ public class SidebarViewManager {
     private Button undoButton;
 
     @FXML
+    private ImageView undoImageView;
+
+    @FXML
     private Button redoButton;
+
+    @FXML
+    private ImageView redoImageView;
 
     @FXML
     private Button helpButton;
@@ -73,26 +81,10 @@ public class SidebarViewManager {
                 rootViewManager.setAndFocusInputField("display done");
                 break;
             case "undoButton":
-                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
-                    try {
-                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
-                    } catch (InvalidInputException e) {
-                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
-                    }
-                } else {
-                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
-                }
+                undo();
                 break;
             case "redoButton":
-                if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
-                    try {
-                        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
-                    } catch (InvalidInputException e) {
-                        LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
-                    }
-                } else {
-                    rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
-                }
+                redo();
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
@@ -105,7 +97,46 @@ public class SidebarViewManager {
         }
     }
 
+    private void redo() {
+        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
+        }
+    }
+
+    private void undo() {
+        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
+        }
+    }
+
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
+    }
+
+    public void refreshUndoButton() {
+        if (rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+            undoImageView.setImage(new Image("app/resources/undo-grey.png"));
+        } else{
+            undoImageView.setImage(new Image("app/resources/undo.png"));
+        }
+    }
+    public void refreshRedoButton() {
+        if (rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+            redoImageView.setImage(new Image("app/resources/redo-grey.png"));
+        } else{
+            redoImageView.setImage(new Image("app/resources/redo.png"));
+        }
     }
 }
