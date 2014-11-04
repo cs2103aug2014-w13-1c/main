@@ -15,15 +15,7 @@ public class ActionController {
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
     private final String ERROR_INVALID_INDEX = "Error. Index is not found.\n";
-    private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
-    private final String ERROR_WRONG_ADD_COMMAND_FORMAT = "Error. Incorrect add command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_CLEAR_COMMAND_FORMAT = "Error. Incorrect clear command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_DELETE_COMMAND_FORMAT = "Error. Incorrect delete command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_DISPLAY_COMMAND_FORMAT = "Error. Incorrect display command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_DONE_COMMAND_FORMAT = "Error. Incorrect done command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_SEARCH_COMMAND_FORMAT = "Error. Incorrect search command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_UNDONE_COMMAND_FORMAT = "Error. Incorrect undone command format. Click help icon or type help for info.\n";
-    private final String ERROR_WRONG_UPDATE_COMMAND_FORMAT = "Error. Incorrect update command format. Click help icon or type help for info.\n";
+    private final String ERROR_WRONG_COMMAND_FORMAT = "Error. Incorrect %1$s command format. Click help icon or type help for info.\n";
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
 
     // Messages
@@ -52,7 +44,7 @@ public class ActionController {
     // Add command method(s)
     protected String addNewLine(CommandObject commandObject){
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_ADD_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
         }
         try {
             commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
@@ -79,7 +71,7 @@ public class ActionController {
             } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getOverdueTasks();
             } else {
-                return CommandController.notifyWithError(ERROR_WRONG_DISPLAY_COMMAND_FORMAT);
+                return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "display"));
             }
         } else {
             returnList = taskController.getUndoneTasks();
@@ -91,7 +83,7 @@ public class ActionController {
     // Clear command method(s)
     protected String clear(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_CLEAR_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
         try {
             commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
@@ -109,11 +101,11 @@ public class ActionController {
     // Delete command method(s)
     protected String deleteEntry(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_DELETE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
         // To check that the index input is an integer
         if(!isInt(commandObject.getCommandString())) {
-            return CommandController.notifyWithError(ERROR_WRONG_DELETE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
         int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
@@ -146,7 +138,7 @@ public class ActionController {
     // Sort command method(s)
     protected String sort(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
         if (commandObject.getCommandString().equalsIgnoreCase("start")) {
             taskController.setSortingStyle(1);
@@ -169,7 +161,7 @@ public class ActionController {
     // Search command method(s)
     protected String search(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_SEARCH_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
         try {
             ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
@@ -197,7 +189,7 @@ public class ActionController {
     // Update command method(s)
     protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_UPDATE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
         Boolean[] parameters = {false, false, false, false, false};
         
@@ -205,7 +197,7 @@ public class ActionController {
         String check = st.nextToken();
         // To check that the index input is an integer
         if(!isInt(check)) {
-            return CommandController.notifyWithError(ERROR_WRONG_UPDATE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
         int index = Integer.parseInt(check) - 1;
         // To check that the index is valid
@@ -243,11 +235,11 @@ public class ActionController {
     // Done method
     protected String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_DONE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
         }
         // To check that the index input is an integer
         if (!isInt(commandObject.getCommandString())) {
-            return CommandController.notifyWithError(ERROR_WRONG_DONE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
         }
         int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
@@ -271,11 +263,11 @@ public class ActionController {
     // Undone method
     protected String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_UNDONE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
         }
         // To check that the index input is an integer
         if (!isInt(commandObject.getCommandString())) {
-            return CommandController.notifyWithError(ERROR_WRONG_UNDONE_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
         }
         int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
