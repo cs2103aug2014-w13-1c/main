@@ -136,7 +136,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksStartingFrom(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getStartDate().before(date)) {
+            if (todo.getStartDate() != null && !todo.getStartDate().before(date)) {
                 results.add(todo);
             }
         }
@@ -147,7 +147,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksEndingBy(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getEndDate().after(date)) {
+            if (todo.getEndDate() != null && !todo.getEndDate().after(date)) {
                 results.add(todo);
             }
         }
@@ -158,7 +158,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
+            if (todo.getStartDate() != null && todo.getEndDate() != null && !todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
                 results.add(todo);
             }
         }
@@ -167,20 +167,28 @@ public class TaskController {
     }
 
     public void setSortingStyle(int newSortingStyle) {
+        System.out.println(newSortingStyle);
         switch (newSortingStyle) {
             case 0 :
                 sortingStyle = SortingStyle.TASKNAME_ENDDATE;
+                break;
             case 1 :
                 sortingStyle = SortingStyle.STARTDATE_PRIORITY;
+                break;
             case 2 :
                 // default sorting style
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
             case 3 :
                 sortingStyle = SortingStyle.PRIORITY_ENDDATE;
+                break;
             default :
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
         }
+        System.out.println(sortingStyle);
         main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        main.getCommandController().resetTaskList();
         main.getCommandController().updateView();
     }
 
