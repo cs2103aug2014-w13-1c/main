@@ -143,6 +143,29 @@ public class ActionController {
         return true;
     }
 
+    // Sort command method(s)
+    protected String sort(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (commandObject.getCommandString().equalsIgnoreCase("start")) {
+            taskController.setSortingStyle(1);
+            return "Sorting by start date\n";
+        }
+        else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
+            taskController.setSortingStyle(2);
+            return "Sorting by end date\n";
+        }
+        else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
+            taskController.setSortingStyle(3);
+            return "Sorting by priority date\n";
+        }
+        else {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        
+    }
+    
     // Search command method(s)
     protected String search(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {

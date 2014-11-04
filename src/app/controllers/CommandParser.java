@@ -15,10 +15,12 @@ public class CommandParser {
     private static Parser dateParser;
     
     public static ArrayList<String> commandKeywords = new ArrayList<String>();
-    private static ArrayList<String> addUpdateKeywords = new ArrayList<String>();
+    private static ArrayList<String> addKeywords = new ArrayList<String>();
+    private static ArrayList<String> updateKeywords = new ArrayList<String>();
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
     private static ArrayList<String> displayKeywords = new ArrayList<String>();
+    private static ArrayList<String> searchKeywords = new ArrayList<String>();
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
@@ -35,12 +37,13 @@ public class CommandParser {
         currentCommandObject = new CommandObject();
         currentCommandObject.setInputString(inputString);
         currentCommandObject.setInputStringArray(inputString.trim().split(" "));
+        currentCommandObject.setEndIndex(currentCommandObject.getInputStringArray().length);
         currentCommandObject.setCommandWord(parseCommandWord(inputString));
         if (commandKeywords.contains(currentCommandObject.getCommandWord())) {
-            currentCommandObject.setCommandString(parseCommandString(inputString));
             setDates();
             checkDate();
             setPriority();
+            currentCommandObject.setCommandString(parseCommandString(inputString));
         }
         return currentCommandObject;
     }
@@ -53,6 +56,7 @@ public class CommandParser {
         commandKeywords.add("display");
         commandKeywords.add("clear");
         commandKeywords.add("exit");
+        commandKeywords.add("sort");
         commandKeywords.add("search");
         commandKeywords.add("update");
         commandKeywords.add("help");
@@ -71,15 +75,24 @@ public class CommandParser {
         endDateKeywords.add("due");
         endDateKeywords.add("by");
         
-        addUpdateKeywords.clear();
-        addUpdateKeywords.add("priority");
-        addUpdateKeywords.addAll(startDateKeywords);
-        addUpdateKeywords.addAll(endDateKeywords);
+        addKeywords.clear();
+        addKeywords.add("priority");
+        addKeywords.addAll(startDateKeywords);
+        addKeywords.addAll(endDateKeywords);
+        
+        updateKeywords.clear();
+        updateKeywords.add("remove");
+        updateKeywords.addAll(addKeywords);
         
         displayKeywords.clear();
         displayKeywords.add("all");
         displayKeywords.add("done");
         displayKeywords.add("overdue");
+                
+        searchKeywords.clear();
+        searchKeywords.add("start");
+        searchKeywords.add("end");
+        searchKeywords.add("priority");
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
@@ -91,10 +104,19 @@ public class CommandParser {
             currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;
         }
-        if (inputStringArray[0].equalsIgnoreCase("add") || inputStringArray[0].equalsIgnoreCase("update")) {
+        if (inputStringArray[0].equalsIgnoreCase("add")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (addUpdateKeywords.contains(inputStringArray[i])) {
+                if (addKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("update")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (updateKeywords.contains(inputStringArray[i])) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -104,6 +126,15 @@ public class CommandParser {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
                 if (displayKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("sort") || inputStringArray[0].equalsIgnoreCase("search")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (searchKeywords.contains(inputStringArray[i])) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -128,8 +159,7 @@ public class CommandParser {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
             int i = 1;
-            while (i < currentCommandObject.getInputStringArray().length &&
-                   !addUpdateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+            while (i < currentCommandObject.getEndIndex()) {
                 result = result.concat(currentCommandObject.getInputStringArray()[i] + " ");
                 i++;
             }
@@ -139,30 +169,53 @@ public class CommandParser {
 
     // Date parser
     private void setDates() {
-        for (int i = 0; i < currentCommandObject.getInputStringArray().length; i++) {
+        boolean startDateFlag = false;
+        boolean endDateFlag = false;
+        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0 ; i--) {
             if (startDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                String toBeParsed = "";
-                String dateKeyword = currentCommandObject.getInputStringArray()[i];
-                i++;
-                while (i < currentCommandObject.getInputStringArray().length &&
-                       !addUpdateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                    toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[i] + " ");
-                    i++;
+                if (!startDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateStartDate(true);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else {
+                        currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateStartDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed.trim()));
-                i--;
+                startDateFlag = true;
             }
             else if (endDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                String toBeParsed = "";
-                String dateKeyword = currentCommandObject.getInputStringArray()[i];
-                i++;
-                while (i < currentCommandObject.getInputStringArray().length &&
-                       !addUpdateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
-                    toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[i] + " ");
-                    i++;
+                if (!endDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateEndDate(true);
+                    }
+                    else {
+                        currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateEndDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed.trim()));
-                i--;
+                endDateFlag = true;
             }
         }
     }
@@ -184,27 +237,38 @@ public class CommandParser {
             }
         }
         if (!dateList.isEmpty()) {
+            if (startDateKeywords.contains(dateKeyword)) {
+                currentCommandObject.setUpdateStartDate(true);
+            }
+            else {
+                currentCommandObject.setUpdateEndDate(true);
+            }
             return dateList.get(0);
         } else {
-            currentCommandObject.setCommandString(
-                    currentCommandObject.getCommandString().concat(" " + dateKeyword + " " + toBeParsed));
             return null;
         }
     }
 
     // Priority parser
     private void setPriority() {
-        for (int i = 0; i < currentCommandObject.getInputStringArray().length; i++) {
-            if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
-                i++;
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("low")) {
-                    currentCommandObject.setPriority(TodoItem.LOW);
-                }
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("medium")) {
-                    currentCommandObject.setPriority(TodoItem.MEDIUM);
-                }
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("high")) {
-                    currentCommandObject.setPriority(TodoItem.HIGH);
+        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
+            for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
+                    if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
+                        currentCommandObject.setPriority(TodoItem.LOW);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
+                        currentCommandObject.setPriority(TodoItem.MEDIUM);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
+                        currentCommandObject.setPriority(TodoItem.HIGH);
+                    }
+                    else {
+                        currentCommandObject.setCommandString(
+                                currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
+                    }
+                    currentCommandObject.setEndIndex(i);
+                    break;
                 }
             }
         }
