@@ -11,6 +11,17 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
+/**
+ * Class ActionController
+ * 
+ * This class takes in a command object, which specifies the details of the action to be carried out,
+ * and then interacts with the model through ModelManager to carry out the action. The data structure can then
+ * be extracted from this class by the CommandController.
+ * 
+ * @author ryan
+ *
+ */
+
 public class ActionController {
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
@@ -62,7 +73,6 @@ public class ActionController {
     // Display command method(s)
     protected String display(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            System.out.println(commandObject.getCommandString());
             if (commandObject.getCommandString().equals("all")) {
                 returnList = taskController.getDoneTasks();
                 returnList.addAll(taskController.getUndoneTasks());
@@ -155,9 +165,18 @@ public class ActionController {
         
     }
     
+    /**
+     * search (method name)
+     * 
+     * Calls taskController to search for query, then updates resultList (which will be used by CommandController
+     * to show to view).
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     // Search command method(s)
     protected String search(CommandObject commandObject) {
-        if (commandObject.getCommandString().isEmpty()) {
+        if (commandObject.getCommandString().isEmpty() && !commandObject.isUpdateStartDate() && !commandObject.isUpdateEndDate()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
         try {
@@ -173,7 +192,6 @@ public class ActionController {
             if (commandObject.isUpdateEndDate()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
-                System.out.println(commandObject.getStartDate());
                 results = taskController.getTasksStartingFrom(commandObject.getStartDate());
             }
         } else if (commandObject.isUpdateEndDate()) {
@@ -183,6 +201,7 @@ public class ActionController {
         }
         returnList = results;
         if (results.isEmpty()) {
+            // Error handling for when I/O with database failed.
             if (modelManager != null) {
                 return CommandController.notifyWithError(ERROR_SEARCH_TERM_NOT_FOUND);
             } else {
@@ -195,6 +214,15 @@ public class ActionController {
         }
     }
 
+    /**
+     * update
+     * 
+     * Updates ModelManager and gets new data based on the CommandObject
+     * 
+     * @param commandObject
+     * @param currentList The current data to be passed to display.
+     * @return a feedback string to notify whether the method has carried out successfully 
+     */
     // Update command method(s)
     protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
@@ -397,6 +425,7 @@ public class ActionController {
 
     protected ActionController(ModelManager manager) {
         modelManager = manager;
+        returnList = modelManager.getTodoItemList();
     }
 
     protected void setTaskController(TaskController controller) {
