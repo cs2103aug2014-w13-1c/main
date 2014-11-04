@@ -136,7 +136,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksStartingFrom(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getStartDate().before(date)) {
+            if (todo.getStartDate() != null && !todo.getStartDate().before(date)) {
                 results.add(todo);
             }
         }
@@ -147,7 +147,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksEndingBy(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getEndDate().after(date)) {
+            if (todo.getEndDate() != null && !todo.getEndDate().after(date)) {
                 results.add(todo);
             }
         }
@@ -158,7 +158,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (!todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
+            if (todo.getStartDate() != null && todo.getEndDate() != null && !todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
                 results.add(todo);
             }
         }
