@@ -90,9 +90,8 @@ public class CommandParser {
         displayKeywords.add("overdue");
                 
         searchKeywords.clear();
-        searchKeywords.add("start");
-        searchKeywords.add("end");
-        searchKeywords.add("priority");
+        searchKeywords.addAll(startDateKeywords);
+        searchKeywords.addAll(endDateKeywords);
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
