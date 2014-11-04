@@ -266,7 +266,7 @@ public class ActionController {
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
 
     // Done method
