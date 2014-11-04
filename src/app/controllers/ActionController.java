@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.LoggingService;
+import app.helpers.CommandObject;
 import app.model.ModelManager;
 import app.model.TodoItem;
 
@@ -10,88 +11,129 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
+/**
+ * Class ActionController
+ * 
+ * This class takes in a command object, which specifies the details of the action to be carried out,
+ * and then interacts with the model through ModelManager to carry out the action. The data structure can then
+ * be extracted from this class by the CommandController.
+ * 
+ * @author ryan
+ *
+ */
+
 public class ActionController {
     // Errors
     private final String ERROR_FILE_EMPTY = "Task list is empty.\n";
-    private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
-    private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
+    private final String ERROR_INVALID_INDEX = "Error. Index is not found.\n";
+    private final String ERROR_WRONG_COMMAND_FORMAT = "Error. Incorrect %1$s command format. Click help icon or type help for info.\n";
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
 
     // Messages
     private final String MESSAGE_ADD_COMPLETE = "Added: \"%1$s\"\n";
+    private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
     private final String MESSAGE_CLEAR_COMPLETE = "Todo cleared\n";
     private final String MESSAGE_DELETE_COMPLETE = "Deleted: \"%1$s\"\n";
-    private final String MESSAGE_SEARCH_COMPLETE = "Search result(s):\n%1$s";
+    private final String MESSAGE_SEARCH_COMPLETE = "Serch complete. \n%1$s";
     private final String MESSAGE_UPDATE_COMPLETE = "Updated: \"%1$s\"\n";
-    private final String MESSAGE_CHANGE_DONE_STATUS_COMPLETE = "Changed done status: \"%1$s\"\n";
-
-
+    
+    private final String MESSAGE_CHANGE_SAVE_FILE_LOCATION = "Save file location is changed\n";
+    private final String MESSAGE_DISPLAY = "Displaying tasks\n";
+    private final String MESSAGE_OPEN_HELP = "Showing help\n";
+    private final String MESSAGE_OPEN_SETTINGS = "Showing settings\n";
+    private final String MESSAGE_REDO = "Redo\n";
+    private final String MESSAGE_UNDO = "Undo\n";
+    
     // Class variables
-    private ModelManager taskList;
-    private Main main;
-    private ArrayList<TodoItem> currentList;
+    private static CommandController commandController;
+    private static ModelManager modelManager;
+    private static TaskController taskController;
+    private static Main main;
+    private static ArrayList<TodoItem> returnList;
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(CommandParser parsedCommand){
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String addNewLine(CommandObject commandObject){
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
         }
         try {
-            taskList.addTask(parsedCommand.getCommandString(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_ADD_COMPLETE, parsedCommand.getInputString()));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_ADD_COMPLETE, commandObject.getInputString()));
     }
 
     // Display command method(s)
-    protected String display(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String display(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            if (commandObject.getCommandString().equals("all")) {
+                returnList = taskController.getDoneTasks();
+                returnList.addAll(taskController.getUndoneTasks());
+            } else if (commandObject.getCommandString().equals("done")) {
+                returnList = taskController.getDoneTasks();
+            } else if (commandObject.getCommandString().equals("overdue")) {
+                returnList = taskController.getOverdueTasks();
+            } else {
+                return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "display"));
+            }
+        } else {
+            returnList = taskController.getUndoneTasks();
         }
-        currentList = taskList.getTodoItemList();
         main.getPrimaryStage().setTitle("wat do");
-        return "displaying tasks\n";
+        return MESSAGE_DISPLAY;
     }
 
     // Clear command method(s)
-    protected String clear(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String clear(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
         try {
-            taskList.clearTasks();
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.clearTasks();
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         return MESSAGE_CLEAR_COMPLETE;
     }
     
     // Delete command method(s)
-    protected String deleteEntry(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String deleteEntry(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
-        int index = -1;
-        index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
-        if(isInt(parsedCommand.getCommandString())) {
-            index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        // To check that the index input is an integer
+        if(!isInt(commandObject.getCommandString())) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
+        // To check that the index is valid
+        if (index < 0 || index >= currentList.size()) {
+            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
-        String toBeDeleted = todoList.get(index).getTaskName();
+        String toBeDeleted = currentList.get(index).getTaskName();
         try {
-            taskList.deleteTask(todoList.get(index).getUUID());
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.deleteTask(currentList.get(index).getUUID());
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
     protected boolean isInt(String number) {
@@ -103,175 +145,302 @@ public class ActionController {
         return true;
     }
 
-    // Search command method(s)
-    protected String search(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    // Sort command method(s)
+    protected String sort(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (todoList.isEmpty()) {
-            return CommandController.showErrorDialog(String.format(ERROR_FILE_EMPTY));
-        }
-        ArrayList<TodoItem> results = main.getTaskController().instantSearch(parsedCommand.getCommandString());
-        if (results.isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_SEARCH_TERM_NOT_FOUND);
+        if (commandObject.getCommandString().equalsIgnoreCase("start")) {
+            taskController.setSortingStyle(1);
+            return "Sorting by start date\n";
+        } else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
+            taskController.setSortingStyle(2);
+            return "Sorting by end date\n";
+        } else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
+            taskController.setSortingStyle(3);
+            return "Sorting by priority date\n";
         } else {
-            currentList = results;
-            main.getPrimaryStage().setTitle("Search results for: \"" + parsedCommand.getCommandString() + "\"");
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        
+    }
+    
+    /**
+     * search (method name)
+     * 
+     * Calls taskController to search for query, then updates resultList (which will be used by CommandController
+     * to show to view).
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
+    // Search command method(s)
+    protected String search(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty() && !commandObject.isUpdateStartDate() && !commandObject.isUpdateEndDate()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
+        }
+        try {
+            ArrayList<TodoItem> todoList = modelManager.getTodoItemList();
+            if (todoList.isEmpty()) {
+                return CommandController.notifyWithError(String.format(ERROR_FILE_EMPTY));
+            }
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        }
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        if (commandObject.isUpdateStartDate()) {
+            if (commandObject.isUpdateEndDate()) {
+                results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
+            } else {
+                results = taskController.getTasksStartingFrom(commandObject.getStartDate());
+            }
+        } else if (commandObject.isUpdateEndDate()) {
+            results = taskController.getTasksEndingBy(commandObject.getEndDate());
+        } else {
+            results = taskController.instantSearch(commandObject.getCommandString());
+        }
+        returnList = results;
+        if (results.isEmpty()) {
+            // Error handling for when I/O with database failed.
+            if (modelManager != null) {
+                return CommandController.notifyWithError(ERROR_SEARCH_TERM_NOT_FOUND);
+            } else {
+                return null;
+            }
+        } else {
+            main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
+            taskController.setDisplayType(TaskController.DisplayType.SEARCH);
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
 
+    /**
+     * update
+     * 
+     * Updates ModelManager and gets new data based on the CommandObject
+     * 
+     * @param commandObject
+     * @param currentList The current data to be passed to display.
+     * @return a feedback string to notify whether the method has carried out successfully 
+     */
     // Update command method(s)
-    protected String update(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
         Boolean[] parameters = {false, false, false, false, false};
         
-        StringTokenizer st = new StringTokenizer(parsedCommand.getCommandString());
+        StringTokenizer st = new StringTokenizer(commandObject.getCommandString());
         String check = st.nextToken();
-        int index = -1;
         // To check that the index input is an integer
-        if(isInt(check)) {
-            index = Integer.parseInt(check) - 1;
+        if(!isInt(check)) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
+        int index = Integer.parseInt(check) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        if (index < 0 || index >= currentList.size()) {
+            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
         String toBeUpdated = "";
         while (st.hasMoreTokens()) {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (parsedCommand.getStartDate() != null) {
+        if (commandObject.isUpdateStartDate()) {
             parameters[1] = true;
         }
-        if (parsedCommand.getEndDate() != null) {
+        if (commandObject.isUpdateEndDate()) {
             parameters[2] = true;
         }
-        if (parsedCommand.getPriority() != null) {
+        if (commandObject.getPriority() != null) {
             parameters[3] = true;
         }
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(),
-                                parameters, toBeUpdated.trim(), parsedCommand.getStartDate(), parsedCommand.getEndDate(), parsedCommand.getPriority(), null);
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.updateTask(currentList.get(index).getUUID(),
+                                    parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_UPDATE_COMPLETE, index + 1));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
 
     // Done method
-    protected String done(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
         }
         // To check that the index input is an integer
-        if (!isInt(parsedCommand.getCommandString())) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        if (!isInt(commandObject.getCommandString())) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
         }
-        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        if (index < 0 || index >= currentList.size()) {
+            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, true);
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
     // Undone method
-    protected String undone(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
         }
         // To check that the index input is an integer
-        if (!isInt(parsedCommand.getCommandString())) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        if (!isInt(commandObject.getCommandString())) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
         }
-        int index = Integer.parseInt(parsedCommand.getCommandString()) - 1;
+        int index = Integer.parseInt(commandObject.getCommandString()) - 1;
         // To check that the index is valid
-        ArrayList<TodoItem> todoList = taskList.getTodoItemList();
-        if (index < 0 || index >= todoList.size()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+        if (index < 0 || index >= currentList.size()) {
+            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            taskList.updateTask(taskList.getTodoItemList().get(index).getUUID(), parameters, null, null, null, null, false);
+            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+            commandController.getUndoController().clearRedo();
+            modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
-            // do something here?
+            CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return CommandController.showInfoDialog(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, parsedCommand.getCommandString()));
+        return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
     // Help method
-    protected String help(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String help(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openHelp();
-        return "showing help\n";
+        return MESSAGE_OPEN_HELP;
     }
 
     // Settings method
-    protected String settings(CommandParser parsedCommand) {
-        if (!parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String settings(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
         main.getRootViewManager().openSettings();
-        return "showing settings\n";
+        return MESSAGE_OPEN_SETTINGS;
     }
     
     // Change save file location (for .json)
-    protected String changeSaveLocation(CommandParser parsedCommand) {
-        if (parsedCommand.getCommandString().isEmpty()) {
-            return CommandController.showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+    protected String changeSaveLocation(CommandObject commandObject) {
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
         try {
-            taskList.changeFileDirectory(parsedCommand.getCommandString());
+            modelManager.changeSettings(commandObject.getCommandString(), null, null);
         } catch (IOException e) {
-            // do something here?
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return "changed save location\n";
+        return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
+    // Undo and redo method(s)
+    protected String undo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (main.getCommandController().getUndoController().isUndoEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            try {
+                main.getCommandController().getUndoController().saveRedo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadUndo());
+            } catch (IOException e) {
+                CommandController.notifyWithError("Failed to write to file.");
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            }
+            return MESSAGE_UNDO;
+        }
+    }
 
-    protected ActionController() {
+    protected String redo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (main.getCommandController().getUndoController().isRedoEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            try {
+                main.getCommandController().getUndoController().saveUndo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadRedo());
+            } catch (IOException e) {
+                CommandController.notifyWithError("Failed to write to file.");
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            }
+            return MESSAGE_REDO;
+        }
+    }
+
+    // Change settings from GUI - Written by Dat
+    protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+        assert filePath != null;
+        
         try {
-            taskList = new ModelManager();
+            modelManager.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
         } catch (IOException e) {
-            // do something here?
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        currentList = new ArrayList<TodoItem>();
-    }
-    
-    protected ArrayList<TodoItem> getCurrentList() {
-        return currentList;
-    }
-    
-    protected ModelManager getTaskList() {
-        return taskList;
+        return "changed settings\n";
     }
 
-    /**
-     * Is called by the CommandController to set the main app for ActionController.
-     *
-     * @param main
-     */
+    protected ActionController(ModelManager manager) {
+        modelManager = manager;
+        returnList = modelManager.getTodoItemList();
+    }
+
+    protected void setTaskController(TaskController controller) {
+        taskController = controller;
+    }
+
+    protected ArrayList<TodoItem> getReturnList() {
+        return returnList;
+    }
+
     protected void setMainApp(Main main) {
         this.main = main;
+    }
+
+    protected void setCommandController(CommandController controller) {
+        commandController = controller;
     }
 }

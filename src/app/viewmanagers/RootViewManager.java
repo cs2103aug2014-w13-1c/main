@@ -28,10 +28,14 @@ public class RootViewManager {
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
     private ListView taskListView;
+    private Pane titleBarView;
 
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
     private HelpViewManager helpViewManager;
+    private InputFieldViewManager inputFieldViewManager;
+    private TitleBarViewManager titleBarViewManager;
+    private SidebarViewManager sidebarViewManager;
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -40,6 +44,7 @@ public class RootViewManager {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
             this.initHelpView();
+            this.showTitleBarView();
             this.showSidebar();
             this.showInputField();
             this.showTaskListView();
@@ -84,6 +89,19 @@ public class RootViewManager {
         helpView.toBack();
     }
 
+    private void showTitleBarView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
+        titleBarView = loader.load();
+
+        titleBarView.getStylesheets().add("app/stylesheets/titleBarView.css");
+
+        titleBarViewManager = loader.getController();
+        titleBarViewManager.setRootViewManager(this);
+
+        borderPane.setTop(titleBarView);
+    }
+
     private void showTaskListView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
@@ -98,7 +116,7 @@ public class RootViewManager {
     }
 
     private void showInputField() {
-        InputFieldViewManager inputFieldViewManager = new InputFieldViewManager();
+        inputFieldViewManager = new InputFieldViewManager();
         inputFieldViewManager.setRootViewManager(this);
         inputField = inputFieldViewManager.getInputField();
 
@@ -112,24 +130,29 @@ public class RootViewManager {
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
 
-        SidebarViewManager controller = loader.getController();
-        controller.setRootViewManager(this);
+        sidebarViewManager = loader.getController();
+        sidebarViewManager.setRootViewManager(this);
 
         borderPane.setLeft(sidebar);
     }
 
     // Getters and Setters
 
-    public void closeSettings(File filePath) {
-        if (filePath != null) {
-            getMainApp().getCommandController().changeSaveLocation(filePath.toString() + "/");
-        }
+    public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
+        getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
+        closeSettings();
+    }
+
+    public void closeSettings() {
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
     public void openSettings() {
+        settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
+        settingsViewManager.setRandomColorsEnabled(getMainApp().getCommandController().areRandomColorsEnabled());
+        settingsViewManager.setNotificationsEnabled(getMainApp().getCommandController().areNotificationsEnabled());
         settingsView.toFront();
         settingsViewManager.focusOnButton();
     }
@@ -160,18 +183,21 @@ public class RootViewManager {
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
     }
-
-    public void setAndFocusInputField(String text) {
-//        mainApp.getPrimaryStage().hide();
-//        mainApp.getPrimaryStage().show();
-
-        mainApp.getPrimaryStage().requestFocus();
-//        rootLayout.requestFocus();
-//        borderPane.requestFocus();
-
-        inputField.replaceText(text);
-        inputField.positionCaret(text.length());
-        inputField.requestFocus();
+    
+    public InputFieldViewManager getInputFieldViewManager() {
+        return inputFieldViewManager;
     }
 
+    public void setAndFocusInputField(String text) {
+        if (!inputField.getText().equals(text)) {
+            inputField.replaceText(text);
+            inputField.positionCaret(text.length());
+            inputField.requestFocus();
+        }
+    }
+
+    public void refreshSidebar() {
+        sidebarViewManager.refreshUndoButton();
+        sidebarViewManager.refreshRedoButton();
+    }
 }

@@ -1,6 +1,7 @@
 package app.model;
 
 import app.helpers.LoggingService;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -13,38 +14,62 @@ import java.util.logging.Level;
 
 public class ModelManager {
     
+    public static final String LOAD_SUCCESS = "Successfully loaded file!";
+    public static final String LOAD_FAILED = "Failed to load file.";
+    public static final String PARSE_FAILED = "File data is corrupted.";
+    public static final String SETTINGS_PARSE_FAILED = "Settings data is corrupted.";
+    public static final String WRITE_SUCCESS = "Successfully written to file!";
+    public static final String WRITE_FAILED = "Failed to write to file.";
+    public static final String WRITE_SETTINGS_FAILED = "Failed to write to settings file.";
+    public static final String LOAD_SETTINGS_FAILED = "Failed to load settings file.";
+    
     private TodoItemList todoList;
     private FileStorage dataStorage;
     private UUID latestModified;
     
+    /**
+     * Constructor
+     * 
+     * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
+     */
     public ModelManager() throws IOException {
+        System.out.println("showed up");
+        
         this.dataStorage = new FileStorage();
         this.latestModified = null;
         
         try {
             dataStorage.loadSettings();
         } catch (JSONException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse settings data.");
-            throw new IOException("Failed to parse settings JSON data.");
+            LoggingService.getLogger().log(Level.SEVERE, SETTINGS_PARSE_FAILED);
+            throw new IOException(SETTINGS_PARSE_FAILED);
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, LOAD_SETTINGS_FAILED);
+            throw new IOException(LOAD_SETTINGS_FAILED);
         }
         
         try {
             this.todoList = new TodoItemList(dataStorage.loadFile());
         } catch (ParseException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse date format at " + dataStorage.getFullFileName() + " at position " + e.getErrorOffset() + ".");
-            throw new IOException("Failed to parse date format at " + dataStorage.getFullFileName() + ".");
+            LoggingService.getLogger().log(Level.SEVERE, PARSE_FAILED);
+            throw new IOException(PARSE_FAILED);
         } catch (JSONException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "Failed to parse JSON data.");
-            throw new IOException("Failed to parse JSON data.");
+            LoggingService.getLogger().log(Level.SEVERE, PARSE_FAILED);
+            throw new IOException(PARSE_FAILED);
         } catch (IOException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "Failed to load file at " + dataStorage.getFullFileName() + ".");
-            throw new IOException("Failed to load file at " + dataStorage.getFullFileName() + ".");
+            LoggingService.getLogger().log(Level.SEVERE, LOAD_FAILED);
+            throw new IOException(LOAD_FAILED);
         }
         
         TodoItemSorter.sortingStyle = TodoItemSorter.DEFAULT_SORTING_STYLE;
         TodoItemSorter.resortTodoList(todoList);
     }
     
+    /**
+     * addTask
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     */
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         
         TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
@@ -59,6 +84,11 @@ public class ModelManager {
         latestModified = newTodoItem.getUUID();
     }
     
+    /**
+     * updateTask
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         
         // parameters array should be length 5
@@ -103,8 +133,15 @@ public class ModelManager {
         latestModified = toChange.getUUID();
     }
     
+    /**
+     * deleteTask
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
     public TodoItem deleteTask(UUID itemID) throws IOException {
         TodoItem deletedItem = todoList.deleteByUUID(itemID);
+        
+        assert deletedItem != null;
         
         TodoItemSorter.resortTodoList(todoList);
 
@@ -115,6 +152,11 @@ public class ModelManager {
         return deletedItem;
     }
     
+    /**
+     * clearTasks
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
     public void clearTasks() throws IOException {
         todoList.clearTodoItems();
 
@@ -123,8 +165,14 @@ public class ModelManager {
         dataStorage.updateFile(todoList.getTodoItems());
     }
     
-    public void changeFileDirectory(String fileDirectory) throws IOException {
-        todoList = new TodoItemList(dataStorage.changeDirectory(fileDirectory));
+    /**
+     * changeSettings
+     * 
+     * @throws IOException with WRITE_SETTINGS_FAILED
+     */
+    public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
+        todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
+        latestModified = null;
     }
     
     public void setSortingStyle(int newSortingStyle) {
@@ -144,6 +192,14 @@ public class ModelManager {
         return dataStorage.getFileDirectory();
     }
     
+    public Boolean areRandomColorsEnabled() {
+        return dataStorage.areRandomColorsEnabled();
+    }
+    
+    public Boolean areNotificationsEnabled() {
+        return dataStorage.areNotificationsEnabled();
+    }
+    
     public String getFullFileName() {
         return dataStorage.getFullFileName();
     }
@@ -156,6 +212,15 @@ public class ModelManager {
         return todoList.searchIndexByUUID(latestModified);
     }
     
+    public UUID getLastModifiedUUID() {
+        return latestModified;
+    }
+    
+    /**
+     * loadTodoItems
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
     public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
         dataStorage.updateFile(newTodoItems);
         

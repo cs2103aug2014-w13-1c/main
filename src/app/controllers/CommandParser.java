@@ -1,71 +1,51 @@
 package app.controllers;
 
+import app.helpers.CommandObject;
 import app.helpers.Keyword;
 import app.model.TodoItem;
 import com.joestelmach.natty.DateGroup;
-import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public class CommandParser {
-    private String inputString;
-    private String commandWord;
-    private String commandString;
-    private Date startDate;
-    private Date endDate;
-    private String priority;
+    private static CommandObject currentCommandObject;
+    private static Parser dateParser;
     
-    private String[] inputStringArray;
-    
-    private static ArrayList<String> keywords = new ArrayList<String>();
-    private static ArrayList<String> commandKeywords = new ArrayList<String>();
+    public static ArrayList<String> commandKeywords = new ArrayList<String>();
+    private static ArrayList<String> addKeywords = new ArrayList<String>();
+    private static ArrayList<String> updateKeywords = new ArrayList<String>();
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
+    private static ArrayList<String> displayKeywords = new ArrayList<String>();
+    private static ArrayList<String> searchKeywords = new ArrayList<String>();
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
         return inputString.indexOf(" ", startIndex);
     }
 
-//    private int getMonth(String monthInput) {
-//        String[] monthName = {
-//            "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
-//        };
-//        int month = -1;
-//        for (int i = 0; i < 12; i++) {
-//            if (monthName[i].equalsIgnoreCase(monthInput)) {
-//                month = i;
-//                break;
-//            }
-//        }
-//        return month;
-//    }
-
     // Constructor and initialization
-    protected CommandParser(String inputString) {
-        init();
-        this.inputString = inputString;
-        this.inputStringArray = inputString.trim().split(" ");
-        setCommandWord(inputString);
-        if (commandKeywords.contains(commandWord)) {
-            setCommandString(inputString);
-            setDates(inputString);
-            checkDate();
-            setPriority();
-        }
+    protected CommandParser() {
+        setKeywords();
+        dateParser = new Parser();
     }
 
-    private void init() {
-        commandWord = "";
-        commandString = "";
-        startDate = null;
-        endDate = null;
-        priority = null;
-        setKeywords();
+    protected CommandObject parseCommand(String inputString) {
+        currentCommandObject = new CommandObject();
+        currentCommandObject.setInputString(inputString);
+        currentCommandObject.setInputStringArray(inputString.trim().split(" "));
+        currentCommandObject.setEndIndex(currentCommandObject.getInputStringArray().length);
+        currentCommandObject.setCommandWord(parseCommandWord(inputString));
+        if (commandKeywords.contains(currentCommandObject.getCommandWord())) {
+            setDates();
+            checkDate();
+            setPriority();
+            currentCommandObject.setCommandString(parseCommandString(inputString));
+        }
+        return currentCommandObject;
     }
 
  // Keywords parser
@@ -76,6 +56,7 @@ public class CommandParser {
         commandKeywords.add("display");
         commandKeywords.add("clear");
         commandKeywords.add("exit");
+        commandKeywords.add("sort");
         commandKeywords.add("search");
         commandKeywords.add("update");
         commandKeywords.add("help");
@@ -83,6 +64,8 @@ public class CommandParser {
     	commandKeywords.add("saveto");
         commandKeywords.add("done");
         commandKeywords.add("undone");
+        commandKeywords.add("undo");
+        commandKeywords.add("redo");
         
     	startDateKeywords.clear();
         startDateKeywords.add("start");
@@ -91,160 +74,202 @@ public class CommandParser {
         endDateKeywords.add("end");
         endDateKeywords.add("due");
         endDateKeywords.add("by");
-
-        keywords.clear();
-        keywords.add("priority");
-        keywords.add("all");
-        keywords.addAll(commandKeywords);
-        keywords.addAll(startDateKeywords);
-        keywords.addAll(endDateKeywords);
+        
+        addKeywords.clear();
+        addKeywords.add("priority");
+        addKeywords.addAll(startDateKeywords);
+        addKeywords.addAll(endDateKeywords);
+        
+        updateKeywords.clear();
+        updateKeywords.add("remove");
+        updateKeywords.addAll(addKeywords);
+        
+        displayKeywords.clear();
+        displayKeywords.add("all");
+        displayKeywords.add("done");
+        displayKeywords.add("overdue");
+                
+        searchKeywords.clear();
+        searchKeywords.addAll(startDateKeywords);
+        searchKeywords.addAll(endDateKeywords);
     }
-    
+
     protected static ArrayList<Keyword> getKeywords(String inputString) {
-        setKeywords();
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
-        int startIndex = 0, endIndex = 0;
-        for (int i = 0; i < inputStringArray.length; i++) {
-            endIndex = startIndex + inputStringArray[i].length() - 1;
-            if (keywords.contains(inputStringArray[i])) {
-                currentKeywords.add(new Keyword(startIndex, endIndex));
-            }
+        int startIndex = 0;
+        int endIndex = inputStringArray[0].length() - 1;;
+        if (commandKeywords.contains(inputStringArray[0])) {
+            currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;
         }
-//        for (int i = 0; i < currentKeywords.size(); i++) {
-//            System.out.println(currentKeywords.get(i).getStartIndex() + " " + currentKeywords.get(i).getEndIndex());
-//        }
+        if (inputStringArray[0].equalsIgnoreCase("add")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (addKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("update")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (updateKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("display")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (displayKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("sort") || inputStringArray[0].equalsIgnoreCase("search")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (searchKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
         return currentKeywords;
     }
 
-    // Return the unparsed input string
-    protected String getInputString() {
-        return inputString;
-    }
-    
     // Command word parser
-    private void setCommandWord(String inputString) {
+    private String parseCommandWord(String inputString) {
         int firstWordPos = nextSpacePosition(inputString, 0);
         if(firstWordPos == -1) {
-            commandWord = inputString;
-        }
-        else {
-            commandWord = inputString.substring(0, nextSpacePosition(inputString, 0));
+            return inputString;
+        } else {
+            return inputString.substring(0, nextSpacePosition(inputString, 0));
         }
     }
-    
-    protected String getCommandWord() {
-        return commandWord;
-    }
-    
+
     // Command string (string after the command word) parser
-    private void setCommandString(String inputString) {
+    private String parseCommandString(String inputString) {
+        String result = "";
         int firstWordPos = nextSpacePosition(inputString, 0);
         if (firstWordPos != -1) {
             int i = 1;
-            while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
-                commandString = commandString.concat(inputStringArray[i] + " ");
+            while (i < currentCommandObject.getEndIndex()) {
+                result = result.concat(currentCommandObject.getInputStringArray()[i] + " ");
                 i++;
             }
         }
-        commandString = commandString.trim();
+        return result.trim();
     }
-    
-    protected String getCommandString() {
-        return commandString;
-    }
-    
+
     // Date parser
-    private void setDates(String inputString) {
-        for (int i = 0; i < inputStringArray.length; i++) {
-            if (startDateKeywords.contains(inputStringArray[i])) {
-                String toBeParsed = "";
-                i++;
-                while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
-                    toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
-                    i++;
+    private void setDates() {
+        boolean startDateFlag = false;
+        boolean endDateFlag = false;
+        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0 ; i--) {
+            if (startDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+                if (!startDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateStartDate(true);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else {
+                        currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateStartDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                startDate = getDate(toBeParsed.trim());
-                i--;
+                startDateFlag = true;
             }
-            else if (endDateKeywords.contains(inputStringArray[i])) {
-                String toBeParsed = "";
-                i++;
-                while (i < inputStringArray.length && !keywords.contains(inputStringArray[i])) {
-                    toBeParsed = toBeParsed.concat(inputStringArray[i] + " ");
-                    i++;
+            else if (endDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+                if (!endDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equals("remove")) {
+                        currentCommandObject.setUpdateEndDate(true);
+                    }
+                    else {
+                        currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.isUpdateEndDate()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
                 }
-                endDate = getDate(toBeParsed.trim());
-                i--;
+                endDateFlag = true;
             }
         }
     }
     
     private void checkDate() {
-        if (startDate != null && endDate != null) {
-            if (endDate.before(startDate)) {
-                commandWord = "dateError";
+        if (currentCommandObject.getStartDate() != null && currentCommandObject.getEndDate() != null) {
+            if (currentCommandObject.getEndDate().before(currentCommandObject.getStartDate())) {
+                currentCommandObject.setCommandWord("dateError");
             }
         }
     }
 
-    @SuppressWarnings("unused")
-    private Date getDate(String toBeParsed) {
-        Parser dateParser = new Parser();
+    private Date getDate(String dateKeyword, String toBeParsed) {
         List<Date> dateList = new ArrayList<Date>();
         List<DateGroup> groups = dateParser.parse(toBeParsed);
         for (DateGroup group : groups) {
-            List<Date> dates = group.getDates();
-            int line = group.getLine();
-            int column = group.getPosition();
-            String matchingValue = group.getText();
-            String syntaxTree = group.getSyntaxTree().toStringTree();
-            Map<String, List<ParseLocation>> parseMap = group.getParseLocations();
-            boolean isRecurreing = group.isRecurring();
-            Date recursUntil = group.getRecursUntil();
-
-            /* if any Dates are present in current group then add them to dateList */
             if (group.getDates() != null) {
                     dateList.addAll(group.getDates());
             }
         }
         if (!dateList.isEmpty()) {
+            if (startDateKeywords.contains(dateKeyword)) {
+                currentCommandObject.setUpdateStartDate(true);
+            }
+            else {
+                currentCommandObject.setUpdateEndDate(true);
+            }
             return dateList.get(0);
-        }
-        else {
-            commandWord = "dateError";
+        } else {
             return null;
         }
     }
-    
-    protected Date getStartDate() {
-        return startDate;
-    }
-    
-    protected Date getEndDate() {
-        return endDate;
-    }
-    
+
     // Priority parser
     private void setPriority() {
-        for (int i = 0; i < inputStringArray.length; i++) {
-            if (inputStringArray[i].equalsIgnoreCase("priority")) {
-                i++;
-                if (inputStringArray[i].equalsIgnoreCase("low")) {
-                    priority = TodoItem.LOW;
-                }
-                if (inputStringArray[i].equalsIgnoreCase("medium")) {
-                    priority = TodoItem.MEDIUM;
-                }
-                if (inputStringArray[i].equalsIgnoreCase("high")) {
-                    priority = TodoItem.HIGH;
+        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
+            for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
+                    if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
+                        currentCommandObject.setPriority(TodoItem.LOW);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
+                        currentCommandObject.setPriority(TodoItem.MEDIUM);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
+                        currentCommandObject.setPriority(TodoItem.HIGH);
+                    }
+                    else {
+                        currentCommandObject.setCommandString(
+                                currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
+                    }
+                    currentCommandObject.setEndIndex(i);
+                    break;
                 }
             }
         }
-    }
-    
-    protected String getPriority() {
-        return priority;
     }
 }

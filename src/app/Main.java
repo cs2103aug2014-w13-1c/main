@@ -5,7 +5,10 @@ import app.controllers.TaskController;
 import app.helpers.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.Dialogs;
 
 import java.net.URL;
@@ -13,6 +16,8 @@ import java.util.logging.Level;
 
 public class Main extends Application {
 
+    private static String[] commandArguments;
+    
     private Stage primaryStage;
 
     private CommandController commandController;
@@ -27,7 +32,16 @@ public class Main extends Application {
         initViewComponent();
         initControllerComponents();
 
-        rootViewManager.setAndFocusInputField("");
+        if (commandArguments.length == 0) {
+            // Actual use case
+            rootViewManager.setAndFocusInputField("");
+        } else {
+            // Testing
+            for (String command : commandArguments) {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute(command);
+            }
+            rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("exit");
+        }
     }
 
     private void createPrimaryStage(Stage stage) {
@@ -47,26 +61,30 @@ public class Main extends Application {
         taskController = taskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
-        commandController.setTaskList(commandController.getTaskList());
+        commandController.setTaskController(taskController);
         commandController.updateView();
     }
 
-    public void showInfoDialog(String title, String message) {
-        Dialogs.create()
-                .owner(primaryStage)
-                .title(title)
-                .masthead(null)
-                .message(message)
-                .showInformation();
+    public void showInfoNotification(String title, String message) {
+        // Actual use case.
+        if (commandArguments.length == 0 && getCommandController().areNotificationsEnabled()) {
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).hideAfter(new Duration(1000)).showInformation();
+        }
+        // If false, currently in test mode so no dialogs are used.
+    }
+
+    public void showErrorNotification(String title, String error) {
+        if (getCommandController().areNotificationsEnabled()) {
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
+        }
     }
 
     public void showErrorDialog(String title, String error) {
         Dialogs.create()
                 .owner(primaryStage)
                 .title(title)
-                .masthead(null)
-                .message(error)
-                .showError();
+                .masthead("Error")
+                .message(error).showError();
     }
 
     public URL getResourceURL(String relativePath) {
@@ -90,6 +108,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        commandArguments = args;
         launch(args);
     }
 }

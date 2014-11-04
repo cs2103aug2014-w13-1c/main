@@ -18,6 +18,7 @@
     <orderEntry type="library" name="org.json-20120521" level="project" />
     <orderEntry type="library" name="natty-0.9" level="project" />
     <orderEntry type="library" name="antlr-runtime-3.2" level="project" />
+    <orderEntry type="library" name="system-rules-1.7.0" level="project" />
   </component>
 </module>
 

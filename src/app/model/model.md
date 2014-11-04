@@ -30,9 +30,14 @@ ModelManager
 * public TodoItem deleteTask(UUID itemID) throws IOException
 * public void clearTasks() throws IOException
 
-### File storage
-* public void changeFileDirectory(String fileDirectory) throws IOException
+### Settings
+* public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException
+ * asserts _fileDirectory != null_
+ * randomColorsEnabled and notificationsEnabled can be null if you do not wish to change them
+ * randomColorsEnabled and notificationsEnabled default to true
 * public String getFileDirectory()
+* public Boolean areRandomColorsEnabled()
+* public Boolean areNotificationsEnabled()
 
 ### Sorting
 * public void setSortingStyle(int newSortingStyle)
@@ -61,6 +66,16 @@ ModelManager
 
 ### Undo
 * public void loadTodoItems(ArrayList<TodoItem> todoItems)
+
+### Exceptions
+* All are IOExceptions
+* Messages can be as follows:
+ * ModelManager.LOAD_FAILED (means watdo.json is not accessible)
+ * ModelManager.WRITE_FAILED (means watdo.json is not accessible)
+ * ModelManager.LOAD_SETTINGS_FAILED (means settings.json is not accessible)
+ * ModelManager.WRITE_SETTINGS_FAILED (means settings.json is not accessible)
+ * ModelManager.PARSE_FAILED (means watdo.json is corrupted)
+ * ModelManager.SETTINGS_PARSE_FAILED (means settings.json is corrupted)
 
 TodoItem
 -----------

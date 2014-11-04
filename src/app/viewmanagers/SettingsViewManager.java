@@ -3,6 +3,7 @@ package app.viewmanagers;
 import app.helpers.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 
@@ -26,30 +27,32 @@ public class SettingsViewManager {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private CheckBox randomColorsCheckBox;
+
+    @FXML
+    private CheckBox notificationCheckBox;
+
     private RootViewManager rootViewManager;
 
-    private File filePath;
+    private File directory;
+    private Boolean randomColorsEnabled;
 
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        // filePath = rootViewManager.getMainApp().getSaveLocation();
-
-        if (filePath != null) {
-            filePathTextField.setText(filePath.toString());
-        }
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewManager.closeSettings(filePath));
-        cancelButton.setOnAction((event) -> rootViewManager.closeSettings(null));
+        saveButton.setOnAction((event) -> rootViewManager.saveSettings(filePathTextField.getText(), randomColorsCheckBox.isSelected(), notificationCheckBox.isSelected()));
+        cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
     }
 
     private void showChooser(DirectoryChooser directoryChooser) {
-        filePath = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
-        filePathTextField.setText(filePath.toString());
+        directory = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
+        filePathTextField.setText(directory.toString());
 
-        assert(filePath.length() >= 0);
-        LoggingService.getLogger().log(Level.INFO, "Selected filePath: " + filePath.toString());
+        assert(directory.length() >= 0);
+        LoggingService.getLogger().log(Level.INFO, "Selected directory: " + directory.toString());
     }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
@@ -63,5 +66,17 @@ public class SettingsViewManager {
 
     public void cancelFocusOnButton() {
         cancelButton.setDefaultButton(false);
+    }
+
+    public void setAbsolutePathToDirectory(String absolutePath) {
+        filePathTextField.setText(absolutePath);
+    }
+
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
+        notificationCheckBox.setSelected(notificationsEnabled);
+    }
+
+    public void setRandomColorsEnabled(Boolean randomColorsEnabled) {
+        randomColorsCheckBox.setSelected(randomColorsEnabled);
     }
 }

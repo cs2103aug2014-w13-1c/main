@@ -1,13 +1,17 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.CommandObject;
 import app.helpers.Keyword;
+import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 
 /**
@@ -21,19 +25,33 @@ import java.util.ArrayList;
 
 public class CommandController {
     protected enum CommandType {
-        ADD, DELETE, DISPLAY, CLEAR, EXIT, SEARCH, UPDATE, DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SORT, SEARCH, UPDATE,
+        DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        UNDO, REDO
     }
 
     // Errors
     private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
-    private final String ERROR_WRONG_COMMAND_FORMAT = "Command error.\n";
-
+    private final String ERROR_INVALID_COMMAND_WORD = "Error. Unidentified command word.\n";
+    
+    private final String ERROR_SETTINGS_PARSE_FAILED = "Seems like there's a problem with your settings.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_PARSE_FAILED = "Seems like there's a problem with your watdo.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_SETTINGS_LOAD_FAILED = "Failed to load settings.json.\nPlease close the program and try again.";
+    private final String ERROR_LOAD_FAILED = "Failed to load watdo.json.\nPlease close the program and try again.";
+    private final String ERROR_UNKNOWN_MODEL_ERROR = "There has been an unexpected problem with our database.\nPlease close the program and try again.";
+    
     // Class variables
-    ActionController action;
-    private static ModelManager taskList;
+    private static ActionController actionController;
+    private static ModelManager modelManager;
     private static Main main;
-    private ArrayList<TodoItem> currentList;
+    private static TaskController taskController;
+    private static CommandParser commandParser;
+    private static UndoController undoController;
 
+    private static String modelManagerError;
+    
+    private ArrayList<TodoItem> currentList;
+    
     // Print string methods
     protected void printString(String message) {
         System.out.print(message);
@@ -51,6 +69,8 @@ public class CommandController {
             return CommandType.CLEAR;
         } else if (commandWord.equalsIgnoreCase("exit")) {
             return CommandType.EXIT;
+        } else if (commandWord.equalsIgnoreCase("sort")) {
+            return CommandType.SORT;
         } else if (commandWord.equalsIgnoreCase("search")) {
             return CommandType.SEARCH;
         } else if (commandWord.equalsIgnoreCase("update")) {
@@ -67,106 +87,132 @@ public class CommandController {
             return CommandType.SAVETO;
         } else if (commandWord.equalsIgnoreCase("dateError")) {
             return CommandType.INVALID_DATE;
+        } else if (commandWord.equalsIgnoreCase("undo")) {
+            return CommandType.UNDO;
+        } else if (commandWord.equalsIgnoreCase("redo")) {
+            return CommandType.REDO;
         } else {
             return CommandType.INVALID;
         }
     }
 
-    protected String processCommand(CommandParser parsedCommand) {
-        ActionController action = new ActionController();
-        action.setMainApp(main);
-        
-        String commandWord = parsedCommand.getCommandWord();
+    protected String processCommand(CommandObject commandObject) {
+        String commandWord = commandObject.getCommandWord();
         CommandType commandType = determineCommandType(commandWord);
         String feedback;
         switch (commandType) {
             case ADD :
-                feedback = action.addNewLine(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.addNewLine(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DISPLAY :
-                feedback = action.display(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
-                updateView();
+                feedback = actionController.display(commandObject);
+                currentList = actionController.getReturnList();
+                updateView(actionController.getReturnList());
                 return feedback;
             case CLEAR :
-                feedback = action.clear(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.clear(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DELETE :
-                feedback = action.deleteEntry(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.deleteEntry(commandObject, currentList);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case SORT :
+                feedback = actionController.sort(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
             case SEARCH :
-                feedback = action.search(parsedCommand);
-                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
-                updateView(currentList);
+                feedback = actionController.search(commandObject);
+                currentList = actionController.getReturnList();
+                updateView(actionController.getReturnList());
                 return feedback;
             case UPDATE :
-                feedback = action.update(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.update(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case DONE :
-                feedback = action.done(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.done(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case UNDONE :
-                feedback = action.undone(parsedCommand);
-//                currentList = action.getCurrentList();
-                taskList = action.getTaskList();
+                feedback = actionController.undone(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
             case HELP :
-                feedback = action.help(parsedCommand);
+                feedback = actionController.help(commandObject);
                 return feedback;
             case SETTINGS :
-                feedback = action.settings(parsedCommand);
+                feedback = actionController.settings(commandObject);
                 return feedback;
             case SAVETO :
-                feedback = action.changeSaveLocation(parsedCommand);
+                feedback = actionController.changeSaveLocation(commandObject);
+                undoController.clear();
+                resetTaskList();
+                updateView();
                 return feedback;
             case EXIT :
-                showInfoDialog("Bye!");
                 System.exit(0);
             case INVALID_DATE :
-                feedback = showErrorDialog(ERROR_INVALID_DATE);
+                feedback = notifyWithError(ERROR_INVALID_DATE);
+                return feedback;
+            case UNDO :
+                feedback = actionController.undo(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case REDO :
+                feedback = actionController.redo(commandObject);
+                resetTaskList();
+                updateView();
                 return feedback;
             default :
-                feedback = showErrorDialog(ERROR_WRONG_COMMAND_FORMAT);
+                feedback = notifyWithError(ERROR_INVALID_COMMAND_WORD);
                 return feedback;
         }
     }
 
     // CommandController public methods
     public CommandController() {
-        action = new ActionController();
-        action.setMainApp(main);
-        taskList = action.getTaskList();
-        currentList = new ArrayList<TodoItem>();
+        commandParser = new CommandParser();
+        try {
+            modelManager = new ModelManager();
+        } catch (IOException e) {
+            switch(e.getMessage()) {
+                case ModelManager.LOAD_SETTINGS_FAILED:
+                    modelManagerError = ERROR_SETTINGS_LOAD_FAILED;
+                    break;
+                case ModelManager.SETTINGS_PARSE_FAILED:
+                    modelManagerError = ERROR_SETTINGS_PARSE_FAILED;
+                    break;
+                case ModelManager.LOAD_FAILED:
+                    modelManagerError = ERROR_LOAD_FAILED;
+                    break;
+                case ModelManager.PARSE_FAILED:
+                    modelManagerError = ERROR_PARSE_FAILED;
+                    break;
+                default:
+                    modelManagerError = ERROR_UNKNOWN_MODEL_ERROR;
+                    break;
+            }   
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        actionController = new ActionController(modelManager);
+        actionController.setCommandController(this);
+        undoController = UndoController.getUndoController();
     }
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandParser parsedCommand = new CommandParser(inputString);
-        printString(processCommand(parsedCommand));
+        CommandObject commandObject = commandParser.parseCommand(inputString);
+        printString(processCommand(commandObject));
     }
 
     public ArrayList<Keyword> parseKeywords(String inputString) {
@@ -175,13 +221,12 @@ public class CommandController {
 
     public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
         ObservableList<TodoItem> taskData = FXCollections.observableArrayList(todoList);
-        
         return taskData;
     }
 
     public void updateView() {
         main.getPrimaryStage().setTitle("wat do");
-        main.getRootViewManager().getTaskListViewManager().updateView(convertList(getTaskList()));
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
@@ -189,45 +234,73 @@ public class CommandController {
     }
 
     public static ArrayList<TodoItem> getTaskList() {
-        return taskList.getTodoItemList();
-    }
-
-    public void setTaskList(ArrayList<TodoItem> todoList) {
-        currentList = todoList;
+        if (modelManager == null) {
+            main.showErrorDialog("FILE ERROR", modelManagerError);
+            return new ArrayList<TodoItem>();
+        }
+        return modelManager.getTodoItemList();
     }
 
     public void resetTaskList() {
-//        main.getPrimaryStage().setTitle("wat do");
-        setTaskList(getTaskList());
+        currentList = taskController.getUndoneTasks();
+    }
+
+    public void setMainApp(Main main) {
+        CommandController.main = main;
+        actionController.setMainApp(main);
+    }
+
+    public void setTaskController(TaskController controller) {
+        taskController = controller;
+        actionController.setTaskController(taskController);
+        resetTaskList();
     }
 
     /**
-     * Is called by the main application to give a reference back to itself.
-     *
-     * @param main
+     * Okay to remove this method once switching to changeSettings is complete.
      */
-    public void setMainApp(Main main) {
-        CommandController.main = main;
-    }
-
     public void changeSaveLocation(String filePath) {
         String newInputString = "saveto ";
         newInputString = newInputString.concat(filePath);
-        CommandParser parsedCommand = new CommandParser(newInputString);
-        printString(processCommand(parsedCommand));
+        CommandObject commandObject = commandParser.parseCommand(newInputString);
+        printString(processCommand(commandObject));
+    }
+    
+    public void changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+        String feedback = actionController.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
+        undoController.clear();
+        resetTaskList();
+        updateView();
+        printString(feedback);
     }
 
-    public static String showErrorDialog(String error) {
-        main.showErrorDialog("Error", error);
+    public static String notifyWithError(String error) {
+        main.showErrorNotification("Error", error);
         return error;
     }
 
-    public static String showInfoDialog(String message) {
-        main.showInfoDialog("Information", message);
+    public static String notifyWithInfo(String message) {
+        main.showInfoNotification("Information", message);
         return message;
     }
 
-    protected static ModelManager getModelManager() {
-        return taskList;
+    public String getSaveDirectory() {
+        return modelManager.getFileDirectory();
+    }
+
+    public Boolean areRandomColorsEnabled() {
+        return modelManager.areRandomColorsEnabled();
+    }
+    
+    public Boolean areNotificationsEnabled() {
+        return modelManager.areNotificationsEnabled();
+    }
+    
+    public UndoController getUndoController() {
+        return undoController;
+    }
+
+    public ModelManager getModelManager() {
+        return modelManager;
     }
 }
