@@ -143,16 +143,13 @@ public class ActionController {
         if (commandObject.getCommandString().equalsIgnoreCase("start")) {
             taskController.setSortingStyle(1);
             return "Sorting by start date\n";
-        }
-        else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
+        } else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
             taskController.setSortingStyle(2);
             return "Sorting by end date\n";
-        }
-        else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
+        } else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
             taskController.setSortingStyle(3);
             return "Sorting by priority date\n";
-        }
-        else {
+        } else {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
         
@@ -171,7 +168,19 @@ public class ActionController {
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        ArrayList<TodoItem> results = taskController.instantSearch(commandObject.getCommandString());
+        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
+        if (commandObject.isUpdateStartDate()) {
+            if (commandObject.isUpdateEndDate()) {
+                results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
+            } else {
+                System.out.println(commandObject.getStartDate());
+                results = taskController.getTasksStartingFrom(commandObject.getStartDate());
+            }
+        } else if (commandObject.isUpdateEndDate()) {
+            results = taskController.getTasksEndingBy(commandObject.getEndDate());
+        } else {
+            results = taskController.instantSearch(commandObject.getCommandString());
+        }
         returnList = results;
         if (results.isEmpty()) {
             if (modelManager != null) {
@@ -209,10 +218,10 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (commandObject.getStartDate() != null) {
+        if (commandObject.isUpdateStartDate()) {
             parameters[1] = true;
         }
-        if (commandObject.getEndDate() != null) {
+        if (commandObject.isUpdateEndDate()) {
             parameters[2] = true;
         }
         if (commandObject.getPriority() != null) {
