@@ -190,7 +190,9 @@ public class RootViewManager {
 
     public void setAndFocusInputField(String text) {
         if (!inputField.getText().equals(text)) {
+            inputFieldViewManager.setFromButton(true);
             inputField.replaceText(text);
+            inputFieldViewManager.setFromButton(false);
             inputField.positionCaret(text.length());
             inputField.requestFocus();
         }

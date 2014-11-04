@@ -137,8 +137,10 @@ public class TaskListViewManager {
         return taskData;
     }
 
-    public void highlightCell (int index) {
-//        taskListView.scrollTo(index);
+    public void highlightCell (int index, boolean isFromButton) {
+        if (!isFromButton) {
+            taskListView.scrollTo(index);
+        }
         taskListView.getSelectionModel().select(index);
         taskListView.getFocusModel().focus(index);
     }
