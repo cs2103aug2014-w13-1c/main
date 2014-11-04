@@ -19,7 +19,6 @@ public class CommandParser {
     private static ArrayList<String> startDateKeywords = new ArrayList<String>();
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
     private static ArrayList<String> displayKeywords = new ArrayList<String>();
-    private static ArrayList<String> sortKeywords = new ArrayList<String>();
     private static ArrayList<String> searchKeywords = new ArrayList<String>();
     
     // String manipulation methods
@@ -87,11 +86,11 @@ public class CommandParser {
         displayKeywords.add("all");
         displayKeywords.add("done");
         displayKeywords.add("overdue");
-        
-        sortKeywords.clear();
-        sortKeywords.add("start");
-        sortKeywords.add("end");
-        sortKeywords.add("priority");
+                
+        searchKeywords.clear();
+        searchKeywords.add("start");
+        searchKeywords.add("end");
+        searchKeywords.add("priority");
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
@@ -131,10 +130,10 @@ public class CommandParser {
                 startIndex = endIndex + 2;
             }
         }
-        if (inputStringArray[0].equalsIgnoreCase("sort")) {
+        if (inputStringArray[0].equalsIgnoreCase("sort") || inputStringArray[0].equalsIgnoreCase("search")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (sortKeywords.contains(inputStringArray[i])) {
+                if (searchKeywords.contains(inputStringArray[i])) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
