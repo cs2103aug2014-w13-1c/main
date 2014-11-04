@@ -32,7 +32,7 @@ public class TitleBarViewManager {
 
         sortStyleChoiceBox.setValue("END DATE");
 
-        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) -> rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex  ));
+        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) -> rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex));
     }
 
     public void setTitle(String title) {

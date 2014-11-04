@@ -167,20 +167,28 @@ public class TaskController {
     }
 
     public void setSortingStyle(int newSortingStyle) {
+        System.out.println(newSortingStyle);
         switch (newSortingStyle) {
             case 0 :
                 sortingStyle = SortingStyle.TASKNAME_ENDDATE;
+                break;
             case 1 :
                 sortingStyle = SortingStyle.STARTDATE_PRIORITY;
+                break;
             case 2 :
                 // default sorting style
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
             case 3 :
                 sortingStyle = SortingStyle.PRIORITY_ENDDATE;
+                break;
             default :
                 sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
         }
+        System.out.println(sortingStyle);
         main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        main.getCommandController().resetTaskList();
         main.getCommandController().updateView();
     }
 
