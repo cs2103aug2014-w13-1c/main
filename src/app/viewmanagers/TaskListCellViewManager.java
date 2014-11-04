@@ -58,26 +58,21 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private RootViewManager rootViewManager;
 
-    List<String> colors;
+    private TodoItem task;
+
     private TaskListViewManager taskListViewManager;
     final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
+        this.task = task;
         setGraphic(anchorPane);
         if (empty) {
             clearContent();
         } else {
             populateContent(task);
-            setButtonEventHandlers(task);
         }
-    }
-
-    private void setButtonEventHandlers(TodoItem task) {
-        setUpdateButtonEventHandler(task);
-        setDeleteButtonEventHandler();
-        setDoneButtonEventHandler();
     }
 
     private void clearContent() {
@@ -133,19 +128,6 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     private void setTaskName(TodoItem task){
         taskNameLabel.setText(task.getTaskName().toUpperCase());
-    }
-
-    private void setDeleteButtonEventHandler() {
-        deleteButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("delete " + getTaskIndex()));
-    }
-
-    private void setUpdateButtonEventHandler(TodoItem task) {
-        updateButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task)));
-    }
-
-    private void setDoneButtonEventHandler() {
-        doneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("undone " + getTaskIndex()));
-        undoneButton.setOnAction((event) -> rootViewManager.setAndFocusInputField("done " + getTaskIndex()));
     }
 
     private int getTaskIndex() { return getIndex() + 1; }
@@ -233,7 +215,35 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     @FXML
-    private void initialize() { }
+    private void initialize() {
+        Button[] buttons = {
+                updateButton,
+                deleteButton,
+                doneButton,
+                undoneButton
+        };
+
+        for (Button button : buttons) {
+            button.setOnAction((e) -> clickedButton(button) );
+        }
+    }
+
+    private void clickedButton(Button button) {
+        switch (button.getId()) {
+            case "updateButton":
+                rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task));
+                break;
+            case "deleteButton":
+                rootViewManager.setAndFocusInputField("delete " + getTaskIndex());
+                break;
+            case "doneButton":
+                rootViewManager.setAndFocusInputField("undone " + getTaskIndex());
+                break;
+            case "undoneButton":
+                rootViewManager.setAndFocusInputField("done " + getTaskIndex());
+                break;
+        }
+    }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
