@@ -69,6 +69,8 @@ public class CommandParser {
         
     	startDateKeywords.clear();
         startDateKeywords.add("start");
+        startDateKeywords.add("begin");
+        startDateKeywords.add("from");
         
         endDateKeywords.clear();
         endDateKeywords.add("end");
