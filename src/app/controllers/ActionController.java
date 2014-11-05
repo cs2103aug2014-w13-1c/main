@@ -191,10 +191,10 @@ public class ActionController {
             if (commandObject.isUpdateEndDate()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
-                results = taskController.getTasksStartingFrom(commandObject.getStartDate());
+                results = taskController.getTasksStartingOn(commandObject.getStartDate());
             }
         } else if (commandObject.isUpdateEndDate()) {
-            results = taskController.getTasksEndingBy(commandObject.getEndDate());
+            results = taskController.getTasksEndingOn(commandObject.getEndDate());
         } else {
             results = taskController.instantSearch(commandObject.getCommandString());
         }

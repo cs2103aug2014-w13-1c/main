@@ -138,10 +138,13 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksStartingFrom(Date date) {
+    protected ArrayList<TodoItem> getTasksStartingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (todo.getStartDate() != null && !todo.getStartDate().before(date)) {
+            if (todo.getStartDate() != null &&
+                todo.getStartDate().getDay() == date.getDay() &&
+                todo.getStartDate().getMonth() == date.getMonth() &&
+                todo.getStartDate().getYear() == date.getYear()) {
                 results.add(todo);
             }
         }
@@ -149,10 +152,13 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksEndingBy(Date date) {
+    protected ArrayList<TodoItem> getTasksEndingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (todo.getEndDate() != null && !todo.getEndDate().after(date)) {
+            if (todo.getEndDate() != null &&
+                    todo.getEndDate().getDay() == date.getDay() &&
+                    todo.getEndDate().getMonth() == date.getMonth() &&
+                    todo.getEndDate().getYear() == date.getYear()) {
                 results.add(todo);
             }
         }
@@ -161,6 +167,12 @@ public class TaskController {
     }
 
     protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+        start.setHours(0);
+        start.setMinutes(0);
+        start.setSeconds(0);
+        end.setHours(23);
+        end.setMinutes(59);
+        end.setSeconds(59);
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.getStartDate() != null && todo.getEndDate() != null && !todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
