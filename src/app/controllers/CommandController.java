@@ -245,16 +245,16 @@ public class CommandController {
     private void updateTitle() {
         switch (taskController.getDisplayType()) {
             case ALL:
-                main.getRootViewManager().getTitleBarViewManager().setTitle("Currently showing: All Tasks");
+                main.getRootViewManager().getTitleBarViewManager().setTitle("All tasks");
                 break;
             case DONE:
-                main.getRootViewManager().getTitleBarViewManager().setTitle("Currently showing: Done Tasks");
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Done tasks");
                 break;
             case UNDONE:
-                main.getRootViewManager().getTitleBarViewManager().setTitle("Currently showing: Undone Tasks");
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Undone tasks");
                 break;
             case OVERDUE:
-                main.getRootViewManager().getTitleBarViewManager().setTitle("Currently showing: Overdue Tasks");
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Overdue tasks");
                 break;
             case SEARCH:
                 // do nothing
