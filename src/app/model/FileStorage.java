@@ -34,7 +34,7 @@ public class FileStorage {
     public static String LOAD_SETTINGS_FAILED = ModelManager.LOAD_SETTINGS_FAILED;
 
     public static final String DEFAULT_FILE_NAME = "watdo.json";
-    public static final String DEFAULT_FILE_DIRECTORY = ".";
+    public static final String DEFAULT_FILE_DIRECTORY = "./";
     public static final String SETTINGS_FILE_NAME = "settings.json";
     
     public FileStorage() {

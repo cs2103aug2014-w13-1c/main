@@ -59,6 +59,11 @@ public class TaskController {
         return results;
     }
 
+    protected ArrayList<TodoItem> getAllTasks() {
+        displayType = DisplayType.ALL;
+        return main.getCommandController().getTaskList();
+    }
+
     protected ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -125,7 +130,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (todo.isOverdue()) {
+            if (!todo.isDone() && todo.isOverdue()) {
                 results.add(todo);
             }
         }

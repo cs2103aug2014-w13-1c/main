@@ -26,7 +26,9 @@ public class InputFieldViewManager {
     private StyleClassedTextArea inputField;
     private RootViewManager rootViewManager;
     private Boolean searchState;
-
+    
+    private boolean isFromButton; 
+    
     public InputFieldViewManager() {
         lastCommand = "";
         inputField = new StyleClassedTextArea();
@@ -35,6 +37,7 @@ public class InputFieldViewManager {
         inputField.getStyleClass().add("input-field");
         inputField.setWrapText(true);
         searchState = false;
+        isFromButton = false;
 
         inputField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
@@ -49,16 +52,16 @@ public class InputFieldViewManager {
                 instantSearch(inputField.getText().substring(7));
             } else if (inputField.getText().startsWith("update ")) {
                 assert inputField.getText().length() > 6;
-                highlightCell(inputField.getText().split(" ", -1)[1]);
+                highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
             } else if (inputField.getText().startsWith("delete ")) {
                 assert inputField.getText().length() > 6;
-                highlightCell(inputField.getText().split(" ", -1)[1]);
+                highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
             } else if (inputField.getText().startsWith("done ")) {
                 assert inputField.getText().length() > 4;
-                highlightCell(inputField.getText().split(" ", -1)[1]);
+                highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
             } else if (inputField.getText().startsWith("undone ")) {
                 assert inputField.getText().length() > 6;
-                highlightCell(inputField.getText().split(" ", -1)[1]);
+                highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
             } else {
                 if (searchState) {
                     rootViewManager.getMainApp().getCommandController().updateView();
@@ -91,7 +94,7 @@ public class InputFieldViewManager {
         });
     }
 
-    private void highlightCell(String index) {
+    private void highlightCell(String index, boolean fromButton) {
 //        System.out.println("index: " + index);
         int highlightIndex;
         try {
@@ -102,7 +105,7 @@ public class InputFieldViewManager {
         if (highlightIndex > 0 ||
             highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
 //            System.out.println("focusing on: " + highlightIndex);
-            rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1);
+            rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1, fromButton);
         }
     }
 
@@ -153,6 +156,10 @@ public class InputFieldViewManager {
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
+    }
+    
+    protected void setFromButton(boolean newIsFromButton) {
+        this.isFromButton = newIsFromButton;
     }
 
     public StyleClassedTextArea getInputField() {

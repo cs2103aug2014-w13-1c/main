@@ -176,9 +176,9 @@ public class RootViewManager {
         return mainApp;
     }
 
-    public StyleClassedTextArea getInputField() {
-        return inputField;
-    }
+//    public StyleClassedTextArea getInputField() {
+//        return inputField;
+//    }
 
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
@@ -188,10 +188,18 @@ public class RootViewManager {
         return inputFieldViewManager;
     }
 
+    public TitleBarViewManager getTitleBarViewManager() {
+        return titleBarViewManager;
+    }
+
     public void setAndFocusInputField(String text) {
         if (!inputField.getText().equals(text)) {
+            inputFieldViewManager.setFromButton(true);
             inputField.replaceText(text);
+            inputFieldViewManager.setFromButton(false);
             inputField.positionCaret(text.length());
+            inputField.requestFocus();
+        } else {
             inputField.requestFocus();
         }
     }

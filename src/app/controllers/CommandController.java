@@ -129,7 +129,14 @@ public class CommandController {
             case SEARCH :
                 feedback = actionController.search(commandObject);
                 currentList = actionController.getReturnList();
-                updateView(actionController.getReturnList());
+                if (currentList.isEmpty()) {
+                    taskController.setDisplayType(TaskController.DisplayType.UNDONE);
+                    resetTaskList();
+                    updateView();
+                } else {
+                    main.getRootViewManager().getTitleBarViewManager().setTitle("Search results for: " + commandObject.getCommandString());
+                    updateView(actionController.getReturnList());
+                }
                 return feedback;
             case UPDATE :
                 feedback = actionController.update(commandObject, currentList);
@@ -225,12 +232,34 @@ public class CommandController {
     }
 
     public void updateView() {
-        main.getPrimaryStage().setTitle("wat do");
+//        main.getPrimaryStage().setTitle("wat do");
+        updateTitle();
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
 
     public void updateView(ArrayList<TodoItem> todoItems) {
+        updateTitle();
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
+    }
+
+    private void updateTitle() {
+        switch (taskController.getDisplayType()) {
+            case ALL:
+                main.getRootViewManager().getTitleBarViewManager().setTitle("All tasks");
+                break;
+            case DONE:
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Done tasks");
+                break;
+            case UNDONE:
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Undone tasks");
+                break;
+            case OVERDUE:
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Overdue tasks");
+                break;
+            case SEARCH:
+                // do nothing
+                break;
+        }
     }
 
     public static ArrayList<TodoItem> getTaskList() {
