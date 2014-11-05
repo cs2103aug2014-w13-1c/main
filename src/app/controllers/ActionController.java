@@ -403,7 +403,7 @@ public class ActionController {
         }
     }
 
-    // Change settings from GUI - Written by Dat
+    //@author A0116703N
     protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         assert filePath != null;
         
@@ -422,6 +422,7 @@ public class ActionController {
         return "changed settings\n";
     }
 
+    //@author A0114914L
     protected ActionController(ModelManager manager) {
         modelManager = manager;
         returnList = modelManager.getTodoItemList();
