@@ -130,7 +130,7 @@ public class TaskController {
     protected ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (todo.isOverdue()) {
+            if (!todo.isDone() && todo.isOverdue()) {
                 results.add(todo);
             }
         }
