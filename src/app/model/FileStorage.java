@@ -1,5 +1,5 @@
 package app.model;
-
+//@author A0116703N
 import app.helpers.LoggingService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -218,13 +218,9 @@ public class FileStorage {
             this.notificationsEnabled = newNotificationsEnabled;
         }
     
-        if (fileDirectory.length() > 0) {
-            if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
-                fileDirectory = fileDirectory + "/";
-            }
-        }
+        this.fileDirectory = fileDirectory;
+        concatSlash();
         
-        this.fileDirectory = fileDirectory; 
         try {
             loadResult = loadFile();
             this.loadStatus = LOAD_SUCCESS;
@@ -293,6 +289,7 @@ public class FileStorage {
         }
 
         BufferedWriter writer = new BufferedWriter(fileToWrite);
+        concatSlash();
         
         JSONObject settingsObject = new JSONObject();
         settingsObject.put("fileDirectory", fileDirectory);
@@ -345,5 +342,13 @@ public class FileStorage {
     
     public String getWriteStatus() {
         return this.writeStatus;
+    }
+    
+    private void concatSlash() {
+        if (fileDirectory.length() > 0) {
+            if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
+                fileDirectory = fileDirectory + "/";
+            }
+        }
     }
 }
