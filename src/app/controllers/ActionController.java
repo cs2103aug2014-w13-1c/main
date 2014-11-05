@@ -79,6 +79,8 @@ public class ActionController {
                 returnList = taskController.getDoneTasks();
             } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getOverdueTasks();
+            } else if (commandObject.getCommandString().equals("overdue")) {
+                returnList = taskController.getUndoneTasks();
             } else {
                 return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "display"));
             }
