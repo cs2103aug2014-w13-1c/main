@@ -134,7 +134,8 @@ public class CommandController {
                     resetTaskList();
                     updateView();
                 } else {
-                    main.getRootViewManager().getTitleBarViewManager().setTitle("Search results for: " + commandObject.getCommandString());
+                    main.getRootViewManager().getTitleBarViewManager().setTitle("Search results for: \"" +
+                                                                                commandObject.getInputString().substring(7) + "\"");
                     updateView(actionController.getReturnList());
                 }
                 return feedback;
@@ -245,19 +246,23 @@ public class CommandController {
     private void updateTitle() {
         switch (taskController.getDisplayType()) {
             case ALL:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
                 main.getRootViewManager().getTitleBarViewManager().setTitle("All tasks");
                 break;
             case DONE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
                 main.getRootViewManager().getTitleBarViewManager().setTitle("Done tasks");
                 break;
             case UNDONE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
                 main.getRootViewManager().getTitleBarViewManager().setTitle("Undone tasks");
                 break;
             case OVERDUE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
                 main.getRootViewManager().getTitleBarViewManager().setTitle("Overdue tasks");
                 break;
             case SEARCH:
-                // do nothing
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(false);
                 break;
         }
     }
