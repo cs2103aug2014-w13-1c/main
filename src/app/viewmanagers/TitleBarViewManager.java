@@ -22,6 +22,9 @@ public class TitleBarViewManager {
     @FXML
     private ChoiceBox sortStyleChoiceBox;
 
+    @FXML
+    private Label sortByLabel;
+
     private RootViewManager rootViewManager;
 
     @FXML
@@ -33,6 +36,11 @@ public class TitleBarViewManager {
         sortStyleChoiceBox.setValue("END DATE");
 
         sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) -> rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex));
+    }
+
+    public void setSortControlsVisible(boolean isVisible) {
+        sortByLabel.setVisible(isVisible);
+        sortStyleChoiceBox.setVisible(isVisible);
     }
 
     public void setTitle(String title) {
