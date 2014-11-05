@@ -15,7 +15,7 @@
                </font>
             </Label>
             <ChoiceBox id="choice-box" fx:id="sortStyleChoiceBox" layoutX="881.0" layoutY="1.0" prefHeight="26.0" prefWidth="117.0" />
-            <Label layoutX="804.0" layoutY="5.0" text="SORT BY:" textFill="WHITE">
+            <Label fx:id="sortByLabel" layoutX="804.0" layoutY="5.0" text="SORT BY:" textFill="WHITE">
                <font>
                   <Font size="15.0" />
                </font>
