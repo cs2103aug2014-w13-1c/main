@@ -175,7 +175,11 @@ public class TaskController {
         end.setSeconds(59);
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
-            if (todo.getStartDate() != null && todo.getEndDate() != null && !todo.getStartDate().before(start) && !todo.getEndDate().after(end)) {
+            if (todo.getStartDate() != null && todo.getEndDate() != null && todo.getStartDate().before(start) && todo.getEndDate().after(end)) {
+                results.add(todo);
+            } else if (todo.getStartDate() != null && !todo.getStartDate().before(start) && !todo.getStartDate().after(end)) {
+                results.add(todo);
+            } else if (todo.getEndDate() != null && !todo.getEndDate().before(start) && !todo.getEndDate().after(end)) {
                 results.add(todo);
             }
         }
