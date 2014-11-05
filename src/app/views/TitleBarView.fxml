@@ -9,13 +9,13 @@
    <children>
       <AnchorPane prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: black;">
          <children>
-            <Label fx:id="titleBarLabel" alignment="CENTER" layoutX="474.0" layoutY="3.0" text="Title" textAlignment="CENTER" textFill="WHITE">
+            <Label fx:id="titleBarLabel" alignment="CENTER" layoutX="290.0" layoutY="5.0" prefHeight="23.0" prefWidth="421.0" text="Title" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
             <ChoiceBox id="choice-box" fx:id="sortStyleChoiceBox" layoutX="881.0" layoutY="1.0" prefHeight="26.0" prefWidth="117.0" />
-            <Label layoutX="807.0" layoutY="7.0" text="SORT BY:" textFill="WHITE">
+            <Label layoutX="804.0" layoutY="5.0" text="SORT BY:" textFill="WHITE">
                <font>
                   <Font size="15.0" />
                </font>
