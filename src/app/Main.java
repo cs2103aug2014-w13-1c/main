@@ -68,14 +68,14 @@ public class Main extends Application {
     public void showInfoNotification(String title, String message) {
         // Actual use case.
         if (commandArguments.length == 0 && getCommandController().areNotificationsEnabled()) {
-            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).hideAfter(new Duration(1000)).showInformation();
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(message).hideAfter(new Duration(1500)).showInformation();
         }
         // If false, currently in test mode so no dialogs are used.
     }
 
     public void showErrorNotification(String title, String error) {
         if (getCommandController().areNotificationsEnabled()) {
-            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1000)).showError();
+            Notifications.create().position(Pos.TOP_RIGHT).title(title).text(error).hideAfter(new Duration(1500)).showError();
         }
     }
 

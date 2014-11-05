@@ -74,8 +74,7 @@ public class ActionController {
     protected String display(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             if (commandObject.getCommandString().equals("all")) {
-                returnList = taskController.getDoneTasks();
-                returnList.addAll(taskController.getUndoneTasks());
+                returnList = taskController.getAllTasks();
             } else if (commandObject.getCommandString().equals("done")) {
                 returnList = taskController.getDoneTasks();
             } else if (commandObject.getCommandString().equals("overdue")) {
@@ -208,7 +207,7 @@ public class ActionController {
                 return null;
             }
         } else {
-            main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
+//            main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
             taskController.setDisplayType(TaskController.DisplayType.SEARCH);
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }

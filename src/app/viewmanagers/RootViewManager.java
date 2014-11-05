@@ -176,9 +176,9 @@ public class RootViewManager {
         return mainApp;
     }
 
-    public StyleClassedTextArea getInputField() {
-        return inputField;
-    }
+//    public StyleClassedTextArea getInputField() {
+//        return inputField;
+//    }
 
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
@@ -186,6 +186,10 @@ public class RootViewManager {
     
     public InputFieldViewManager getInputFieldViewManager() {
         return inputFieldViewManager;
+    }
+
+    public TitleBarViewManager getTitleBarViewManager() {
+        return titleBarViewManager;
     }
 
     public void setAndFocusInputField(String text) {

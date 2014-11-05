@@ -59,6 +59,11 @@ public class TaskController {
         return results;
     }
 
+    protected ArrayList<TodoItem> getAllTasks() {
+        displayType = DisplayType.ALL;
+        return main.getCommandController().getTaskList();
+    }
+
     protected ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
