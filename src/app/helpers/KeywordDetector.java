@@ -19,7 +19,6 @@ public class KeywordDetector {
         int lastWordEnd = 0;
         for (Keyword keyword : keywords) {
             spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
-//            System.out.println("keyword length: " + (keyword.getEndIndex() - keyword.getStartIndex() + 1));
             spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
             lastWordEnd = keyword.getEndIndex() + 1;
         }

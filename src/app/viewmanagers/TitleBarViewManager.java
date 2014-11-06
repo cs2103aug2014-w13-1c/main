@@ -30,10 +30,9 @@ public class TitleBarViewManager {
         sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
             "TASK NAME", "START DATE", "END DATE", "PRIORITY"
         ));
-
         sortStyleChoiceBox.setValue("END DATE");
-
-        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) -> rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex));
+        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) ->
+                rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex));
     }
 
     public void setSortControlsVisible(boolean isVisible) {
