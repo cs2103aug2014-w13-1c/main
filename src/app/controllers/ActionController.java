@@ -79,6 +79,8 @@ public class ActionController {
                 returnList = taskController.getDoneTasks();
             } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getOverdueTasks();
+            } else if (commandObject.getCommandString().equals("overdue")) {
+                returnList = taskController.getUndoneTasks();
             } else {
                 return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "display"));
             }
@@ -191,10 +193,10 @@ public class ActionController {
             if (commandObject.isUpdateEndDate()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
-                results = taskController.getTasksStartingFrom(commandObject.getStartDate());
+                results = taskController.getTasksStartingOn(commandObject.getStartDate());
             }
         } else if (commandObject.isUpdateEndDate()) {
-            results = taskController.getTasksEndingBy(commandObject.getEndDate());
+            results = taskController.getTasksEndingOn(commandObject.getEndDate());
         } else {
             results = taskController.instantSearch(commandObject.getCommandString());
         }
@@ -403,7 +405,7 @@ public class ActionController {
         }
     }
 
-    // Change settings from GUI - Written by Dat
+    //@author A0116703N
     protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         assert filePath != null;
         
@@ -422,6 +424,7 @@ public class ActionController {
         return "changed settings\n";
     }
 
+    //@author A0114914L
     protected ActionController(ModelManager manager) {
         modelManager = manager;
         returnList = modelManager.getTodoItemList();

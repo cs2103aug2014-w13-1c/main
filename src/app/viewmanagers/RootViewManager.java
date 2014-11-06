@@ -198,6 +198,8 @@ public class RootViewManager {
             inputFieldViewManager.setFromButton(false);
             inputField.positionCaret(text.length());
             inputField.requestFocus();
+        } else {
+            inputField.requestFocus();
         }
     }
 

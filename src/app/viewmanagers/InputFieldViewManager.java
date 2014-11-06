@@ -80,7 +80,8 @@ public class InputFieldViewManager {
                 } catch (InvalidInputException e) {
                     LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
                 }
-            } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("")) {
+            } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("") &&
+                       !lastCommand.equals(inputField.getText())) {
                 event.consume();
                 inputField.replaceText(lastCommand);
             } else if (event.getCode() == KeyCode.TAB) {

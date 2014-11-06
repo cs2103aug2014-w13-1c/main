@@ -69,6 +69,8 @@ public class CommandParser {
         
     	startDateKeywords.clear();
         startDateKeywords.add("start");
+        startDateKeywords.add("begin");
+        startDateKeywords.add("from");
         
         endDateKeywords.clear();
         endDateKeywords.add("end");
@@ -88,6 +90,7 @@ public class CommandParser {
         displayKeywords.add("all");
         displayKeywords.add("done");
         displayKeywords.add("overdue");
+        displayKeywords.add("undone");
                 
         searchKeywords.clear();
         searchKeywords.addAll(startDateKeywords);

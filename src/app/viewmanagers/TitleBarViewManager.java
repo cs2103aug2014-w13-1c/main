@@ -42,7 +42,7 @@ public class TitleBarViewManager {
     }
 
     public void setTitle(String title) {
-        titleBarLabel.setText(title);
+        titleBarLabel.setText(title.toUpperCase());
     }
 
     public void setRootViewManager(RootViewManager rootViewManager) {
