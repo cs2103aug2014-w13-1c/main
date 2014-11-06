@@ -165,11 +165,7 @@ public class TodoItem {
         }
         
         Date currentDate = new Date();
-        if (currentDate.getTime() > endDate.getTime()) {
-            return true;
-        }
-        
-        return false;
+        return (currentDate.getTime() > endDate.getTime());
     }
     
 }
