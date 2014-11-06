@@ -52,21 +52,7 @@ public class InputFieldViewManager {
         } else {
             inputField.setStyleSpans(0, keywordDetection(newValue));
         }
-        if (inputField.getText().startsWith("search ")) {
-            searchState = true;
-            instantSearch(inputField.getText().substring(7));
-        } else if (inputField.getText().startsWith("update ") ||
-                   inputField.getText().startsWith("delete ") ||
-                   inputField.getText().startsWith("undone ") ||
-                   inputField.getText().startsWith("done ")) {
-            highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
-        } else {
-            if (searchState) {
-                rootViewManager.getMainApp().getCommandController().updateView();
-                searchState = false;
-            }
-            rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
-        }
+        instantSearchAndHighlight();
     }
 
     private void keyPressListener(KeyEvent event) {
@@ -88,6 +74,24 @@ public class InputFieldViewManager {
             if (completedString != null) {
                 inputField.replaceText(completedString + " ");
             }
+        }
+    }
+
+    private void instantSearchAndHighlight() {
+        if (inputField.getText().startsWith("search ")) {
+            searchState = true;
+            instantSearch(inputField.getText().substring(7));
+        } else if (inputField.getText().startsWith("update ") ||
+                   inputField.getText().startsWith("delete ") ||
+                   inputField.getText().startsWith("undone ") ||
+                   inputField.getText().startsWith("done ")) {
+            highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
+        } else {
+            if (searchState) {
+                rootViewManager.getMainApp().getCommandController().updateView();
+                searchState = false;
+            }
+            rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
         }
     }
 
