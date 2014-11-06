@@ -1,94 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
-
-<AnchorPane id="cell" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListCellViewManager">
-   <children>
-      <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ" textAlignment="CENTER" textFill="#797777">
-         <font>
-            <Font size="34.0" />
-         </font>
-      </Label>
-      <Button fx:id="deleteButton" layoutX="882.0" layoutY="5.0" mnemonicParsing="false" style="-fx-background-color: transparent;">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/cross.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <tooltip>
-            <Tooltip text="Delete this task. Command: &quot;delete &lt;task index&gt;&quot;" />
-         </tooltip>
-      </Button>
-      <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/compose.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <tooltip>
-            <Tooltip text="Update this task. Command: &quot;update &lt;index number&gt; [task name | start | end | priority]&quot;" />
-         </tooltip>
-      </Button>
-      <Label fx:id="bottomDateLabel" layoutX="628.0" layoutY="22.0" prefHeight="14.0" prefWidth="184.0" text="END 1 JANUARY 2015" textFill="WHITE">
-         <font>
-            <Font size="11.0" />
-         </font>
-      </Label>
-      <Label fx:id="topDateLabel" layoutX="628.0" layoutY="6.0" prefHeight="14.0" prefWidth="184.0" text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
-         <font>
-            <Font size="11.0" />
-         </font>
-      </Label>
-      <Label fx:id="priorityLevelLabel" layoutX="806.0" layoutY="12.0" prefHeight="16.0" prefWidth="57.0" text="high" textAlignment="RIGHT" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="System Italic" size="11.0" />
-         </font>
-      </Label>
-      <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="11.0" prefHeight="16.0" prefWidth="468.0" stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum" textFill="WHITE">
-         <font>
-            <Font size="15.0" />
-         </font>
-         <tooltip>
-            <Tooltip fx:id="taskNameTooltip" />
-         </tooltip>
-      </Label>
-      <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/tick.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <tooltip>
-            <Tooltip text="Mark as undone. Command: &quot;undone &lt;index number&gt;&quot;" />
-         </tooltip>
-      </Button>
-      <Label fx:id="hexLabel" layoutX="34.0" layoutY="12.0" text="#" textFill="WHITE" />
-      <Label fx:id="indexLabel" layoutX="43.0" layoutY="12.0" prefHeight="16.0" prefWidth="38.0" text="42" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="13.0" />
-         </font></Label>
-      <Button fx:id="undoneButton" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent;">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/untick.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <tooltip>
-            <Tooltip text="Mark as done. Command: &quot;done &lt;index number&gt;&quot;" />
-         </tooltip>
-      </Button>
-   </children>
+<AnchorPane id="cell" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="app.viewmanagers.TaskListCellViewManager">
+    <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ"
+           textAlignment="CENTER" textFill="#797777">
+        <font>
+          <Font size="34.0"/>
+        </font>
+    </Label>
+    <Button fx:id="deleteButton" layoutX="882.0" layoutY="5.0" mnemonicParsing="false"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/cross.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Delete this task. Command: &quot;delete &lt;task index&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0"
+            prefWidth="20.0" style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/compose.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip
+                  text="Update this task. Command: &quot;update &lt;index number&gt; [task name | start | end | priority]&quot;"/>
+        </tooltip>
+    </Button>
+    <Label fx:id="bottomDateLabel" layoutX="628.0" layoutY="22.0" prefHeight="14.0" prefWidth="184.0"
+           text="END 1 JANUARY 2015" textFill="WHITE">
+        <font>
+          <Font size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="topDateLabel" layoutX="628.0" layoutY="6.0" prefHeight="14.0" prefWidth="184.0"
+           text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
+        <font>
+          <Font size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="priorityLevelLabel" layoutX="806.0" layoutY="12.0" prefHeight="16.0" prefWidth="57.0" text="high"
+           textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+        <font>
+          <Font name="System Italic" size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="11.0" prefHeight="16.0" prefWidth="468.0"
+           stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum" textFill="WHITE">
+        <font>
+          <Font size="15.0"/>
+        </font>
+        <tooltip>
+          <Tooltip fx:id="taskNameTooltip"/>
+        </tooltip>
+    </Label>
+    <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/tick.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Mark as undone. Command: &quot;undone &lt;index number&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Label fx:id="hexLabel" layoutX="34.0" layoutY="12.0" text="#" textFill="WHITE"/>
+    <Label fx:id="indexLabel" layoutX="43.0" layoutY="12.0" prefHeight="16.0" prefWidth="38.0" text="42"
+           textFill="WHITE">
+        <font>
+          <Font name="System Bold" size="13.0"/>
+        </font>
+    </Label>
+    <Button fx:id="undoneButton" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/untick.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Mark as done. Command: &quot;done &lt;index number&gt;&quot;"/>
+        </tooltip>
+    </Button>
 </AnchorPane>
