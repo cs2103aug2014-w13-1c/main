@@ -1,6 +1,5 @@
 package app.helpers;
 
-import app.viewmanagers.InputFieldViewManager;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 

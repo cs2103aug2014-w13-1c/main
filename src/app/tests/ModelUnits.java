@@ -1,7 +1,6 @@
 package app.tests;
 
 import app.model.*;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import java.io.*;
