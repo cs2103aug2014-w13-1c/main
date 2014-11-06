@@ -66,8 +66,6 @@ public class TaskListViewManager {
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {
-        assert(taskData.size() >= 0);
-
         // Workaround for inherent bug in JavaFX that refuses
         // to update the ListView with new objects.
         taskListView.getItems().clear();
