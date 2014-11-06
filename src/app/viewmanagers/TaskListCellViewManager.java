@@ -7,13 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by jin on 28/9/14.
