@@ -96,16 +96,14 @@ public class InputFieldViewManager {
     }
 
     private void highlightCell(String index, boolean fromButton) {
-//        System.out.println("index: " + index);
         int highlightIndex;
         try {
             highlightIndex = Integer.parseInt(index);
         } catch (NumberFormatException e) {
             highlightIndex = -1;
         }
-        if (highlightIndex > 0 ||
+        if (highlightIndex > 0 &&
             highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
-//            System.out.println("focusing on: " + highlightIndex);
             rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1, fromButton);
         }
     }
