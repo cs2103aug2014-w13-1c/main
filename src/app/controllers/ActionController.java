@@ -427,7 +427,11 @@ public class ActionController {
     //@author A0114914L
     protected ActionController(ModelManager manager) {
         modelManager = manager;
-        returnList = modelManager.getTodoItemList();
+        if (manager != null) {
+            returnList = modelManager.getTodoItemList();
+        } else {
+            returnList = null;
+        }
     }
 
     protected void setTaskController(TaskController controller) {
