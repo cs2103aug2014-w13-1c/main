@@ -364,6 +364,7 @@ public class ActionController {
         return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
+    //@author A0111987X
     // Undo and redo method(s)
     protected String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
@@ -385,6 +386,7 @@ public class ActionController {
         }
     }
 
+    //@author A0111987X
     protected String redo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
