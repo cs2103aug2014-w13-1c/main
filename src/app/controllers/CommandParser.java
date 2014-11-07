@@ -101,7 +101,7 @@ public class CommandParser {
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
-        int endIndex = inputStringArray[0].length() - 1;;
+        int endIndex = inputStringArray[0].length() - 1;
         if (commandKeywords.contains(inputStringArray[0])) {
             currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;

@@ -30,12 +30,11 @@ public class TodoItemList {
 	}
 	
 	public TodoItem getByUUID(UUID itemID) {
-	    for (int i = 0; i < todoItems.size(); i++) {
-	        TodoItem currentItem = todoItems.get(i);
-	        if (currentItem.getUUID().equals(itemID)) {
-	            return currentItem;
-	        }
-	    }
+        for (TodoItem currentItem : todoItems) {
+            if (currentItem.getUUID().equals(itemID)) {
+                return currentItem;
+            }
+        }
 	    return null;
 	}
 	

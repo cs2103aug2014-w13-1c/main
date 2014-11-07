@@ -17,12 +17,13 @@
                     </font>
                 </Label>
                 <Button fx:id="okButton" layoutX="321.0" layoutY="483.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="GOT IT" />
-            <Label fx:id="helpCommands" layoutX="32.0" layoutY="66.0" prefHeight="399.0" prefWidth="386.0" textFill="WHITE" wrapText="true">
-               <font>
-                  <Font size="16.0" />
-               </font>
-            </Label>
+                <Label fx:id="helpCommands" layoutX="32.0" layoutY="66.0" prefHeight="399.0" prefWidth="386.0" textFill="WHITE" wrapText="true">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
             </children>
         </AnchorPane>
     </children>
 </Pane>
+

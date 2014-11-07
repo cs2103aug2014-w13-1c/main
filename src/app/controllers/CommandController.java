@@ -228,8 +228,7 @@ public class CommandController {
     }
 
     public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
-        ObservableList<TodoItem> taskData = FXCollections.observableArrayList(todoList);
-        return taskData;
+        return FXCollections.observableArrayList(todoList);
     }
 
     public void updateView() {

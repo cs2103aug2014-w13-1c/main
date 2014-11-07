@@ -36,7 +36,6 @@ public class SettingsViewManager {
     private RootViewManager rootViewManager;
 
     private File directory;
-    private Boolean randomColorsEnabled;
 
     @FXML
     private void initialize() {

@@ -12,7 +12,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
