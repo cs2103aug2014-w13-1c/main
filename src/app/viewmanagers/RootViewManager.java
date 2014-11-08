@@ -169,6 +169,7 @@ public class RootViewManager {
         return titleBarViewManager;
     }
 
+    //@author A0111987X
     public void setAndFocusInputField(String text) {
         if (!inputField.getText().equals(text)) {
             inputFieldViewManager.setFromButton(true);
