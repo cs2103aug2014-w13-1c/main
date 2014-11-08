@@ -176,7 +176,7 @@ public class ModelManager {
     }
     
     public void setSortingStyle(int newSortingStyle) {
-        TodoItemSorter.sortingStyle = newSortingStyle;
+        TodoItemSorter.changeSortStyle(newSortingStyle);
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
 
