@@ -28,7 +28,7 @@ public class ModelManager {
     private UUID latestModified;
     
     /**
-     * Constructor
+     * ModelManager Constructor
      * 
      * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
      */
