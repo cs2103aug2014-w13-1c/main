@@ -68,6 +68,12 @@ public class RootViewManager {
         settingsView.toBack();
     }
 
+    //@author A0111987X
+    /**
+     * Initialises the Help View.
+     *
+     * @throws IOException
+     */
     private void initHelpView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
@@ -138,11 +144,18 @@ public class RootViewManager {
         settingsViewManager.focusOnButton();
     }
 
+    //@author A0111987X
+    /**
+     * Brings help view to front.
+     */
     public void openHelp() {
         helpView.toFront();
         helpViewManager.focusOnButton();
     }
 
+    /**
+     * Sends help view to back.
+     */
     public void closeHelp() {
         helpView.toBack();
         helpViewManager.cancelFocusOnButton();
@@ -170,6 +183,11 @@ public class RootViewManager {
     }
 
     //@author A0111987X
+    /**
+     * Populates the inputField with a specified string and brings it into focus.
+     *
+     * @param text String to populate the inputField with.
+     */
     public void setAndFocusInputField(String text) {
         if (!inputField.getText().equals(text)) {
             inputFieldViewManager.setFromButton(true);

@@ -32,7 +32,6 @@ import java.util.logging.Level;
 
 /**
  * InputFieldViewManager
- * Created by jolly on 24/9/14.
  */
 public class InputFieldViewManager {
 
@@ -42,12 +41,18 @@ public class InputFieldViewManager {
     private Boolean searchState;
     private Boolean isFromButton;
 
+    /**
+     *
+     */
     public InputFieldViewManager() {
         initInputFieldViewManager();
         inputField.textProperty().addListener(this::keyListener);
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, this::keyPressListener);
     }
 
+    /**
+     *
+     */
     private void initInputFieldViewManager() {
         lastCommand = "";
         inputField = new StyleClassedTextArea();
@@ -60,6 +65,8 @@ public class InputFieldViewManager {
     }
 
     /**
+     *
+     *
      * @param observable
      * @param oldValue
      * @param newValue
@@ -74,6 +81,11 @@ public class InputFieldViewManager {
         instantSearchAndHighlight();
     }
 
+    /**
+     *
+     *
+     * @param event
+     */
     private void keyPressListener(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
@@ -96,6 +108,9 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     */
     private void instantSearchAndHighlight() {
         if (inputField.getText().startsWith("search ")) {
             searchState = true;
@@ -114,6 +129,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @param fromButton
+     */
     private void highlightCell(String index, boolean fromButton) {
         int highlightIndex;
         try {
@@ -127,6 +148,11 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param query
+     */
     private void instantSearch(String query) {
         LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
         ArrayList<TodoItem> results =
@@ -137,6 +163,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @return
+     */
     private String autoComplete(String command) {
         ArrayList<String> results = new ArrayList<String>();
         for (String keyword : CommandParser.commandKeywords) {
@@ -147,6 +179,12 @@ public class InputFieldViewManager {
         return autoCompleteResults(results);
     }
 
+    /**
+     *
+     *
+     * @param results
+     * @return
+     */
     private String autoCompleteResults(ArrayList<String> results) {
         if (results.size() == 0) {
             return null;
@@ -162,6 +200,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @throws InvalidInputException
+     */
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
             throw new InvalidInputException("empty command");
@@ -173,19 +217,40 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @return
+     */
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
 
+    /**
+     *
+     *
+     * @param newIsFromButton
+     */
     protected void setFromButton(boolean newIsFromButton) {
         this.isFromButton = newIsFromButton;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public StyleClassedTextArea getInputField() {
         return inputField;
     }
 
+    /**
+     *
+     *
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }

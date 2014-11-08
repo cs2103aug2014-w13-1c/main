@@ -1,7 +1,7 @@
 package app.viewmanagers;
 
 import app.helpers.LoggingService;
-import app.helpers.UserGuide;
+import app.helpers.WelcomePane;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +26,7 @@ public class TaskListViewManager {
     private Label emptySearch;
 
     private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
-    private UserGuide userGuide;
+    private WelcomePane welcomePane;
 
     private RootViewManager rootViewManager;
     private List<String> colors;
@@ -53,8 +53,8 @@ public class TaskListViewManager {
             }
         });
 
-        userGuide = new UserGuide();
-        taskListView.setPlaceholder(userGuide.getUserGuide());
+        welcomePane = new WelcomePane();
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
 
     public void setEmptySearchPlaceholder() {
@@ -62,7 +62,7 @@ public class TaskListViewManager {
     }
 
     public void setUserGuidePlaceholder() {
-        taskListView.setPlaceholder(userGuide.getUserGuide());
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
 
     public void updateView(ObservableList<TodoItem> taskData) {

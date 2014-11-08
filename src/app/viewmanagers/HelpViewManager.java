@@ -42,7 +42,7 @@ import javafx.scene.control.Label;
 
 
 /**
- * Created by jolly on 10/10/14.
+ * View manager for the Help View.
  */
 public class HelpViewManager {
 
@@ -54,6 +54,9 @@ public class HelpViewManager {
     @FXML
     private Label helpCommands;
 
+    /**
+     * Populates label with help text.
+     */
     @FXML
     private void initialize() {
         helpCommands.setText("Here are the other commands you can use:\n" +
@@ -76,15 +79,26 @@ public class HelpViewManager {
         okButton.setOnAction((event) -> rootViewManager.closeHelp());
     }
 
+    /**
+     * Setter for rootViewManager
+     *
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
 
+    /**
+     * Sets okButton as default button and brings focus to it.
+     */
     public void focusOnButton() {
         okButton.setDefaultButton(true);
         okButton.requestFocus();
     }
 
+    /**
+     * Unsets okButton as the default button.
+     */
     public void cancelFocusOnButton() {
         okButton.setDefaultButton(false);
     }
