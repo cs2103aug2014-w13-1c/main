@@ -185,12 +185,12 @@ public class CommandParser {
                         j++;
                     }
                     if (toBeParsed.trim().equals("remove")) {
-                        currentCommandObject.setUpdateStartDate(true);
+                        currentCommandObject.setStartDateUpdated(true);
                         currentCommandObject.setEndIndex(i);
                     }
                     else {
                         currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
-                        if (currentCommandObject.isUpdateStartDate()) {
+                        if (currentCommandObject.isStartDateUpdated()) {
                             currentCommandObject.setEndIndex(i);
                         }
                     }
@@ -208,11 +208,11 @@ public class CommandParser {
                         j++;
                     }
                     if (toBeParsed.trim().equals("remove")) {
-                        currentCommandObject.setUpdateEndDate(true);
+                        currentCommandObject.setEndDateUpdated(true);
                     }
                     else {
                         currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
-                        if (currentCommandObject.isUpdateEndDate()) {
+                        if (currentCommandObject.isEndDateUpdated()) {
                             currentCommandObject.setEndIndex(i);
                         }
                     }
@@ -240,10 +240,10 @@ public class CommandParser {
         }
         if (!dateList.isEmpty()) {
             if (startDateKeywords.contains(dateKeyword)) {
-                currentCommandObject.setUpdateStartDate(true);
+                currentCommandObject.setStartDateUpdated(true);
             }
             else {
-                currentCommandObject.setUpdateEndDate(true);
+                currentCommandObject.setEndDateUpdated(true);
             }
             return dateList.get(0);
         } else {

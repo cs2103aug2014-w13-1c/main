@@ -12,14 +12,14 @@ public class CommandObject {
     private int endIndex;
     private Date startDate;
     private Date endDate;
-    private boolean updateStartDate;
-    private boolean updateEndDate;
+    private boolean startDateUpdated;
+    private boolean endDateUpdated;
     private String priority;
     private String[] inputStringArray;
 
     public CommandObject() {
-        setUpdateStartDate(false);
-        setUpdateEndDate(false);
+        setStartDateUpdated(false);
+        setEndDateUpdated(false);
         endIndex = 1000000000;
     }
 
@@ -79,20 +79,20 @@ public class CommandObject {
         return priority;
     }
 
-    public boolean isUpdateStartDate() {
-        return updateStartDate;
+    public boolean isStartDateUpdated() {
+        return startDateUpdated;
     }
 
-    public void setUpdateStartDate(boolean updateStartDate) {
-        this.updateStartDate = updateStartDate;
+    public void setStartDateUpdated(boolean updated) {
+        startDateUpdated = updated;
     }
 
-    public boolean isUpdateEndDate() {
-        return updateEndDate;
+    public boolean isEndDateUpdated() {
+        return endDateUpdated;
     }
 
-    public void setUpdateEndDate(boolean updateEndDate) {
-        this.updateEndDate = updateEndDate;
+    public void setEndDateUpdated(boolean updated) {
+        endDateUpdated = updated;
     }
 
     public int getEndIndex() {
