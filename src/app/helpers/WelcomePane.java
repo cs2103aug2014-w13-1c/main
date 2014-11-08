@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.helpers;
 
 import javafx.geometry.Pos;
@@ -5,19 +6,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.*;
 
 /**
- * Created by jolly on 10/10/14.
+ * In charge of the Welcome Splash Page.
  */
-public class UserGuide {
+public class WelcomePane {
 
-    private GridPane userGuide;
-    private TextFlow textFlow;
+    private GridPane welcomePane;
 
-    public UserGuide() {
-        userGuide = new GridPane();
-        userGuide.setAlignment(Pos.CENTER);
+    /**
+     * Initialises and populates the GridPane containing the Welcome Splash Page.
+     */
+    public WelcomePane() {
+        welcomePane = new GridPane();
+        welcomePane.setAlignment(Pos.CENTER);
         String family = "Helvetica";
         double size = 30;
-        textFlow = new TextFlow();
+        TextFlow textFlow = new TextFlow();
         textFlow.setTextAlignment(TextAlignment.CENTER);
         textFlow.setLineSpacing(10);
 
@@ -43,11 +46,16 @@ public class UserGuide {
         text7.setFont(Font.font(family, size));
 
         textFlow.getChildren().addAll(text1, text2, text3, text4, text5, text6, text7);
-        userGuide.add(textFlow, 0, 0);
+        welcomePane.add(textFlow, 0, 0);
     }
 
-    public GridPane getUserGuide() {
-        return userGuide;
+    /**
+     * Getter for welcomePane.
+     *
+     * @return GridPane containing Welcome Splash Page.
+     */
+    public GridPane getWelcomePane() {
+        return welcomePane;
     }
 
 }

@@ -26,9 +26,6 @@ public class RootViewManager {
     private Pane helpView;
     private BorderPane borderPane;
     private StyleClassedTextArea inputField;
-    private ListView taskListView;
-    private Pane titleBarView;
-
     private TaskListViewManager taskListViewManager;
     private SettingsViewManager settingsViewManager;
     private HelpViewManager helpViewManager;
@@ -38,7 +35,6 @@ public class RootViewManager {
 
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
-
         try {
             this.initRootLayout(primaryStage);
             this.initSettingsView();
@@ -50,7 +46,6 @@ public class RootViewManager {
         } catch (IOException e) {
             LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
         }
-
     }
 
     private void initRootLayout(Stage primaryStage) throws IOException {
@@ -58,7 +53,6 @@ public class RootViewManager {
         loader.setLocation(mainApp.getResourceURL("views/RootView.fxml"));
         rootLayout = loader.load();
         borderPane = (BorderPane) rootLayout.getChildren().get(0);
-
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -68,22 +62,24 @@ public class RootViewManager {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
         settingsView = loader.load();
-
         settingsViewManager = loader.getController();
         settingsViewManager.setRootViewManager(this);
-
         rootLayout.getChildren().add(settingsView);
         settingsView.toBack();
     }
 
+    //@author A0111987X
+    /**
+     * Initialises the Help View.
+     *
+     * @throws IOException
+     */
     private void initHelpView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
         helpView = loader.load();
-
         helpViewManager = loader.getController();
         helpViewManager.setRootViewManager(this);
-
         rootLayout.getChildren().add(helpView);
         helpView.toBack();
     }
@@ -91,26 +87,21 @@ public class RootViewManager {
     private void showTitleBarView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
-        titleBarView = loader.load();
-
+        Pane titleBarView = loader.load();
         titleBarView.getStylesheets().add("app/stylesheets/titleBarView.css");
-
         titleBarViewManager = loader.getController();
         titleBarViewManager.setRootViewManager(this);
-
         borderPane.setTop(titleBarView);
     }
 
     private void showTaskListView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
-        taskListView = loader.load();
+        ListView taskListView = loader.load();
         taskListView.getStylesheets().add("app/stylesheets/taskList.css");
         taskListView.getStyleClass().add("task-list");
-
         taskListViewManager = loader.getController();
         taskListViewManager.setRootViewManager(this);
-
         borderPane.setCenter(taskListView);
     }
 
@@ -118,7 +109,6 @@ public class RootViewManager {
         inputFieldViewManager = new InputFieldViewManager();
         inputFieldViewManager.setRootViewManager(this);
         inputField = inputFieldViewManager.getInputField();
-
         borderPane.setBottom(new StackPane(inputField));
     }
 
@@ -128,10 +118,8 @@ public class RootViewManager {
         VBox sidebar = loader.load();
         sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
         sidebar.getStyleClass().add("sidebar");
-
         sidebarViewManager = loader.getController();
         sidebarViewManager.setRootViewManager(this);
-
         borderPane.setLeft(sidebar);
     }
 
@@ -156,11 +144,18 @@ public class RootViewManager {
         settingsViewManager.focusOnButton();
     }
 
+    //@author A0111987X
+    /**
+     * Brings help view to front.
+     */
     public void openHelp() {
         helpView.toFront();
         helpViewManager.focusOnButton();
     }
 
+    /**
+     * Sends help view to back.
+     */
     public void closeHelp() {
         helpView.toBack();
         helpViewManager.cancelFocusOnButton();
@@ -175,10 +170,6 @@ public class RootViewManager {
         return mainApp;
     }
 
-//    public StyleClassedTextArea getInputField() {
-//        return inputField;
-//    }
-
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
     }
@@ -191,6 +182,12 @@ public class RootViewManager {
         return titleBarViewManager;
     }
 
+    //@author A0111987X
+    /**
+     * Populates the inputField with a specified string and brings it into focus.
+     *
+     * @param text String to populate the inputField with.
+     */
     public void setAndFocusInputField(String text) {
         if (!inputField.getText().equals(text)) {
             inputFieldViewManager.setFromButton(true);

@@ -1,8 +1,9 @@
 package tests.integration;
 //@author A0116703N
-import app.Main;
-import app.model.*;
 
+import app.Main;
+import app.model.FileStorage;
+import app.model.TodoItem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;

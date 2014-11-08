@@ -1,15 +1,17 @@
-package app.controllers;
+//@author A0111987X
+package tests;
 
 import app.Main;
+import app.controllers.CommandController;
+import app.controllers.TaskController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/** test class for TaskController, tests filtering of done/undone/overdue tasks
- *
- * Created by jolly on 21/10/14.
+/**
+ * Test class for TaskController, tests filtering of done/undone/overdue tasks.
  */
 public class TaskControllerTest extends Main {
 

@@ -1,18 +1,16 @@
+//@author A0111987X
 package app.controllers;
 
 import app.Main;
 import app.model.TodoItem;
-import com.joestelmach.natty.Parser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 /**
- * in charge of sorting and searching of tasks
- * implemented as a singleton
- *
- * Created by jolly on 15/10/14.
+ * In charge of sorting and searching of tasks.
+ * Implemented as a singleton.
  */
 public class TaskController {
 
@@ -20,34 +18,57 @@ public class TaskController {
     private static Main main;
     private static DisplayType displayType;
     private static SortingStyle sortingStyle;
-    private static Parser dateParser;
 
+    /**
+     * Enum containing the various display types.
+     */
     public static enum DisplayType {
         ALL, DONE, UNDONE, OVERDUE, SEARCH
     }
 
+    /**
+     * Enum containing the various sorting styles.
+     */
     public static enum SortingStyle {
         TASKNAME_ENDDATE, STARTDATE_PRIORITY, ENDDATE_PRIORITY, PRIORITY_ENDDATE
     }
 
+    /**
+     * Empty constructor.
+     */
     private TaskController() {
         // nothing to do here
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public static TaskController getTaskController() {
         if (self == null) {
             self = new TaskController();
             displayType = DisplayType.ALL;
             sortingStyle = SortingStyle.ENDDATE_PRIORITY;
-            dateParser = new Parser();
         }
         return self;
     }
 
+    /**
+     * Setter for main.
+     *
+     * @param main
+     */
     public void setMainApp(Main main) {
         this.main = main;
     }
 
+    /**
+     *
+     *
+     * @param query
+     * @return
+     */
     public ArrayList<TodoItem> instantSearch(String query) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -59,12 +80,22 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getAllTasks() {
+    /**
+     *
+     *
+     * @return
+     */
+    public ArrayList<TodoItem> getAllTasks() {
         displayType = DisplayType.ALL;
         return main.getCommandController().getTaskList();
     }
 
-    protected ArrayList<TodoItem> getDoneTasks() {
+    /**
+     *
+     *
+     * @return
+     */
+    public ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.isDone()) {
@@ -75,59 +106,28 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getUndoneTasks() {
+    /**
+     *
+     *
+     * @return
+     */
+    public ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (!todo.isDone()) {
                 results.add(todo);
             }
         }
-
-//        ArrayList<TodoItem> today = new ArrayList<TodoItem>();
-//        ArrayList<TodoItem> tomorrow = new ArrayList<TodoItem>();
-//        ArrayList<TodoItem> future = new ArrayList<TodoItem>();
-//
-//        Date endToday =  dateParser.parse("today 2359h").get(0).getDates().get(0);
-//        Date endTomorrow =  dateParser.parse("tomorrow 2359h").get(0).getDates().get(0);
-//
-//        for (TodoItem todo : main.getCommandController().getTaskList()) {
-//            if (!todo.isDone() && todo.getEndDate() != null) {
-//                if (!todo.getEndDate().after(endToday)) {
-//                    today.add(todo);
-//                } else if (!todo.getEndDate().after(endTomorrow)) {
-//                    tomorrow.add(todo);
-//                } else {
-//                    future.add(todo);
-//                }
-//            } else if (!todo.isDone()) {
-//                future.add(todo);
-//            }
-//        }
-//
-//        if (!today.isEmpty()) {
-//            results.add(new TodoItem("today divider", null, null, null, null));
-//            for (TodoItem todo : today) {
-//                results.add(todo);
-//            }
-//        }
-//        if (!tomorrow.isEmpty()) {
-//            results.add(new TodoItem("tomorrow divider", null, null, null, null));
-//            for (TodoItem todo : tomorrow) {
-//                results.add(todo);
-//            }
-//        }
-//        if (!future.isEmpty()) {
-//            results.add(new TodoItem("future divider", null, null, null, null));
-//            for (TodoItem todo : future) {
-//                results.add(todo);
-//            }
-//        }
-
         displayType = DisplayType.UNDONE;
         return results;
     }
 
-    protected ArrayList<TodoItem> getOverdueTasks() {
+    /**
+     *
+     *
+     * @return
+     */
+    public ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (!todo.isDone() && todo.isOverdue()) {
@@ -138,7 +138,13 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksStartingOn(Date date) {
+    /**
+     *
+     *
+     * @param date
+     * @return
+     */
+    public ArrayList<TodoItem> getTasksStartingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.getStartDate() != null &&
@@ -152,7 +158,13 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksEndingOn(Date date) {
+    /**
+     *
+     *
+     * @param date
+     * @return
+     */
+    public ArrayList<TodoItem> getTasksEndingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.getEndDate() != null &&
@@ -166,7 +178,14 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+    /**
+     *
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    public ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
         start.setHours(0);
         start.setMinutes(0);
         start.setSeconds(0);
@@ -187,6 +206,11 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @param newSortingStyle
+     */
     public void setSortingStyle(int newSortingStyle) {
         System.out.println(newSortingStyle);
         switch (newSortingStyle) {
@@ -213,20 +237,30 @@ public class TaskController {
         main.getCommandController().updateView();
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public UUID getLastModifiedUUID() {
         return main.getCommandController().getModelManager().getLastModifiedUUID();
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public DisplayType getDisplayType() {
         return displayType;
     }
 
+    /**
+     *
+     *
+     * @param type
+     */
     public void setDisplayType(DisplayType type) {
         displayType = type;
     }
-
-    public SortingStyle getSortingStyle() {
-        return sortingStyle;
-    }
-
 }

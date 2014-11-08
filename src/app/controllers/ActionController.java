@@ -1,8 +1,8 @@
 package app.controllers;
 
 import app.Main;
-import app.helpers.LoggingService;
 import app.helpers.CommandObject;
+import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 
@@ -177,7 +177,7 @@ public class ActionController {
      */
     // Search command method(s)
     protected String search(CommandObject commandObject) {
-        if (commandObject.getCommandString().isEmpty() && !commandObject.isUpdateStartDate() && !commandObject.isUpdateEndDate()) {
+        if (commandObject.getCommandString().isEmpty() && !commandObject.isStartDateUpdated() && !commandObject.isEndDateUpdated()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
         try {
@@ -189,13 +189,13 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        if (commandObject.isUpdateStartDate()) {
-            if (commandObject.isUpdateEndDate()) {
+        if (commandObject.isStartDateUpdated()) {
+            if (commandObject.isEndDateUpdated()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
                 results = taskController.getTasksStartingOn(commandObject.getStartDate());
             }
-        } else if (commandObject.isUpdateEndDate()) {
+        } else if (commandObject.isEndDateUpdated()) {
             results = taskController.getTasksEndingOn(commandObject.getEndDate());
         } else {
             results = taskController.instantSearch(commandObject.getCommandString());
@@ -247,10 +247,10 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (commandObject.isUpdateStartDate()) {
+        if (commandObject.isStartDateUpdated()) {
             parameters[1] = true;
         }
-        if (commandObject.isUpdateEndDate()) {
+        if (commandObject.isEndDateUpdated()) {
             parameters[2] = true;
         }
         if (commandObject.getPriority() != null) {
@@ -364,6 +364,7 @@ public class ActionController {
         return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
+    //@author A0111987X
     // Undo and redo method(s)
     protected String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
@@ -385,6 +386,7 @@ public class ActionController {
         }
     }
 
+    //@author A0111987X
     protected String redo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);

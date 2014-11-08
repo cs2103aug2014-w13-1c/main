@@ -1,9 +1,12 @@
+//@author A0111987X
 package app.helpers;
 
 import java.util.Date;
 
 /**
- * Created by jolly on 29/10/14.
+ * CommandObject is a class purely to encapsulate all the details related to a command.
+ * The class is used only to store information and thus is mainly made out of
+ * getter and setter methods.
  */
 public class CommandObject {
     private String inputString;
@@ -12,96 +15,202 @@ public class CommandObject {
     private int endIndex;
     private Date startDate;
     private Date endDate;
-    private boolean updateStartDate;
-    private boolean updateEndDate;
+    private boolean startDateUpdated;
+    private boolean endDateUpdated;
     private String priority;
     private String[] inputStringArray;
 
+    /**
+     * Constructor for CommandObject.
+     * Sets setStartDateUpdated and setEndDateUpdated to false.
+     * Sets endIndex to 1000000000 (a very large number).
+     */
     public CommandObject() {
-        setUpdateStartDate(false);
-        setUpdateEndDate(false);
+        setStartDateUpdated(false);
+        setEndDateUpdated(false);
         endIndex = 1000000000;
     }
 
+    /**
+     * Setter for inputString.
+     *
+     * @param string
+     */
     public void setInputString(String string) {
         inputString = string;
     }
 
+    /**
+     * Getter for inputString.
+     *
+     * @return
+     */
     public String getInputString() {
         return inputString;
     }
 
+    /**
+     * Setter for inputStringArray.
+     *
+     * @param array
+     */
     public void setInputStringArray(String[] array) {
         inputStringArray = array;
     }
 
+    /**
+     * Getter for inputStringArray.
+     *
+     * @return
+     */
     public String[] getInputStringArray() {
         return inputStringArray;
     }
 
+    /**
+     * Setter for commandWord.
+     *
+     * @param word
+     */
     public void setCommandWord(String word) {
         commandWord = word;
     }
 
+    /**
+     * Getter for commandWord.
+     *
+     * @return
+     */
     public String getCommandWord() {
-            return commandWord;
-        }
+        return commandWord;
+    }
 
+    /**
+     * Setter for commandString.
+     *
+     * @param string
+     */
     public void setCommandString(String string) {
         commandString = string;
     }
 
+    /**
+     * Getter for commandString.
+     *
+     * @return
+     */
     public String getCommandString() {
-            return commandString;
-        }
+        return commandString;
+    }
 
+    /**
+     * Setter for startDate.
+     *
+     * @param date
+     */
     public void setStartDate(Date date) {
         startDate = date;
     }
 
+    /**
+     * Getter for startDate.
+     *
+     * @return
+     */
     public Date getStartDate() {
-            return startDate;
-        }
+        return startDate;
+    }
 
+    /**
+     * Setter for endDate.
+     *
+     * @param date
+     */
     public void setEndDate(Date date) {
         endDate = date;
     }
 
+    /**
+     * Getter for endDate.
+     *
+     * @return
+     */
     public Date getEndDate() {
-            return endDate;
-        }
+        return endDate;
+    }
 
+    /**
+     * Setter for priority.
+     *
+     * @param string
+     */
     public void setPriority(String string) {
         priority = string;
     }
 
+    /**
+     * Getter for priority.
+     *
+     * @return
+     */
     public String getPriority() {
         return priority;
     }
 
-    public boolean isUpdateStartDate() {
-        return updateStartDate;
+    /**
+     * Getter for startDateUpdated.
+     *
+     * @return
+     */
+    public boolean isStartDateUpdated() {
+        return startDateUpdated;
     }
 
-    public void setUpdateStartDate(boolean updateStartDate) {
-        this.updateStartDate = updateStartDate;
+    /**
+     * Setter for startDateUpdated.
+     *
+     * @param updated
+     */
+    public void setStartDateUpdated(boolean updated) {
+        startDateUpdated = updated;
     }
 
-    public boolean isUpdateEndDate() {
-        return updateEndDate;
+    /**
+     * Getter for endDateUpdated.
+     *
+     * @return
+     */
+    public boolean isEndDateUpdated() {
+        return endDateUpdated;
     }
 
-    public void setUpdateEndDate(boolean updateEndDate) {
-        this.updateEndDate = updateEndDate;
+    /**
+     * Setter for endDateUpdated.
+     *
+     * @param updated
+     */
+    public void setEndDateUpdated(boolean updated) {
+        endDateUpdated = updated;
     }
 
+    /**
+     * Getter for endIndex.
+     *
+     * @return
+     */
     public int getEndIndex() {
         return endIndex;
     }
 
-    public void setEndIndex(int endIndex) {
-        if (this.endIndex > endIndex) {
-            this.endIndex = endIndex;
+    /**
+     * Setter for endIndex.
+     * Only updates endIndex if existing endIndex is larger than the new one.
+     *
+     * @param index
+     */
+    public void setEndIndex(int index) {
+        if (endIndex > index) {
+            endIndex = index;
         }
     }
 }
