@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.viewmanagers;
 
 import app.controllers.CommandParser;
@@ -14,6 +15,20 @@ import org.fxmisc.richtext.StyleSpans;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
+
+/* inputField.css
+.input-field {
+    -fx-font-family: Helvetica;
+    -fx-font-size: 30px;
+    -fx-background-color: #C7F464;
+    -fx-padding: 15px;
+}
+
+.keyword {
+    -fx-fill: #C44D58;
+    -fx-font-weight: bold;
+}
+ */
 
 /**
  * InputFieldViewManager

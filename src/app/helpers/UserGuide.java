@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.helpers;
 
 import javafx.geometry.Pos;
@@ -10,14 +11,13 @@ import javafx.scene.text.*;
 public class UserGuide {
 
     private GridPane userGuide;
-    private TextFlow textFlow;
 
     public UserGuide() {
         userGuide = new GridPane();
         userGuide.setAlignment(Pos.CENTER);
         String family = "Helvetica";
         double size = 30;
-        textFlow = new TextFlow();
+        TextFlow textFlow = new TextFlow();
         textFlow.setTextAlignment(TextAlignment.CENTER);
         textFlow.setLineSpacing(10);
 
