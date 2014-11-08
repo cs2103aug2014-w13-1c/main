@@ -1,6 +1,8 @@
-package app.controllers;
+package tests;
 
 import app.Main;
+import app.controllers.CommandController;
+import app.controllers.TaskController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

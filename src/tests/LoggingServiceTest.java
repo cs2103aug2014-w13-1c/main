@@ -1,4 +1,4 @@
-package app.tests;
+package tests;
 
 import app.helpers.LoggingService;
 import org.junit.Test;

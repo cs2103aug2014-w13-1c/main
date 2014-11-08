@@ -45,6 +45,12 @@ public class InputFieldViewManager {
         isFromButton = false;
     }
 
+    /**
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void keyListener(javafx.beans.Observable observable, String oldValue, String newValue) {
         if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
             newValue = newValue.substring(1, newValue.length());

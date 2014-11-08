@@ -1,4 +1,4 @@
-package app.tests;
+package tests;
 
 import app.controllers.CommandController;
 import app.model.TodoItemList;

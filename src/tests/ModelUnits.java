@@ -1,4 +1,4 @@
-package app.tests;
+package tests;
 //@author A0116703N
 import app.model.*;
 import org.junit.Test;

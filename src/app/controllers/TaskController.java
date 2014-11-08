@@ -56,12 +56,12 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getAllTasks() {
+    public ArrayList<TodoItem> getAllTasks() {
         displayType = DisplayType.ALL;
         return main.getCommandController().getTaskList();
     }
 
-    protected ArrayList<TodoItem> getDoneTasks() {
+    public ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.isDone()) {
@@ -72,7 +72,7 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getUndoneTasks() {
+    public ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (!todo.isDone()) {
@@ -83,7 +83,7 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getOverdueTasks() {
+    public ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (!todo.isDone() && todo.isOverdue()) {
@@ -94,7 +94,7 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksStartingOn(Date date) {
+    public ArrayList<TodoItem> getTasksStartingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.getStartDate() != null &&
@@ -108,7 +108,7 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksEndingOn(Date date) {
+    public ArrayList<TodoItem> getTasksEndingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
             if (todo.getEndDate() != null &&
@@ -122,7 +122,7 @@ public class TaskController {
         return results;
     }
 
-    protected ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+    public ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
         start.setHours(0);
         start.setMinutes(0);
         start.setSeconds(0);
