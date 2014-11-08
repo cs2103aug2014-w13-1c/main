@@ -62,7 +62,7 @@ public class ModelManager {
         }
         
         TodoItemSorter.sortingStyle = TodoItemSorter.DEFAULT_SORTING_STYLE;
-        TodoItemSorter.resortTodoList(todoList);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
     
     /**
@@ -76,7 +76,7 @@ public class ModelManager {
         
         todoList.addTodoItem(newTodoItem);
         
-        TodoItemSorter.resortTodoList(todoList);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
         LoggingService.getLogger().log(Level.INFO, "Adding new task " + newTaskName);
         
         dataStorage.updateFile(todoList.getTodoItems());
@@ -124,7 +124,7 @@ public class ModelManager {
             toChange.setDoneStatus(newDoneStatus);
         }
         
-        TodoItemSorter.resortTodoList(todoList);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
 
         LoggingService.getLogger().log(Level.INFO, "Updating task " + toChange.getTaskName());
         
@@ -143,7 +143,7 @@ public class ModelManager {
         
         assert deletedItem != null;
         
-        TodoItemSorter.resortTodoList(todoList);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
 
         LoggingService.getLogger().log(Level.INFO, "Deleting task " + deletedItem.getTaskName());
         
@@ -177,7 +177,7 @@ public class ModelManager {
     
     public void setSortingStyle(int newSortingStyle) {
         TodoItemSorter.sortingStyle = newSortingStyle;
-        TodoItemSorter.resortTodoList(todoList);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
 
     public ArrayList<TodoItem> getTodoItemList() {
@@ -227,6 +227,6 @@ public class ModelManager {
         this.todoList = new TodoItemList(newTodoItems);
         this.latestModified = null;
         
-        TodoItemSorter.resortTodoList(this.todoList);
+        TodoItemSorter.resortTodoList(this.todoList.getTodoItems());
     }
 }

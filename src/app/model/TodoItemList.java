@@ -55,10 +55,6 @@ public class TodoItemList {
     public int countTodoItems() {
         return todoItems.size();
     }
-
-    public void sortTodoItems(Comparator<TodoItem> todoItemComparator) {
-        Collections.sort(todoItems, todoItemComparator);
-    }
 	
 	// CRUD
 	public void addTodoItem(TodoItem newItem) {

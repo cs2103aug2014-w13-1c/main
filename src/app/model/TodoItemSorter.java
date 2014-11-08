@@ -1,4 +1,6 @@
 package app.model;
+import java.util.ArrayList;
+import java.util.Collections;
 //@author A0116703N
 import java.util.Comparator;
 
@@ -104,7 +106,7 @@ public class TodoItemSorter {
         }
     }
     
-    public static void resortTodoList(TodoItemList todoList) {
-        todoList.sortTodoItems(todoItemComparators[sortingStyle]);
+    public static void resortTodoList(ArrayList<TodoItem> todoList) {
+        Collections.sort(todoList, todoItemComparators[sortingStyle]);
     }
 }
