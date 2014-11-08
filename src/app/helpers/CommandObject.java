@@ -44,32 +44,32 @@ public class CommandObject {
     }
 
     public String getCommandWord() {
-            return commandWord;
-        }
+        return commandWord;
+    }
 
     public void setCommandString(String string) {
         commandString = string;
     }
 
     public String getCommandString() {
-            return commandString;
-        }
+        return commandString;
+    }
 
     public void setStartDate(Date date) {
         startDate = date;
     }
 
     public Date getStartDate() {
-            return startDate;
-        }
+        return startDate;
+    }
 
     public void setEndDate(Date date) {
         endDate = date;
     }
 
     public Date getEndDate() {
-            return endDate;
-        }
+        return endDate;
+    }
 
     public void setPriority(String string) {
         priority = string;
@@ -99,9 +99,9 @@ public class CommandObject {
         return endIndex;
     }
 
-    public void setEndIndex(int endIndex) {
-        if (this.endIndex > endIndex) {
-            this.endIndex = endIndex;
+    public void setEndIndex(int index) {
+        if (endIndex > index) {
+            endIndex = index;
         }
     }
 }

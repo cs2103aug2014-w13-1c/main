@@ -17,7 +17,6 @@ import java.util.logging.Level;
 
 /**
  * InputFieldViewManager
- *
  * Created by jolly on 24/9/14.
  */
 public class InputFieldViewManager {
@@ -27,7 +26,7 @@ public class InputFieldViewManager {
     private RootViewManager rootViewManager;
     private Boolean searchState;
     private Boolean isFromButton;
-    
+
     public InputFieldViewManager() {
         initInputFieldViewManager();
         inputField.textProperty().addListener(this::keyListener);
@@ -46,7 +45,6 @@ public class InputFieldViewManager {
     }
 
     /**
-     *
      * @param observable
      * @param oldValue
      * @param newValue
@@ -71,7 +69,7 @@ public class InputFieldViewManager {
                 LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
             }
         } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("") &&
-                   !lastCommand.equals(inputField.getText())) {
+                !lastCommand.equals(inputField.getText())) {
             event.consume();
             inputField.replaceText(lastCommand);
         } else if (event.getCode() == KeyCode.TAB) {
@@ -88,9 +86,9 @@ public class InputFieldViewManager {
             searchState = true;
             instantSearch(inputField.getText().substring(7));
         } else if (inputField.getText().startsWith("update ") ||
-                   inputField.getText().startsWith("delete ") ||
-                   inputField.getText().startsWith("undone ") ||
-                   inputField.getText().startsWith("done ")) {
+                inputField.getText().startsWith("delete ") ||
+                inputField.getText().startsWith("undone ") ||
+                inputField.getText().startsWith("done ")) {
             highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
         } else {
             if (searchState) {
@@ -109,7 +107,7 @@ public class InputFieldViewManager {
             highlightIndex = -1;
         }
         if (highlightIndex > 0 &&
-            highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
+                highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
             rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1, fromButton);
         }
     }
@@ -140,7 +138,7 @@ public class InputFieldViewManager {
         } else if (results.size() == 1) {
             return results.get(0);
         } else {
-            String multipleKeywords  = "Possible keywords: ";
+            String multipleKeywords = "Possible keywords: ";
             for (String result : results) {
                 multipleKeywords = multipleKeywords + result + " ";
             }
@@ -164,7 +162,7 @@ public class InputFieldViewManager {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
-    
+
     protected void setFromButton(boolean newIsFromButton) {
         this.isFromButton = newIsFromButton;
     }

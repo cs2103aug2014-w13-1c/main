@@ -8,7 +8,6 @@ import java.util.Stack;
 /**
  * in charge of undos and redos
  * implemented as a singleton
- *
  * Created by jolly on 27/10/14.
  */
 public class UndoController {
@@ -33,10 +32,10 @@ public class UndoController {
         ArrayList<TodoItem> undo = new ArrayList<TodoItem>();
         for (TodoItem todo : list) {
             undo.add(new TodoItem(todo.getTaskName(),
-                                  todo.getStartDate(),
-                                  todo.getEndDate(),
-                                  todo.getPriority(),
-                                  todo.isDone()));
+                    todo.getStartDate(),
+                    todo.getEndDate(),
+                    todo.getPriority(),
+                    todo.isDone()));
         }
         undoStack.push(undo);
     }
