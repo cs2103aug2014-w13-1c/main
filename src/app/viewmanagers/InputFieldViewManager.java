@@ -34,7 +34,13 @@ import java.util.logging.Level;
  * View Manager for the inputField.
  * inputField is implemented using RichTextFX to allow for per character styling, which is then used
  * for keyword highlighting.
- * InputFieldViewManager is also in charge of realtime search and cell highlighting.
+ *
+ * InputFieldViewManager is also in charge of the following things:
+ * - real-time search: task list is updated with search results as the user types, only works for task name queries,
+ * and not with date queries
+ * - real-time cell highlighting: highlights (and scrolls to if the command was entered by the user) the relevant cell
+ * to indicate the task which the command will have an effect on (used for update/delete/done/undone)
+ * - pressing the up key in the inputField populates it with the last entered command
  */
 public class InputFieldViewManager {
 
@@ -70,9 +76,9 @@ public class InputFieldViewManager {
     /**
      *
      *
-     * @param observable
-     * @param oldValue
-     * @param newValue
+     * @param observable    Observable entity which isn't used.
+     * @param oldValue      Old value of the inputField.
+     * @param newValue      New value of the inputField.
      */
     private void keyListener(javafx.beans.Observable observable, String oldValue, String newValue) {
         if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
@@ -92,7 +98,9 @@ public class InputFieldViewManager {
     private void keyPressListener(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
-            lastCommand = inputField.getText();
+            if (!inputField.getText().equals("")) {
+                lastCommand = inputField.getText();
+            }
             try {
                 checkCommandLengthAndExecute(lastCommand);
             } catch (InvalidInputException e) {
@@ -244,9 +252,9 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Getter for the inputField. Used mainly by rootViewManager to interact with the inputField.
      *
-     *
-     * @return
+     * @return inputField
      */
     public StyleClassedTextArea getInputField() {
         return inputField;
