@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class ModelManager {
-    
+    // Error messages to be thrown to controller.
     public static final String LOAD_SUCCESS = "Successfully loaded file!";
     public static final String LOAD_FAILED = "Failed to load file.";
     public static final String PARSE_FAILED = "File data is corrupted.";
@@ -23,21 +23,25 @@ public class ModelManager {
     public static final String WRITE_SETTINGS_FAILED = "Failed to write to settings file.";
     public static final String LOAD_SETTINGS_FAILED = "Failed to load settings file.";
     
+    // Model class instances
     private TodoItemList todoList;
     private FileStorage dataStorage;
+    
     private UUID latestModified;
     
     /**
      * ModelManager Constructor
      * 
+     * Upon construction of a ModelManager, file I/O are instantly carried out. The data files are first loaded here.
+     * 
      * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
      */
     public ModelManager() throws IOException {
-        System.out.println("showed up");
-        
+        // Don't load the any files yet
         this.dataStorage = new FileStorage();
         this.latestModified = null;
         
+        // First load the settings
         try {
             dataStorage.loadSettings();
         } catch (JSONException e) {
@@ -48,6 +52,7 @@ public class ModelManager {
             throw new IOException(LOAD_SETTINGS_FAILED);
         }
         
+        // Then load the data from target directory
         try {
             this.todoList = new TodoItemList(dataStorage.loadFile());
         } catch (ParseException e) {
@@ -61,64 +66,83 @@ public class ModelManager {
             throw new IOException(LOAD_FAILED);
         }
         
+        // Finally, resort the task list based on end date
         TodoItemSorter.sortingStyle = TodoItemSorter.DEFAULT_SORTING_STYLE;
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
     
+    // CRUD
     /**
      * addTask
      * 
+     * Adds a task into the program data and then writes it into the database file. 
+     * 
+     * @param newTaskName The name of the new task
+     * @param newStartDate The start date of the new task
+     * @param newEndDate The end date of the new task
+     * @param newPriority The priority level of the new task. If this is not TodoItem.HIGH/MEDIUM/LOW, priority is set to MEDIUM.
+     * @param newDoneStatus The done status of the new task. If this is null, done status is set to false.
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
      */
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
-        
-        TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
-        
-        todoList.addTodoItem(newTodoItem);
-        
-        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+        // First, log the method call
         LoggingService.getLogger().log(Level.INFO, "Adding new task " + newTaskName);
         
+        // Then update the program data
+        TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
+        todoList.addTodoItem(newTodoItem);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+        
+        // Then update file
         dataStorage.updateFile(todoList.getTodoItems());
         
+        // Finally, update the last modified UUID
         latestModified = newTodoItem.getUUID();
     }
     
     /**
      * updateTask
      * 
+     * Updates a task within the program data and then updates database file.
+     * 
+     * @param itemID The UUID of the item to be updated
+     * @param parameters An array specifying which attribute of the TodoItem to update
+     * @param newTaskName (Can be null) The new task name of the item.
+     * @param newStartDate (Can be null) The new start date of the item.
+     * @param newEndDate (Can be null) The new end date of the item.
+     * @param newPriority (Can be null) The new priority level of the item. If this is not TodoItem.LOW/MEDIUM/HIGH, an assertion error will occur.
+     * @param newDoneStatus (Can be null) The new done status of the item.
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, "Updating task.");
         
-        // parameters array should be length 5
+        // parameters array should always be length 5
         assert parameters.length == 5;
         
+        // Search for the task to update by its UUID
         TodoItem toChange = todoList.getByUUID(itemID);
         
-        // UUID not found
-        assert toChange != null;
+        assert toChange != null; // UUID should always exist
         
+        // Now we update the program data based on the parameters
         // Task name
         if (parameters[0]) {
             toChange.setTaskName(newTaskName);
         }
-        
         // Start date
         if (parameters[1]) {
             toChange.setStartDate(newStartDate);
         }
-        
         // End date
         if (parameters[2]) {
             toChange.setEndDate(newEndDate);
         }
-        
         // Priority
         if (parameters[3]) {
             toChange.setPriority(newPriority);
         }
-        
         // Done status
         if (parameters[4]) {
             toChange.setDoneStatus(newDoneStatus);
@@ -126,27 +150,32 @@ public class ModelManager {
         
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
 
-        LoggingService.getLogger().log(Level.INFO, "Updating task " + toChange.getTaskName());
-        
+        // Then, update the file
         dataStorage.updateFile(todoList.getTodoItems());
         
+        // Finally, update the last modified UUID
         latestModified = toChange.getUUID();
     }
     
     /**
      * deleteTask
      * 
-     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     * Deletes a task within the program data and then updates the file.
+     * 
+     * @param itemID The UUID of the item to be deleted
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     * @return The deleted TodoItem
      */
     public TodoItem deleteTask(UUID itemID) throws IOException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, "Deleting task.");
+        
+        // Then update the data in memory
         TodoItem deletedItem = todoList.deleteByUUID(itemID);
-        
-        assert deletedItem != null;
-        
+        assert deletedItem != null; // UUID should always exist
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
 
-        LoggingService.getLogger().log(Level.INFO, "Deleting task " + deletedItem.getTaskName());
-        
+        // Then update the file
         dataStorage.updateFile(todoList.getTodoItems());
         
         return deletedItem;
@@ -154,6 +183,8 @@ public class ModelManager {
     
     /**
      * clearTasks
+     * 
+     * Clears all tasks in the program data and in the database file.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
@@ -165,68 +196,147 @@ public class ModelManager {
         dataStorage.updateFile(todoList.getTodoItems());
     }
     
+    // Sorting
     /**
-     * changeSettings
+     * setSortingStyle
      * 
-     * @throws IOException with WRITE_SETTINGS_FAILED
+     * Changes the sortingStyle in the TodoItemSorter.
+     * 
+     * @param newSortingStyle The new sorting style index.
      */
-    public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
-        todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
-        latestModified = null;
-    }
-    
     public void setSortingStyle(int newSortingStyle) {
         TodoItemSorter.changeSortStyle(newSortingStyle);
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
 
+    // Data exposure
+    /**
+     * getTodoItemList
+     * 
+     * Returns the data held by Model.
+     * 
+     * @return The ArrayList of TodoItems currently in the program memory.
+     */
     public ArrayList<TodoItem> getTodoItemList() {
         return todoList.getTodoItems();
     }
     
+    /**
+     * getTodoItemIterator
+     * 
+     * Returns the data held by Model as a ListIterator
+     * 
+     * @return The iterator of the ArrayList of TodoItems currently in the program memory.
+     */
     public ListIterator<TodoItem> getTodoItemIterator() {
         return getTodoItemList().listIterator();
     }
     
+    // Settings
+    /**
+     * changeSettings
+     * 
+     * Changes the settings stored in the FileStorage, and then updates the settings.json file.
+     * 
+     * @param fileDirectory The new directory to switch to
+     * @param randomColorsEnabled The new setting for random colors
+     * @param notificationsEnabled The new setting for notifications
+     * @throws IOException with WRITE_SETTINGS_FAILED
+     */
+    public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
+        todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
+        
+        // Reloading the data repopulates the item list with different items, so the UUID is not valid any more.
+        latestModified = null;
+    }
+    
+    /**
+     * getFileDirectory
+     * 
+     * Returns the current file directory in use by the program.
+     * 
+     * @return The file directory in use
+     */
     public String getFileDirectory() {
         return dataStorage.getFileDirectory();
     }
     
+    /**
+     * areRandomColorsEnabled
+     * 
+     * Returns the current setting of random task item colors.
+     * 
+     * @return The current random color setting
+     */
     public Boolean areRandomColorsEnabled() {
         return dataStorage.areRandomColorsEnabled();
     }
     
+    /**
+     * areNotificationsEnabled
+     * 
+     * Returns the current setting of notification display.
+     * 
+     * @return The current notification setting
+     */
     public Boolean areNotificationsEnabled() {
         return dataStorage.areNotificationsEnabled();
     }
     
-    public String getFullFileName() {
-        return dataStorage.getFullFileName();
-    }
-    
-    public int countTasks() {
-        return todoList.countTodoItems();
-    }
-    
+    // Last modified
+    /**
+     * getLastModifiedIndex
+     * 
+     * @return The index within the program data of the last modified task item.
+     */
     public int getLastModifiedIndex() {
         return todoList.searchIndexByUUID(latestModified);
     }
     
+    /**
+     * getLastModifiedUUID
+     * 
+     * @return The last modified task item's UUID.
+     */
     public UUID getLastModifiedUUID() {
         return latestModified;
     }
     
+    // For use by Undo/Redo functionalities
     /**
      * loadTodoItems
+     * 
+     * Reloads a snapshot of the program data.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
+        // We attempt to write to the database file first. If there are
+        // any I/O problems, we still have the old data intact.
         dataStorage.updateFile(newTodoItems);
         
         this.todoList = new TodoItemList(newTodoItems);
         this.latestModified = null;
         
         TodoItemSorter.resortTodoList(this.todoList.getTodoItems());
+    }
+    
+    // Miscellaneous
+    /**
+     * getFullFileName
+     * 
+     * @return The full filepath to the program.
+     */
+    public String getFullFileName() {
+        return dataStorage.getFullFileName();
+    }
+    
+    /**
+     * countTasks
+     * 
+     * @return The number of tasks held in program memory.
+     */
+    public int countTasks() {
+        return todoList.countTodoItems();
     }
 }
