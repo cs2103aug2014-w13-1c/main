@@ -47,7 +47,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 
 /**
  * The TitleBar contains a label that shows the user their current context,
