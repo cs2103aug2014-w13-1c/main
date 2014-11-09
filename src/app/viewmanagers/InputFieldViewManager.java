@@ -40,7 +40,9 @@ import java.util.logging.Level;
  * and not with date queries
  * - real-time cell highlighting: highlights (and scrolls to if the command was entered by the user) the relevant cell
  * to indicate the task which the command will have an effect on (used for update/delete/done/undone)
- * - pressing the up key in the inputField populates it with the last entered command
+ * - pressing the up key in the inputField populates it with the last entered command (regardless of its validity)
+ * - auto-complete for keywords: using tab for auto-complete, which only works for the first word,
+ * having multiple matches will pop up a notification telling the user the possible keywords that match
  */
 public class InputFieldViewManager {
 
@@ -51,7 +53,8 @@ public class InputFieldViewManager {
     private Boolean isFromButton;
 
     /**
-     *
+     * Constructor for InputFieldViewManager, initialises the relevant components for InputFieldViewManager,
+     * then adds two listeners, one for input changes and one for key presses.
      */
     public InputFieldViewManager() {
         initInputFieldViewManager();
@@ -60,7 +63,7 @@ public class InputFieldViewManager {
     }
 
     /**
-     *
+     * Initialises the relevant components for InputFieldViewManager, such as the relevant styles from the css file.
      */
     private void initInputFieldViewManager() {
         lastCommand = "";
@@ -74,7 +77,9 @@ public class InputFieldViewManager {
     }
 
     /**
-     *
+     * Listener for changes in inputField.
+     * Removes spaces (" ") if they are the first character in the command.
+     * Calls the methods in charge of keyword highlighting, instant search and cell highlighting.
      *
      * @param observable    Observable entity which isn't used.
      * @param oldValue      Old value of the inputField.
@@ -91,7 +96,10 @@ public class InputFieldViewManager {
     }
 
     /**
-     *
+     * Listener for key presses in the inputField.
+     * If the [ENTER] key is pressed, sends current user input to the CommandController for execution.
+     * If the [UP] key is pressed, replaces the current text with the last entered command.
+     * If the [TAB] key is pressed, calls auto-complete method.
      *
      * @param event
      */
@@ -120,7 +128,9 @@ public class InputFieldViewManager {
     }
 
     /**
-     *
+     * Calls relevant methods when a real-time search or cell highlight situation is detected.
+     * This detection is purely based on the first word of the current user input.
+     * Also resets the placeholder of the task list to the welcome splash page.
      */
     private void instantSearchAndHighlight() {
         if (inputField.getText().startsWith("search ")) {
@@ -141,10 +151,14 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Highlights the task based on the identified index in the current user input.
      *
+     * Scroll to task is only enabled if the user types the command that triggers cell highlighting,
+     * if the inputField is populated using a button (done, update or delete), the task list does not
+     * scroll to the highlighted task in order not to confuse the user.
      *
-     * @param index
-     * @param fromButton
+     * @param index Index of the task to highlight.
+     * @param fromButton True if the command came from pressing a button rather than the user typing it.
      */
     private void highlightCell(String index, boolean fromButton) {
         int highlightIndex;
@@ -163,9 +177,11 @@ public class InputFieldViewManager {
     }
 
     /**
+     * For real-time searching for only task name queries. Does not apply to queries with dates.
+     * Updates task list with real-time results based on search query.
+     * Updates task list placeholder if there are no search results.
      *
-     *
-     * @param query
+     * @param query search query
      */
     private void instantSearch(String query) {
         LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
@@ -178,10 +194,10 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Generates a list of matching keywords taken from the CommandParser based on the current user input.
      *
-     *
-     * @param command
-     * @return
+     * @param command user input
+     * @return Only match for keyword or null if there is no match or more than one match.
      */
     private String autoComplete(String command) {
         ArrayList<String> results = new ArrayList<String>();
@@ -194,10 +210,12 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Based on the ArrayList of possible matches of keywords, if there is just one, it returns that keyword.
+     * If there are more than one, it displays all possibilities in a notification and then returns null.
+     * Also returns null if there are no results.
      *
-     *
-     * @param results
-     * @return
+     * @param results ArrayList of Strings which are the matching keywords.
+     * @return Only match for keyword or null if there is no match or more than one match.
      */
     private String autoCompleteResults(ArrayList<String> results) {
         if (results.size() == 0) {
@@ -215,9 +233,9 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Checks to make sure the command is not empty, if not it throws an Invalid Input Exception.
      *
-     *
-     * @param command
+     * @param command user input
      * @throws InvalidInputException
      */
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
@@ -232,10 +250,12 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Gets the ArrayList of Keywords from CommandController (which passes it to CommandParser) to figure out
+     * which keywords to highlight based on the current user input string. Passes the ArrayList to KeywordDetector
+     * to get the StyleSpans collection for use with RichTextFX.
      *
-     *
-     * @param command
-     * @return
+     * @param command input string
+     * @return StyleSpans collection with the information needed to determine which keywords to highlight.
      */
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
@@ -243,12 +263,13 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Setter for isFromButton.
+     * Used for cell highlighting to determine if the task list should scroll to the highlighted task to.
      *
-     *
-     * @param newIsFromButton
+     * @param newIsFromButton isFromButton
      */
     protected void setFromButton(boolean newIsFromButton) {
-        this.isFromButton = newIsFromButton;
+        isFromButton = newIsFromButton;
     }
 
     /**

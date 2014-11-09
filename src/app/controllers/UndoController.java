@@ -8,6 +8,7 @@ import java.util.Stack;
 
 /**
  * In charge of undos and redos.
+ * Implements undos and redos as two stacks of ArrayLists of TodoItems.
  * Implemented as a singleton.
  */
 public class UndoController {
@@ -27,7 +28,7 @@ public class UndoController {
     /**
      * Getter for UndoController.
      *
-     * @return
+     * @return UndoController (singleton pattern)
      */
     protected static UndoController getUndoController() {
         if (self == null) {

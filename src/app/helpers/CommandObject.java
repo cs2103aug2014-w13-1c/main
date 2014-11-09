@@ -34,7 +34,7 @@ public class CommandObject {
     /**
      * Setter for inputString.
      *
-     * @param string
+     * @param string inputString
      */
     public void setInputString(String string) {
         inputString = string;
@@ -43,7 +43,7 @@ public class CommandObject {
     /**
      * Getter for inputString.
      *
-     * @return
+     * @return inputString
      */
     public String getInputString() {
         return inputString;
@@ -52,7 +52,7 @@ public class CommandObject {
     /**
      * Setter for inputStringArray.
      *
-     * @param array
+     * @param array inputStringArray
      */
     public void setInputStringArray(String[] array) {
         inputStringArray = array;
@@ -61,7 +61,7 @@ public class CommandObject {
     /**
      * Getter for inputStringArray.
      *
-     * @return
+     * @return inputStringArray
      */
     public String[] getInputStringArray() {
         return inputStringArray;
@@ -70,7 +70,7 @@ public class CommandObject {
     /**
      * Setter for commandWord.
      *
-     * @param word
+     * @param word commandWord
      */
     public void setCommandWord(String word) {
         commandWord = word;
@@ -79,7 +79,7 @@ public class CommandObject {
     /**
      * Getter for commandWord.
      *
-     * @return
+     * @return commandWord
      */
     public String getCommandWord() {
         return commandWord;
@@ -88,7 +88,7 @@ public class CommandObject {
     /**
      * Setter for commandString.
      *
-     * @param string
+     * @param string commandString
      */
     public void setCommandString(String string) {
         commandString = string;
@@ -97,7 +97,7 @@ public class CommandObject {
     /**
      * Getter for commandString.
      *
-     * @return
+     * @return commandString
      */
     public String getCommandString() {
         return commandString;
@@ -106,7 +106,7 @@ public class CommandObject {
     /**
      * Setter for startDate.
      *
-     * @param date
+     * @param date startDate
      */
     public void setStartDate(Date date) {
         startDate = date;
@@ -115,7 +115,7 @@ public class CommandObject {
     /**
      * Getter for startDate.
      *
-     * @return
+     * @return startDate
      */
     public Date getStartDate() {
         return startDate;
@@ -124,7 +124,7 @@ public class CommandObject {
     /**
      * Setter for endDate.
      *
-     * @param date
+     * @param date endDate
      */
     public void setEndDate(Date date) {
         endDate = date;
@@ -133,7 +133,7 @@ public class CommandObject {
     /**
      * Getter for endDate.
      *
-     * @return
+     * @return endDate
      */
     public Date getEndDate() {
         return endDate;
@@ -142,7 +142,7 @@ public class CommandObject {
     /**
      * Setter for priority.
      *
-     * @param string
+     * @param string priority
      */
     public void setPriority(String string) {
         priority = string;
@@ -151,7 +151,7 @@ public class CommandObject {
     /**
      * Getter for priority.
      *
-     * @return
+     * @return priority
      */
     public String getPriority() {
         return priority;
@@ -160,7 +160,7 @@ public class CommandObject {
     /**
      * Getter for startDateUpdated.
      *
-     * @return
+     * @return startDateUpdated
      */
     public boolean isStartDateUpdated() {
         return startDateUpdated;
@@ -169,7 +169,7 @@ public class CommandObject {
     /**
      * Setter for startDateUpdated.
      *
-     * @param updated
+     * @param updated startDateUpdated
      */
     public void setStartDateUpdated(boolean updated) {
         startDateUpdated = updated;
@@ -178,7 +178,7 @@ public class CommandObject {
     /**
      * Getter for endDateUpdated.
      *
-     * @return
+     * @return endDateUpdated
      */
     public boolean isEndDateUpdated() {
         return endDateUpdated;
@@ -187,7 +187,7 @@ public class CommandObject {
     /**
      * Setter for endDateUpdated.
      *
-     * @param updated
+     * @param updated endDateUpdated
      */
     public void setEndDateUpdated(boolean updated) {
         endDateUpdated = updated;
@@ -196,7 +196,7 @@ public class CommandObject {
     /**
      * Getter for endIndex.
      *
-     * @return
+     * @return endIndex
      */
     public int getEndIndex() {
         return endIndex;
@@ -204,9 +204,9 @@ public class CommandObject {
 
     /**
      * Setter for endIndex.
-     * Only updates endIndex if existing endIndex is larger than the new one.
+     * Only updates endIndex if the new one is smaller than the existing one.
      *
-     * @param index
+     * @param index endIndex
      */
     public void setEndIndex(int index) {
         if (endIndex > index) {

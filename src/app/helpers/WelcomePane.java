@@ -6,7 +6,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.*;
 
 /**
- * In charge of the Welcome Splash Page.
+ * Creates the Welcome Splash Page that is shown when there are no tasks.
  */
 public class WelcomePane {
 

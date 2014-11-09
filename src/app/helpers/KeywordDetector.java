@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.helpers;
 
 import org.fxmisc.richtext.StyleSpans;
@@ -8,12 +9,23 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Takes in an arraylist of keywords and returns a stylespans collection.
- *
- * Created by jolly on 15/10/14.
+ * Helper class in charge of converting an ArrayList of Keywords which contain indexes to words that the
+ * CommandParser has recognised, to a StyleSpans collection which is used to tell the inputField which
+ * words to highlight.
  */
 public class KeywordDetector {
 
+    /**
+     * Takes in an ArrayList of Keywords and returns a StyleSpans collection which is then used
+     * for keyword highlighting.
+     *
+     * Code is adapted from:
+     * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
+     *
+     * @param keywords  ArrayList of Keywords.
+     * @param command   Command string that was entered.
+     * @return          StyleSpans collection.
+     */
     public static StyleSpans<Collection<String>> getStyleSpans(ArrayList<Keyword> keywords, String command) {
         StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
         int lastWordEnd = 0;
