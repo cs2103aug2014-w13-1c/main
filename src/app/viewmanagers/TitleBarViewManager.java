@@ -66,11 +66,18 @@ public class TitleBarViewManager {
 
     private RootViewManager rootViewManager;
 
+    /**
+     * Initializer of TitleBarView.
+     */
     @FXML
     public void initialize() {
         initSortStyleChoiceBox();
     }
 
+    /**
+     * Initialize the choice box that lets the user choose the sorting style of the
+     * task list.
+     */
     private void initSortStyleChoiceBox() {
         sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
                 "TASK NAME", "START DATE", "END DATE", "PRIORITY"
@@ -93,7 +100,7 @@ public class TitleBarViewManager {
     /**
      * The sorting control is disabled in the search view context,
      * and enabled in all other contexts.
-     * @param isVisible
+     * @param isVisible If set to true, show the sorting controls.
      */
     public void setSortControlsVisible(boolean isVisible) {
         sortByLabel.setVisible(isVisible);
@@ -102,7 +109,7 @@ public class TitleBarViewManager {
 
     /**
      * Public setter for the titleBarLabel.
-     * @param title
+     * @param title The title of the current view context.
      */
     public void setTitle(String title) {
         titleBarLabel.setText(title.toUpperCase());
@@ -110,7 +117,7 @@ public class TitleBarViewManager {
 
     /**
      * Set back-reference to the rootViewManager.
-     * @param rootViewManager
+     * @param rootViewManager The RootViewManager instance.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
