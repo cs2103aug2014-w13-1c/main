@@ -64,10 +64,13 @@ public class IntegrationTest1 {
                    return;
                }
 
+               assertEquals(4, testTodoItems.size());
+               
                String testInput1 = "task 1";
                String testInput2 = "task 2";
                String testInput3 = "task 3";
                String testInput4 = "task 4";
+               
                assertEquals(testInput3, testTodoItems.get(0).getTaskName());
                assertEquals(testInput4, testTodoItems.get(1).getTaskName());
                assertEquals(testInput2, testTodoItems.get(2).getTaskName());

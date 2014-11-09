@@ -151,7 +151,7 @@ public class ActionController {
         }
         if (commandObject.getCommandString().equalsIgnoreCase("name")) {
             taskController.setSortingStyle(0);
-            main.getRootViewManager().getTitleBarViewManager().setSortStyle(TitleBarViewManager.SortStyle.START);
+            main.getRootViewManager().getTitleBarViewManager().setSortStyle(TitleBarViewManager.SortStyle.NAME);
             return "Sorting by task name\n";
         } else if (commandObject.getCommandString().equalsIgnoreCase("start")) {
             taskController.setSortingStyle(1);
