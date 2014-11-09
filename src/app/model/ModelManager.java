@@ -30,6 +30,12 @@ public class ModelManager {
     public static final String WRITE_SETTINGS_FAILED = "Failed to write to settings file.";
     public static final String LOAD_SETTINGS_FAILED = "Failed to load settings file.";
     
+    // Logger messages
+    private static final String ADD_MESSAGE = "Adding new task ";
+    private static final String UPDATE_MESSAGE = "Updating task.";
+    private static final String DELETE_MESSAGE = "Deleting task.";
+    private static final String CLEAR_MESSAGE = "Clearing all tasks.";
+    
     // Model class instances
     private TodoItemList todoList;
     private FileStorage dataStorage;
@@ -89,7 +95,7 @@ public class ModelManager {
      */
     public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         // First, log the method call
-        LoggingService.getLogger().log(Level.INFO, "Adding new task " + newTaskName);
+        LoggingService.getLogger().log(Level.INFO, ADD_MESSAGE + newTaskName);
         
         // Then update the program data
         TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
@@ -117,7 +123,7 @@ public class ModelManager {
      */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
         // First, log the method call
-        LoggingService.getLogger().log(Level.INFO, "Updating task.");
+        LoggingService.getLogger().log(Level.INFO, UPDATE_MESSAGE);
         
         // parameters array should always be length 5
         assert parameters.length == 5;
@@ -167,7 +173,7 @@ public class ModelManager {
      */
     public TodoItem deleteTask(UUID itemID) throws IOException {
         // First, log the method call
-        LoggingService.getLogger().log(Level.INFO, "Deleting task.");
+        LoggingService.getLogger().log(Level.INFO, DELETE_MESSAGE);
         
         // Then update the data in memory
         TodoItem deletedItem = todoList.deleteByUUID(itemID);
@@ -190,7 +196,7 @@ public class ModelManager {
     public void clearTasks() throws IOException {
         todoList.clearTodoItems();
 
-        LoggingService.getLogger().log(Level.INFO, "Clearing all tasks.");
+        LoggingService.getLogger().log(Level.INFO, CLEAR_MESSAGE);
         
         dataStorage.updateFile(todoList.getTodoItems());
     }
