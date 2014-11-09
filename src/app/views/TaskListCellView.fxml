@@ -17,11 +17,9 @@
     <Button fx:id="deleteButton" layoutX="882.0" layoutY="5.0" mnemonicParsing="false"
             style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-              <image>
-                  <Image url="@../resources/cross.png"/>
-              </image>
-          </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../resources/cross.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Delete this task. Command: &quot;delete &lt;task index&gt;&quot;"/>
@@ -30,11 +28,9 @@
     <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0"
             prefWidth="20.0" style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-              <image>
-                  <Image url="@../resources/compose.png"/>
-              </image>
-          </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../resources/compose.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip
@@ -71,11 +67,9 @@
     <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
             style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-              <image>
-                  <Image url="@../resources/tick.png"/>
-              </image>
-          </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../resources/tick.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Mark as undone. Command: &quot;undone &lt;index number&gt;&quot;"/>
@@ -91,11 +85,9 @@
     <Button fx:id="undoneButton" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
             style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-              <image>
-                  <Image url="@../resources/untick.png"/>
-              </image>
-          </ImageView>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                <Image url="@../resources/untick.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Mark as done. Command: &quot;done &lt;index number&gt;&quot;"/>

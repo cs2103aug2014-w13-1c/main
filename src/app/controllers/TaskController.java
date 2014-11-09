@@ -57,10 +57,10 @@ public class TaskController {
     /**
      * Setter for main.
      *
-     * @param main
+     * @param main main
      */
     public void setMainApp(Main main) {
-        this.main = main;
+        TaskController.main = main;
     }
 
     /**
@@ -70,8 +70,8 @@ public class TaskController {
      * @return      tasks whose task name contains the search query
      */
     public ArrayList<TodoItem> instantSearch(String query) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.getTaskName().toLowerCase().
                     contains(query.toLowerCase())) {
                 results.add(todo);
@@ -87,7 +87,7 @@ public class TaskController {
      */
     public ArrayList<TodoItem> getAllTasks() {
         displayType = DisplayType.ALL;
-        return main.getCommandController().getTaskList();
+        return CommandController.getTaskList();
     }
 
     /**
@@ -96,8 +96,8 @@ public class TaskController {
      * @return done tasks
      */
     public ArrayList<TodoItem> getDoneTasks() {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.isDone()) {
                 results.add(todo);
             }
@@ -113,8 +113,8 @@ public class TaskController {
      * @return undone tasks
      */
     public ArrayList<TodoItem> getUndoneTasks() {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (!todo.isDone()) {
                 results.add(todo);
             }
@@ -129,8 +129,8 @@ public class TaskController {
      * @return overdue tasks
      */
     public ArrayList<TodoItem> getOverdueTasks() {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (!todo.isDone() && todo.isOverdue()) {
                 results.add(todo);
             }
@@ -146,8 +146,8 @@ public class TaskController {
      * @return      tasks that start on the specified day
      */
     public ArrayList<TodoItem> getTasksStartingOn(Date date) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.getStartDate() != null &&
                 todo.getStartDate().getDay() == date.getDay() &&
                 todo.getStartDate().getMonth() == date.getMonth() &&
@@ -166,8 +166,8 @@ public class TaskController {
      * @return      tasks that end on the specified day
      */
     public ArrayList<TodoItem> getTasksEndingOn(Date date) {
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.getEndDate() != null &&
                     todo.getEndDate().getDay() == date.getDay() &&
                     todo.getEndDate().getMonth() == date.getMonth() &&
@@ -196,8 +196,8 @@ public class TaskController {
         end.setHours(23);
         end.setMinutes(59);
         end.setSeconds(59);
-        ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        for (TodoItem todo : main.getCommandController().getTaskList()) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
             if (todo.getStartDate() != null && todo.getEndDate() != null && todo.getStartDate().before(start) && todo.getEndDate().after(end)) {
                 results.add(todo);
             } else if (todo.getStartDate() != null && !todo.getStartDate().before(start) && !todo.getStartDate().after(end)) {

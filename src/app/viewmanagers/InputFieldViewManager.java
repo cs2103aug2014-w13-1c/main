@@ -101,7 +101,7 @@ public class InputFieldViewManager {
      * If the [UP] key is pressed, replaces the current text with the last entered command.
      * If the [TAB] key is pressed, calls auto-complete method.
      *
-     * @param event
+     * @param event KeyEvent
      */
     private void keyPressListener(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
@@ -200,7 +200,7 @@ public class InputFieldViewManager {
      * @return Only match for keyword or null if there is no match or more than one match.
      */
     private String autoComplete(String command) {
-        ArrayList<String> results = new ArrayList<String>();
+        ArrayList<String> results = new ArrayList<>();
         for (String keyword : CommandParser.commandKeywords) {
             if (command.length() < keyword.length() && command.equals(keyword.substring(0, command.length()))) {
                 results.add(keyword);
