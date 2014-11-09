@@ -1,4 +1,4 @@
-package tests;
+package tests.units;
 
 //author A0111764L
 import app.helpers.LoggingService;

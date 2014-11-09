@@ -1,4 +1,4 @@
-package tests;
+package tests.units;
 //@author A0116703N
 
 import app.model.*;

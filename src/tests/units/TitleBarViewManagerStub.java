@@ -1,5 +1,5 @@
 //@author A0111987X
-package tests;
+package tests.units;
 
 import app.viewmanagers.TitleBarViewManager;
 
