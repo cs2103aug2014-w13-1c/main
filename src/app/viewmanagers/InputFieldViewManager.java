@@ -31,7 +31,10 @@ import java.util.logging.Level;
  */
 
 /**
- * InputFieldViewManager
+ * View Manager for the inputField.
+ * inputField is implemented using RichTextFX to allow for per character styling, which is then used
+ * for keyword highlighting.
+ * InputFieldViewManager is also in charge of realtime search and cell highlighting.
  */
 public class InputFieldViewManager {
 
@@ -73,8 +76,8 @@ public class InputFieldViewManager {
      */
     private void keyListener(javafx.beans.Observable observable, String oldValue, String newValue) {
         if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
-            newValue = newValue.substring(1, newValue.length());
-            inputField.replaceText(newValue);
+            // this doesn't allow for spaces (" ") as the first character in the command.
+            inputField.replaceText(newValue.substring(1));
         } else {
             inputField.setStyleSpans(0, keywordDetection(newValue));
         }
@@ -250,9 +253,9 @@ public class InputFieldViewManager {
     }
 
     /**
+     * Setter for rootViewManager
      *
-     *
-     * @param rootViewManager
+     * @param rootViewManager The rootViewManager that initialises InputFieldViewManager.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
