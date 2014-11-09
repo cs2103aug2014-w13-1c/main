@@ -319,6 +319,12 @@ public class CommandController {
         return message;
     }
 
+    //@author A0111987X
+    /**
+     * Gets the current file directory from ModelManager.
+     *
+     * @return current file directory
+     */
     public String getSaveDirectory() {
         return modelManager.getFileDirectory();
     }

@@ -98,15 +98,20 @@ public class SettingsViewManager {
     private File directory;
 
     /**
-     *  Clicking on the save button passes all options to rootViewManager.
+     * Initializer of SettingsView.
+     * Clicking on the save button passes all options to rootViewManager.
      */
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewManager.saveSettings(filePathTextField.getText(), randomColorsCheckBox.isSelected(), notificationCheckBox.isSelected()));
         cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
+        saveButton.setOnAction((event) ->
+                rootViewManager.saveSettings(
+                        filePathTextField.getText(),
+                        randomColorsCheckBox.isSelected(),
+                        notificationCheckBox.isSelected()));
     }
 
     /**
@@ -116,7 +121,7 @@ public class SettingsViewManager {
      *
      * There is also a textfield next to the browse button, should the user
      * prefer entering the directory manually.
-     * @param directoryChooser
+     * @param directoryChooser The DirectoryChooser object that opens up an explorer dialog to choose a directory.
      */
     private void showChooser(DirectoryChooser directoryChooser) {
         directory = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
@@ -135,14 +140,18 @@ public class SettingsViewManager {
         cancelButton.requestFocus();
     }
 
+    /**
+     * Remove the focus on the cancel button.
+     */
     public void cancelFocusOnButton() {
         cancelButton.setDefaultButton(false);
     }
 
     /**
-     * This is called internally when opening the settings view.
-     * This fills the text field with the file path as set in settings.json.
-     * @param absolutePath
+     * This is called internally when opening the settings view. This file path
+     * refers to the location of watdo.json. * This fills the text field with the
+     * file path as set in settings.json.
+     * @param absolutePath The absolute path to the directory of watdo.json. e.g. /foo/bar/baz/
      */
     public void setAbsolutePathToDirectory(String absolutePath) {
         filePathTextField.setText(absolutePath);
@@ -150,7 +159,7 @@ public class SettingsViewManager {
 
     /**
      * Set the notifications checkbox depending on whether notifications are enabled.
-     * @param notificationsEnabled
+     * @param notificationsEnabled True if the user enables Notifications.
      */
     public void setNotificationsEnabled(Boolean notificationsEnabled) {
         notificationCheckBox.setSelected(notificationsEnabled);
@@ -158,7 +167,7 @@ public class SettingsViewManager {
 
     /**
      * Set the random colors checkbox depending on whether random colors are enabled.
-     * @param randomColorsEnabled
+     * @param randomColorsEnabled True if random colors if the user enables random colors in the TaskListView.
      */
     public void setRandomColorsEnabled(Boolean randomColorsEnabled) {
         randomColorsCheckBox.setSelected(randomColorsEnabled);
@@ -166,7 +175,7 @@ public class SettingsViewManager {
 
     /**
      * Set back-reference to rootViewManager.
-     * @param rootViewManager
+     * @param rootViewManager The instance of RootViewManager where this SettingsViewManager instance was created from.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

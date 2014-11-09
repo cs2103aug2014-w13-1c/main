@@ -17,6 +17,15 @@ import org.controlsfx.dialog.Dialogs;
 import java.net.URL;
 import java.util.logging.Level;
 
+/**
+ * This is the entry point of the application. By default, if there are no
+ * command arguments passed into this, the application will launch normally.
+ * If there are command arguments, the application will launch as an
+ * integration test with the command arguments simulated as user inputs.
+ *
+ * Main also acts as the bridge between the View and Controller components by
+ * providing getters.
+ */
 public class Main extends Application {
 
     private static String[] commandArguments;
@@ -31,6 +40,8 @@ public class Main extends Application {
      * Entry method.
      * NOTE: The order of view and controller component initialization
      * is important, and should not be swapped.
+     * @param stage The Stage object which the JavaFX application lives in.
+     * @throws Exception Only for integration tests. If the input is invalid, throw an InvalidInputException.
      */
     @Override
     public void start(Stage stage) throws Exception {
@@ -49,10 +60,18 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * Focus on the input field. Called at the end after all components have been initialized.
+     */
     private void waitForUserInput() {
         rootViewManager.setAndFocusInputField("");
     }
 
+    /**
+     * Manually send each command to input field and execute them as if the user pressed enter.
+     * This simulates user actions.
+     * @throws InvalidInputException Throw InvalidInputException if the command is invalid.
+     */
     private void sendCommandsToInput() throws InvalidInputException {
         for (String command : commandArguments) {
             rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute(command);
@@ -61,8 +80,8 @@ public class Main extends Application {
     }
 
     /**
-     * Creates the Stage object where all GUI components will live in.
-     * @param stage
+     * Apply title and resizable settings for the Stage object.
+     * @param stage The The Stage object which the JavaFX application lives in.
      */
     private void createPrimaryStage(Stage stage) {
         primaryStage = stage;
@@ -95,8 +114,8 @@ public class Main extends Application {
     /**
      * Using ControlsFX's Notification API, display a notification
      * with an Info icon at the top right hand corner of the screen.
-     * @param title
-     * @param message
+     * @param title The title of the notification.
+     * @param message The message to be shown.
      */
     public void showInfoNotification(String title, String message) {
         // Actual use case.
@@ -115,8 +134,8 @@ public class Main extends Application {
     /**
      * Using ControlsFX's Notification API, display a notification
      * with an Error icon at the top right hand corner of the screen.
-     * @param title
-     * @param error
+     * @param title The title of the notification.
+     * @param error The error message to be shown.
      */
     public void showErrorNotification(String title, String error) {
         if (getCommandController().areNotificationsEnabled()) {
@@ -133,8 +152,8 @@ public class Main extends Application {
     /**
      * Using ControlsFX's Dialog API, display a dialog with an Error
      * icon to the user.
-     * @param title
-     * @param error
+     * @param title The title of the dialog.
+     * @param error The error message to be shown.
      */
     public void showErrorDialog(String title, String error) {
         Dialogs.create()
@@ -148,25 +167,41 @@ public class Main extends Application {
     /**
      * Convert a relative path string to an URL. This is used for
      * stylesheets and resources (icons).
-     * @param relativePath
-     * @return
+     * @param relativePath The relative path from the src location to the resource.
+     * @return An URL object containing the path to the resource.
      */
     public URL getResourceURL(String relativePath) {
         return this.getClass().getResource(relativePath);
     }
 
+    /**
+     * Getter for the Stage object
+     * @return The Stage object
+     */
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
+    /**
+     * Getter for the CommandController component
+     * @return The instantiated CommandController object.
+     */
     public CommandController getCommandController() {
         return commandController;
     }
 
+    /**
+     * Getter for the TaskController component
+     * @return The instantiated TaskController object.
+     */
     public TaskController getTaskController() {
         return taskController;
     }
 
+    /**
+     * Getter for the RootViewManager component
+     * @return The instantiated RootViewManager object.
+     */
     public RootViewManager getRootViewManager() {
         return rootViewManager;
     }
@@ -175,13 +210,18 @@ public class Main extends Application {
      * Entry point of the application.
      * Arguments can be passed in through this method, and they
      * are used for integration testing.
-     * @param args
+     * @param args (For integration testing) Simulated user command inputs in a String array.
      */
     public static void main(String[] args) {
         commandArguments = args;
         launch(args);
     }
 
+    /**
+     * Checks if the commandArguments array is empty. If it's empty, it means
+     * that the application is not under test, and should be launched normally.
+     * @return True if application is under testing.
+     */
     private boolean isTesting() {
         return commandArguments.length > 0;
     }

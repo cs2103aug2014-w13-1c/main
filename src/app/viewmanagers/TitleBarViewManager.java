@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-<Pane fx:id="titleBarView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="30.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="app.viewmanagers.TitleBarViewManager">
     <AnchorPane prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: black;">
@@ -47,7 +47,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 
 /**
  * The TitleBar contains a label that shows the user their current context,
@@ -55,9 +54,6 @@ import javafx.scene.layout.Pane;
  * are sorted by.
  */
 public class TitleBarViewManager {
-
-    @FXML
-    private Pane titleBarView;
 
     @FXML
     private Label titleBarLabel;
@@ -70,11 +66,19 @@ public class TitleBarViewManager {
 
     private RootViewManager rootViewManager;
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
     @FXML
     public void initialize() {
         initSortStyleChoiceBox();
     }
 
+    /**
+     * Initialize the choice box that lets the user choose the sorting style of the
+     * task list.
+     */
     private void initSortStyleChoiceBox() {
         sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
                 "TASK NAME", "START DATE", "END DATE", "PRIORITY"
@@ -97,7 +101,7 @@ public class TitleBarViewManager {
     /**
      * The sorting control is disabled in the search view context,
      * and enabled in all other contexts.
-     * @param isVisible
+     * @param isVisible If set to true, show the sorting controls.
      */
     public void setSortControlsVisible(boolean isVisible) {
         sortByLabel.setVisible(isVisible);
@@ -106,7 +110,7 @@ public class TitleBarViewManager {
 
     /**
      * Public setter for the titleBarLabel.
-     * @param title
+     * @param title The title of the current view context.
      */
     public void setTitle(String title) {
         titleBarLabel.setText(title.toUpperCase());
@@ -114,7 +118,7 @@ public class TitleBarViewManager {
 
     /**
      * Set back-reference to the rootViewManager.
-     * @param rootViewManager
+     * @param rootViewManager The RootViewManager instance where this TitleBarViewManager instance was created from.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

@@ -210,9 +210,9 @@ public class SidebarViewManager {
     }
 
     /**
-     * Apply the button's event listener. Some actions are immediate upon clicking (undo,
+     * Apply the button's event listener action. Some actions are immediate upon clicking (undo,
      * redo), while the rest fill the input field with a command string.
-     * @param button
+     * @param button The button to assign an action to.
      */
     private void clickedButton(Button button) {
         LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
@@ -278,7 +278,7 @@ public class SidebarViewManager {
 
     /**
      * Check with UndoController if there's anything to undo.
-     * @return true if undoable
+     * @return True if there is an undoable state to go to.
      */
     private boolean isRedoable() {
         return !rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty();
@@ -286,18 +286,10 @@ public class SidebarViewManager {
 
     /**
      * Check with UndoController if there's anything to redo.
-     * @return true if redoable
+     * @return True if there is a redoable state to go to.
      */
     private boolean isUndoable() {
         return !rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty();
-    }
-
-    /**
-     * Set back-reference to rootViewManager.
-     * @param rootViewManager
-     */
-    public void setRootViewManager(RootViewManager rootViewManager) {
-        this.rootViewManager = rootViewManager;
     }
 
     /**
@@ -322,5 +314,13 @@ public class SidebarViewManager {
         } else{
             redoImageView.setImage(new Image("app/resources/redo.png"));
         }
+    }
+
+    /**
+     * Set back-reference to rootViewManager.
+     * @param rootViewManager The RootViewManager instance where this SidebarViewManager was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 }
