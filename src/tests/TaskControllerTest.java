@@ -12,13 +12,16 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test class for TaskController, tests filtering of done/undone/overdue tasks.
+ * Test class for TaskController, tests filtering of tasks.
  */
 public class TaskControllerTest extends Main {
 
     private TaskController taskController;
     private CommandController commandController;
 
+    /**
+     * Setup needed to run tests, includes creating a new CommandController and TaskController.
+     */
     @Before
     public void setUp() {
         commandController = new CommandController();
@@ -30,6 +33,9 @@ public class TaskControllerTest extends Main {
         commandController.parseCommand("clear");
     }
 
+    /**
+     * Teardown for tests, clears the task list and sets commandController and taskController to null.
+     */
     @After
     public void tearDown() {
         commandController.parseCommand("clear");
@@ -37,43 +43,83 @@ public class TaskControllerTest extends Main {
         taskController = null;
     }
 
-    @Override
-    public CommandController getCommandController() {
-        return commandController;
-    }
-
+    /**
+     * Override for showInfoNotification that just prints the message.
+     *
+     * @param title The title of the notification.
+     * @param message The message to be shown.
+     */
     @Override
     public void showInfoNotification(String title, String message) {
-        // do nothing
+        System.out.println(title + ": " + message);
     }
 
+    /**
+     * Override for showErrorNotification that just prints the message.
+     *
+     * @param title The title of the notification.
+     * @param message The error message to be shown.
+     */
+    @Override
+    public void showErrorNotification(String title, String message) {
+        System.out.println(title + ": " + message);
+    }
+
+    /**
+     * Override for getRootViewManager that returns a RootViewManagerStub instead of a RootViewManager.
+     *
+     * @return RootViewManagerStub
+     */
     @Override
     public RootViewManager getRootViewManager() {
         return new RootViewManagerStub();
     }
 
+    /**
+     * testing the ability to search within all task names
+     *
+     * @throws Exception any exception
+     */
     @Test
     public void testInstantSearch() throws Exception {
+        // testing with an empty task list
+        assertEquals(taskController.instantSearch("task").size(), 0);
 
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.instantSearch("task").size(), 3);
+        assertEquals(taskController.instantSearch("1").size(), 1);
+        assertEquals(taskController.instantSearch("222").size(), 1);
     }
 
+    /**
+     * testing the ability to filter all tasks
+     *
+     * @throws Exception any exception
+     */
     @Test
     public void testGetAllTasks() throws Exception {
+        // testing with an empty task list
+        assertEquals(taskController.getAllTasks().size(), 0);
 
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.getAllTasks().size(), 3);
+
+        commandController.parseCommand("delete 2");
+        assertEquals(taskController.getAllTasks().size(), 2);
+
+        commandController.parseCommand("add task 444");
+        commandController.parseCommand("add task 555");
+        assertEquals(taskController.getAllTasks().size(), 4);
     }
 
-    /** testing the ability to filter done tasks
-     * unable to change done/undone flag because it has not been implemented
-     * in commandcontroller yet
+    /**
+     * testing the ability to filter done tasks
      *
-     * boundary values:
-     * 0 done tasks
-     * 2 done tasks (has not been implemented yet)
-     * infinitely many done tasks (but not feasible to implement)
-     *
-     * cannot have a negative number of tasks
-     *
-     * @throws Exception
+     * @throws Exception any exception
      */
     @Test
     public void testGetDoneTasks() throws Exception {
@@ -85,24 +131,16 @@ public class TaskControllerTest extends Main {
         commandController.parseCommand("add task 333");
         assertEquals(taskController.getDoneTasks().size(), 0);
 
-        // testing for boundary case of 2 done tasks (has not been implemented yet)
-//        commandController.parseCommand("done 1");
-//        commandController.parseCommand("done 3");
-//        assertEquals(taskController.getDoneTasks().size(), 2);
+        // testing for boundary case of 2 done tasks
+        commandController.parseCommand("done 1");
+        commandController.parseCommand("done 1");
+        assertEquals(taskController.getDoneTasks().size(), 2);
     }
 
-    /** testing the ability to filter undone tasks
-     * unable to change done/undone flag because it has not been implemented
-     * in commandcontroller yet
+    /**
+     * testing the ability to filter undone tasks
      *
-     * boundary values:
-     * 0 undone tasks (has not been implemented yet)
-     * 2 undone tasks
-     * infinitely many undone tasks (but not feasible to implement)
-     *
-     * cannot have a negative number of tasks
-     *
-     * @throws Exception
+     * @throws Exception any exception
      */
     @Test
     public void testGetUndoneTasks() throws Exception {
@@ -114,27 +152,18 @@ public class TaskControllerTest extends Main {
         commandController.parseCommand("add task 333");
         assertEquals(taskController.getUndoneTasks().size(), 3);
 
-        // testing for boundary case of 2 undone tasks (has not been implemented yet)
-//        commandController.parseCommand("done 3");
-//        assertEquals(taskController.getUndoneTasks().size(), 2);
-
-        // testing for boundary case of 2 undone tasks (has not been implemented yet)
-//        commandController.parseCommand("undone 3");
-//        commandController.parseCommand("done 1");
-//        assertEquals(taskController.getUndoneTasks().size(), 2);
+        // testing for boundary case of 2 undone tasks
+        commandController.parseCommand("done 3");
+        commandController.parseCommand("done 1");
+        commandController.parseCommand("display done");
+        commandController.parseCommand("undone 2");
+        assertEquals(taskController.getUndoneTasks().size(), 2);
     }
 
-    /** testing the ability to filter overdue tasks
+    /**
+     * testing the ability to filter overdue tasks
      *
-     * boundary values:
-     * 0 overdue tasks
-     * 2 overdue tasks
-     * infinitely many overdue tasks (but not feasible to implement)
-     *
-     * cannot have a negative number of tasks
-     *
-     *
-     * @throws Exception
+     * @throws Exception any exception
      */
     @Test
     public void testGetOverdueTasks() throws Exception {
@@ -148,18 +177,18 @@ public class TaskControllerTest extends Main {
         assertEquals(taskController.getOverdueTasks().size(), 2);
     }
 
-    @Test
-    public void testGetTasksStartingOn() throws Exception {
+//    @Test
+//    public void testGetTasksStartingOn() throws Exception {
+//
+//    }
 
-    }
+//    @Test
+//    public void testGetTasksEndingOn() throws Exception {
+//
+//    }
 
-    @Test
-    public void testGetTasksEndingOn() throws Exception {
-
-    }
-
-    @Test
-    public void testGetTasksWithinDateRange() throws Exception {
-
-    }
+//    @Test
+//    public void testGetTasksWithinDateRange() throws Exception {
+//
+//    }
 }
