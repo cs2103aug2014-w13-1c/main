@@ -10,6 +10,7 @@ import java.util.UUID;
 
 /**
  * In charge of sorting and searching of tasks.
+ * Actual sorting of tasks is done in Model Manager, this just acts as an interface to that.
  * Implemented as a singleton.
  */
 public class TaskController {
@@ -34,22 +35,21 @@ public class TaskController {
     }
 
     /**
-     * Empty constructor.
+     * Constructor for TaskController, sets default display type and sorting style.
      */
     private TaskController() {
-        // nothing to do here
+        displayType = DisplayType.ALL;
+        sortingStyle = SortingStyle.ENDDATE_PRIORITY;
     }
 
     /**
+     * Getter for TaskController.
      *
-     *
-     * @return
+     * @return TaskController (singleton pattern)
      */
     public static TaskController getTaskController() {
         if (self == null) {
             self = new TaskController();
-            displayType = DisplayType.ALL;
-            sortingStyle = SortingStyle.ENDDATE_PRIORITY;
         }
         return self;
     }
@@ -64,10 +64,10 @@ public class TaskController {
     }
 
     /**
+     * Returns all results whose task name contains the search query.
      *
-     *
-     * @param query
-     * @return
+     * @param query search query
+     * @return      tasks whose task name contains the search query
      */
     public ArrayList<TodoItem> instantSearch(String query) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -81,9 +81,9 @@ public class TaskController {
     }
 
     /**
+     * Returns all tasks.
      *
-     *
-     * @return
+     * @return all tasks
      */
     public ArrayList<TodoItem> getAllTasks() {
         displayType = DisplayType.ALL;
@@ -91,9 +91,9 @@ public class TaskController {
     }
 
     /**
+     * Returns all done tasks.
      *
-     *
-     * @return
+     * @return done tasks
      */
     public ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -107,9 +107,10 @@ public class TaskController {
     }
 
     /**
+     * Returns all undone tasks.
+     * Implemented as the default view.
      *
-     *
-     * @return
+     * @return undone tasks
      */
     public ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -123,9 +124,9 @@ public class TaskController {
     }
 
     /**
+     * Returns all overdue tasks.
      *
-     *
-     * @return
+     * @return overdue tasks
      */
     public ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -139,10 +140,10 @@ public class TaskController {
     }
 
     /**
+     * Return tasks that start on the specified day.
      *
-     *
-     * @param date
-     * @return
+     * @param date  start date
+     * @return      tasks that start on the specified day
      */
     public ArrayList<TodoItem> getTasksStartingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -159,10 +160,10 @@ public class TaskController {
     }
 
     /**
+     * Returns tasks that end on the specified day.
      *
-     *
-     * @param date
-     * @return
+     * @param date  end date
+     * @return      tasks that end on the specified day
      */
     public ArrayList<TodoItem> getTasksEndingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
@@ -179,13 +180,16 @@ public class TaskController {
     }
 
     /**
+     * Returns tasks that fall within the given date range.
+     * Includes tasks whose start or end dates fall within the date range.
+     * Also includes tasks which start before and end after the date range.
      *
-     *
-     * @param start
-     * @param end
-     * @return
+     * @param start start date
+     * @param end   end date
+     * @return      tasks within that date range
      */
     public ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+        // setting date range to be the full days for both the start and end dates
         start.setHours(0);
         start.setMinutes(0);
         start.setSeconds(0);
@@ -207,9 +211,11 @@ public class TaskController {
     }
 
     /**
+     * Setter for sortingStyle.
+     * Sets sorting style for model manager and calls for a re-sort of the task list.
+     * Finally calls for an view update of the task list to reflect the new sorting style.
      *
-     *
-     * @param newSortingStyle
+     * @param newSortingStyle sortingStyle
      */
     public void setSortingStyle(int newSortingStyle) {
         System.out.println(newSortingStyle);
@@ -238,27 +244,27 @@ public class TaskController {
     }
 
     /**
+     * Acts as the interface between the view and the model manager for getting the last modified task's UUID.
      *
-     *
-     * @return
+     * @return last modified UUID
      */
     public UUID getLastModifiedUUID() {
         return main.getCommandController().getModelManager().getLastModifiedUUID();
     }
 
     /**
+     * Getter for displayType.
      *
-     *
-     * @return
+     * @return displayType
      */
     public DisplayType getDisplayType() {
         return displayType;
     }
 
     /**
+     * Setter for displayType.
      *
-     *
-     * @param type
+     * @param type displayType
      */
     public void setDisplayType(DisplayType type) {
         displayType = type;
