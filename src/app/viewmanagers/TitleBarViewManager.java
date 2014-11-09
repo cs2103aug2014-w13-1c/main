@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
-<Pane fx:id="titleBarView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="30.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="app.viewmanagers.TitleBarViewManager">
     <AnchorPane prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: black;">
@@ -55,9 +55,6 @@ import javafx.scene.layout.Pane;
  * are sorted by.
  */
 public class TitleBarViewManager {
-
-    @FXML
-    private Pane titleBarView;
 
     @FXML
     private Label titleBarLabel;
