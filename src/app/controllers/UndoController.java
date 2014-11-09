@@ -21,8 +21,8 @@ public class UndoController {
      * Initialises both the undo and redo stacks.
      */
     private UndoController() {
-        undoStack = new Stack<ArrayList<TodoItem>>();
-        redoStack = new Stack<ArrayList<TodoItem>>();
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
     }
 
     /**
@@ -43,7 +43,7 @@ public class UndoController {
      * @param list ArrayList of TodoItems to be saved.
      */
     protected void saveUndo(ArrayList<TodoItem> list) {
-        ArrayList<TodoItem> undo = new ArrayList<TodoItem>();
+        ArrayList<TodoItem> undo = new ArrayList<>();
         for (TodoItem todo : list) {
             undo.add(new TodoItem(todo.getTaskName(),
                     todo.getStartDate(),
@@ -60,7 +60,7 @@ public class UndoController {
      * @param list ArrayList of TodoItems to be saved.
      */
     protected void saveRedo(ArrayList<TodoItem> list) {
-        ArrayList<TodoItem> redo = new ArrayList<TodoItem>();
+        ArrayList<TodoItem> redo = new ArrayList<>();
         for (TodoItem todo : list) {
             redo.add(new TodoItem(todo.getTaskName(),
                     todo.getStartDate(),
