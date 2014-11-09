@@ -14,7 +14,14 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class IntegrationTests {
+/**
+ * First integration test.
+ * Tests the correct use case for the add, saveto and clear commands. 
+ * 
+ * @author Nguyen Quoc Dat (A0116703N)
+ *
+ */
+public class IntegrationTest1 {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
     

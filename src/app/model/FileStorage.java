@@ -54,6 +54,33 @@ public class FileStorage {
     public static final String DEFAULT_FILE_DIRECTORY = "./";
     public static final String SETTINGS_FILE_NAME = "settings.json";
     
+    // Logger messages
+    private static final String LOADING_FILE_MESSAGE = "Loading file ";
+    private static final String WRITING_FILE_MESSAGE = "Writing to file ";
+    private static final String WRITE_FILE_SUCCESS_MESSAGE = "Successfully updated file ";
+    private static final String CHANGING_SETTINGS_MESSAGE = "Changing settings. New directory is ";
+    private static final String LOADING_SETTINGS_MESSAGE = "Loading settings file.";
+    private static final String WRITING_SETTINGS_MESSAGE = "Writing to settings file.";
+    private static final String WRITE_SETTINGS_SUCCESS_MESSAGE = "Successfully updated settings file.";
+    private static final String NO_FILE_FOUND_MESSAGE = "No file found at target destination.";
+    private static final String NO_SETTINGS_FILE_FOUND_MESSAGE = "No settings file found at target destination, creating new settings.json.";
+    
+    // Fields in JSON objects
+    private static final String JSON_TASK_NAME_FIELD = "taskName";
+    private static final String JSON_START_DATE_FIELD = "startDate";
+    private static final String JSON_END_DATE_FIELD = "endDate";
+    private static final String JSON_PRIORITY_FIELD = "priority";
+    private static final String JSON_DONE_STATUS_FIELD = "doneStatus";
+    private static final String JSON_DIRECTORY_FIELD = "fileDirectory";
+    private static final String JSON_RANDOM_COLORS_FIELD = "randomColorsEnabled";
+    private static final String JSON_NOTIFICATIONS_FIELD = "notificationsEnabled";
+    
+    // Date formatting
+    private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
+    
+    // Slash character for concatSlash
+    private static final char SLASH_CHARACTER = '/';
+    
     /**
      * Constructor
      * 
@@ -80,14 +107,14 @@ public class FileStorage {
      */
     public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
         // First, log the method call
-        LoggingService.getLogger().log(Level.INFO, "Loading file " + fileDirectory + fileName);
+        LoggingService.getLogger().log(Level.INFO, LOADING_FILE_MESSAGE + fileDirectory + fileName);
         
         // Try to open the file!
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(fileDirectory + fileName);
         } catch (FileNotFoundException e) { // if no file found at stated path, return
-            LoggingService.getLogger().log(Level.INFO, "No file found at target destination.");
+            LoggingService.getLogger().log(Level.INFO, NO_FILE_FOUND_MESSAGE);
             return null;
         }
         
@@ -113,13 +140,13 @@ public class FileStorage {
             String currentPriority = null;
             Boolean currentDoneStatus = false;
             
-            String JSONTaskName = currentJSONObject.optString("taskName");
-            String JSONStartDate = currentJSONObject.optString("startDate");
-            String JSONEndDate = currentJSONObject.optString("endDate");
-            String JSONPriority = currentJSONObject.optString("priority"); 
-            Boolean JSONDoneStatus = currentJSONObject.optBoolean("doneStatus");
+            String JSONTaskName = currentJSONObject.optString(JSON_TASK_NAME_FIELD);
+            String JSONStartDate = currentJSONObject.optString(JSON_START_DATE_FIELD);
+            String JSONEndDate = currentJSONObject.optString(JSON_END_DATE_FIELD);
+            String JSONPriority = currentJSONObject.optString(JSON_PRIORITY_FIELD); 
+            Boolean JSONDoneStatus = currentJSONObject.optBoolean(JSON_DONE_STATUS_FIELD);
             
-            SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
             
             if (JSONTaskName.length() > 0) {
                 currentTaskName = JSONTaskName;
@@ -156,7 +183,7 @@ public class FileStorage {
      */
     public void updateFile(ArrayList<TodoItem> todoItems) throws IOException {
         // First, log the method call
-        LoggingService.getLogger().log(Level.INFO, "Updating file " + fileDirectory + fileName);
+        LoggingService.getLogger().log(Level.INFO, WRITING_FILE_MESSAGE + fileDirectory + fileName);
         
         // Then try to access the file destination!
         FileWriter fileToWrite;
@@ -173,7 +200,7 @@ public class FileStorage {
         // Access successful, now we start writing the data to a single JSONArray.
         BufferedWriter writer = new BufferedWriter(fileToWrite);
         JSONArray fileArray = new JSONArray();
-        SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
         
         try {
             for(TodoItem currentTodoItem : todoItems) {
@@ -186,19 +213,19 @@ public class FileStorage {
                 Boolean currentDoneStatus = currentTodoItem.isDone();
                 
                 if (currentTaskName != null) {
-                    fileObject.put("taskName", currentTaskName);
+                    fileObject.put(JSON_TASK_NAME_FIELD, currentTaskName);
                 }
                 if (currentStartDate != null) {
-                    fileObject.put("startDate", df.format(currentStartDate).toString());
+                    fileObject.put(JSON_START_DATE_FIELD, df.format(currentStartDate).toString());
                 }
                 if (currentEndDate != null) {
-                    fileObject.put("endDate", df.format(currentEndDate).toString());
+                    fileObject.put(JSON_END_DATE_FIELD, df.format(currentEndDate).toString());
                 }
                 if (currentPriority != null) {
-                    fileObject.put("priority", currentPriority);
+                    fileObject.put(JSON_PRIORITY_FIELD, currentPriority);
                 }
                 if (currentDoneStatus != null) {
-                    fileObject.put("doneStatus", currentDoneStatus);
+                    fileObject.put(JSON_DONE_STATUS_FIELD, currentDoneStatus);
                 }
                 fileArray.put(fileObject);
             }
@@ -218,7 +245,7 @@ public class FileStorage {
         }
         
         // Log again to confirm the success of the operation.
-        LoggingService.getLogger().log(Level.INFO, "Successfully updated file " + fileDirectory + fileName);
+        LoggingService.getLogger().log(Level.INFO, WRITE_FILE_SUCCESS_MESSAGE + fileDirectory + fileName);
         
         // Finally close the target file.
         try {
@@ -242,7 +269,7 @@ public class FileStorage {
      */
     public ArrayList<TodoItem> changeSettings(String fileDirectory, Boolean newRandomColorsEnabled, Boolean newNotificationsEnabled) throws IOException {
         // First, log the method call.
-        LoggingService.getLogger().log(Level.INFO, "Changing settings. New directory is " + fileDirectory);
+        LoggingService.getLogger().log(Level.INFO, CHANGING_SETTINGS_MESSAGE + fileDirectory);
         
         assert fileDirectory != null; //fileDirectory must not be null.
         
@@ -290,15 +317,14 @@ public class FileStorage {
      */
     public void loadSettings() throws IOException, JSONException {
         // First, log the method call.
-        LoggingService.getLogger().log(Level.INFO, "Loading settings file.");
+        LoggingService.getLogger().log(Level.INFO, LOADING_SETTINGS_MESSAGE);
         
         // Then try to open the settings file.
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(SETTINGS_FILE_NAME);
-            LoggingService.getLogger().log(Level.INFO, "Loaded settings file.");
         } catch (FileNotFoundException e) { // if no file found at stated path, create new settings file
-            LoggingService.getLogger().log(Level.INFO, "No settings file found at target destination, creating new settings.json.");
+            LoggingService.getLogger().log(Level.INFO, NO_SETTINGS_FILE_FOUND_MESSAGE);
             updateSettings();
             return;
         }
@@ -314,9 +340,9 @@ public class FileStorage {
         
         JSONObject settingsObject = new JSONObject(fileString);
         
-        String JSONfileDirectory = settingsObject.optString("fileDirectory");
-        Boolean JSONrandomColorsEnabled = settingsObject.optBoolean("randomColorsEnabled");
-        Boolean JSONnotificationsEnabled = settingsObject.optBoolean("notificationsEnabled");
+        String JSONfileDirectory = settingsObject.optString(JSON_DIRECTORY_FIELD);
+        Boolean JSONrandomColorsEnabled = settingsObject.optBoolean(JSON_RANDOM_COLORS_FIELD);
+        Boolean JSONnotificationsEnabled = settingsObject.optBoolean(JSON_NOTIFICATIONS_FIELD);
         
         fileDirectory = JSONfileDirectory;
         randomColorsEnabled = JSONrandomColorsEnabled;
@@ -334,7 +360,7 @@ public class FileStorage {
      */
     public void updateSettings() throws IOException, JSONException {
         // First, log the method call.
-        LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
+        LoggingService.getLogger().log(Level.INFO, WRITING_SETTINGS_MESSAGE);
         
         // Then, try to access the file.
         FileWriter fileToWrite;
@@ -349,9 +375,9 @@ public class FileStorage {
         concatSlash();
         
         JSONObject settingsObject = new JSONObject();
-        settingsObject.put("fileDirectory", fileDirectory);
-        settingsObject.put("randomColorsEnabled", randomColorsEnabled);
-        settingsObject.put("notificationsEnabled", notificationsEnabled);
+        settingsObject.put(JSON_DIRECTORY_FIELD, fileDirectory);
+        settingsObject.put(JSON_RANDOM_COLORS_FIELD, randomColorsEnabled);
+        settingsObject.put(JSON_NOTIFICATIONS_FIELD, notificationsEnabled);
         
         // And then convert the JSONObject into an indented string
         // And then write it to the file.
@@ -365,7 +391,7 @@ public class FileStorage {
         }
         
         // Log again to confirm operation success.
-        LoggingService.getLogger().log(Level.INFO, "Successfully updated settings file.");
+        LoggingService.getLogger().log(Level.INFO, WRITE_SETTINGS_SUCCESS_MESSAGE);
         
         // Finally we close the file.
         try {
@@ -418,8 +444,8 @@ public class FileStorage {
      */
     private void concatSlash() {
         if (fileDirectory.length() > 0) {
-            if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
-                fileDirectory = fileDirectory + "/";
+            if (fileDirectory.charAt(fileDirectory.length() - 1) != SLASH_CHARACTER) {
+                fileDirectory = fileDirectory + SLASH_CHARACTER;
             }
         }
     }
