@@ -168,7 +168,7 @@ public class Main extends Application {
      * Convert a relative path string to an URL. This is used for
      * stylesheets and resources (icons).
      * @param relativePath The relative path from the src location to the resource.
-     * @return an URL object containing the path to the resource.
+     * @return An URL object containing the path to the resource.
      */
     public URL getResourceURL(String relativePath) {
         return this.getClass().getResource(relativePath);
@@ -176,7 +176,7 @@ public class Main extends Application {
 
     /**
      * Getter for the Stage object
-     * @return the stage object
+     * @return The Stage object
      */
     public Stage getPrimaryStage() {
         return primaryStage;
@@ -184,7 +184,7 @@ public class Main extends Application {
 
     /**
      * Getter for the CommandController component
-     * @return commandController
+     * @return The instantiated CommandController object.
      */
     public CommandController getCommandController() {
         return commandController;
@@ -192,7 +192,7 @@ public class Main extends Application {
 
     /**
      * Getter for the TaskController component
-     * @return taskController
+     * @return The instantiated TaskController object.
      */
     public TaskController getTaskController() {
         return taskController;
@@ -200,7 +200,7 @@ public class Main extends Application {
 
     /**
      * Getter for the RootViewManager component
-     * @return rootViewManager
+     * @return The instantiated RootViewManager object.
      */
     public RootViewManager getRootViewManager() {
         return rootViewManager;
