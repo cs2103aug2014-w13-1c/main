@@ -5,6 +5,7 @@ import app.helpers.CommandObject;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
+import app.viewmanagers.TitleBarViewManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -152,12 +153,15 @@ public class ActionController {
         }
         if (commandObject.getCommandString().equalsIgnoreCase("start")) {
             taskController.setSortingStyle(1);
+            main.getRootViewManager().getTitleBarViewManager().setSortStyle(TitleBarViewManager.SortStyle.START);
             return "Sorting by start date\n";
         } else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
             taskController.setSortingStyle(2);
+            main.getRootViewManager().getTitleBarViewManager().setSortStyle(TitleBarViewManager.SortStyle.END);
             return "Sorting by end date\n";
         } else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
             taskController.setSortingStyle(3);
+            main.getRootViewManager().getTitleBarViewManager().setSortStyle(TitleBarViewManager.SortStyle.PRIORITY);
             return "Sorting by priority date\n";
         } else {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
