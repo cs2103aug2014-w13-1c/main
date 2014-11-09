@@ -44,6 +44,7 @@
 
 package app.viewmanagers;
 
+import app.controllers.TaskController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -68,12 +69,27 @@ public class TitleBarViewManager {
 
     @FXML
     public void initialize() {
+        initSortStyleChoiceBox();
+    }
+
+    private void initSortStyleChoiceBox() {
         sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
-            "TASK NAME", "START DATE", "END DATE", "PRIORITY"
+                "TASK NAME", "START DATE", "END DATE", "PRIORITY"
         ));
+
         sortStyleChoiceBox.setValue("END DATE");
-        sortStyleChoiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldIndex, newIndex) ->
-                rootViewManager.getMainApp().getTaskController().setSortingStyle((int) newIndex));
+
+
+        sortStyleChoiceBox
+                .getSelectionModel()
+                .selectedIndexProperty()
+                .addListener((observableValue, oldIndex, newIndex) ->
+                rootViewManager
+                        .getMainApp()
+                        .getTaskController()
+                        .setSortingStyle((int) newIndex)
+                )
+        ;
     }
 
     public void setSortControlsVisible(boolean isVisible) {
