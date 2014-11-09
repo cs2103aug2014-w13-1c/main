@@ -39,7 +39,7 @@ public class IntegrationTest2 {
        String previousDirectory = testStorage.getFileDirectory();
        
        // Commands to be carried out
-       String directoryCommand1 = "saveto testDirectory/";
+       String directoryCommand = "saveto testDirectory/";
        String clearCommand = "clear";
        String addCommand1 = "add task 1";
        String addCommand2 = "add task 2 priority high";
@@ -60,7 +60,7 @@ public class IntegrationTest2 {
        String exitCommand = "exit";
        
        String[] testCommands = {
-               directoryCommand1,
+               directoryCommand,
                clearCommand,
                addCommand1,
                addCommand2,

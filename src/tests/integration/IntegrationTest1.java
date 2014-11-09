@@ -38,14 +38,21 @@ public class IntegrationTest1 {
        String previousDirectory = testStorage.getFileDirectory();
 
        // Commands to be carried out
-       String directoryCommand1 = "saveto testDirectory/";
+       String directoryCommand = "saveto testDirectory/";
        String clearCommand = "clear";
        String addCommand1 = "add task 1";
        String addCommand2 = "add task 2 priority high";
        String addCommand3 = "add task 3 due tomorrow";
-       String addCommand4 = "add task 4 start today end tomorrow";
+       String addCommand4 = "add task 4 start yesterday end today";
        String exitCommand = "exit";
-       String[] testCommands = {directoryCommand1, clearCommand, addCommand1, addCommand2, addCommand3, addCommand4, exitCommand};
+       String[] testCommands = {
+               directoryCommand,
+               clearCommand,
+               addCommand1,
+               addCommand2,
+               addCommand3,
+               addCommand4,
+               exitCommand};
 
        exit.expectSystemExit();
        exit.checkAssertionAfterwards(new Assertion() {
@@ -64,6 +71,7 @@ public class IntegrationTest1 {
                    return;
                }
 
+               // After cleaning and adding, we should have four tasks.
                assertEquals(4, testTodoItems.size());
                
                String testInput1 = "task 1";
@@ -71,11 +79,12 @@ public class IntegrationTest1 {
                String testInput3 = "task 3";
                String testInput4 = "task 4";
                
-               assertEquals(testInput3, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput4, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
-               assertEquals(testInput1, testTodoItems.get(3).getTaskName());
+               assertEquals(testInput2, testTodoItems.get(0).getTaskName());
+               assertEquals(testInput1, testTodoItems.get(1).getTaskName());
+               assertEquals(testInput4, testTodoItems.get(2).getTaskName());
+               assertEquals(testInput3, testTodoItems.get(3).getTaskName());
 
+               // Cleanup
                testStorage.updateFile(new ArrayList<TodoItem>());
                testStorage.changeSettings(previousDirectory, null, null);
            }
@@ -85,7 +94,7 @@ public class IntegrationTest1 {
        try {
            Main.main(testCommands);
        } catch (Exception e) {
-//           e.printStackTrace();
+           // Do nothing, this is already caught by the ExpectedSystemExit.
        }
     }
 }
