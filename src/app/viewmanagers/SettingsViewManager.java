@@ -105,8 +105,12 @@ public class SettingsViewManager {
         DirectoryChooser directoryChooser = new DirectoryChooser();
 
         browseButton.setOnAction((event) -> showChooser(directoryChooser));
-        saveButton.setOnAction((event) -> rootViewManager.saveSettings(filePathTextField.getText(), randomColorsCheckBox.isSelected(), notificationCheckBox.isSelected()));
         cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
+        saveButton.setOnAction((event) ->
+                rootViewManager.saveSettings(
+                        filePathTextField.getText(),
+                        randomColorsCheckBox.isSelected(),
+                        notificationCheckBox.isSelected()));
     }
 
     /**
