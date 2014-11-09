@@ -50,6 +50,11 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * TaskListViewManager manages the ListView object, which is responsible
+ * for creating and displaying individual ListCell objects that represent
+ * a TodoItem each.
+ */
 public class TaskListViewManager {
 
     @FXML
@@ -97,10 +102,16 @@ public class TaskListViewManager {
         taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
 
+    /**
+     * Set the placeholder when there are no results for a search term.
+     */
     public void setEmptySearchPlaceholder() {
         taskListView.setPlaceholder(emptySearch);
     }
 
+    /**
+     * Set the placeholder when the task list is empty.
+     */
     public void setUserGuidePlaceholder() {
         taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
@@ -179,6 +190,12 @@ public class TaskListViewManager {
         return -1;
     }
 
+    /**
+     * When the user disable random colors, this method returns the selected
+     * color that was initialized at launch time.
+     *
+     * @return the chosen color.
+     */
     public String getCurrentColor() {
         return color;
     }
@@ -192,6 +209,9 @@ public class TaskListViewManager {
         return colors.get(new Random().nextInt(colors.size()));
     }
 
+    /**
+     * Initialize the color palette.
+     */
     private void initColors() {
         colors = Arrays.asList(
                 "208, 23, 22", // red 700
@@ -211,10 +231,18 @@ public class TaskListViewManager {
                 "121, 85, 72"); // brown 500
     }
 
+    /**
+     * Set back-reference to the rootviewManager.
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
 
+    /**
+     * Public getter for the current task list.
+     * @return
+     */
     public ObservableList<TodoItem> getTaskData() {
         return taskData;
     }

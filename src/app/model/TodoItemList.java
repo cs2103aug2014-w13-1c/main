@@ -3,9 +3,7 @@ package app.model;
 import java.util.*;
 
 /**
- * Class TodoItemList
- * 
- * The model class to hold one to-do task of wat do.
+ * The model class to hold a list of TodoItems.
  * 
  * @author Nguyen Quoc Dat (A0116703N)
  */

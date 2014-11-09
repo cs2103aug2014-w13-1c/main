@@ -49,6 +49,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
+/**
+ * The TitleBar contains a label that shows the user their current context,
+ * as well as a drop-down choice box that lets the user switch how the tasks
+ * are sorted by.
+ */
 public class TitleBarViewManager {
 
     @FXML
@@ -86,12 +91,12 @@ public class TitleBarViewManager {
                         .getMainApp()
                         .getTaskController()
                         .setSortingStyle((int) newIndex)
-                )
-        ;
+                );
     }
 
     /**
-     * The sorting control is disabled in the search view context.
+     * The sorting control is disabled in the search view context,
+     * and enabled in all other contexts.
      * @param isVisible
      */
     public void setSortControlsVisible(boolean isVisible) {
@@ -99,10 +104,18 @@ public class TitleBarViewManager {
         sortStyleChoiceBox.setVisible(isVisible);
     }
 
+    /**
+     * Public setter for the titleBarLabel.
+     * @param title
+     */
     public void setTitle(String title) {
         titleBarLabel.setText(title.toUpperCase());
     }
 
+    /**
+     * Set back-reference to the rootViewManager.
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
