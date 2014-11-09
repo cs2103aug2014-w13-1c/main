@@ -72,7 +72,7 @@ public class ModelManager {
         }
         
         // Finally, resort the task list based on end date
-        TodoItemSorter.sortingStyle = TodoItemSorter.DEFAULT_SORTING_STYLE;
+        TodoItemSorter.changeSortStyle(TodoItemSorter.DEFAULT_SORTING_STYLE);
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
     
