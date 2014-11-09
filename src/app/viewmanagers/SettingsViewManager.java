@@ -66,7 +66,12 @@ import java.io.File;
 import java.util.logging.Level;
 
 /**
- * Created by jin on 8/10/14.
+ * This is the view manager for the Settings component, which
+ * appears as a pop up when "settings" is entered as a command or if
+ * the settings button is clicked.
+ *
+ * It lets the user set the directory of the .json document, as well
+ * as options to enable/disable random list cell colors and notifications.
  */
 public class SettingsViewManager {
 
@@ -92,6 +97,9 @@ public class SettingsViewManager {
 
     private File directory;
 
+    /**
+     *  Clicking on the save button passes all options to rootViewManager.
+     */
     @FXML
     private void initialize() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -101,6 +109,15 @@ public class SettingsViewManager {
         cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
     }
 
+    /**
+     * This is called when the user clicks on the "browse" button. It opens
+     * up a finder/browser/explorer that allows the user to select a directory
+     * graphically.
+     *
+     * There is also a textfield next to the browse button, should the user
+     * prefer entering the directory manually.
+     * @param directoryChooser
+     */
     private void showChooser(DirectoryChooser directoryChooser) {
         directory = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
         filePathTextField.setText(directory.toString());
@@ -109,10 +126,10 @@ public class SettingsViewManager {
         LoggingService.getLogger().log(Level.INFO, "Selected directory: " + directory.toString());
     }
 
-    public void setRootViewManager(RootViewManager rootViewManager) {
-        this.rootViewManager = rootViewManager;
-    }
-
+    /**
+     * UX feature. Set the default button as cancel to prevent accidental
+     * changing of settings.
+     */
     public void focusOnButton() {
         cancelButton.setDefaultButton(true);
         cancelButton.requestFocus();
@@ -122,15 +139,36 @@ public class SettingsViewManager {
         cancelButton.setDefaultButton(false);
     }
 
+    /**
+     * This is called internally when opening the settings view.
+     * This fills the text field with the file path as set in settings.json.
+     * @param absolutePath
+     */
     public void setAbsolutePathToDirectory(String absolutePath) {
         filePathTextField.setText(absolutePath);
     }
 
+    /**
+     * Set the notifications checkbox depending on whether notifications are enabled.
+     * @param notificationsEnabled
+     */
     public void setNotificationsEnabled(Boolean notificationsEnabled) {
         notificationCheckBox.setSelected(notificationsEnabled);
     }
 
+    /**
+     * Set the random colors checkbox depending on whether random colors are enabled.
+     * @param randomColorsEnabled
+     */
     public void setRandomColorsEnabled(Boolean randomColorsEnabled) {
         randomColorsCheckBox.setSelected(randomColorsEnabled);
+    }
+
+    /**
+     * Set back-reference to rootViewManager.
+     * @param rootViewManager
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
     }
 }

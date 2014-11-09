@@ -131,6 +131,9 @@ import javafx.scene.layout.AnchorPane;
 
 import java.util.Date;
 
+/**
+ * Each TaskListCell represents a single TodoItem.
+ */
 public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     @FXML
@@ -176,6 +179,13 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     private TaskListViewManager taskListViewManager;
     final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
+
+    /**
+     * This method is implicitly called whenever the taskData of TaskListViewManager
+     * is changed. It updates the ListCell object with the new TodoItem.
+     * @param task
+     * @param empty
+     */
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
         super.updateItem(task, empty);
@@ -188,11 +198,26 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
+    /**
+     * Remove all content from the ListCell.
+     */
     private void clearContent() {
         setText(null);
         setGraphic(null);
     }
 
+    /**
+     * Fills up the controls in the cell with the appropriate information.
+     *
+     * Some labels are shown conditionally. For example, the done/undone button
+     * is shown based on the done/undone status of the task, and overdue labels aren't
+     * shown when the task is done.
+     *
+     * Technically, we could replace the done/undone buttons with a single button, but
+     * having two buttons trades memory usage for code readability and organization, which is
+     * a worthwhile tradeoff.
+     * @param task
+     */
     private void populateContent(TodoItem task) {
         setIndex();
         setTaskName(task);
@@ -205,11 +230,26 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         overdueLabel.setVisible(task.isOverdue() && !task.isDone());
     }
 
+    /**
+     * Setter for the priority label.
+     *
+     * Substring-ing is a hacky way to get around the implementation of priority strings.
+     * Currently, priority strings are in the form of "1. High", "2. Medium", etc. to facilitate
+     * sorting. Because we only want the priority text, we'll have to substring the number out.
+     * @param task
+     */
     private void setPriorityLevel(TodoItem task) {
         priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
         setBackgroundColor(task);
     }
 
+    /**
+     * Setter for the date labels.
+     *
+     * There are four different configurations of data labels in accordance to the different types
+     * of tasks: floating, deadline, event, endless.
+     * @param task
+     */
     private void setDates(TodoItem task) {
         switch (task.getTodoItemType().toLowerCase()) {
             case "event":
@@ -235,16 +275,42 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
+    /**
+     * Setter for the index label.
+     */
     private void setIndex() {
         indexLabel.setText(String.valueOf(getTaskIndex()));
     }
 
+    /**
+     * Setter for the task name label.
+     *
+     * toUpperCase() is purely for cosmetic reasons.
+     * @param task
+     */
     private void setTaskName(TodoItem task){
         taskNameLabel.setText(task.getTaskName().toUpperCase());
     }
 
+    /**
+     * Since the actual task list displayed to the user is 1-index,
+     * we'll have to increment getIndex() by 1.
+     * @return 1-index of the task.
+     */
     private int getTaskIndex() { return getIndex() + 1; }
 
+    /**
+     * Getter for the task information.
+     *
+     * This method is called when the update button is clicked. For UX reasons,
+     * we want to pre-fill the input field with all of the task's information, such as
+     * name, dates, and priority levels. This helps the user by not requiring them to
+     * type the entire command again in the case where they only made a minor
+     * mistake.
+     *
+     * @param task
+     * @return a valid command string with all of the task's information.
+     */
     private String getTaskInfo(TodoItem task) {
         String info = "";
 
@@ -265,6 +331,23 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         return info;
     }
 
+    /**
+     * Setter of the cell's background color.
+     *
+     * Due to the information we have from each task (due date + priority, specifically),
+     * we are able to estimate the importance of the task. We will quantify this
+     * importance level and represent it by adjusting the alpha value (transparency)
+     * of the background color of the cell.
+     *
+     * Each priority level (High/Med/Low) is assigned a static weight. This weight is
+     * then multiplied by a factor that's obtained from the difference in days
+     * from the current day to the deadline. The range of values is from 0.315 to 1,
+     * where 1 is full opaqueness.
+     *
+     * Done tasks always have a alpha value of 0.45.
+     *
+     * @param task
+     */
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
         int differenceInDays = 0;
@@ -307,7 +390,11 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
-    // Return a value between 0.5 and 1
+    /**
+     * Normalize and return a scaling factor between 0.45 and 1.
+     * @param differenceInDays
+     * @return
+     */
     private float calculateFactor(int differenceInDays) {
         if (differenceInDays == 0) {
             return 1;
@@ -327,6 +414,9 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         return normalized;
     }
 
+    /**
+     * Initialize the buttons and assign their event listeners.
+     */
     @FXML
     private void initialize() {
         Button[] buttons = {
@@ -341,6 +431,11 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
+    /**
+     * Clicking the buttons will fill the input field with a command string corresponding
+     * to the action.
+     * @param button
+     */
     private void clickedButton(Button button) {
         switch (button.getId()) {
             case "updateButton":
@@ -358,10 +453,18 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
     }
 
+    /**
+     * Set back-reference to the rootViewManager.
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
 
+    /**
+     * Set back-reference to taskListViewManager.
+     * @param taskListViewManager
+     */
     public void setTaskListViewManager(TaskListViewManager taskListViewManager) {
         this.taskListViewManager = taskListViewManager;
     }

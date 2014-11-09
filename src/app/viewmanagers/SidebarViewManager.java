@@ -147,6 +147,10 @@ import javafx.scene.image.ImageView;
 
 import java.util.logging.Level;
 
+/**
+ * This class manages the Sidebar control, which consists of various buttons
+ * for interacting with the application.
+ */
 public class SidebarViewManager {
 
     @FXML
@@ -184,6 +188,8 @@ public class SidebarViewManager {
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
+     *
+     * Also sets the event listeners for each button.
      */
     @FXML
     private void initialize() {
@@ -203,6 +209,11 @@ public class SidebarViewManager {
         }
     }
 
+    /**
+     * Apply the button's event listener. Some actions are immediate upon clicking (undo,
+     * redo), while the rest fill the input field with a command string.
+     * @param button
+     */
     private void clickedButton(Button button) {
         LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
         switch (button.getId()) {
@@ -219,10 +230,10 @@ public class SidebarViewManager {
                 rootViewManager.setAndFocusInputField("display done");
                 break;
             case "undoButton":
-                undo();
+                tryUndo();
                 break;
             case "redoButton":
-                redo();
+                tryRedo();
                 break;
             case "helpButton":
                 rootViewManager.openHelp();
@@ -235,34 +246,64 @@ public class SidebarViewManager {
         }
     }
 
-    private void redo() {
-        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
-            try {
-                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
-            } catch (InvalidInputException e) {
-                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
-            }
-        } else {
-            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
-        }
-    }
-
-    private void undo() {
-        if (!rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+    /**
+     * Attempt to undo the state. Show error if there's nothing to undo.
+     */
+    private void tryUndo() {
+        if (isUndoable()) {
             try {
                 rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
             } catch (InvalidInputException e) {
-                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
             }
         } else {
-            rootViewManager.getMainApp().showErrorNotification("Error", "Command error.\n");
+            rootViewManager.getMainApp().showErrorNotification("Error", "Nothing to undo.\n");
         }
     }
 
+    /**
+     * Attempt to redo the state. Show error if there's nothing to redo.
+     */
+    private void tryRedo() {
+        if (isRedoable()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Nothing to redo.\n");
+        }
+    }
+
+    /**
+     * Check with UndoController if there's anything to undo.
+     * @return true if undoable
+     */
+    private boolean isRedoable() {
+        return !rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty();
+    }
+
+    /**
+     * Check with UndoController if there's anything to redo.
+     * @return true if redoable
+     */
+    private boolean isUndoable() {
+        return !rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty();
+    }
+
+    /**
+     * Set back-reference to rootViewManager.
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
 
+    /**
+     * This is called whenever there is a change of list state. Grey out undo button if
+     * there is nothing to undo.
+     */
     public void refreshUndoButton() {
         if (rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
             undoImageView.setImage(new Image("app/resources/undo-grey.png"));
@@ -270,6 +311,11 @@ public class SidebarViewManager {
             undoImageView.setImage(new Image("app/resources/undo.png"));
         }
     }
+
+    /**
+     * This is called whenever there is a change of list state. Grey out redo button if
+     * there is nothing to redo.
+     */
     public void refreshRedoButton() {
         if (rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
             redoImageView.setImage(new Image("app/resources/redo-grey.png"));

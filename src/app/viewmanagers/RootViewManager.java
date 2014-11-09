@@ -31,7 +31,13 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 /**
- * Created by jin on 8/10/14.
+ * This is the root view manager of all view managers/components.
+ *
+ * The app layout is structured in StackPane, which allows for z-indexes.
+ * Components are able to hide between one and another.
+ *
+ * A borderPane serves as the first child of the StackPane. The other children
+ * are panes representing the Help and Settings views.
  */
 public class RootViewManager {
 
@@ -48,6 +54,11 @@ public class RootViewManager {
     private TitleBarViewManager titleBarViewManager;
     private SidebarViewManager sidebarViewManager;
 
+    /**
+     * Initializes all view components. The order is important, and shouldn't
+     * be changed.
+     * @param primaryStage
+     */
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
         try {
@@ -63,6 +74,12 @@ public class RootViewManager {
         }
     }
 
+    /**
+     * This is the first component to be initialized, as all other
+     * components live within this.
+     * @param primaryStage
+     * @throws IOException
+     */
     private void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/RootView.fxml"));
@@ -73,6 +90,11 @@ public class RootViewManager {
         primaryStage.show();
     }
 
+    /**
+     * The settings view is created at launch and hidden from the user
+     * immediately by hiding it behind the borderPane.
+     * @throws IOException
+     */
     private void initSettingsView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
@@ -100,6 +122,10 @@ public class RootViewManager {
     }
 
     //@author A0111764L
+    /**
+     * Initializes the title bar.
+     * @throws IOException
+     */
     private void showTitleBarView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
@@ -110,6 +136,10 @@ public class RootViewManager {
         borderPane.setTop(titleBarView);
     }
 
+    /**
+     * Initialize the task list view.
+     * @throws IOException
+     */
     private void showTaskListView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
@@ -121,6 +151,10 @@ public class RootViewManager {
         borderPane.setCenter(taskListView);
     }
 
+
+    /**
+     * Initialize the input field.
+     */
     private void showInputField() {
         inputFieldViewManager = new InputFieldViewManager();
         inputFieldViewManager.setRootViewManager(this);
@@ -128,6 +162,10 @@ public class RootViewManager {
         borderPane.setBottom(new StackPane(inputField));
     }
 
+    /**
+     * Initialize the sidebar.
+     * @throws IOException
+     */
     private void showSidebar() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/SidebarView.fxml"));
@@ -141,17 +179,29 @@ public class RootViewManager {
 
     // Getters and Setters
 
+    /**
+     * Called by SettingsView, this saves the user's settings through CommandController.
+     * @param filePath
+     * @param enableRandomColors
+     * @param enableNotifications
+     */
     public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
         getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
         closeSettings();
     }
 
+    /**
+     * Hide the settings view and places focus in the input field.
+     */
     public void closeSettings() {
         settingsView.toBack();
         settingsViewManager.cancelFocusOnButton();
         inputField.requestFocus();
     }
 
+    /**
+     * Fill the settings view with the user's settings and bring it to th front.
+     */
     public void openSettings() {
         settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
         settingsViewManager.setRandomColorsEnabled(getMainApp().getCommandController().areRandomColorsEnabled());
@@ -179,22 +229,40 @@ public class RootViewManager {
     }
 
     //@author A0111764L
+
+    /**
+     * Set back-reference to the Main instance.
+     * @param mainApp
+     */
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
     }
 
+    /**
+     * Get back-reference to the Main instance.
+     * @return back-reference to Main.
+     */
     public Main getMainApp() {
         return mainApp;
     }
 
+    /**
+     * @return reference to TaskListViewManager instance.
+     */
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
     }
-    
+
+    /**
+     * @return reference to InputFieldViewManager instance.
+     */
     public InputFieldViewManager getInputFieldViewManager() {
         return inputFieldViewManager;
     }
 
+    /**
+     * @return reference to TitleBarViewManager instance.
+     */
     public TitleBarViewManager getTitleBarViewManager() {
         return titleBarViewManager;
     }
@@ -218,6 +286,12 @@ public class RootViewManager {
     }
 
     //@author A0111764L
+
+    /**
+     * Called whenever the list experiences a change of state.
+     * This greys out the undo/redo button based on whether there
+     * are available undo/redo states.
+     */
     public void refreshSidebar() {
         sidebarViewManager.refreshUndoButton();
         sidebarViewManager.refreshRedoButton();
