@@ -42,7 +42,8 @@ import javafx.scene.control.Label;
 
 
 /**
- * View manager for the Help View.
+ * View manager for the Help View. View contains a label with the available commands that the user
+ * can use in the program, and an OK button.
  */
 public class HelpViewManager {
 
@@ -75,14 +76,18 @@ public class HelpViewManager {
                 "help\n" +
                 "settings\n" +
                 "clear\n" +
-                "exit");
+                "exit\n" +
+                "\n" +
+                "Other things you can do:\n" +
+                "Press [TAB] when entering the first word for auto-complete\n" +
+                "Press [UP] to return to your last entered command");
         okButton.setOnAction((event) -> rootViewManager.closeHelp());
     }
 
     /**
      * Setter for rootViewManager
      *
-     * @param rootViewManager
+     * @param rootViewManager The rootViewManager that initialises HelpViewManager.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
