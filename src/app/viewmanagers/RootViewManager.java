@@ -83,7 +83,7 @@ public class RootViewManager {
         settingsView.toBack();
     }
 
-    //author A0111987X
+    //@author A0111987X
     /**
      * Initialises the Help View.
      *
