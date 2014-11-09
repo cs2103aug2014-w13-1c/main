@@ -16,15 +16,17 @@ import java.util.logging.Level;
 
 public class FileStorage {
     
+    // Settings data
     private String fileName;
     private String fileDirectory;
-    
     private Boolean notificationsEnabled;
     private Boolean randomColorsEnabled;
     
+    // Load/write statuses. Mainly for debugging convenience.
     private String loadStatus;
     private String writeStatus;
     
+    // Error messages
     public static String LOAD_SUCCESS = ModelManager.LOAD_SUCCESS;
     public static String LOAD_FAILED = ModelManager.LOAD_FAILED;
     public static String PARSE_FAILED = ModelManager.PARSE_FAILED;
@@ -33,10 +35,18 @@ public class FileStorage {
     public static String WRITE_SETTINGS_FAILED = ModelManager.WRITE_SETTINGS_FAILED;
     public static String LOAD_SETTINGS_FAILED = ModelManager.LOAD_SETTINGS_FAILED;
 
+    // Default file names
     public static final String DEFAULT_FILE_NAME = "watdo.json";
     public static final String DEFAULT_FILE_DIRECTORY = "./";
     public static final String SETTINGS_FILE_NAME = "settings.json";
     
+    /**
+     * Constructor
+     * 
+     * Initializes internal state and settings.
+     * Does NOT attempt to do any file I/O operations yet. Instead, we
+     * let ModelManager control when to fire I/O operations.
+     */
     public FileStorage() {
         this.fileDirectory = DEFAULT_FILE_DIRECTORY;
         this.fileName = DEFAULT_FILE_NAME;
@@ -47,6 +57,9 @@ public class FileStorage {
     /**
      * loadFile 
      * 
+     * Loads watdo.json file data as a String, and then parses it and returns
+     * the data as an ArrayList of TodoItems. 
+     * 
      * @return Loaded ArrayList of TodoItems from file
      * 
      * @throws IOException Undefined message, caught by ModelManager constructor
@@ -54,7 +67,10 @@ public class FileStorage {
      * @throws ParseException Undefined message, caught by ModelManager constructor
      */
     public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
+        // First, log the method call
         LoggingService.getLogger().log(Level.INFO, "Loading file " + fileDirectory + fileName);
+        
+        // Try to open the file!
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(fileDirectory + fileName);
@@ -63,6 +79,7 @@ public class FileStorage {
             return null;
         }
         
+        // Successfully opened the file, now we parse the data.
         BufferedReader reader = new BufferedReader(fileToRead);
         
         String fileString = "";
@@ -122,11 +139,17 @@ public class FileStorage {
     /**
      * updateFile
      * 
+     * Updates the content of the watdo.json file with the given data.
+     * 
+     * @param todoItems The data to write to the file.
      * @throws IOException Messages are LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
      */
     public void updateFile(ArrayList<TodoItem> todoItems) throws IOException {
-        FileWriter fileToWrite;
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, "Updating file " + fileDirectory + fileName);
         
+        // Then try to access the file destination!
+        FileWriter fileToWrite;
         try {
             File targetFile = new File(fileDirectory);
             if (!targetFile.exists()) {
@@ -137,17 +160,13 @@ public class FileStorage {
             throw new IOException(LOAD_FAILED);
         }
 
+        // Access successful, now we start writing the data to a single JSONArray.
         BufferedWriter writer = new BufferedWriter(fileToWrite);
-        
         JSONArray fileArray = new JSONArray();
-        
-        ListIterator<TodoItem> todoListIterator = todoItems.listIterator();
-
         SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
         
         try {
-            while (todoListIterator.hasNext()) {
-                TodoItem currentTodoItem = todoListIterator.next();
+            for(TodoItem currentTodoItem : todoItems) {
                 JSONObject fileObject = new JSONObject();
                 
                 String currentTaskName = currentTodoItem.getTaskName();
@@ -155,6 +174,7 @@ public class FileStorage {
                 Date currentEndDate = currentTodoItem.getEndDate();
                 String currentPriority = currentTodoItem.getPriority();
                 Boolean currentDoneStatus = currentTodoItem.isDone();
+                
                 if (currentTaskName != null) {
                     fileObject.put("taskName", currentTaskName);
                 }
@@ -175,8 +195,9 @@ public class FileStorage {
         } catch (JSONException e) {
             throw new IOException(PARSE_FAILED);
         }
-        LoggingService.getLogger().log(Level.INFO, "Updating file " + fileDirectory + fileName);
         
+        // Now that we have the JSONArray, we convert it into an indented string,
+        // and then write to the file.
         try {
             writer.write(fileArray.toString(2));
             writer.flush();
@@ -186,8 +207,10 @@ public class FileStorage {
             throw new IOException(WRITE_FAILED);
         }
         
+        // Log again to confirm the success of the operation.
         LoggingService.getLogger().log(Level.INFO, "Successfully updated file " + fileDirectory + fileName);
         
+        // Finally close the target file.
         try {
             fileToWrite.close();
         } catch (Exception e) {
@@ -198,35 +221,50 @@ public class FileStorage {
     /**
      * changeSettings 
      * 
-     * @return ArrayList of TodoItems after loading the file
+     * Changes this object's internal settings to the given ones,
+     * and then update the settings.json file with the new settings.
+     * Finally, this method will load the watdo.json data at the new
+     * directory.
      * 
+     * @param fileDirectory The new directory to load watdo.json at. Must not be null.
+     * @param newRandomColorsEnabled The new random color display setting
+     * @param newNotificationsEnabled The new notification setting
+     * @return ArrayList of TodoItems after loading the file
      * @throws IOException with WRITE_SETTINGS_FAILED
      */
     public ArrayList<TodoItem> changeSettings(String fileDirectory, Boolean newRandomColorsEnabled, Boolean newNotificationsEnabled) throws IOException {
-        assert fileDirectory != null;
+        // First, log the method call.
+        LoggingService.getLogger().log(Level.INFO, "Changing settings. New directory is " + fileDirectory);
         
+        assert fileDirectory != null; //fileDirectory must not be null.
+        
+        // Store the old data in temp variables in case of errors.
         String tempFileDirectory = this.fileDirectory;
         Boolean tempRandomColorsEnabled = this.randomColorsEnabled;
         Boolean tempNotificationsEnabled = this.notificationsEnabled;
         ArrayList<TodoItem> loadResult;
 
+        // Now change the internal values.
         if (newRandomColorsEnabled != null) {
             this.randomColorsEnabled = newRandomColorsEnabled;
         }
-        
         if (newNotificationsEnabled != null) {
             this.notificationsEnabled = newNotificationsEnabled;
         }
-    
         this.fileDirectory = fileDirectory;
         concatSlash();
         
+        // Try to load the file at the new directory.
+        // If successful, we write the new settings to the settings.json file
+        // and then return the loaded data.
         try {
             loadResult = loadFile();
             this.loadStatus = LOAD_SUCCESS;
             updateSettings();
             return loadResult;
         } catch (Exception e) {
+            // If there are any issues during the process, we change the internal values
+            // back to the old values, and then throw an exception.
             this.fileDirectory = tempFileDirectory;
             this.randomColorsEnabled = tempRandomColorsEnabled;
             this.notificationsEnabled = tempNotificationsEnabled;
@@ -238,11 +276,17 @@ public class FileStorage {
     /**
      * loadSettings
      * 
+     * Loads settings from the settings.json file. Usually called only at
+     * program startup.
+     * 
      * @throws IOException Message undefined, caught by ModelManager.
      * @throws JSONException Message undefined, caught by ModelManager.
      */
     public void loadSettings() throws IOException, JSONException {
+        // First, log the method call.
         LoggingService.getLogger().log(Level.INFO, "Loading settings file.");
+        
+        // Then try to open the settings file.
         FileReader fileToRead;
         try {
             fileToRead = new FileReader(SETTINGS_FILE_NAME);
@@ -252,6 +296,8 @@ public class FileStorage {
             updateSettings();
             return;
         }
+        
+        // When settings file is found, begin parsing the data.
         BufferedReader reader = new BufferedReader(fileToRead);
         
         String fileString = "";
@@ -270,24 +316,31 @@ public class FileStorage {
         randomColorsEnabled = JSONrandomColorsEnabled;
         notificationsEnabled = JSONnotificationsEnabled;
         
+        // Close the file when we're done.
         reader.close();
     }
     
     /**
      * updateSettings
      * 
+     * Writes this object's current settings data to the settings.json file.
+     * 
      * @throws IOException Message LOAD_SETTINGS_FAILED, WRITE_SETTINGS_FAILED
      * @throws JSONException Messsage undefined, caught by changeSettings
      */
     public void updateSettings() throws IOException, JSONException {
-        FileWriter fileToWrite;
+        // First, log the method call.
+        LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
         
+        // Then, try to access the file.
+        FileWriter fileToWrite;
         try {
             fileToWrite = new FileWriter(SETTINGS_FILE_NAME);
         } catch (Exception e) {
             throw new IOException(LOAD_SETTINGS_FAILED);
         }
 
+        // Now we convert the settings data into a JSONObject.
         BufferedWriter writer = new BufferedWriter(fileToWrite);
         concatSlash();
         
@@ -296,8 +349,8 @@ public class FileStorage {
         settingsObject.put("randomColorsEnabled", randomColorsEnabled);
         settingsObject.put("notificationsEnabled", notificationsEnabled);
         
-        LoggingService.getLogger().log(Level.INFO, "Updating settings file.");
-        
+        // And then convert the JSONObject into an indented string
+        // And then write it to the file.
         try {
             writer.write(settingsObject.toString(2));
             writer.flush();
@@ -307,8 +360,10 @@ public class FileStorage {
             throw new IOException(LOAD_SETTINGS_FAILED);
         }
         
+        // Log again to confirm operation success.
         LoggingService.getLogger().log(Level.INFO, "Successfully updated settings file.");
         
+        // Finally we close the file.
         try {
             fileToWrite.close();
         } catch (Exception e) {
@@ -316,34 +371,59 @@ public class FileStorage {
         }
     }
     
+    // Methods for acquiring settings data
+    /**
+     * getFileName
+     * 
+     * @return The filename in use by the program. Always watdo.json.
+     */
     public String getFileName() {
         return this.fileName;
     }
-    
-    public String getFullFileName() {
-        return this.fileDirectory + this.fileName;
-    }
-    
+
+    /**
+     * getFileDirectory
+     * 
+     * @return The filepath in use by the program.
+     */
     public String getFileDirectory() {
         return this.fileDirectory;
     }
     
+    /**
+     * getFullFileName
+     * 
+     * @return The filepath and filename in use by the program.
+     */
+    public String getFullFileName() {
+        return this.fileDirectory + this.fileName;
+    }
+    
+    /**
+     * areRandomColorsEnabled
+     * 
+     * @return The settings value for whether random color task display is enabled.
+     */
     public Boolean areRandomColorsEnabled() {
         return this.randomColorsEnabled;
     }
     
+    /**
+     * areNotificationsEnalbed
+     * 
+     * @return The settings value for whether notification display is enabled.
+     */
     public Boolean areNotificationsEnabled() {
         return this.notificationsEnabled;
     }
 
-    public String getLoadStatus() {
-        return this.loadStatus;
-    }
-    
-    public String getWriteStatus() {
-        return this.writeStatus;
-    }
-    
+    // File directory formatting
+    /**
+     * concatSlash
+     * 
+     * If there is no forward slash at the end of the target directory,
+     * concatenate the target directory string with a forward slash.
+     */
     private void concatSlash() {
         if (fileDirectory.length() > 0) {
             if (fileDirectory.charAt(fileDirectory.length() - 1) != '/') {
@@ -351,4 +431,24 @@ public class FileStorage {
             }
         }
     }
+    
+    // Debugging methods
+    /**
+     * getLoadStatus
+     * 
+     * @return The current file load status of the program.
+     */
+    public String getLoadStatus() {
+        return this.loadStatus;
+    }
+    
+    /**
+     * getWriteStatus
+     * 
+     * @return The current file write status of the program.
+     */
+    public String getWriteStatus() {
+        return this.writeStatus;
+    }
+    
 }
