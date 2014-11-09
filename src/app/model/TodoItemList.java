@@ -29,6 +29,10 @@ public class TodoItemList {
 		return todoItems;
 	}
 	
+    public ListIterator<TodoItem> getTodoItemsIterator() {
+        return todoItems.listIterator();
+    }
+	
 	public TodoItem getByUUID(UUID itemID) {
         for (TodoItem currentItem : todoItems) {
             if (currentItem.getUUID().equals(itemID)) {
@@ -47,17 +51,9 @@ public class TodoItemList {
         }
         return -1;
     }
-	
-	public ListIterator<TodoItem> getTodoItemsIterator() {
-	    return todoItems.listIterator();
-	}
 
     public int countTodoItems() {
         return todoItems.size();
-    }
-
-    public void sortTodoItems(Comparator<TodoItem> todoItemComparator) {
-        Collections.sort(todoItems, todoItemComparator);
     }
 	
 	// CRUD

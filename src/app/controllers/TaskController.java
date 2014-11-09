@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.controllers;
 
 import app.Main;
@@ -8,10 +9,8 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * in charge of sorting and searching of tasks
- * implemented as a singleton
- *
- * Created by jolly on 15/10/14.
+ * In charge of sorting and searching of tasks.
+ * Implemented as a singleton.
  */
 public class TaskController {
 
@@ -20,18 +19,32 @@ public class TaskController {
     private static DisplayType displayType;
     private static SortingStyle sortingStyle;
 
+    /**
+     * Enum containing the various display types.
+     */
     public static enum DisplayType {
         ALL, DONE, UNDONE, OVERDUE, SEARCH
     }
 
+    /**
+     * Enum containing the various sorting styles.
+     */
     public static enum SortingStyle {
         TASKNAME_ENDDATE, STARTDATE_PRIORITY, ENDDATE_PRIORITY, PRIORITY_ENDDATE
     }
 
+    /**
+     * Empty constructor.
+     */
     private TaskController() {
         // nothing to do here
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public static TaskController getTaskController() {
         if (self == null) {
             self = new TaskController();
@@ -41,10 +54,21 @@ public class TaskController {
         return self;
     }
 
+    /**
+     * Setter for main.
+     *
+     * @param main
+     */
     public void setMainApp(Main main) {
         this.main = main;
     }
 
+    /**
+     *
+     *
+     * @param query
+     * @return
+     */
     public ArrayList<TodoItem> instantSearch(String query) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -56,11 +80,21 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public ArrayList<TodoItem> getAllTasks() {
         displayType = DisplayType.ALL;
         return main.getCommandController().getTaskList();
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public ArrayList<TodoItem> getDoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -72,6 +106,11 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public ArrayList<TodoItem> getUndoneTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -83,6 +122,11 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public ArrayList<TodoItem> getOverdueTasks() {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -94,6 +138,12 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @param date
+     * @return
+     */
     public ArrayList<TodoItem> getTasksStartingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -108,6 +158,12 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @param date
+     * @return
+     */
     public ArrayList<TodoItem> getTasksEndingOn(Date date) {
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
         for (TodoItem todo : main.getCommandController().getTaskList()) {
@@ -122,6 +178,13 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @param start
+     * @param end
+     * @return
+     */
     public ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
         start.setHours(0);
         start.setMinutes(0);
@@ -143,6 +206,11 @@ public class TaskController {
         return results;
     }
 
+    /**
+     *
+     *
+     * @param newSortingStyle
+     */
     public void setSortingStyle(int newSortingStyle) {
         System.out.println(newSortingStyle);
         switch (newSortingStyle) {
@@ -169,14 +237,29 @@ public class TaskController {
         main.getCommandController().updateView();
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public UUID getLastModifiedUUID() {
         return main.getCommandController().getModelManager().getLastModifiedUUID();
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public DisplayType getDisplayType() {
         return displayType;
     }
 
+    /**
+     *
+     *
+     * @param type
+     */
     public void setDisplayType(DisplayType type) {
         displayType = type;
     }

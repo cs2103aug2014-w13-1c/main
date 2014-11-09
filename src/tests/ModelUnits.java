@@ -127,7 +127,7 @@ public class ModelUnits {
         
         // TaskName then EndDate
         TodoItemSorter.sortingStyle = 0;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         ArrayList<TodoItem> currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -153,7 +153,7 @@ public class ModelUnits {
         
         // StartDate then Priority
         TodoItemSorter.sortingStyle = 1;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -179,7 +179,7 @@ public class ModelUnits {
         
         // EndDate then Priority
         TodoItemSorter.sortingStyle = 2;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -205,7 +205,7 @@ public class ModelUnits {
         
         // Priority then EndDate
         TodoItemSorter.sortingStyle = 3;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -361,6 +361,7 @@ public class ModelUnits {
         try {
             testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             fail();
         }
         
@@ -523,21 +524,5 @@ public class ModelUnits {
         } catch (Exception e) {
             fail();
         }
-    }
-    
-    // Minor test for sorting in todoItemList
-    @Test
-    public void testTodoItemListSort() {
-        TodoItemList testList = new TodoItemList();
-        testList.addTodoItem(new TodoItem("2", null, null, null, null));
-        testList.addTodoItem(new TodoItem("1", null, null, null, null));
-        
-        assertEquals("2", testList.getTodoItems().get(0).getTaskName());
-        assertEquals("1", testList.getTodoItems().get(1).getTaskName());
-        
-        testList.sortTodoItems(TodoItemSorter.todoItemComparators[0]);
-        
-        assertEquals("1", testList.getTodoItems().get(0).getTaskName());
-        assertEquals("2", testList.getTodoItems().get(1).getTaskName());
     }
 }

@@ -1,4 +1,6 @@
 package app.model;
+import java.util.ArrayList;
+import java.util.Collections;
 //@author A0116703N
 import java.util.Comparator;
 
@@ -50,20 +52,6 @@ public class TodoItemSorter {
             },
     };
     
-
-    public static int compareEndDates(TodoItem todoItem1, TodoItem todoItem2) {
-        if ((todoItem1 == null || todoItem1.getEndDate() == null) && (todoItem2 == null || todoItem2.getEndDate() == null)) {
-            return 0;
-        }
-        if (todoItem1 == null || todoItem1.getEndDate() == null) {
-            return -1;
-        }
-        if (todoItem2 == null || todoItem2.getEndDate() == null) {
-            return 1;
-        }
-        return ((Long)todoItem1.getEndDate().getTime()).compareTo(todoItem2.getEndDate().getTime());
-    }
-    
     private static boolean isInvalid(TodoItem todoItem, int parameter) {
         if (todoItem == null) {
             return true;
@@ -96,7 +84,7 @@ public class TodoItemSorter {
         }
         
         switch(parameter) {
-            case 0: return todoItem1.getTaskName().compareTo(todoItem2.getTaskName());
+            case 0: return todoItem1.getTaskName().toLowerCase().compareTo(todoItem2.getTaskName().toLowerCase());
             case 1: return ((Long) todoItem1.getStartDate().getTime()).compareTo(todoItem2.getStartDate().getTime());
             case 2: return ((Long) todoItem1.getEndDate().getTime()).compareTo(todoItem2.getEndDate().getTime());
             case 3: return todoItem1.getPriority().compareTo(todoItem2.getPriority());
@@ -104,7 +92,11 @@ public class TodoItemSorter {
         }
     }
     
-    public static void resortTodoList(TodoItemList todoList) {
-        todoList.sortTodoItems(todoItemComparators[sortingStyle]);
+    public static void resortTodoList(ArrayList<TodoItem> todoList) {
+        Collections.sort(todoList, todoItemComparators[sortingStyle]);
+    }
+    
+    public static void changeSortStyle(int newSortingStyle) {
+        sortingStyle = newSortingStyle;
     }
 }

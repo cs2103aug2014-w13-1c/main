@@ -1,3 +1,4 @@
+//@author A0111987X
 package app.viewmanagers;
 
 import app.controllers.CommandParser;
@@ -15,10 +16,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 
+/* inputField.css
+.input-field {
+    -fx-font-family: Helvetica;
+    -fx-font-size: 30px;
+    -fx-background-color: #C7F464;
+    -fx-padding: 15px;
+}
+
+.keyword {
+    -fx-fill: #C44D58;
+    -fx-font-weight: bold;
+}
+ */
+
 /**
  * InputFieldViewManager
- *
- * Created by jolly on 24/9/14.
  */
 public class InputFieldViewManager {
 
@@ -27,13 +40,19 @@ public class InputFieldViewManager {
     private RootViewManager rootViewManager;
     private Boolean searchState;
     private Boolean isFromButton;
-    
+
+    /**
+     *
+     */
     public InputFieldViewManager() {
         initInputFieldViewManager();
         inputField.textProperty().addListener(this::keyListener);
         inputField.addEventFilter(KeyEvent.KEY_PRESSED, this::keyPressListener);
     }
 
+    /**
+     *
+     */
     private void initInputFieldViewManager() {
         lastCommand = "";
         inputField = new StyleClassedTextArea();
@@ -46,6 +65,7 @@ public class InputFieldViewManager {
     }
 
     /**
+     *
      *
      * @param observable
      * @param oldValue
@@ -61,6 +81,11 @@ public class InputFieldViewManager {
         instantSearchAndHighlight();
     }
 
+    /**
+     *
+     *
+     * @param event
+     */
     private void keyPressListener(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
@@ -71,7 +96,7 @@ public class InputFieldViewManager {
                 LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
             }
         } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("") &&
-                   !lastCommand.equals(inputField.getText())) {
+                !lastCommand.equals(inputField.getText())) {
             event.consume();
             inputField.replaceText(lastCommand);
         } else if (event.getCode() == KeyCode.TAB) {
@@ -83,14 +108,17 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     */
     private void instantSearchAndHighlight() {
         if (inputField.getText().startsWith("search ")) {
             searchState = true;
             instantSearch(inputField.getText().substring(7));
         } else if (inputField.getText().startsWith("update ") ||
-                   inputField.getText().startsWith("delete ") ||
-                   inputField.getText().startsWith("undone ") ||
-                   inputField.getText().startsWith("done ")) {
+                inputField.getText().startsWith("delete ") ||
+                inputField.getText().startsWith("undone ") ||
+                inputField.getText().startsWith("done ")) {
             highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
         } else {
             if (searchState) {
@@ -101,6 +129,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @param fromButton
+     */
     private void highlightCell(String index, boolean fromButton) {
         int highlightIndex;
         try {
@@ -109,11 +143,16 @@ public class InputFieldViewManager {
             highlightIndex = -1;
         }
         if (highlightIndex > 0 &&
-            highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
+                highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
             rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1, fromButton);
         }
     }
 
+    /**
+     *
+     *
+     * @param query
+     */
     private void instantSearch(String query) {
         LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
         ArrayList<TodoItem> results =
@@ -124,6 +163,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @return
+     */
     private String autoComplete(String command) {
         ArrayList<String> results = new ArrayList<String>();
         for (String keyword : CommandParser.commandKeywords) {
@@ -134,13 +179,19 @@ public class InputFieldViewManager {
         return autoCompleteResults(results);
     }
 
+    /**
+     *
+     *
+     * @param results
+     * @return
+     */
     private String autoCompleteResults(ArrayList<String> results) {
         if (results.size() == 0) {
             return null;
         } else if (results.size() == 1) {
             return results.get(0);
         } else {
-            String multipleKeywords  = "Possible keywords: ";
+            String multipleKeywords = "Possible keywords: ";
             for (String result : results) {
                 multipleKeywords = multipleKeywords + result + " ";
             }
@@ -149,6 +200,12 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @throws InvalidInputException
+     */
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
             throw new InvalidInputException("empty command");
@@ -160,19 +217,40 @@ public class InputFieldViewManager {
         }
     }
 
+    /**
+     *
+     *
+     * @param command
+     * @return
+     */
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
         return KeywordDetector.getStyleSpans(keywords, command);
     }
-    
+
+    /**
+     *
+     *
+     * @param newIsFromButton
+     */
     protected void setFromButton(boolean newIsFromButton) {
         this.isFromButton = newIsFromButton;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public StyleClassedTextArea getInputField() {
         return inputField;
     }
 
+    /**
+     *
+     *
+     * @param rootViewManager
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
