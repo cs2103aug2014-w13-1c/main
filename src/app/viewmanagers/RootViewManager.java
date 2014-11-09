@@ -1,3 +1,18 @@
+//@author A0111764L
+/* RootView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1000" prefHeight="700.0"
+           prefWidth="1000.0" xmlns="http://javafx.com/javafx/8">
+    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1000" prefHeight="700.0"
+                prefWidth="1000.0" xmlns="http://javafx.com/javafx/8">
+    </BorderPane>
+</StackPane>
+
+ */
 package app.viewmanagers;
 
 import app.Main;
@@ -84,6 +99,7 @@ public class RootViewManager {
         helpView.toBack();
     }
 
+    //@author A0111764L
     private void showTitleBarView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
@@ -162,6 +178,7 @@ public class RootViewManager {
         inputField.requestFocus();
     }
 
+    //@author A0111764L
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
     }
@@ -200,6 +217,7 @@ public class RootViewManager {
         }
     }
 
+    //@author A0111764L
     public void refreshSidebar() {
         sidebarViewManager.refreshUndoButton();
         sidebarViewManager.refreshRedoButton();

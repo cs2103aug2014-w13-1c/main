@@ -26,22 +26,6 @@
 
 }
 
-/* ------------------------------------------------------------------------------------- */
-/** EVENT CSS **/
-/* ------------------------------------------------------------------------------------- */
-
-/* The main scrollbar **track** CSS class on event of "hover" and "pressed" */
-/*
-.task-list .scroll-bar:horizontal:hover .track ,
-.task-list .scroll-bar:horizontal:pressed .track ,
-.task-list .scroll-bar:vertical:hover .track,
-.task-list .scroll-bar:vertical:pressed .track{
-     -fx-background-color: derive(#434343,70%);
-	 -fx-opacity: 0.5;
-	 -fx-background-radius: 0em;
-
-}*/
-
 /* The main scrollbar **thumb** CSS class on event of "hover" and "pressed" */
 .task-list .scroll-bar .thumb:hover,
 .task-list .scroll-bar .thumb:pressed{

@@ -144,7 +144,10 @@ public class InputFieldViewManager {
         }
         if (highlightIndex > 0 &&
                 highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
-            rootViewManager.getTaskListViewManager().highlightCell(highlightIndex - 1, fromButton);
+            if (!fromButton) {
+                rootViewManager.getTaskListViewManager().scrollTo(highlightIndex - 1);
+            }
+            rootViewManager.getTaskListViewManager().highlight(highlightIndex - 1);
         }
     }
 

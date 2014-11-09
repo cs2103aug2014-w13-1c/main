@@ -1,5 +1,6 @@
 package tests;
 
+//author A0111764L
 import app.helpers.LoggingService;
 import org.junit.Test;
 
@@ -10,9 +11,6 @@ import java.util.logging.Logger;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by jin on 23/10/14.
- */
 public class LoggingServiceTest {
 
     /**

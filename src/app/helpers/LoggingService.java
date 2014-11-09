@@ -1,5 +1,6 @@
 package app.helpers;
 
+//@author A0111764L
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -11,13 +12,15 @@ import java.util.logging.Logger;
  * The logger can only be referenced by calling getLogger on this class, and
  * because it's a singleton, it'll always refer back to the same logger object.
  *
- * Created by jin on 14/10/14.
  */
 public class LoggingService {
 
     private Logger logger;
     private static LoggingService self;
 
+    /**
+     * Private constructor of the Service object.
+     */
     private LoggingService() {
        logger = Logger.getLogger(this.getClass().getName());
         try {
@@ -28,6 +31,9 @@ public class LoggingService {
         }
     }
 
+    /**
+     * @return instance of Logger object
+     */
     private static LoggingService getInstance() {
         if (self == null) {
             self = new LoggingService();

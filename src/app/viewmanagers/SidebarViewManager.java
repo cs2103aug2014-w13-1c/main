@@ -1,3 +1,141 @@
+//@author A0111764L
+
+/* sidebar.css
+
+.sidebar {
+    -fx-border-style: none;
+    -fx-stroke: black;
+    -fx-stroke-width: 8;
+    -fx-background-color: #4ECDC4;
+}
+
+*/
+
+/* SidebarView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="592.0" prefWidth="32.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.viewmanagers.SidebarViewManager">
+    <opaqueInsets>
+    </opaqueInsets>
+    <Button fx:id="displayButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <Image url="@../resources/list.png"/>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Display undone tasks. Command: &quot;display&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/tick.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Show completed tasks. Command: &quot;display done&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="addButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/add.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Add a task. Command: &quot;add &lt;task name&gt; [start | end | priority]&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/search.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Search for a task. Command: &quot;search &lt;task name&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="undoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fx:id="undoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                     scaleX="0.8" scaleY="0.8">
+              <image>
+                  <Image url="@../resources/undo.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Undo action. Command: &quot;undo&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="redoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fx:id="redoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                     scaleX="0.8" scaleY="0.8">
+              <image>
+                  <Image url="@../resources/redo.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Redo action. Command: &quot;redo&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;" translateY="230.0">
+        <graphic>
+          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                     scaleY="0.8">
+              <image>
+                  <Image url="@../resources/bulb.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Help. Command: &quot;help&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;" translateY="230.0">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/settings.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Settings. Command: &quot;settings&quot;"/>
+        </tooltip>
+    </Button>
+</VBox>
+
+ */
+
 package app.viewmanagers;
 
 import app.helpers.InvalidInputException;
