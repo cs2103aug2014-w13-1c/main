@@ -288,11 +288,24 @@ public class CommandController {
         resetTaskList();
     }
     
+    //@author A0116703N
+    /**
+     * Calls the changeSettings method in modelManager. Mostly used by the SettingsView
+     * to change the user's settings from the settings window. 
+     * 
+     * @param filePath The new file directory to be used. 
+     * @param randomColorsEnabled The new random color display setting.
+     * @param notificationsEnabled The new notification display setting.
+     */
     public void changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         String feedback = actionController.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
+        
+        // The data in modelManager has changed, so we refresh the data to be displayed and clear the undo stack.
         undoController.clear();
         resetTaskList();
         updateView();
+        
+        // Finally do a System.out.println.
         printString(feedback);
     }
 
@@ -316,6 +329,7 @@ public class CommandController {
         return modelManager.getFileDirectory();
     }
 
+    //@author A0116703N
     public Boolean areRandomColorsEnabled() {
         return modelManager.areRandomColorsEnabled();
     }
