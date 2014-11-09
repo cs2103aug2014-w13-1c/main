@@ -12,6 +12,13 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * The main class in the Model. This class controls the model's logic,
+ * and calls methods from other Model classes. 
+ * 
+ * @author Nguyen Quoc Dat (A0116703N)
+ *
+ */
 public class ModelManager {
     // Error messages to be thrown to controller.
     public static final String LOAD_SUCCESS = "Successfully loaded file!";
@@ -30,8 +37,6 @@ public class ModelManager {
     private UUID latestModified;
     
     /**
-     * ModelManager Constructor
-     * 
      * Upon construction of a ModelManager, file I/O are instantly carried out. The data files are first loaded here.
      * 
      * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
@@ -73,8 +78,6 @@ public class ModelManager {
     
     // CRUD
     /**
-     * addTask
-     * 
      * Adds a task into the program data and then writes it into the database file. 
      * 
      * @param newTaskName The name of the new task
@@ -101,8 +104,6 @@ public class ModelManager {
     }
     
     /**
-     * updateTask
-     * 
      * Updates a task within the program data and then updates database file.
      * 
      * @param itemID The UUID of the item to be updated
@@ -158,8 +159,6 @@ public class ModelManager {
     }
     
     /**
-     * deleteTask
-     * 
      * Deletes a task within the program data and then updates the file.
      * 
      * @param itemID The UUID of the item to be deleted
@@ -198,8 +197,6 @@ public class ModelManager {
     
     // Sorting
     /**
-     * setSortingStyle
-     * 
      * Changes the sortingStyle in the TodoItemSorter.
      * 
      * @param newSortingStyle The new sorting style index.
@@ -211,8 +208,6 @@ public class ModelManager {
 
     // Data exposure
     /**
-     * getTodoItemList
-     * 
      * Returns the data held by Model.
      * 
      * @return The ArrayList of TodoItems currently in the program memory.
@@ -222,8 +217,6 @@ public class ModelManager {
     }
     
     /**
-     * getTodoItemIterator
-     * 
      * Returns the data held by Model as a ListIterator
      * 
      * @return The iterator of the ArrayList of TodoItems currently in the program memory.
@@ -234,8 +227,6 @@ public class ModelManager {
     
     // Settings
     /**
-     * changeSettings
-     * 
      * Changes the settings stored in the FileStorage, and then updates the settings.json file.
      * 
      * @param fileDirectory The new directory to switch to
@@ -251,8 +242,6 @@ public class ModelManager {
     }
     
     /**
-     * getFileDirectory
-     * 
      * Returns the current file directory in use by the program.
      * 
      * @return The file directory in use
@@ -262,8 +251,6 @@ public class ModelManager {
     }
     
     /**
-     * areRandomColorsEnabled
-     * 
      * Returns the current setting of random task item colors.
      * 
      * @return The current random color setting
@@ -273,8 +260,6 @@ public class ModelManager {
     }
     
     /**
-     * areNotificationsEnabled
-     * 
      * Returns the current setting of notification display.
      * 
      * @return The current notification setting
@@ -285,8 +270,6 @@ public class ModelManager {
     
     // Last modified
     /**
-     * getLastModifiedIndex
-     * 
      * @return The index within the program data of the last modified task item.
      */
     public int getLastModifiedIndex() {
@@ -294,8 +277,6 @@ public class ModelManager {
     }
     
     /**
-     * getLastModifiedUUID
-     * 
      * @return The last modified task item's UUID.
      */
     public UUID getLastModifiedUUID() {
@@ -304,9 +285,8 @@ public class ModelManager {
     
     // For use by Undo/Redo functionalities
     /**
-     * loadTodoItems
-     * 
-     * Reloads a snapshot of the program data.
+     * Reloads a snapshot of the program data. This has the same effect on the
+     * program data as switching to a new directory containing the given data.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
@@ -323,8 +303,6 @@ public class ModelManager {
     
     // Miscellaneous
     /**
-     * getFullFileName
-     * 
      * @return The full filepath to the program.
      */
     public String getFullFileName() {
@@ -332,8 +310,6 @@ public class ModelManager {
     }
     
     /**
-     * countTasks
-     * 
      * @return The number of tasks held in program memory.
      */
     public int countTasks() {

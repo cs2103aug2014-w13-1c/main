@@ -14,6 +14,13 @@ import java.util.Date;
 import java.util.ListIterator;
 import java.util.logging.Level;
 
+/**
+ * This class is in charge of all I/O operations from the Model, and
+ * manages program settings.
+ * 
+ * @author Nguyen Quoc Dat (A0116703N)
+ *
+ */
 public class FileStorage {
     
     // Settings data
@@ -55,8 +62,6 @@ public class FileStorage {
     }
     
     /**
-     * loadFile 
-     * 
      * Loads watdo.json file data as a String, and then parses it and returns
      * the data as an ArrayList of TodoItems. 
      * 
@@ -137,8 +142,6 @@ public class FileStorage {
     }
     
     /**
-     * updateFile
-     * 
      * Updates the content of the watdo.json file with the given data.
      * 
      * @param todoItems The data to write to the file.
@@ -219,8 +222,6 @@ public class FileStorage {
     }
     
     /**
-     * changeSettings 
-     * 
      * Changes this object's internal settings to the given ones,
      * and then update the settings.json file with the new settings.
      * Finally, this method will load the watdo.json data at the new
@@ -274,8 +275,6 @@ public class FileStorage {
     }
     
     /**
-     * loadSettings
-     * 
      * Loads settings from the settings.json file. Usually called only at
      * program startup.
      * 
@@ -321,8 +320,6 @@ public class FileStorage {
     }
     
     /**
-     * updateSettings
-     * 
      * Writes this object's current settings data to the settings.json file.
      * 
      * @throws IOException Message LOAD_SETTINGS_FAILED, WRITE_SETTINGS_FAILED
@@ -373,8 +370,6 @@ public class FileStorage {
     
     // Methods for acquiring settings data
     /**
-     * getFileName
-     * 
      * @return The filename in use by the program. Always watdo.json.
      */
     public String getFileName() {
@@ -382,8 +377,6 @@ public class FileStorage {
     }
 
     /**
-     * getFileDirectory
-     * 
      * @return The filepath in use by the program.
      */
     public String getFileDirectory() {
@@ -391,8 +384,6 @@ public class FileStorage {
     }
     
     /**
-     * getFullFileName
-     * 
      * @return The filepath and filename in use by the program.
      */
     public String getFullFileName() {
@@ -400,8 +391,6 @@ public class FileStorage {
     }
     
     /**
-     * areRandomColorsEnabled
-     * 
      * @return The settings value for whether random color task display is enabled.
      */
     public Boolean areRandomColorsEnabled() {
@@ -409,8 +398,6 @@ public class FileStorage {
     }
     
     /**
-     * areNotificationsEnalbed
-     * 
      * @return The settings value for whether notification display is enabled.
      */
     public Boolean areNotificationsEnabled() {
@@ -419,8 +406,6 @@ public class FileStorage {
 
     // File directory formatting
     /**
-     * concatSlash
-     * 
      * If there is no forward slash at the end of the target directory,
      * concatenate the target directory string with a forward slash.
      */
@@ -434,8 +419,6 @@ public class FileStorage {
     
     // Debugging methods
     /**
-     * getLoadStatus
-     * 
      * @return The current file load status of the program.
      */
     public String getLoadStatus() {
@@ -443,8 +426,6 @@ public class FileStorage {
     }
     
     /**
-     * getWriteStatus
-     * 
      * @return The current file write status of the program.
      */
     public String getWriteStatus() {
