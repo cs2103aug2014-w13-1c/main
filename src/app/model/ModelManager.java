@@ -212,6 +212,13 @@ public class ModelManager {
         TodoItemSorter.resortTodoList(todoList.getTodoItems());
     }
 
+    /**
+     * @return The current sorting style of the program.
+     */
+    public int getSortingStyle() {
+        return TodoItemSorter.getSortStyle();
+    }
+    
     // Data exposure
     /**
      * Returns the data held by Model.

@@ -139,4 +139,11 @@ public class TodoItemSorter {
     public static void changeSortStyle(int newSortingStyle) {
         sortingStyle = newSortingStyle;
     }
+    
+    /**
+     * @return The current sorting style in use.
+     */
+    public static int getSortStyle() {
+        return sortingStyle;
+    }
 }

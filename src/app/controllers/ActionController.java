@@ -5,7 +5,6 @@ import app.helpers.CommandObject;
 import app.helpers.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
-import app.viewmanagers.TitleBarViewManager;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -244,6 +244,13 @@ public class TaskController {
     }
 
     /**
+     * @return The current sorting style of the program.
+     */
+    public int getSortingStyle() {
+        return main.getCommandController().getModelManager().getSortingStyle();
+    }
+    
+    /**
      * Acts as the interface between the view and the model manager for getting the last modified task's UUID.
      *
      * @return last modified UUID

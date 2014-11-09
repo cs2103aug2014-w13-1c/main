@@ -141,6 +141,23 @@ public class TitleBarViewManager {
         }
     }
 
+    public void setSortStyleByIndex(int index) {
+        switch(index) {
+            case 0:
+                setSortStyle(SortStyle.NAME);
+                break;
+            case 1:
+                setSortStyle(SortStyle.START);
+                break;
+            case 2:
+                setSortStyle(SortStyle.END);
+                break;
+            case 3:
+                setSortStyle(SortStyle.PRIORITY);
+                break;
+        }
+    }
+    
     /**
      * Set back-reference to the rootViewManager.
      * @param rootViewManager The RootViewManager instance where this TitleBarViewManager instance was created from.

@@ -261,6 +261,21 @@ public class CommandController {
                 main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(false);
                 break;
         }
+        
+        switch (taskController.getSortingStyle()) {
+            case 0:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(0);
+                break;
+            case 1:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(1);
+                break;
+            case 2:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(2);
+                break;
+            case 3:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(3);
+                break;
+        }
     }
 
     public static ArrayList<TodoItem> getTaskList() {
