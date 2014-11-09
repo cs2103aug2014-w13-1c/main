@@ -22,7 +22,7 @@ public class TaskControllerTest extends Main {
     public void setUp() {
         commandController = new CommandController();
         commandController.setMainApp(this);
-        taskController = taskController.getTaskController();
+        taskController = TaskController.getTaskController();
         taskController.setMainApp(this);
         commandController.parseCommand("clear");
     }
