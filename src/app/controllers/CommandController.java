@@ -288,16 +288,6 @@ public class CommandController {
         actionController.setTaskController(taskController);
         resetTaskList();
     }
-
-    /**
-     * Okay to remove this method once switching to changeSettings is complete.
-     */
-    public void changeSaveLocation(String filePath) {
-        String newInputString = "saveto ";
-        newInputString = newInputString.concat(filePath);
-        CommandObject commandObject = commandParser.parseCommand(newInputString);
-        printString(processCommand(commandObject));
-    }
     
     public void changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         String feedback = actionController.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
