@@ -87,7 +87,6 @@ public class ActionController {
         } else {
             returnList = taskController.getUndoneTasks();
         }
-        main.getPrimaryStage().setTitle("wat do");
         return MESSAGE_DISPLAY;
     }
 
