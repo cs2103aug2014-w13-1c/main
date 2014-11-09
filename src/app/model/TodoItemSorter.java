@@ -3,7 +3,6 @@ package app.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-//@author A0116703N
 import java.util.Comparator;
 
 /**

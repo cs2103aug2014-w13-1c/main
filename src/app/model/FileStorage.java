@@ -1,5 +1,6 @@
 package app.model;
 //@author A0116703N
+
 import app.helpers.LoggingService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,7 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.ListIterator;
 import java.util.logging.Level;
 
 /**
