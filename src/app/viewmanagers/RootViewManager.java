@@ -151,7 +151,6 @@ public class RootViewManager {
         borderPane.setCenter(taskListView);
     }
 
-
     /**
      * Initialize the input field.
      */
@@ -229,7 +228,6 @@ public class RootViewManager {
     }
 
     //@author A0111764L
-
     /**
      * Set back-reference to the Main instance.
      * @param mainApp
@@ -286,7 +284,6 @@ public class RootViewManager {
     }
 
     //@author A0111764L
-
     /**
      * Called whenever the list experiences a change of state.
      * This greys out the undo/redo button based on whether there
