@@ -104,7 +104,7 @@ public class Main extends Application {
      */
     private void initControllerComponents() {
         commandController = new CommandController();
-        taskController = taskController.getTaskController();
+        taskController = TaskController.getTaskController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
         commandController.setTaskController(taskController);
