@@ -117,7 +117,7 @@ public class TitleBarViewManager {
 
     /**
      * Set back-reference to the rootViewManager.
-     * @param rootViewManager The RootViewManager instance.
+     * @param rootViewManager The RootViewManager instance where this TitleBarViewManager instance was created from.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

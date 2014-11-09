@@ -233,7 +233,7 @@ public class TaskListViewManager {
 
     /**
      * Set back-reference to the rootviewManager.
-     * @param rootViewManager The RootViewManager Instance.
+     * @param rootViewManager The RootViewManager instance where this TaskListViewManager instance was created from.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;

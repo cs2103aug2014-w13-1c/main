@@ -183,8 +183,8 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     /**
      * This method is implicitly called whenever the taskData of TaskListViewManager
      * is changed. It updates the ListCell object with the new TodoItem.
-     * @param task
-     * @param empty
+     * @param task Update the ListCell with this TodoItem object.
+     * @param empty True if there is no TodoItem object.
      */
     @Override
     protected void updateItem(TodoItem task, boolean empty) {
@@ -216,7 +216,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      * Technically, we could replace the done/undone buttons with a single button, but
      * having two buttons trades memory usage for code readability and organization, which is
      * a worthwhile tradeoff.
-     * @param task
+     * @param task Populate the controls with the properties of this TodoItem.
      */
     private void populateContent(TodoItem task) {
         setIndex();
@@ -236,7 +236,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      * Substring-ing is a hacky way to get around the implementation of priority strings.
      * Currently, priority strings are in the form of "1. High", "2. Medium", etc. to facilitate
      * sorting. Because we only want the priority text, we'll have to substring the number out.
-     * @param task
+     * @param task Set the priorityLevelLabel with the priority string of this TodoItem.
      */
     private void setPriorityLevel(TodoItem task) {
         priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
@@ -248,7 +248,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      *
      * There are four different configurations of data labels in accordance to the different types
      * of tasks: floating, deadline, event, endless.
-     * @param task
+     * @param task Set the dateLabels with the priority string of this TodoItem.
      */
     private void setDates(TodoItem task) {
         switch (task.getTodoItemType().toLowerCase()) {
@@ -286,7 +286,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      * Setter for the task name label.
      *
      * toUpperCase() is purely for cosmetic reasons.
-     * @param task
+     * @param task Set the taskNameLabel with the name of this TodoItem.
      */
     private void setTaskName(TodoItem task){
         taskNameLabel.setText(task.getTaskName().toUpperCase());
@@ -295,7 +295,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     /**
      * Since the actual task list displayed to the user is 1-index,
      * we'll have to increment getIndex() by 1.
-     * @return 1-index of the task.
+     * @return 1-index of the task in the current list.
      */
     private int getTaskIndex() { return getIndex() + 1; }
 
@@ -308,7 +308,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      * type the entire command again in the case where they only made a minor
      * mistake.
      *
-     * @param task
+     * @param task The referenced TodoItem.
      * @return a valid command string with all of the task's information.
      */
     private String getTaskInfo(TodoItem task) {
@@ -346,7 +346,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
      *
      * Done tasks always have a alpha value of 0.45.
      *
-     * @param task
+     * @param task The referenced TodoItem.
      */
     private void setBackgroundColor(TodoItem task) {
         String alphaValue;
@@ -391,9 +391,10 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     /**
-     * Normalize and return a scaling factor between 0.45 and 1.
+     * Normalize and return a scaling factor between 0.45 and 1. The further the deadline,
+     * the smaller the factor.
      * @param differenceInDays
-     * @return
+     * @return a float value between 0.45 and 1, depending on the difference in days till the deadline.
      */
     private float calculateFactor(int differenceInDays) {
         if (differenceInDays == 0) {
@@ -434,7 +435,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     /**
      * Clicking the buttons will fill the input field with a command string corresponding
      * to the action.
-     * @param button
+     * @param button The button to assign an action to.
      */
     private void clickedButton(Button button) {
         switch (button.getId()) {
@@ -455,7 +456,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     /**
      * Set back-reference to the rootViewManager.
-     * @param rootViewManager
+     * @param rootViewManager The RootViewManager instance where the parent TaskListViewManager was created from.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
@@ -463,7 +464,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
 
     /**
      * Set back-reference to taskListViewManager.
-     * @param taskListViewManager
+     * @param taskListViewManager The TaskListViewManager instance where this TaskListCellViewManager instance was created from.
      */
     public void setTaskListViewManager(TaskListViewManager taskListViewManager) {
         this.taskListViewManager = taskListViewManager;
