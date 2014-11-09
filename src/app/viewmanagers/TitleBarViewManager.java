@@ -66,6 +66,8 @@ public class TitleBarViewManager {
 
     private RootViewManager rootViewManager;
 
+    public static enum SortStyle { START, END, PRIORITY, NAME };
+
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
@@ -85,7 +87,6 @@ public class TitleBarViewManager {
         ));
 
         sortStyleChoiceBox.setValue("END DATE");
-
 
         sortStyleChoiceBox
                 .getSelectionModel()
@@ -114,6 +115,30 @@ public class TitleBarViewManager {
      */
     public void setTitle(String title) {
         titleBarLabel.setText(title.toUpperCase());
+    }
+
+    /**
+     * Called by ActionController. This changes the selected item
+     * in the sortStyleChoiceBox when the user sorts the list
+     * with a command input instead of selecting the style in
+     * the choiceBox.
+     * @param style The SortStyle enum element (START, END, NAME, PRIORITY).
+     */
+    public void setSortStyle(SortStyle style) {
+        switch (style) {
+            case START:
+                sortStyleChoiceBox.setValue("START DATE");
+                break;
+            case END:
+                sortStyleChoiceBox.setValue("END DATE");
+                break;
+            case PRIORITY:
+                sortStyleChoiceBox.setValue("PRIORITY");
+                break;
+            case NAME:
+                sortStyleChoiceBox.setValue("TASK NAME");
+                break;
+        }
     }
 
     /**
