@@ -1,6 +1,7 @@
+//@author A0111764L
+
 package app;
 
-//author A0111764L
 import app.controllers.CommandController;
 import app.controllers.TaskController;
 import app.helpers.InvalidInputException;

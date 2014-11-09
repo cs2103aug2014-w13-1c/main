@@ -1,3 +1,36 @@
+//@author A0111764L
+
+
+/* taskListView.css
+
+Retrieved from: http://blog.ngopal.com.np/2012/07/11/customize-scrollbar-via-css/
+I'm not the author of the code, so it will not be included here.
+
+*/
+
+/* TaskListView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.text.Font?>
+<ListView fx:id="taskListView" fixedCellSize="44.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListViewManager">
+    <Label text="You have no tasks." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    <Label fx:id="emptySearch" text="No tasks found." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+</ListView>
+
+ */
+
 package app.viewmanagers;
 
 import app.helpers.LoggingService;

@@ -1,3 +1,47 @@
+//@author A0111764L
+
+
+/* titleBarView.css
+
+.choice-box .label {
+    -fx-text-fill: black;
+}
+
+*/
+
+/* TitleBarView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<Pane fx:id="titleBarView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="30.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.viewmanagers.TitleBarViewManager">
+    <AnchorPane prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: black;">
+        <children>
+          <Label fx:id="titleBarLabel" alignment="CENTER" layoutX="290.0" layoutY="5.0" prefHeight="23.0"
+                 prefWidth="421.0" text="Title" textAlignment="CENTER" textFill="WHITE">
+              <font>
+                  <Font size="18.0"/>
+              </font>
+          </Label>
+          <ChoiceBox id="choice-box" fx:id="sortStyleChoiceBox" layoutX="881.0" layoutY="1.0" prefHeight="26.0"
+                     prefWidth="117.0"/>
+          <Label fx:id="sortByLabel" layoutX="804.0" layoutY="5.0" text="SORT BY:" textFill="WHITE">
+              <font>
+                  <Font size="15.0"/>
+              </font>
+          </Label>
+        </children>
+    </AnchorPane>
+</Pane>
+
+ */
+
 package app.viewmanagers;
 
 import javafx.collections.FXCollections;
@@ -6,9 +50,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
-/**
- * Created by jin on 30/10/14.
- */
 public class TitleBarViewManager {
 
     @FXML
