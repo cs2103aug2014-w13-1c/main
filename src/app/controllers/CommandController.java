@@ -232,7 +232,6 @@ public class CommandController {
     }
 
     public void updateView() {
-//        main.getPrimaryStage().setTitle("wat do");
         updateTitle();
         main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
     }
