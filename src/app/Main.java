@@ -76,7 +76,6 @@ public class Main extends Application {
         for (String command : commandArguments) {
             rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute(command);
         }
-        rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("exit");
     }
 
     /**

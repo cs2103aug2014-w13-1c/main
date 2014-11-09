@@ -44,7 +44,8 @@ public class IntegrationTest1 {
        String addCommand2 = "add task 2 priority high";
        String addCommand3 = "add task 3 due tomorrow";
        String addCommand4 = "add task 4 start today end tomorrow";
-       String[] testCommands = {directoryCommand1, clearCommand, addCommand1, addCommand2, addCommand3, addCommand4};
+       String exitCommand = "exit";
+       String[] testCommands = {directoryCommand1, clearCommand, addCommand1, addCommand2, addCommand3, addCommand4, exitCommand};
 
        exit.expectSystemExit();
        exit.checkAssertionAfterwards(new Assertion() {
