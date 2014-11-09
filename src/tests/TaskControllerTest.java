@@ -4,6 +4,7 @@ package tests;
 import app.Main;
 import app.controllers.CommandController;
 import app.controllers.TaskController;
+import app.viewmanagers.RootViewManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,8 @@ public class TaskControllerTest extends Main {
         commandController.setMainApp(this);
         taskController = TaskController.getTaskController();
         taskController.setMainApp(this);
+        commandController.setTaskController(taskController);
+        commandController.parseCommand("saveto ./testDirectory");
         commandController.parseCommand("clear");
     }
 
@@ -32,6 +35,31 @@ public class TaskControllerTest extends Main {
         commandController.parseCommand("clear");
         commandController = null;
         taskController = null;
+    }
+
+    @Override
+    public CommandController getCommandController() {
+        return commandController;
+    }
+
+    @Override
+    public void showInfoNotification(String title, String message) {
+        // do nothing
+    }
+
+    @Override
+    public RootViewManager getRootViewManager() {
+        return new RootViewManagerStub();
+    }
+
+    @Test
+    public void testInstantSearch() throws Exception {
+
+    }
+
+    @Test
+    public void testGetAllTasks() throws Exception {
+
     }
 
     /** testing the ability to filter done tasks
@@ -44,9 +72,11 @@ public class TaskControllerTest extends Main {
      * infinitely many done tasks (but not feasible to implement)
      *
      * cannot have a negative number of tasks
+     *
+     * @throws Exception
      */
     @Test
-    public void getDoneTasksTest() {
+    public void testGetDoneTasks() throws Exception {
         // first we test that in an empty task list, the number of done tasks is 0
         assertEquals(taskController.getDoneTasks().size(), 0);
 
@@ -71,9 +101,11 @@ public class TaskControllerTest extends Main {
      * infinitely many undone tasks (but not feasible to implement)
      *
      * cannot have a negative number of tasks
+     *
+     * @throws Exception
      */
     @Test
-    public void getUndoneTasksTest() {
+    public void testGetUndoneTasks() throws Exception {
         // first we test that in an empty task list, the number of undone tasks is 0
         assertEquals(taskController.getUndoneTasks().size(), 0);
 
@@ -100,9 +132,12 @@ public class TaskControllerTest extends Main {
      * infinitely many overdue tasks (but not feasible to implement)
      *
      * cannot have a negative number of tasks
+     *
+     *
+     * @throws Exception
      */
     @Test
-    public void getOverdueTasksTest() {
+    public void testGetOverdueTasks() throws Exception {
         // first we test that in an empty task list, the number of overdue tasks is 0
         assertEquals(taskController.getOverdueTasks().size(), 0);
 
@@ -113,13 +148,18 @@ public class TaskControllerTest extends Main {
         assertEquals(taskController.getOverdueTasks().size(), 2);
     }
 
-    @Override
-    public CommandController getCommandController() {
-        return commandController;
+    @Test
+    public void testGetTasksStartingOn() throws Exception {
+
     }
 
-    @Override
-    public void showInfoNotification(String title, String message) {
-        // do nothing
+    @Test
+    public void testGetTasksEndingOn() throws Exception {
+
+    }
+
+    @Test
+    public void testGetTasksWithinDateRange() throws Exception {
+
     }
 }
