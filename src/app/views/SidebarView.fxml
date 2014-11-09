@@ -24,9 +24,7 @@
         <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
                        scaleY="0.8">
-                <image>
-                    <Image url="@../resources/tick.png"/>
-                </image>
+                <Image url="@../resources/tick.png"/>
             </ImageView>
         </graphic>
         <tooltip>
@@ -38,9 +36,7 @@
         <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
                        scaleY="0.8">
-                <image>
-                    <Image url="@../resources/add.png"/>
-                </image>
+                <Image url="@../resources/add.png"/>
             </ImageView>
         </graphic>
         <tooltip>
@@ -52,9 +48,7 @@
         <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
                        scaleY="0.8">
-                <image>
-                    <Image url="@../resources/search.png"/>
-                </image>
+                <Image url="@../resources/search.png"/>
             </ImageView>
         </graphic>
         <tooltip>
@@ -64,12 +58,10 @@
     <Button fx:id="undoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
             style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fx:id="undoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
-                     scaleX="0.8" scaleY="0.8">
-              <image>
-                  <Image url="@../resources/undo.png"/>
-              </image>
-          </ImageView>
+            <ImageView fx:id="undoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                       scaleX="0.8" scaleY="0.8">
+                <Image url="@../resources/undo.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Undo action. Command: &quot;undo&quot;"/>
@@ -78,12 +70,10 @@
     <Button fx:id="redoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
             style="-fx-background-color: transparent;">
         <graphic>
-          <ImageView fx:id="redoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
-                     scaleX="0.8" scaleY="0.8">
-              <image>
-                  <Image url="@../resources/redo.png"/>
-              </image>
-          </ImageView>
+            <ImageView fx:id="redoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                       scaleX="0.8" scaleY="0.8">
+                <Image url="@../resources/redo.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Redo action. Command: &quot;redo&quot;"/>
@@ -92,12 +82,10 @@
     <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
             style="-fx-background-color: transparent;" translateY="230.0">
         <graphic>
-          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
-                     scaleY="0.8">
-              <image>
-                  <Image url="@../resources/bulb.png"/>
-              </image>
-          </ImageView>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <Image url="@../resources/bulb.png"/>
+            </ImageView>
         </graphic>
         <tooltip>
           <Tooltip text="Help. Command: &quot;help&quot;"/>
@@ -108,9 +96,7 @@
         <graphic>
             <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
                        scaleY="0.8">
-                <image>
-                    <Image url="@../resources/settings.png"/>
-                </image>
+                <Image url="@../resources/settings.png"/>
             </ImageView>
         </graphic>
         <tooltip>
