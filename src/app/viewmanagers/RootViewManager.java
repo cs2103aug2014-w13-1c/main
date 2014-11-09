@@ -57,7 +57,7 @@ public class RootViewManager {
     /**
      * Initializes all view components. The order is important, and shouldn't
      * be changed.
-     * @param primaryStage
+     * @param primaryStage The Stage object where all components live in.
      */
     public void initLayout(Stage primaryStage) {
         LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
@@ -77,8 +77,8 @@ public class RootViewManager {
     /**
      * This is the first component to be initialized, as all other
      * components live within this.
-     * @param primaryStage
-     * @throws IOException
+     * @param primaryStage The Stage object where all components live in.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void initRootLayout(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -93,7 +93,7 @@ public class RootViewManager {
     /**
      * The settings view is created at launch and hidden from the user
      * immediately by hiding it behind the borderPane.
-     * @throws IOException
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void initSettingsView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -109,7 +109,7 @@ public class RootViewManager {
     /**
      * Initialises the Help View.
      *
-     * @throws IOException
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void initHelpView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -124,7 +124,7 @@ public class RootViewManager {
     //@author A0111764L
     /**
      * Initializes the title bar.
-     * @throws IOException
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void showTitleBarView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -138,7 +138,7 @@ public class RootViewManager {
 
     /**
      * Initialize the task list view.
-     * @throws IOException
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void showTaskListView() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -163,7 +163,7 @@ public class RootViewManager {
 
     /**
      * Initialize the sidebar.
-     * @throws IOException
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
      */
     private void showSidebar() throws IOException {
         FXMLLoader loader = new FXMLLoader();
@@ -180,9 +180,9 @@ public class RootViewManager {
 
     /**
      * Called by SettingsView, this saves the user's settings through CommandController.
-     * @param filePath
-     * @param enableRandomColors
-     * @param enableNotifications
+     * @param filePath The file path string of watdo.json
+     * @param enableRandomColors A boolean representing if the user enabled random colors in the task list.
+     * @param enableNotifications A boolean representing if the user enabled notifications to show up.
      */
     public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
         getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
@@ -230,7 +230,7 @@ public class RootViewManager {
     //@author A0111764L
     /**
      * Set back-reference to the Main instance.
-     * @param mainApp
+     * @param mainApp The Main instance where this RootViewManager instance was created from.
      */
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
@@ -238,28 +238,28 @@ public class RootViewManager {
 
     /**
      * Get back-reference to the Main instance.
-     * @return back-reference to Main.
+     * @return The Main instance where this RootViewManager instance was created from.
      */
     public Main getMainApp() {
         return mainApp;
     }
 
     /**
-     * @return reference to TaskListViewManager instance.
+     * @return reference to instantiated TaskListViewManager object.
      */
     public TaskListViewManager getTaskListViewManager() {
         return taskListViewManager;
     }
 
     /**
-     * @return reference to InputFieldViewManager instance.
+     * @return reference to instantiated InputFieldViewManager object.
      */
     public InputFieldViewManager getInputFieldViewManager() {
         return inputFieldViewManager;
     }
 
     /**
-     * @return reference to TitleBarViewManager instance.
+     * @return reference to instantiated TitleBarViewManager object.
      */
     public TitleBarViewManager getTitleBarViewManager() {
         return titleBarViewManager;

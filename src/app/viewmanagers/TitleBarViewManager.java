@@ -67,7 +67,8 @@ public class TitleBarViewManager {
     private RootViewManager rootViewManager;
 
     /**
-     * Initializer of TitleBarView.
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
      */
     @FXML
     public void initialize() {

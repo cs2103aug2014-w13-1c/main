@@ -71,6 +71,9 @@ public class TaskListViewManager {
     private String color;
 
     /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
      * In our implementation, we are using a custom CellFactory for generating
      * ListCells. This opens up the class to allow customized controls and methods.
      *

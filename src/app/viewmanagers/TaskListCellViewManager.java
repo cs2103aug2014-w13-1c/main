@@ -416,7 +416,10 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
     }
 
     /**
-     * Initialize the buttons and assign their event listeners.
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * Also initialize the buttons and assign their event listeners.
      */
     @FXML
     private void initialize() {
