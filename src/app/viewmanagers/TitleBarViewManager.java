@@ -1,6 +1,5 @@
 //@author A0111764L
 
-
 /* titleBarView.css
 
 .choice-box .label {
@@ -44,7 +43,6 @@
 
 package app.viewmanagers;
 
-import app.controllers.TaskController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -92,6 +90,10 @@ public class TitleBarViewManager {
         ;
     }
 
+    /**
+     * The sorting control is disabled in the search view context.
+     * @param isVisible
+     */
     public void setSortControlsVisible(boolean isVisible) {
         sortByLabel.setVisible(isVisible);
         sortStyleChoiceBox.setVisible(isVisible);
