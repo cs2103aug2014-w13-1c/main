@@ -21,6 +21,7 @@ public class CommandParser {
     private static ArrayList<String> endDateKeywords = new ArrayList<String>();
     private static ArrayList<String> displayKeywords = new ArrayList<String>();
     private static ArrayList<String> searchKeywords = new ArrayList<String>();
+    private static ArrayList<String> sortKeywords = new ArrayList<String>();
     
     // String manipulation methods
    private int nextSpacePosition(String inputString, int startIndex) {
@@ -95,6 +96,10 @@ public class CommandParser {
         searchKeywords.clear();
         searchKeywords.addAll(startDateKeywords);
         searchKeywords.addAll(endDateKeywords);
+        
+        sortKeywords.clear();
+        sortKeywords.addAll(addKeywords);
+        sortKeywords.add("name");
     }
 
     protected static ArrayList<Keyword> getKeywords(String inputString) {
@@ -133,10 +138,19 @@ public class CommandParser {
                 startIndex = endIndex + 2;
             }
         }
-        if (inputStringArray[0].equalsIgnoreCase("sort") || inputStringArray[0].equalsIgnoreCase("search")) {
+        if (inputStringArray[0].equalsIgnoreCase("search")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
                 if (searchKeywords.contains(inputStringArray[i])) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("sort")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (sortKeywords.contains(inputStringArray[i])) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -166,6 +180,7 @@ public class CommandParser {
                 i++;
             }
         }
+
         return result.trim();
     }
 

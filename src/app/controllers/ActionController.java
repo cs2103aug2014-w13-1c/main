@@ -12,8 +12,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 /**
- * Class ActionController
- * 
  * This class takes in a command object, which specifies the details of the action to be carried out,
  * and then interacts with the model through ModelManager to carry out the action. The data structure can then
  * be extracted from this class by the CommandController.
@@ -150,7 +148,10 @@ public class ActionController {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
-        if (commandObject.getCommandString().equalsIgnoreCase("start")) {
+        if (commandObject.getCommandString().equalsIgnoreCase("name")) {
+            taskController.setSortingStyle(0);
+            return "Sorting by task name\n";
+        } else if (commandObject.getCommandString().equalsIgnoreCase("start")) {
             taskController.setSortingStyle(1);
             return "Sorting by start date\n";
         } else if (commandObject.getCommandString().equalsIgnoreCase("end")) {
@@ -158,7 +159,7 @@ public class ActionController {
             return "Sorting by end date\n";
         } else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
             taskController.setSortingStyle(3);
-            return "Sorting by priority date\n";
+            return "Sorting by priority\n";
         } else {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -166,8 +167,6 @@ public class ActionController {
     }
     
     /**
-     * search (method name)
-     * 
      * Calls taskController to search for query, then updates resultList (which will be used by CommandController
      * to show to view).
      * 
@@ -215,8 +214,6 @@ public class ActionController {
     }
 
     /**
-     * update
-     * 
      * Updates ModelManager and gets new data based on the CommandObject
      * 
      * @param commandObject
@@ -407,6 +404,14 @@ public class ActionController {
     }
 
     //@author A0116703N
+    /**
+     * Calls modelManager to update with new settings.
+     * 
+     * @param filePath The new file directory to be used
+     * @param randomColorsEnabled The new setting for random color display
+     * @param notificationsEnabled The new setting for notifications display
+     * @return The result string to be printed to the console
+     */
     protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         assert filePath != null;
         

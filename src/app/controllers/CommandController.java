@@ -15,8 +15,6 @@ import java.util.logging.Level;
 
 
 /**
- * Class CommandController
- * 
  * This class is the main controller.
  * Skeleton based on jolly's CE2.
  *
