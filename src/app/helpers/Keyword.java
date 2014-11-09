@@ -7,8 +7,8 @@ package app.helpers;
  */
 public class Keyword {
 
-    private int startIndex;
-    private int endIndex;
+    private final int startIndex;
+    private final int endIndex;
 
     /**
      * Constructor, takes in the start and end indexes of a word.

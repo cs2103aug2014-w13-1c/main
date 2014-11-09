@@ -10,7 +10,7 @@ import javafx.scene.text.*;
  */
 public class WelcomePane {
 
-    private GridPane welcomePane;
+    private final GridPane welcomePane;
 
     /**
      * Initialises and populates the GridPane containing the Welcome Splash Page.
