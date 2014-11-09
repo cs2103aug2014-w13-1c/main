@@ -120,7 +120,7 @@ public class TaskListViewManager {
      * This method is called from various components whenever the task
      * list needs to be updated. For example, searching and changing
      * view context (Overdue, Done, Undone) uses this method.
-     * @param taskData
+     * @param taskData An ObservableList containing TodoItems to replace the current list.
      */
     public void updateView(ObservableList<TodoItem> taskData) {
 
@@ -142,7 +142,7 @@ public class TaskListViewManager {
 
     /**
      * Provide automatic scrolling to the least recently modified task as an UX feature.
-     * @param taskData
+     * @param taskData The current list of TodoItems being displayed to the user.
      */
     private void scrollToLastModifiedTask(ObservableList<TodoItem> taskData) {
         UUID uuid = rootViewManager.getMainApp().getTaskController().getLastModifiedUUID();
@@ -153,7 +153,7 @@ public class TaskListViewManager {
 
     /**
      * Scroll to a specified index. UX feature.
-     * @param index
+     * @param index The index of the task list cell to scroll to.
      */
     public void scrollTo(int index) {
         taskListView.scrollTo(index);
@@ -161,7 +161,7 @@ public class TaskListViewManager {
 
     /**
      * Highlight a specified index. UX feature.
-     * @param index
+     * @param index The index of the task list cell to highlight.
      */
     public void highlight(int index) {
         taskListView.getSelectionModel().select(index);
@@ -177,8 +177,8 @@ public class TaskListViewManager {
      *
      * Returns -1 if task is not found.
      *
-     * @param uuid
-     * @param taskData
+     * @param uuid The UUID of the specified TodoItem.
+     * @param taskData The list of TodoItems to check against.
      * @return index of task in current task list with the specified UUID.
      */
     private int convertUUIDtoIndex(UUID uuid, ObservableList<TodoItem> taskData) {
@@ -194,7 +194,7 @@ public class TaskListViewManager {
      * When the user disable random colors, this method returns the selected
      * color that was initialized at launch time.
      *
-     * @return the chosen color.
+     * @return The chosen color from instantiation time.
      */
     public String getCurrentColor() {
         return color;
@@ -203,7 +203,7 @@ public class TaskListViewManager {
     /**
      * When the user enables random colors, this method generates the colors
      * to be applied for each ListCell.
-     * @return a random color.
+     * @return A random color.
      */
     public String getRandomColor() {
         return colors.get(new Random().nextInt(colors.size()));
@@ -233,7 +233,7 @@ public class TaskListViewManager {
 
     /**
      * Set back-reference to the rootviewManager.
-     * @param rootViewManager
+     * @param rootViewManager The RootViewManager Instance.
      */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
@@ -241,7 +241,7 @@ public class TaskListViewManager {
 
     /**
      * Public getter for the current task list.
-     * @return
+     * @return an ObservableList of TodoItems.
      */
     public ObservableList<TodoItem> getTaskData() {
         return taskData;
