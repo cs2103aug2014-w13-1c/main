@@ -27,9 +27,6 @@ import static org.junit.Assert.fail;
  *  
  * Fourth integration test.
  * Tests program behavior when settings data is compromised.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
- *
  */
 public class IntegrationTest4 {
     @Rule

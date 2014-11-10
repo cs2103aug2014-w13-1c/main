@@ -16,10 +16,7 @@ import static org.junit.Assert.fail;
 
 /**
  * First integration test.
- * Tests the correct use case for the add, saveto and clear commands. 
- * 
- * @author Nguyen Quoc Dat (A0116703N)
- *
+ * Tests the correct use case for the add, saveto and clear commands.
  */
 public class IntegrationTest1 {
     @Rule

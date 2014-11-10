@@ -24,8 +24,6 @@ import java.util.logging.Level;
 /**
  * This class is in charge of all I/O operations from the Model, and
  * manages program settings.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
  *
  */
 public class FileStorage {

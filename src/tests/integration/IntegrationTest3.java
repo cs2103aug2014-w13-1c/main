@@ -28,9 +28,6 @@ import static org.junit.Assert.fail;
  *  
  * Third integration test.
  * Tests program behavior when watdo.json data is compromised.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
- *
  */
 public class IntegrationTest3 {
     @Rule

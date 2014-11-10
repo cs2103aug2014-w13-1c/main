@@ -265,55 +265,16 @@ public class ActionControllerUnits {
         
         ActionController actionTest = commandControllerTest.getActionController();
         
-        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
-        actionTest.changeSaveLocation(commandObjectTest);
-        commandObjectTest = parserTest.parseCommand("clear");
-        actionTest.clear(commandObjectTest);
-        commandObjectTest = parserTest.parseCommand("add task 1");
-        actionTest.add(commandObjectTest);
-        commandObjectTest = parserTest.parseCommand("add *&$(*&$)(@ due yesterday");
-        actionTest.add(commandObjectTest);
-        commandObjectTest = parserTest.parseCommand("add 34987314 due today");
-        actionTest.add(commandObjectTest);
-        commandObjectTest = parserTest.parseCommand("add hello world due tomorrow");
-        actionTest.add(commandObjectTest);
+        String oldDirectory = commandControllerTest.getModelManager().getFileDirectory();
+        Boolean oldRandomColors = commandControllerTest.getModelManager().areRandomColorsEnabled();
+        Boolean oldNotifications = commandControllerTest.getModelManager().areNotificationsEnabled();
+        actionTest.changeSettings("testDirectory", true, true);
         
-        commandObjectTest = parserTest.parseCommand("display done");
-        actionTest.display(commandObjectTest);
-        ArrayList<TodoItem> returnListTest = actionTest.getReturnList();
-        assertEquals(0, returnListTest.size());
+        assertEquals("testDirectory/", commandControllerTest.getModelManager().getFileDirectory());
+        assertEquals(true, commandControllerTest.areRandomColorsEnabled());
+        assertEquals(true, commandControllerTest.areNotificationsEnabled());
         
-        commandObjectTest = parserTest.parseCommand("display");
-        actionTest.display(commandObjectTest);
-        returnListTest = actionTest.getReturnList();
-        assertEquals(4, returnListTest.size());
-        
-        commandObjectTest = parserTest.parseCommand("done 1");
-        actionTest.done(commandObjectTest, actionTest.getReturnList());
-        commandObjectTest = parserTest.parseCommand("display");
-        actionTest.display(commandObjectTest);
-        returnListTest = actionTest.getReturnList();
-        assertEquals(3, returnListTest.size());
-        
-        commandObjectTest = parserTest.parseCommand("display done");
-        actionTest.display(commandObjectTest);
-        returnListTest = actionTest.getReturnList();
-        assertEquals(1, returnListTest.size());
-        
-        commandObjectTest = parserTest.parseCommand("undone 1");
-        actionTest.undone(commandObjectTest, returnListTest);
-        commandObjectTest = parserTest.parseCommand("display");
-        actionTest.display(commandObjectTest);
-        returnListTest = actionTest.getReturnList();
-        assertEquals(4, returnListTest.size());
-        
-        commandObjectTest = parserTest.parseCommand("clear");
-        actionTest.clear(commandObjectTest);
-        assertEquals(0, commandControllerTest.getModelManager().countTasks());
-        
-        commandObjectTest = parserTest.parseCommand("saveto .");
-        actionTest.changeSaveLocation(commandObjectTest);
-        assertEquals("./", commandControllerTest.getModelManager().getFileDirectory());
+        actionTest.changeSettings(oldDirectory, oldRandomColors, oldNotifications);
         
     }
 }
