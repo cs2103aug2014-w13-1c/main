@@ -3,15 +3,11 @@ package tests.integration;
 
 import app.Main;
 import app.model.FileStorage;
-import app.model.TodoItem;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -31,20 +27,12 @@ public class IntegrationTest0 {
            fail();
        }
 
-       // Commands to be carried out
        String exitCommand = "exit";
        String[] testCommands = {
                exitCommand};
 
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
-
-               // If the application failed to launch, this point will not be reached.
-               assertTrue(true);
-           }
-       });
+       exit.checkAssertionAfterwards(() -> assertTrue(true));
 
        // Carry out commands
        try {
