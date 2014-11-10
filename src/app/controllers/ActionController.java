@@ -51,13 +51,16 @@ public class ActionController {
 
     // Individual command methods
     /**
-     * This method is used to add a new TodoItem.
-     * This method is 
+     * This method is used by CommandController to add a new TodoItem.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls UndoController to save the state for undo command.
+     * It then calls ModelManager to add a TodoItem based on the CommandObject.
      * 
      * @param commandObject
      * @return A string notifying whether the method carries out properly.
      */
     public String add(CommandObject commandObject){
+        // To check if CommandString is empty
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
         }
@@ -74,7 +77,14 @@ public class ActionController {
         return CommandController.notifyWithInfo(String.format(MESSAGE_ADD_COMPLETE, commandObject.getInputString()));
     }
 
-    // Display command method(s)
+    /**
+     * This method is used by CommandController to change the display option of the current view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls TaskController to select the display option depending on the CommandObject.
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     public String display(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             if (commandObject.getCommandString().equals("all")) {
@@ -85,7 +95,7 @@ public class ActionController {
                 returnList = taskController.getOverdueTasks();
             } else if (commandObject.getCommandString().equals("overdue")) {
                 returnList = taskController.getUndoneTasks();
-            } else {
+            } else {    // If CommandString is something else, it is an invalid command
                 return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "display"));
             }
         } else {
@@ -94,8 +104,17 @@ public class ActionController {
         return MESSAGE_DISPLAY;
     }
 
-    // Clear command method(s)
+    /**
+     * This method is used by CommandController to clear all TodoItem(s).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls UndoController to save the state for undo command.
+     * It then calls ModelManager to clear the TodoItem(s).
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     public String clear(CommandObject commandObject) {
+        // To check whether CommandString is empty
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
@@ -112,8 +131,19 @@ public class ActionController {
         return MESSAGE_CLEAR_COMPLETE;
     }
     
-    // Delete command method(s)
+    /**
+     * This method is used by CommandController to delete a TodoItem.
+     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
+     * TodoItem to be able to delete the TodoItem from the current list.
+     * It calls UndoController to save the state for undo command.
+     * It then calls ModelManager to delete the TodoItem by a given index (from current list) retrieved from CommandObject.
+     * 
+     * @param commandObject
+     * @param currentList
+     * @return A string notifying whether the method carries out properly.
+     */
     public String delete(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        // To check whether CommandString is empty
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
@@ -145,6 +175,12 @@ public class ActionController {
         }
     }
 
+    /**
+     * A simple method to test whether a given string is a number.
+     * 
+     * @param number
+     * @return boolean true or false
+     */
     private boolean isInt(String number) {
         try {
             Integer.parseInt(number);
@@ -154,8 +190,16 @@ public class ActionController {
         return true;
     }
 
-    // Sort command method(s)
+    /**
+     * This method is used by CommandController to sort the TodoItem(s).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls TaskController to sort the TodoItem(s) based on the option given by CommandObject.
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     public String sort(CommandObject commandObject) {
+        // To check whether CommandString is empty
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
@@ -171,15 +215,15 @@ public class ActionController {
         } else if (commandObject.getCommandString().equalsIgnoreCase("priority")) {
             taskController.setSortingStyle(3);
             return "Sorting by priority\n";
-        } else {
+        } else {    // If CommandString is something else, it is an invalid command
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
         
     }
     
     /**
-     * This method is used to search a quary.
-     * 
+     * This method is used by CommandController to search for a query.
+     * It takes a CommandObject and check whether the CommandObject is valid.
      * Calls taskController to search for query, then updates resultList (which will be used by CommandController
      * to show to view).
      * 
@@ -188,7 +232,8 @@ public class ActionController {
      */
     // Search command method(s)
     public String search(CommandObject commandObject) {
-        if (commandObject.getCommandString().isEmpty() && !commandObject.isStartDateUpdated() && !commandObject.isEndDateUpdated()) {
+        // To check whether CommandString is empty and 
+        if (commandObject.getCommandString().isEmpty() && !commandObject.hasStartDateKeyword() && !commandObject.hasEndDateKeyword()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
         try {
@@ -200,13 +245,13 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        if (commandObject.isStartDateUpdated()) {
-            if (commandObject.isEndDateUpdated()) {
+        if (commandObject.hasStartDateKeyword()) {
+            if (commandObject.hasEndDateKeyword()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
                 results = taskController.getTasksStartingOn(commandObject.getStartDate());
             }
-        } else if (commandObject.isEndDateUpdated()) {
+        } else if (commandObject.hasEndDateKeyword()) {
             results = taskController.getTasksEndingOn(commandObject.getEndDate());
         } else {
             results = taskController.instantSearch(commandObject.getCommandString());
@@ -257,10 +302,10 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (commandObject.isStartDateUpdated()) {
+        if (commandObject.hasStartDateKeyword()) {
             parameters[1] = true;
         }
-        if (commandObject.isEndDateUpdated()) {
+        if (commandObject.hasEndDateKeyword()) {
             parameters[2] = true;
         }
         if (commandObject.getPriority() != null) {

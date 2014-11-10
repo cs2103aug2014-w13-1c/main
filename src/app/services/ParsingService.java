@@ -200,12 +200,12 @@ public class ParsingService {
                         j++;
                     }
                     if (toBeParsed.trim().equals("remove")) {
-                        currentCommandObject.setStartDateUpdated(true);
+                        currentCommandObject.setStartDateKeyword(true);
                         currentCommandObject.setEndIndex(i);
                     }
                     else {
                         currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
-                        if (currentCommandObject.isStartDateUpdated()) {
+                        if (currentCommandObject.hasStartDateKeyword()) {
                             currentCommandObject.setEndIndex(i);
                         }
                     }
@@ -223,11 +223,12 @@ public class ParsingService {
                         j++;
                     }
                     if (toBeParsed.trim().equals("remove")) {
-                        currentCommandObject.setEndDateUpdated(true);
+                        currentCommandObject.setEndDateKeyword(true);
+                        currentCommandObject.setEndIndex(i);
                     }
                     else {
                         currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
-                        if (currentCommandObject.isEndDateUpdated()) {
+                        if (currentCommandObject.hasEndDateKeyword()) {
                             currentCommandObject.setEndIndex(i);
                         }
                     }
@@ -255,10 +256,10 @@ public class ParsingService {
         }
         if (!dateList.isEmpty()) {
             if (startDateKeywords.contains(dateKeyword)) {
-                currentCommandObject.setStartDateUpdated(true);
+                currentCommandObject.setStartDateKeyword(true);
             }
             else {
-                currentCommandObject.setEndDateUpdated(true);
+                currentCommandObject.setEndDateKeyword(true);
             }
             return dateList.get(0);
         } else {
