@@ -236,7 +236,7 @@ public class InputFieldViewManager {
      * Checks to make sure the command is not empty, if not it throws an Invalid Input Exception.
      *
      * @param command user input
-     * @throws InvalidInputException
+     * @throws InvalidInputException InvalidInputException
      */
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
