@@ -17,7 +17,6 @@ import java.util.logging.Level;
  * be extracted from this class by the CommandController.
  * 
  * @author ryan
- *
  */
 
 public class ActionController {
@@ -51,7 +50,7 @@ public class ActionController {
 
     // Individual command methods
     // Add command method(s)
-    protected String addNewLine(CommandObject commandObject){
+    public String add(CommandObject commandObject){
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
         }
@@ -69,7 +68,7 @@ public class ActionController {
     }
 
     // Display command method(s)
-    protected String display(CommandObject commandObject) {
+    public String display(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             if (commandObject.getCommandString().equals("all")) {
                 returnList = taskController.getAllTasks();
@@ -89,7 +88,7 @@ public class ActionController {
     }
 
     // Clear command method(s)
-    protected String clear(CommandObject commandObject) {
+    public String clear(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
@@ -107,7 +106,7 @@ public class ActionController {
     }
     
     // Delete command method(s)
-    protected String deleteEntry(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+    public String delete(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "delete"));
         }
@@ -139,7 +138,7 @@ public class ActionController {
         }
     }
 
-    protected boolean isInt(String number) {
+    private boolean isInt(String number) {
         try {
             Integer.parseInt(number);
         } catch (NumberFormatException e) {
@@ -149,7 +148,7 @@ public class ActionController {
     }
 
     // Sort command method(s)
-    protected String sort(CommandObject commandObject) {
+    public String sort(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
@@ -179,7 +178,7 @@ public class ActionController {
      * @return A string notifying whether the method carries out properly.
      */
     // Search command method(s)
-    protected String search(CommandObject commandObject) {
+    public String search(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty() && !commandObject.isStartDateUpdated() && !commandObject.isEndDateUpdated()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
@@ -226,7 +225,7 @@ public class ActionController {
      * @return a feedback string to notify whether the method has carried out successfully 
      */
     // Update command method(s)
-    protected String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+    public String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
@@ -272,7 +271,7 @@ public class ActionController {
     }
 
     // Done method
-    protected String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+    public String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
         }
@@ -300,7 +299,7 @@ public class ActionController {
     }
 
     // Undone method
-    protected String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+    public String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
         }
@@ -328,7 +327,7 @@ public class ActionController {
     }
 
     // Help method
-    protected String help(CommandObject commandObject) {
+    public String help(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -337,7 +336,7 @@ public class ActionController {
     }
 
     // Settings method
-    protected String settings(CommandObject commandObject) {
+    public String settings(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -346,7 +345,7 @@ public class ActionController {
     }
     
     // Change save file location (for .json)
-    protected String changeSaveLocation(CommandObject commandObject) {
+    public String changeSaveLocation(CommandObject commandObject) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -367,7 +366,7 @@ public class ActionController {
 
     //@author A0111987X
     // Undo and redo method(s)
-    protected String undo(CommandObject commandObject) {
+    public String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -388,7 +387,7 @@ public class ActionController {
     }
 
     //@author A0111987X
-    protected String redo(CommandObject commandObject) {
+    public String redo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -417,7 +416,7 @@ public class ActionController {
      * @param notificationsEnabled The new setting for notifications display
      * @return The result string to be printed to the console
      */
-    protected String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+    public String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
         assert filePath != null;
         
         try {
@@ -436,7 +435,7 @@ public class ActionController {
     }
 
     //@author A0114914L
-    protected ActionController(ModelManager manager) {
+    public ActionController(ModelManager manager) {
         modelManager = manager;
         if (manager != null) {
             returnList = modelManager.getTodoItemList();
