@@ -23,6 +23,8 @@ public class ActionController {
     private final String ERROR_INVALID_INDEX = "Error. Index is not found.\n";
     private final String ERROR_WRONG_COMMAND_FORMAT = "Error. Incorrect %1$s command format. Click help icon or type help for info.\n";
     private final String ERROR_SEARCH_TERM_NOT_FOUND = "Search term not found.\n";
+    private final String ERROR_NOTHING_TO_UNDO = "Nothing to undo.";
+    private final String ERROR_NOTHING_TO_REDO = "Nothing to redo.";
 
     // Messages
     private final String MESSAGE_ADD_COMPLETE = "Added: \"%1$s\"\n";
@@ -105,23 +107,55 @@ public class ActionController {
     }
 
     /**
-     * This method is used by CommandController to clear all TodoItem(s).
-     * It takes a CommandObject and check whether the CommandObject is valid.
+     * This method is used by CommandController to update a TodoItem.
+     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
+     * TodoItem to be able to update the TodoItem from the current list.
      * It calls UndoController to save the state for undo command.
-     * It then calls ModelManager to clear the TodoItem(s).
+     * It calls ModelManager to update the TodoItem by a given index (from current list) and gets new data based
+     * on the CommandObject.
      * 
      * @param commandObject
+     * @param currentList The current data to be passed to display.
      * @return A feedback string to notify whether the method has carried out successfully.
      */
-    public String clear(CommandObject commandObject) {
+    public String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         // To check whether CommandString is empty
-        if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
+        }
+        Boolean[] parameters = {false, false, false, false, false};
+        
+        StringTokenizer st = new StringTokenizer(commandObject.getCommandString());
+        String check = st.nextToken();
+        // To check that the index input is an integer
+        if(!isInt(check)) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
+        }
+        int index = Integer.parseInt(check) - 1;
+        // To check that the index is valid
+        if (index < 0 || index >= currentList.size()) {
+            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
+        }
+        // Checking which parameters are updated
+        String toBeUpdated = "";
+        while (st.hasMoreTokens()) {
+            toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
+            parameters[0] = true;
+        }
+        if (commandObject.hasStartDateKeyword()) {
+            parameters[1] = true;
+        }
+        if (commandObject.hasEndDateKeyword()) {
+            parameters[2] = true;
+        }
+        if (commandObject.getPriority() != null) {
+            parameters[3] = true;
         }
         try {
             undoController.saveUndo(modelManager.getTodoItemList());
             undoController.clearRedo();
-            modelManager.clearTasks();
+            modelManager.updateTask(currentList.get(index).getUUID(),
+                                    parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -129,10 +163,27 @@ public class ActionController {
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
             return EMPTY_MESSAGE;
+        } catch (InvalidInputException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
         }
-        return MESSAGE_CLEAR_COMPLETE;
+        return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
-    
+
+    /**
+     * A simple method to test whether a given string is a number.
+     * 
+     * @param number
+     * @return boolean true or false
+     */
+    private boolean isInt(String number) {
+        try {
+            Integer.parseInt(number);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * This method is used by CommandController to delete a TodoItem.
      * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
@@ -172,7 +223,7 @@ public class ActionController {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
                 return EMPTY_MESSAGE;
             }
-
+    
             return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
         } catch (IndexOutOfBoundsException e) {
             return CommandController.notifyWithError("Index out of bounds.");
@@ -180,20 +231,32 @@ public class ActionController {
     }
 
     /**
-     * A simple method to test whether a given string is a number.
+     * This method is used by CommandController to clear all TodoItem(s).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls UndoController to save the state for undo command.
+     * It then calls ModelManager to clear the TodoItem(s).
      * 
-     * @param number
-     * @return boolean true or false
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
-    private boolean isInt(String number) {
-        try {
-            Integer.parseInt(number);
-        } catch (NumberFormatException e) {
-            return false;
+    public String clear(CommandObject commandObject) {
+        // To check whether CommandString is empty
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
-        return true;
+        try {
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
+            modelManager.clearTasks();
+        } catch (IOException e) {
+            CommandController.notifyWithError("Failed to write to file.");
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        }
+        return MESSAGE_CLEAR_COMPLETE;
     }
-
+    
     /**
      * This method is used by CommandController to sort the TodoItem(s).
      * It takes a CommandObject and check whether the CommandObject is valid.
@@ -273,73 +336,7 @@ public class ActionController {
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
     }
-
-    /**
-     * This method is used by CommandController to update a TodoItem.
-     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
-     * TodoItem to be able to update the TodoItem from the current list.
-     * It calls UndoController to save the state for undo command.
-     * It calls ModelManager to update the TodoItem by a given index (from current list) and gets new data based
-     * on the CommandObject.
-     * 
-     * @param commandObject
-     * @param currentList The current data to be passed to display.
-     * @return A feedback string to notify whether the method has carried out successfully.
-     */
-    public String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
-        // To check whether CommandString is empty
-        if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
-        }
-        Boolean[] parameters = {false, false, false, false, false};
-        
-        StringTokenizer st = new StringTokenizer(commandObject.getCommandString());
-        String check = st.nextToken();
-        // To check that the index input is an integer
-        if(!isInt(check)) {
-            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
-        }
-        int index = Integer.parseInt(check) - 1;
-        // To check that the index is valid
-        if (index < 0 || index >= currentList.size()) {
-            return CommandController.notifyWithError(ERROR_INVALID_INDEX);
-        }
-        // Checking which parameters are updated
-        String toBeUpdated = EMPTY_MESSAGE;
-        while (st.hasMoreTokens()) {
-            toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
-            parameters[0] = true;
-        }
-        if (commandObject.hasStartDateKeyword()) {
-            parameters[1] = true;
-        }
-        if (commandObject.hasEndDateKeyword()) {
-            parameters[2] = true;
-        }
-        if (commandObject.getPriority() != null) {
-            parameters[3] = true;
-        }
-        try {
-            undoController.saveUndo(modelManager.getTodoItemList());
-            undoController.clearRedo();
-            modelManager.updateTask(currentList.get(index).getUUID(),
-                                    parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
-            CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
-        } catch (IOException e) {
-            CommandController.notifyWithError("Failed to write to file.");
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-            return EMPTY_MESSAGE;
-        } catch (NullPointerException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
-            return EMPTY_MESSAGE;
-        } catch (InvalidInputException e) {
-            CommandController.notifyWithError("Start date must not be after end date.");
-            LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
-            return EMPTY_MESSAGE;
-        }
-        return String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString());
-    }
-
+    
     /**
      * This method is used by CommandController to mark a TodoItem as done.
      * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
@@ -428,78 +425,14 @@ public class ActionController {
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
-    /**
-     * This method is used by CommandController to open the help view.
-     * It takes a CommandObject and check whether the CommandObject is valid.
-     * It calls the commandController to open the help view.
-     * 
-     * @param commandObject
-     * @return A feedback string to notify whether the method has carried out successfully.
-     */
-    public String help(CommandObject commandObject) {
-        // To check whether CommandString is empty
-        if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
-        }
-        commandController.openHelp();
-        return MESSAGE_OPEN_HELP;
-    }
-
-    /**
-     * This method is used by CommandController to open the settings view.
-     * It takes a CommandObject and check whether the CommandObject is valid.
-     * It calls the commandController to open the settings view.
-     * 
-     * @param commandObject
-     * @return A feedback string to notify whether the method has carried out successfully.
-     */
-    public String settings(CommandObject commandObject) {
-     // To check whether CommandString is not empty
-        if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
-        }
-        commandController.openSettings();
-        return MESSAGE_OPEN_SETTINGS;
-    }
-    
-    /**
-     * This method is used by CommandController to change save file location (for .json).
-     * It takes a CommandObject and check whether the CommandObject is valid.
-     * It calls ModelManager to change the save file location.
-     * 
-     * @param commandObject
-     * @return A feedback string to notify whether the method has carried out successfully.
-     */
-    public String changeSaveLocation(CommandObject commandObject) {
-        // To check whether CommandString is empty
-        if (commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
-        }
-        try {
-            modelManager.changeSettings(commandObject.getCommandString(), null, null);
-        } catch (IOException e) {
-            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
-                CommandController.notifyWithError("Failed to write to settings.json file.");
-            } else {
-                CommandController.notifyWithError("Failed to load new file.");
-            }
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-            return EMPTY_MESSAGE;
-        } catch (NullPointerException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
-            return EMPTY_MESSAGE;
-        }
-        return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
-    }
-
     //@author A0111987X
     // Undo and redo method(s)
     public String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undo"));
         }
         if (undoController.isUndoEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(ERROR_NOTHING_TO_UNDO);
         } else {
             try {
                 undoController.saveRedo(modelManager.getTodoItemList());
@@ -519,10 +452,10 @@ public class ActionController {
     //@author A0111987X
     public String redo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "redo"));
         }
         if (undoController.isRedoEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(ERROR_NOTHING_TO_REDO);
         } else {
             try {
                 undoController.saveUndo(modelManager.getTodoItemList());
@@ -539,6 +472,40 @@ public class ActionController {
         }
     }
 
+    /**
+     * This method is used by CommandController to open the help view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the commandController to open the help view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String help(CommandObject commandObject) {
+        // To check whether CommandString is empty
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "help"));
+        }
+        commandController.openHelp();
+        return MESSAGE_OPEN_HELP;
+    }
+
+    /**
+     * This method is used by CommandController to open the settings view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the commandController to open the settings view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String settings(CommandObject commandObject) {
+     // To check whether CommandString is not empty
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "settings"));
+        }
+        commandController.openSettings();
+        return MESSAGE_OPEN_SETTINGS;
+    }
+    
     //@author A0116703N
     /**
      * Calls modelManager to update with new settings.
@@ -566,6 +533,34 @@ public class ActionController {
             return EMPTY_MESSAGE;
         }
         return "changed settings\n";
+    }
+
+    /**
+     * This method is used by CommandController to change save file location (for .json).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls ModelManager to change the save file location.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String changeSaveLocation(CommandObject commandObject) {
+        // To check whether CommandString is empty
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "change save file location"));
+        }
+        try {
+            modelManager.changeSettings(commandObject.getCommandString(), null, null);
+        } catch (IOException e) {
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        }
+        return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
     //@author A0114914L

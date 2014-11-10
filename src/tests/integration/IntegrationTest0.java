@@ -12,9 +12,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * Tests for a successful application launch and file storage IO.
- * 
- * Integration test zero. 
+ * Integration test 0. Tests for a successful application launch and file storage IO.
  */
 public class IntegrationTest0 {
     @Rule

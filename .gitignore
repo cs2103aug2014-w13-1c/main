@@ -16,3 +16,4 @@ logs/
 doc/
 .settings/
 .idea/
+*.iml
