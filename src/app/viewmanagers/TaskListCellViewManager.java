@@ -379,7 +379,7 @@ public class TaskListCellViewManager extends ListCell<TodoItem> {
         }
 
         // Done tasks are low priority
-        if (task.isDone()) {
+        if (task.isDone() || task.getTodoItemType().equals(TodoItem.FLOATING)) {
             alphaValue = "0.45";
         }
 

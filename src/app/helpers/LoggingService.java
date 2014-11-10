@@ -1,6 +1,7 @@
 package app.helpers;
 
 //@author A0111764L
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -24,6 +25,8 @@ public class LoggingService {
     private LoggingService() {
        logger = Logger.getLogger(this.getClass().getName());
         try {
+            File target = new File("./logs");
+            target.mkdir();
             Handler fh = new FileHandler("./logs/watdo.log");
             logger.addHandler(fh);
         } catch (IOException e) {

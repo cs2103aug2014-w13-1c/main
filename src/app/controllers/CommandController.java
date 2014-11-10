@@ -100,7 +100,7 @@ public class CommandController {
         String feedback;
         switch (commandType) {
             case ADD :
-                feedback = actionController.addNewLine(commandObject);
+                feedback = actionController.add(commandObject);
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -115,7 +115,7 @@ public class CommandController {
                 updateView();
                 return feedback;
             case DELETE :
-                feedback = actionController.deleteEntry(commandObject, currentList);
+                feedback = actionController.delete(commandObject, currentList);
                 resetTaskList();
                 updateView();
                 return feedback;
@@ -328,7 +328,9 @@ public class CommandController {
     }
 
     public static String notifyWithInfo(String message) {
-        main.showInfoNotification("Information", message);
+        if (main != null) {
+            main.showInfoNotification("Information", message);
+        }
         return message;
     }
 
