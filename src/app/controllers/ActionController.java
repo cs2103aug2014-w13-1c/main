@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.CommandObject;
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 

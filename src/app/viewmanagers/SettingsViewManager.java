@@ -55,7 +55,7 @@
 
 package app.viewmanagers;
 
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;

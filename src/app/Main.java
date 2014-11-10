@@ -4,8 +4,8 @@ package app;
 
 import app.controllers.CommandController;
 import app.controllers.TaskController;
-import app.helpers.InvalidInputException;
-import app.helpers.LoggingService;
+import app.exceptions.InvalidInputException;
+import app.services.LoggingService;
 import app.viewmanagers.RootViewManager;
 import javafx.application.Application;
 import javafx.geometry.Pos;

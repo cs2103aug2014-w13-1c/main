@@ -1,7 +1,7 @@
 package app.model;
 //@author A0116703N
 
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

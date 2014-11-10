@@ -1,4 +1,4 @@
-package app.controllers;
+package app.services;
 
 import app.helpers.CommandObject;
 import app.helpers.Keyword;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CommandParser {
+public class ParsingService {
     private static CommandObject currentCommandObject;
     private static Parser dateParser;
     
@@ -29,7 +29,7 @@ public class CommandParser {
     }
 
     // Constructor and initialization
-    public CommandParser() {
+    public ParsingService() {
         setKeywords();
         dateParser = new Parser();
     }

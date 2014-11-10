@@ -3,7 +3,8 @@ package app.controllers;
 import app.Main;
 import app.helpers.CommandObject;
 import app.helpers.Keyword;
-import app.helpers.LoggingService;
+import app.services.ParsingService;
+import app.services.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
@@ -43,7 +44,7 @@ public class CommandController {
     private static ModelManager modelManager;
     private static Main main;
     private static TaskController taskController;
-    private static CommandParser commandParser;
+    private static ParsingService parsingService;
     private static UndoController undoController;
 
     private static String modelManagerError;
@@ -187,7 +188,7 @@ public class CommandController {
 
     // CommandController public methods
     public CommandController() {
-        commandParser = new CommandParser();
+        parsingService = new ParsingService();
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
@@ -217,12 +218,12 @@ public class CommandController {
 
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandObject = commandParser.parseCommand(inputString);
+        CommandObject commandObject = parsingService.parseCommand(inputString);
         printString(processCommand(commandObject));
     }
 
     public ArrayList<Keyword> parseKeywords(String inputString) {
-        return CommandParser.getKeywords(inputString);
+        return ParsingService.getKeywords(inputString);
     }
 
     public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {

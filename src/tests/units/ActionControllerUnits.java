@@ -4,7 +4,7 @@ package tests.units;
 import java.io.IOException;
 
 import app.controllers.ActionController;
-import app.controllers.CommandParser;
+import app.services.ParsingService;
 import app.helpers.CommandObject;
 import app.model.ModelManager;
 import static org.junit.Assert.*;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ActionControllerUnits {
     ActionController actionTest;
-    CommandParser parserTest = new CommandParser();
+    ParsingService parserTest = new ParsingService();
     CommandObject commandObjectTest = new CommandObject();
     
     @Test
