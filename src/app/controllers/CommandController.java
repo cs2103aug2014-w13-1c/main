@@ -43,8 +43,8 @@ public class CommandController {
     private static ModelManager modelManager;
     private static Main main;
     private static TaskController taskController;
-    private static CommandParser commandParser;
     private static UndoController undoController;
+    private static CommandParser commandParser;
 
     private static String modelManagerError;
     
@@ -212,7 +212,6 @@ public class CommandController {
         }
         actionController = new ActionController(modelManager);
         actionController.setCommandController(this);
-        undoController = UndoController.getUndoController();
     }
 
     public void parseCommand(String inputString) {
@@ -301,6 +300,12 @@ public class CommandController {
         resetTaskList();
     }
     
+    public void setUndoController(UndoController controller) {
+        undoController = controller;
+        actionController.setUndoController(undoController);
+        resetTaskList();
+    }
+    
     //@author A0116703N
     /**
      * Calls the changeSettings method in modelManager. Mostly used by the SettingsView
@@ -323,7 +328,9 @@ public class CommandController {
     }
 
     public static String notifyWithError(String error) {
-        main.showErrorNotification("Error", error);
+        if (main != null) {
+            main.showErrorNotification("Error", error);
+        }
         return error;
     }
 
@@ -345,10 +352,16 @@ public class CommandController {
     }
 
     //@author A0116703N
+    /**
+     * @return The current setting for displaying tasks in random colors
+     */
     public Boolean areRandomColorsEnabled() {
         return modelManager.areRandomColorsEnabled();
     }
     
+    /**
+     * @return The current setting for whether notifications are displayed
+     */
     public Boolean areNotificationsEnabled() {
         try {
             return modelManager.areNotificationsEnabled();
