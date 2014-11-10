@@ -26,10 +26,40 @@
                 CommandController.notifyWithError("Failed to load new file.");
             }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
+        }
+        return "changed settings\n";
+    }
+
+    /**
+     * This method is used by CommandController to change save file location (for .json).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls ModelManager to change the save file location.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String changeSaveLocation(CommandObject commandObject) {
+        // To check whether CommandString is empty
+        if (commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "change save file location"));
+        }
+        try {
+            modelManager.changeSettings(commandObject.getCommandString(), null, null);
+        } catch (IOException e) {
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
-        return "changed settings\n";
+        return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
 
 	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
@@ -749,7 +779,8 @@ public class ModelManager {
      * @param newEndDate (Can be null) The new end date of the item.
      * @param newPriority (Can be null) The new priority level of the item. If this is not TodoItem.LOW/MEDIUM/HIGH, an assertion error will occur.
      * @param newDoneStatus (Can be null) The new done status of the item.
-     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     * @throws InvalidInputException with START_DATE_AFTER_END_DATE  
      */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException, InvalidInputException {
         // First, log the method call
@@ -835,8 +866,6 @@ public class ModelManager {
     }
     
     /**
-     * clearTasks
-     * 
      * Clears all tasks in the program data and in the database file.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
@@ -949,6 +978,7 @@ public class ModelManager {
      * Reloads a snapshot of the program data. This has the same effect on the
      * program data as switching to a new directory containing the given data.
      * 
+     * @param newTodoItems The new set of TodoItems to be loaded to.
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
@@ -1557,8 +1587,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * First integration test.
  * Tests the correct use case for the add, saveto and clear commands.
+ * 
+ * First integration test.
  */
 public class IntegrationTest1 {
     @Rule
@@ -1593,38 +1624,35 @@ public class IntegrationTest1 {
                exitCommand};
 
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+       exit.checkAssertionAfterwards(() -> {
 
-               // Checks if the data is intact!
-               ArrayList<TodoItem> testTodoItems;
+           // Checks if the data is intact!
+           ArrayList<TodoItem> testTodoItems;
 
-               try {
-                   testStorage.loadSettings();
-                   testTodoItems = testStorage.loadFile();
-               } catch (Exception e) {
-                   fail();
-                   return;
-               }
-
-               // After cleaning and adding, we should have four tasks.
-               assertEquals(4, testTodoItems.size());
-               
-               String testInput1 = "task 1";
-               String testInput2 = "task 2";
-               String testInput3 = "task 3";
-               String testInput4 = "task 4";
-               
-               assertEquals(testInput4, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput3, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
-               assertEquals(testInput1, testTodoItems.get(3).getTaskName());
-
-               // Cleanup
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
+           try {
+               testStorage.loadSettings();
+               testTodoItems = testStorage.loadFile();
+           } catch (Exception e) {
+               fail();
+               return;
            }
+
+           // After cleaning and adding, we should have four tasks.
+           assertEquals(4, testTodoItems.size());
+
+           String testInput1 = "task 1";
+           String testInput2 = "task 2";
+           String testInput3 = "task 3";
+           String testInput4 = "task 4";
+
+           assertEquals(testInput4, testTodoItems.get(0).getTaskName());
+           assertEquals(testInput3, testTodoItems.get(1).getTaskName());
+           assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+           assertEquals(testInput1, testTodoItems.get(3).getTaskName());
+
+           // Cleanup
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands
@@ -1661,8 +1689,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Second integration test.
  * Tests the correct use case for sort, search, delete, undo and redo.
+ * 
+ * Second integration test.
  */
 public class IntegrationTest2 {
     @Rule
@@ -1724,37 +1753,34 @@ public class IntegrationTest2 {
                exitCommand};
        
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+       exit.checkAssertionAfterwards(() -> {
 
-               // Now we check if the data is intact.
-               ArrayList<TodoItem> testTodoItems;
+           // Now we check if the data is intact.
+           ArrayList<TodoItem> testTodoItems;
 
-               try {
-                   testStorage.loadSettings();
-                   testTodoItems = testStorage.loadFile();
-               } catch (Exception e) {
-                   fail();
-                   return;
-               }
-               
-               // The leftover data after the five deletes, two undos and one redo should be 3 items. 
-               assertEquals(3, testTodoItems.size());
-               
-               // Then leftover data should be task 1, task 4 then task 3.
-               String testInput2 = "task 2";
-               String testInput3 = "task 3";
-               String testInput7 = "task 7";
-               
-               assertEquals(testInput3, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput7, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
-               
-               // Yay! We passed the tests. Now change back to previous directory.
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
+           try {
+               testStorage.loadSettings();
+               testTodoItems = testStorage.loadFile();
+           } catch (Exception e) {
+               fail();
+               return;
            }
+
+           // The leftover data after the five deletes, two undos and one redo should be 3 items.
+           assertEquals(3, testTodoItems.size());
+
+           // Then leftover data should be task 1, task 4 then task 3.
+           String testInput2 = "task 2";
+           String testInput3 = "task 3";
+           String testInput7 = "task 7";
+
+           assertEquals(testInput3, testTodoItems.get(0).getTaskName());
+           assertEquals(testInput7, testTodoItems.get(1).getTaskName());
+           assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+
+           // Yay! We passed the tests. Now change back to previous directory.
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands
@@ -1797,12 +1823,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
+ * Tests program behavior when watdo.json data is compromised.
+ * 
  * It is 2014. You are working on your very very important task, when something terrible happens.
  * Your watdo.json file contents has been corrupted! *gasp* But no worries, you are going to be just
  * fine, for error handling is here! 
  *  
  * Third integration test.
- * Tests program behavior when watdo.json data is compromised.
  */
 public class IntegrationTest3 {
     @Rule
@@ -1860,19 +1887,16 @@ public class IntegrationTest3 {
        // Now none of the commands should work except exit, now that the data is corrupted.
        
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
-               // Now we check if there is any change to the data.
-               String newFileString = readFromFile("testDirectory/watdo.json");
-               
-               // There should be no change.
-               assertEquals(badFileString, newFileString);
-               
-               // Good. No change. None of the commands have any effect.
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
-           }
+       exit.checkAssertionAfterwards(() -> {
+           // Now we check if there is any change to the data.
+           String newFileString = readFromFile("testDirectory/watdo.json");
+
+           // There should be no change.
+           assertEquals(badFileString, newFileString);
+
+           // Good. No change. None of the commands have any effect.
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands
@@ -2024,11 +2048,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
+ * Tests program behavior when settings data is compromised.
+ * 
  * The corrupted watdo.json was just the mid-boss. Now comes the final challenge.
  * The corrupted settings.json stands between you and your very important tasks.
  *  
  * Fourth integration test.
- * Tests program behavior when settings data is compromised.
  */
 public class IntegrationTest4 {
     @Rule
@@ -2079,21 +2104,18 @@ public class IntegrationTest4 {
         // Now none of the commands should work except exit, now that the settings are corrupted.
            
         exit.expectSystemExit();
-        exit.checkAssertionAfterwards(new Assertion() {
-            @Override
-            public void checkAssertion() throws Exception {
-               // Now we check if there is any change to the data.
-               String newFileString = readFromFile("testDirectory/watdo.json");
-            
-               // There should be no change.
-               assertEquals(dataFileString, newFileString);
-           
-               // Good. No change. None of the commands have any effect.
-               // Restore the old data.
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               writeToFile(settingsFileString, "settings.json");
-            }
-       });
+        exit.checkAssertionAfterwards(() -> {
+           // Now we check if there is any change to the data.
+           String newFileString = readFromFile("testDirectory/watdo.json");
+
+           // There should be no change.
+           assertEquals(dataFileString, newFileString);
+
+           // Good. No change. None of the commands have any effect.
+           // Restore the old data.
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           writeToFile(settingsFileString, "settings.json");
+        });
             
        // Carry out commands
        try {

@@ -316,7 +316,7 @@ public class CommandController {
      */
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandObject = parsingService.parseCommand(inputString);
+        CommandObject commandObject = parsingService.parseCommand(inputString.toLowerCase());
         printString(processCommand(commandObject));
     }
 
@@ -646,14 +646,14 @@ public class ParsingService {
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
         int endIndex = inputStringArray[0].length() - 1;
-        if (commandKeywords.contains(inputStringArray[0])) {
+        if (commandKeywords.contains(inputStringArray[0].toLowerCase())) {
             currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;
         }
         if (inputStringArray[0].equalsIgnoreCase("add")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (addKeywords.contains(inputStringArray[i])) {
+                if (addKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -662,7 +662,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("update")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (updateKeywords.contains(inputStringArray[i])) {
+                if (updateKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -671,7 +671,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("display")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (displayKeywords.contains(inputStringArray[i])) {
+                if (displayKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -680,7 +680,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("search")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (searchKeywords.contains(inputStringArray[i])) {
+                if (searchKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -689,7 +689,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("sort")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (sortKeywords.contains(inputStringArray[i])) {
+                if (sortKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -752,7 +752,7 @@ public class ParsingService {
                         toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
                         j++;
                     }
-                    if (toBeParsed.trim().equals("remove")) {
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
                         currentCommandObject.setStartDateKeyword(true);
                         currentCommandObject.setEndIndex(i);
                     }
@@ -775,7 +775,7 @@ public class ParsingService {
                         toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
                         j++;
                     }
-                    if (toBeParsed.trim().equals("remove")) {
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
                         currentCommandObject.setEndDateKeyword(true);
                         currentCommandObject.setEndIndex(i);
                     }
@@ -837,21 +837,20 @@ public class ParsingService {
     private void setPriority() {
         if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
             for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority") && i != currentCommandObject.getInputStringArray().length - 1) {
                     if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
                         currentCommandObject.setPriority(TodoItem.LOW);
+                        currentCommandObject.setEndIndex(i);
                     }
-                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium") || currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("med")) {
                         currentCommandObject.setPriority(TodoItem.MEDIUM);
+                        currentCommandObject.setEndIndex(i);
                     }
                     else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
                         currentCommandObject.setPriority(TodoItem.HIGH);
+                        currentCommandObject.setEndIndex(i);
                     }
-                    else {
-                        currentCommandObject.setCommandString(
-                                currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
-                    }
-                    currentCommandObject.setEndIndex(i);
+                    
                     break;
                 }
             }

@@ -9,10 +9,10 @@
     // Undo and redo method(s)
     public String undo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undo"));
         }
         if (undoController.isUndoEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(ERROR_NOTHING_TO_UNDO);
         } else {
             try {
                 undoController.saveRedo(modelManager.getTodoItemList());
@@ -20,8 +20,10 @@
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+                return EMPTY_MESSAGE;
             } catch (NullPointerException e) {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+                return EMPTY_MESSAGE;
             }
             return MESSAGE_UNDO;
         }
@@ -39,10 +41,10 @@
 
     public String redo(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "redo"));
         }
         if (undoController.isRedoEmpty()) {
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(ERROR_NOTHING_TO_REDO);
         } else {
             try {
                 undoController.saveUndo(modelManager.getTodoItemList());
@@ -50,13 +52,49 @@
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+                return EMPTY_MESSAGE;
             } catch (NullPointerException e) {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+                return EMPTY_MESSAGE;
             }
             return MESSAGE_REDO;
         }
     }
 
+    /**
+     * This method is used by CommandController to open the help view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the commandController to open the help view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String help(CommandObject commandObject) {
+        // To check whether CommandString is empty
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "help"));
+        }
+        commandController.openHelp();
+        return MESSAGE_OPEN_HELP;
+    }
+
+    /**
+     * This method is used by CommandController to open the settings view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the commandController to open the settings view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
+    public String settings(CommandObject commandObject) {
+     // To check whether CommandString is not empty
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "settings"));
+        }
+        commandController.openSettings();
+        return MESSAGE_OPEN_SETTINGS;
+    }
+    
 	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
 
 
@@ -1272,7 +1310,7 @@ public class InputFieldViewManager {
      * Checks to make sure the command is not empty, if not it throws an Invalid Input Exception.
      *
      * @param command user input
-     * @throws InvalidInputException
+     * @throws InvalidInputException InvalidInputException
      */
     public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
         if (command.length() == 0) {
