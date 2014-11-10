@@ -2,7 +2,6 @@ package tests.integration;
 //@author A0116703N
 
 import app.Main;
-import app.helpers.LoggingService;
 import app.model.FileStorage;
 import app.model.TodoItem;
 
@@ -49,7 +48,6 @@ public class IntegrationTest4 {
         } catch (Exception e) {
             fail();
         }
-        String previousDirectory = testStorage.getFileDirectory();
          
         try {
             testStorage.changeSettings("testDirectory/", null, null);
@@ -106,6 +104,11 @@ public class IntegrationTest4 {
        }
     }
     
+    /**
+     * 
+     * 
+     * @return
+     */
     private ArrayList<TodoItem> getFixtures() {
         ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
         testTodoItems.add(new TodoItem("task 1", null, null));
@@ -118,6 +121,12 @@ public class IntegrationTest4 {
         return testTodoItems;
     }
     
+    /**
+     * Reads a file's data as a String and returns it.
+     * 
+     * @param targetFile The file path of the target file
+     * @return The string containing a file's data
+     */
     private String readFromFile(String targetFile) {
         // First we open the file
         FileReader fileToRead;
@@ -135,7 +144,7 @@ public class IntegrationTest4 {
         try {
             String line = "";
             while ((line = reader.readLine()) != null) {
-                fileString += line;
+                fileString += (line + "\n");
             }
             reader.close();
         } catch (Exception e) {
@@ -145,6 +154,12 @@ public class IntegrationTest4 {
         return fileString;
     }
     
+    /**
+     * Writes the given string to the target file.
+     * 
+     * @param toWrite The string to be written to the target file.
+     * @param targetFile The target file to be written to.
+     */
     private void writeToFile(String toWrite, String targetFile) {
         // We write the bad string to the testDirectory/watdo.json file.
         FileWriter fileToWrite;
@@ -168,6 +183,11 @@ public class IntegrationTest4 {
         }
     }
     
+    /**
+     * Creates an array of commands to be carried out.
+     * 
+     * @return The string array of commands to feed into main's args array.
+     */
     private String[] getCommands() {
         String directoryCommand = "saveto testDirectory/";
         String clearCommand = "clear";
