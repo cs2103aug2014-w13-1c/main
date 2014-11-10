@@ -1,11 +1,11 @@
 //@author A0111987X
 package app.viewmanagers;
 
-import app.controllers.CommandParser;
-import app.helpers.InvalidInputException;
+import app.services.KeywordDetectorService;
+import app.services.ParsingService;
+import app.exceptions.InvalidInputException;
 import app.helpers.Keyword;
-import app.helpers.KeywordDetector;
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import app.model.TodoItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -194,14 +194,14 @@ public class InputFieldViewManager {
     }
 
     /**
-     * Generates a list of matching keywords taken from the CommandParser based on the current user input.
+     * Generates a list of matching keywords taken from the ParsingService based on the current user input.
      *
      * @param command user input
      * @return Only match for keyword or null if there is no match or more than one match.
      */
     private String autoComplete(String command) {
         ArrayList<String> results = new ArrayList<>();
-        for (String keyword : CommandParser.commandKeywords) {
+        for (String keyword : ParsingService.commandKeywords) {
             if (command.length() < keyword.length() && command.equals(keyword.substring(0, command.length()))) {
                 results.add(keyword);
             }
@@ -250,8 +250,8 @@ public class InputFieldViewManager {
     }
 
     /**
-     * Gets the ArrayList of Keywords from CommandController (which passes it to CommandParser) to figure out
-     * which keywords to highlight based on the current user input string. Passes the ArrayList to KeywordDetector
+     * Gets the ArrayList of Keywords from CommandController (which passes it to ParsingService) to figure out
+     * which keywords to highlight based on the current user input string. Passes the ArrayList to KeywordDetectorService
      * to get the StyleSpans collection for use with RichTextFX.
      *
      * @param command input string
@@ -259,7 +259,7 @@ public class InputFieldViewManager {
      */
     private StyleSpans<Collection<String>> keywordDetection(String command) {
         ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
-        return KeywordDetector.getStyleSpans(keywords, command);
+        return KeywordDetectorService.getStyleSpans(keywords, command);
     }
 
     /**

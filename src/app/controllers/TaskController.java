@@ -2,7 +2,7 @@
 package app.controllers;
 
 import app.Main;
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import app.model.TodoItem;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package app.controllers;
 
 import app.Main;
 import app.helpers.CommandObject;
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 
@@ -45,18 +45,25 @@ public class ActionController {
     private static CommandController commandController;
     private static ModelManager modelManager;
     private static TaskController taskController;
+    private static UndoController undoController;
     private static Main main;
     private static ArrayList<TodoItem> returnList;
 
     // Individual command methods
-    // Add command method(s)
+    /**
+     * This method is used to add a new TodoItem.
+     * This method is 
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     public String add(CommandObject commandObject){
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
         }
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
             modelManager.addTask(commandObject.getCommandString(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
@@ -93,8 +100,8 @@ public class ActionController {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "clear"));
         }
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
             modelManager.clearTasks();
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
@@ -122,8 +129,8 @@ public class ActionController {
         try {
             String toBeDeleted = currentList.get(index).getTaskName();
             try {
-                commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-                commandController.getUndoController().clearRedo();
+                undoController.saveUndo(modelManager.getTodoItemList());
+                undoController.clearRedo();
                 modelManager.deleteTask(currentList.get(index).getUUID());
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
@@ -171,6 +178,8 @@ public class ActionController {
     }
     
     /**
+     * This method is used to search a quary.
+     * 
      * Calls taskController to search for query, then updates resultList (which will be used by CommandController
      * to show to view).
      * 
@@ -218,6 +227,7 @@ public class ActionController {
     }
 
     /**
+     * This method is used to update a TodoItem.
      * Updates ModelManager and gets new data based on the CommandObject
      * 
      * @param commandObject
@@ -257,8 +267,8 @@ public class ActionController {
             parameters[3] = true;
         }
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(),
                                     parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
         } catch (IOException e) {
@@ -286,8 +296,8 @@ public class ActionController {
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, true);
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
@@ -314,8 +324,8 @@ public class ActionController {
         }
         Boolean[] parameters = {false, false, false, false, true};
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
+            undoController.saveUndo(modelManager.getTodoItemList());
+            undoController.clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(), parameters, null, null, null, null, false);
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
@@ -370,12 +380,12 @@ public class ActionController {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
-        if (main.getCommandController().getUndoController().isUndoEmpty()) {
+        if (undoController.isUndoEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         } else {
             try {
-                main.getCommandController().getUndoController().saveRedo(modelManager.getTodoItemList());
-                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadUndo());
+                undoController.saveRedo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(undoController.loadUndo());
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -391,12 +401,12 @@ public class ActionController {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
-        if (main.getCommandController().getUndoController().isRedoEmpty()) {
+        if (undoController.isRedoEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         } else {
             try {
-                main.getCommandController().getUndoController().saveUndo(modelManager.getTodoItemList());
-                modelManager.loadTodoItems(main.getCommandController().getUndoController().loadRedo());
+                undoController.saveUndo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(undoController.loadRedo());
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
@@ -442,6 +452,10 @@ public class ActionController {
         } else {
             returnList = null;
         }
+    }
+    
+    public void setUndoController(UndoController controller) {
+        undoController = controller;
     }
 
     protected void setTaskController(TaskController controller) {

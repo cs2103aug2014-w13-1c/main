@@ -30,7 +30,7 @@ public class UndoController {
      *
      * @return UndoController (singleton pattern)
      */
-    protected static UndoController getUndoController() {
+    public static UndoController getUndoController() {
         if (self == null) {
             self = new UndoController();
         }
