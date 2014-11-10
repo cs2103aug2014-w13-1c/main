@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 /**
- * First integration test.
  * Tests the correct use case of setting a task as done and undone.
  *
  * Steps taken:
@@ -64,39 +63,36 @@ public class IntegrationTest5 {
                exitCommand};
 
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+       exit.checkAssertionAfterwards(() -> {
 
-               // Checks if the data is intact!
-               ArrayList<TodoItem> testTodoItems;
+           // Checks if the data is intact!
+           ArrayList<TodoItem> testTodoItems;
 
-               try {
-                   testStorage.loadSettings();
-                   testTodoItems = testStorage.loadFile();
-               } catch (Exception e) {
-                   fail();
-                   return;
-               }
-
-               // There are only two tasks added.
-               assertEquals(2, testTodoItems.size());
-               
-               String testInput1 = "task 1";
-               String testInput2 = "task 2";
-
-               // The first task is undone, as it received both done and undone commands.
-               assertEquals(testInput1, testTodoItems.get(0).getTaskName());
-               assertFalse(testTodoItems.get(0).isDone());
-
-               // The second task should remain as done, as it received only the done command.
-               assertEquals(testInput2, testTodoItems.get(1).getTaskName());
-               assertTrue(testTodoItems.get(1).isDone());
-
-               // Cleanup
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
+           try {
+               testStorage.loadSettings();
+               testTodoItems = testStorage.loadFile();
+           } catch (Exception e) {
+               fail();
+               return;
            }
+
+           // There are only two tasks added.
+           assertEquals(2, testTodoItems.size());
+
+           String testInput1 = "task 1";
+           String testInput2 = "task 2";
+
+           // The first task is undone, as it received both done and undone commands.
+           assertEquals(testInput1, testTodoItems.get(0).getTaskName());
+           assertFalse(testTodoItems.get(0).isDone());
+
+           // The second task should remain as done, as it received only the done command.
+           assertEquals(testInput2, testTodoItems.get(1).getTaskName());
+           assertTrue(testTodoItems.get(1).isDone());
+
+           // Cleanup
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands
