@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.Main;
 import app.exceptions.InvalidInputException;
 import app.helpers.CommandObject;
 import app.services.LoggingService;
@@ -214,7 +213,7 @@ public class ActionController {
             taskController.setSortingStyle(3);
             return "Sorting by priority\n";
         } else {    // If CommandString is something else, it is an invalid command
-            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+            return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "sort"));
         }
         
     }
