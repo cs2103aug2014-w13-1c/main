@@ -325,21 +325,20 @@ public class ParsingService {
     private void setPriority() {
         if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
             for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
-                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority")) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority") && i != currentCommandObject.getInputStringArray().length - 1) {
                     if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
                         currentCommandObject.setPriority(TodoItem.LOW);
+                        currentCommandObject.setEndIndex(i);
                     }
-                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium")) {
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium") || currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("med")) {
                         currentCommandObject.setPriority(TodoItem.MEDIUM);
+                        currentCommandObject.setEndIndex(i);
                     }
                     else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
                         currentCommandObject.setPriority(TodoItem.HIGH);
+                        currentCommandObject.setEndIndex(i);
                     }
-                    else {
-                        currentCommandObject.setCommandString(
-                                currentCommandObject.getCommandString().concat(" priority " + currentCommandObject.getInputStringArray()[i]));
-                    }
-                    currentCommandObject.setEndIndex(i);
+                    
                     break;
                 }
             }
