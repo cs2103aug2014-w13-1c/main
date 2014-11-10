@@ -8,9 +8,7 @@ import java.util.Comparator;
 /**
  * This class holds the comparators for sorting TodoItems. Note that while this
  * class *can* be instantiated, it is not meant to be instantiated. All of its 
- * methods and fields are static. 
- * 
- * @author Nguyen Quoc Dat (A0116703N)
+ * methods and fields are static.
  *
  */
 public class TodoItemSorter {

@@ -20,8 +20,6 @@ import java.util.logging.Level;
  * This class is the main controller. It is called by the Main to create the other controllers (ActionController,
  * TaskController and UndoController) and initialise ModelManager.
  * Skeleton based on jolly's CE2.
- *
- * @author ryan
  */
 
 public class CommandController {
@@ -207,10 +205,11 @@ public class CommandController {
 
     // CommandController public methods
     /**
-     * Constructor for CommandController. It will also initialise CommandParser, ModelManager, ActionController
-     * and UndoController. During initialisation of ModelManager, it will catch an IOException from ModelManager
-     * and do the necessary error catching depending on the type of the error. It will then pass the model manager
-     * during creation of ActionController and will set the main app for ActionController.
+     * Constructor for CommandController. It will also initialise CommandParser, ModelManager, ActionController,
+     * taskController and UndoController. During initialisation of ModelManager, it will catch an IOException 
+     * from ModelManager and do the necessary error catching depending on the type of the error. It will then 
+     * pass the model manager during creation of ActionController and will set the main app for 
+     * ActionController.
      */
     public CommandController() {
         parsingService = new ParsingService();
@@ -367,7 +366,6 @@ public class CommandController {
      */
     public void setMainApp(Main main) {
         CommandController.main = main;
-        actionController.setMainApp(main);
     }
 
     //@author A0111987X
@@ -499,5 +497,19 @@ public class CommandController {
      */
     public ActionController getActionController() {
         return actionController;
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openSettings() {
+        main.getRootViewManager().openSettings();
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openHelp() {
+        main.getRootViewManager().openHelp();
     }
 }

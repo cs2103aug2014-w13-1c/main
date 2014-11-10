@@ -1,0 +1,2026 @@
+//@author: a0111764l
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\Main.java
+	 */
+
+
+package app;
+
+import app.controllers.CommandController;
+import app.controllers.TaskController;
+import app.controllers.UndoController;
+import app.exceptions.InvalidInputException;
+import app.services.LoggingService;
+import app.viewmanagers.RootViewManager;
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import org.controlsfx.control.Notifications;
+import org.controlsfx.dialog.Dialogs;
+
+import java.net.URL;
+import java.util.logging.Level;
+
+/**
+ * This is the entry point of the application. By default, if there are no
+ * command arguments passed into this, the application will launch normally.
+ * If there are command arguments, the application will launch as an
+ * integration test with the command arguments simulated as user inputs.
+ *
+ * Main also acts as the bridge between the View and Controller components by
+ * providing getters.
+ */
+public class Main extends Application {
+
+    private static String[] commandArguments;
+    
+    private Stage primaryStage;
+
+    private CommandController commandController;
+    private TaskController taskController;
+    private UndoController undoController;
+    private RootViewManager rootViewManager;
+
+    /**
+     * Entry method.
+     * NOTE: The order of view and controller component initialization
+     * is important, and should not be swapped.
+     * @param stage The Stage object which the JavaFX application lives in.
+     * @throws Exception Only for integration tests. If the input is invalid, throw an InvalidInputException.
+     */
+    @Override
+    public void start(Stage stage) throws Exception {
+        LoggingService.getLogger().log(Level.INFO, "Launching app");
+
+        createPrimaryStage(stage);
+
+        initViewComponent();
+
+        initControllerComponents();
+
+        if (isTesting()) {
+            sendCommandsToInput();
+        } else {
+            waitForUserInput();
+        }
+    }
+
+    /**
+     * Focus on the input field. Called at the end after all components have been initialized.
+     */
+    private void waitForUserInput() {
+        rootViewManager.setAndFocusInputField("");
+    }
+
+    /**
+     * Manually send each command to input field and execute them as if the user pressed enter.
+     * This simulates user actions.
+     * @throws InvalidInputException Throw InvalidInputException if the command is invalid.
+     */
+    private void sendCommandsToInput() throws InvalidInputException {
+        for (String command : commandArguments) {
+            rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute(command);
+        }
+    }
+
+    /**
+     * Apply title and resizable settings for the Stage object.
+     * @param stage The The Stage object which the JavaFX application lives in.
+     */
+    private void createPrimaryStage(Stage stage) {
+        primaryStage = stage;
+        primaryStage.setTitle("wat do");
+        primaryStage.setResizable(false);
+    }
+
+    /**
+     * Initialize the root layout, a StackPane.
+     */
+    private void initViewComponent() {
+        rootViewManager = new RootViewManager();
+        rootViewManager.setMainApp(this);
+        rootViewManager.initLayout(primaryStage);
+    }
+
+    /**
+     * Initializes components responsible for handling commands
+     * and managing of tasks.
+     */
+    private void initControllerComponents() {
+        commandController = new CommandController();
+        taskController = TaskController.getTaskController();
+        undoController = UndoController.getUndoController();
+        commandController.setMainApp(this);
+        taskController.setMainApp(this);
+        commandController.setTaskController(taskController);
+        commandController.setUndoController(undoController);
+        commandController.updateView();
+    }
+
+    /**
+     * Using ControlsFX's Notification API, display a notification
+     * with an Info icon at the top right hand corner of the screen.
+     * @param title The title of the notification.
+     * @param message The message to be shown.
+     */
+    public void showInfoNotification(String title, String message) {
+        // Actual use case.
+        if (!isTesting() && getCommandController().areNotificationsEnabled()) {
+            Notifications
+                    .create()
+                    .position(Pos.TOP_RIGHT)
+                    .title(title)
+                    .text(message)
+                    .hideAfter(new Duration(1500))
+                    .showInformation();
+        }
+        // If false, currently in test mode so no dialogs are used.
+    }
+
+    /**
+     * Using ControlsFX's Notification API, display a notification
+     * with an Error icon at the top right hand corner of the screen.
+     * @param title The title of the notification.
+     * @param error The error message to be shown.
+     */
+    public void showErrorNotification(String title, String error) {
+        if (getCommandController().areNotificationsEnabled()) {
+            Notifications
+                    .create()
+                    .position(Pos.TOP_RIGHT)
+                    .title(title)
+                    .text(error)
+                    .hideAfter(new Duration(1500))
+                    .showError();
+        }
+    }
+
+    /**
+     * Using ControlsFX's Dialog API, display a dialog with an Error
+     * icon to the user.
+     * @param title The title of the dialog.
+     * @param error The error message to be shown.
+     */
+    public void showErrorDialog(String title, String error) {
+        if (!isTesting()) {
+            Dialogs.create()
+                .owner(primaryStage)
+                .title(title)
+                .masthead("Error")
+                .message(error)
+                .showError();
+        } // If in test mode, don't show an error dialog.
+    }
+
+    /**
+     * Convert a relative path string to an URL. This is used for
+     * stylesheets and resources (icons).
+     * @param relativePath The relative path from the src location to the resource.
+     * @return An URL object containing the path to the resource.
+     */
+    public URL getResourceURL(String relativePath) {
+        return this.getClass().getResource(relativePath);
+    }
+
+    /**
+     * Getter for the Stage object
+     * @return The Stage object
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Getter for the CommandController component
+     * @return The instantiated CommandController object.
+     */
+    public CommandController getCommandController() {
+        return commandController;
+    }
+
+    /**
+     * Getter for the TaskController component
+     * @return The instantiated TaskController object.
+     */
+    public TaskController getTaskController() {
+        return taskController;
+    }
+
+    /**
+     * Getter for the RootViewManager component
+     * @return The instantiated RootViewManager object.
+     */
+    public RootViewManager getRootViewManager() {
+        return rootViewManager;
+    }
+
+    /**
+     * Entry point of the application.
+     * Arguments can be passed in through this method, and they
+     * are used for integration testing.
+     * @param args (For integration testing) Simulated user command inputs in a String array.
+     */
+    public static void main(String[] args) {
+        commandArguments = args;
+        launch(args);
+    }
+
+    /**
+     * Checks if the commandArguments array is empty. If it's empty, it means
+     * that the application is not under test, and should be launched normally.
+     * @return True if application is under testing.
+     */
+    private boolean isTesting() {
+        return commandArguments.length > 0;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\Main.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\services\LoggingService.java
+	 */
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+
+/**
+ * This is a singleton class for Logging.
+ *
+ * The logger can only be referenced by calling getLogger on this class, and
+ * because it's a singleton, it'll always refer back to the same logger object.
+ *
+ */
+public class LoggingService {
+
+    private Logger logger;
+    private static LoggingService self;
+
+    /**
+     * Private constructor of the Service object.
+     */
+    private LoggingService() {
+       logger = Logger.getLogger(this.getClass().getName());
+        try {
+            File target = new File("./logs");
+            target.mkdir();
+            Handler fh = new FileHandler("./logs/watdo.log");
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @return instance of Logger object
+     */
+    private static LoggingService getInstance() {
+        if (self == null) {
+            self = new LoggingService();
+        }
+        return self;
+    }
+
+    public static Logger getLogger() {
+        return getInstance().logger;
+    }
+
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\services\LoggingService.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+/* RootView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1000" prefHeight="700.0"
+           prefWidth="1000.0" xmlns="http://javafx.com/javafx/8">
+    <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="700.0" minWidth="1000" prefHeight="700.0"
+                prefWidth="1000.0" xmlns="http://javafx.com/javafx/8">
+    </BorderPane>
+</StackPane>
+
+ */
+package app.viewmanagers;
+
+import app.Main;
+import app.services.LoggingService;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.fxmisc.richtext.StyleClassedTextArea;
+
+import java.io.IOException;
+import java.util.logging.Level;
+
+/**
+ * This is the root view manager of all view managers/components.
+ *
+ * The app layout is structured in StackPane, which allows for z-indexes.
+ * Components are able to hide between one and another.
+ *
+ * A borderPane serves as the first child of the StackPane. The other children
+ * are panes representing the Help and Settings views.
+ */
+public class RootViewManager {
+
+    private Main mainApp;
+    private StackPane rootLayout;
+    private Pane settingsView;
+    private Pane helpView;
+    private BorderPane borderPane;
+    private StyleClassedTextArea inputField;
+    private TaskListViewManager taskListViewManager;
+    private SettingsViewManager settingsViewManager;
+    private HelpViewManager helpViewManager;
+    private InputFieldViewManager inputFieldViewManager;
+    private TitleBarViewManager titleBarViewManager;
+    private SidebarViewManager sidebarViewManager;
+
+    /**
+     * Initializes all view components. The order is important, and shouldn't
+     * be changed.
+     * @param primaryStage The Stage object where all components live in.
+     */
+    public void initLayout(Stage primaryStage) {
+        LoggingService.getLogger().log(Level.INFO, "Initializing layout.");
+        try {
+            this.initRootLayout(primaryStage);
+            this.initSettingsView();
+            this.initHelpView();
+            this.showTitleBarView();
+            this.showSidebar();
+            this.showInputField();
+            this.showTaskListView();
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+        }
+    }
+
+    /**
+     * This is the first component to be initialized, as all other
+     * components live within this.
+     * @param primaryStage The Stage object where all components live in.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void initRootLayout(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/RootView.fxml"));
+        rootLayout = loader.load();
+        borderPane = (BorderPane) rootLayout.getChildren().get(0);
+        Scene scene = new Scene(rootLayout);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    /**
+     * The settings view is created at launch and hidden from the user
+     * immediately by hiding it behind the borderPane.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void initSettingsView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/SettingsView.fxml"));
+        settingsView = loader.load();
+        settingsViewManager = loader.getController();
+        settingsViewManager.setRootViewManager(this);
+        rootLayout.getChildren().add(settingsView);
+        settingsView.toBack();
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Initializes the title bar.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void showTitleBarView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TitleBarView.fxml"));
+        Pane titleBarView = loader.load();
+        titleBarView.getStylesheets().add("app/stylesheets/titleBarView.css");
+        titleBarViewManager = loader.getController();
+        titleBarViewManager.setRootViewManager(this);
+        borderPane.setTop(titleBarView);
+    }
+
+    /**
+     * Initialize the task list view.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void showTaskListView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/TaskListView.fxml"));
+        ListView taskListView = loader.load();
+        taskListView.getStylesheets().add("app/stylesheets/taskList.css");
+        taskListView.getStyleClass().add("task-list");
+        taskListViewManager = loader.getController();
+        taskListViewManager.setRootViewManager(this);
+        borderPane.setCenter(taskListView);
+    }
+
+    /**
+     * Initialize the input field.
+     */
+    private void showInputField() {
+        inputFieldViewManager = new InputFieldViewManager();
+        inputFieldViewManager.setRootViewManager(this);
+        inputField = inputFieldViewManager.getInputField();
+        borderPane.setBottom(new StackPane(inputField));
+    }
+
+    /**
+     * Initialize the sidebar.
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void showSidebar() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/SidebarView.fxml"));
+        VBox sidebar = loader.load();
+        sidebar.getStylesheets().add("app/stylesheets/sidebar.css");
+        sidebar.getStyleClass().add("sidebar");
+        sidebarViewManager = loader.getController();
+        sidebarViewManager.setRootViewManager(this);
+        borderPane.setLeft(sidebar);
+    }
+
+    // Getters and Setters
+
+    /**
+     * Called by SettingsView, this saves the user's settings through CommandController.
+     * @param filePath The file path string of watdo.json
+     * @param enableRandomColors A boolean representing if the user enabled random colors in the task list.
+     * @param enableNotifications A boolean representing if the user enabled notifications to show up.
+     */
+    public void saveSettings(String filePath, Boolean enableRandomColors, Boolean enableNotifications) {
+        getMainApp().getCommandController().changeSettings(filePath, enableRandomColors, enableNotifications);
+        closeSettings();
+    }
+
+    /**
+     * Hide the settings view and places focus in the input field.
+     */
+    public void closeSettings() {
+        settingsView.toBack();
+        settingsViewManager.cancelFocusOnButton();
+        inputField.requestFocus();
+    }
+
+    /**
+     * Fill the settings view with the user's settings and bring it to th front.
+     */
+    public void openSettings() {
+        settingsViewManager.setAbsolutePathToDirectory(getMainApp().getCommandController().getSaveDirectory());
+        settingsViewManager.setRandomColorsEnabled(getMainApp().getCommandController().areRandomColorsEnabled());
+        settingsViewManager.setNotificationsEnabled(getMainApp().getCommandController().areNotificationsEnabled());
+        settingsView.toFront();
+        settingsViewManager.focusOnButton();
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Set back-reference to the Main instance.
+     * @param mainApp The Main instance where this RootViewManager instance was created from.
+     */
+    public void setMainApp(Main mainApp) {
+        this.mainApp = mainApp;
+    }
+
+    /**
+     * Get back-reference to the Main instance.
+     * @return The Main instance where this RootViewManager instance was created from.
+     */
+    public Main getMainApp() {
+        return mainApp;
+    }
+
+    /**
+     * @return reference to instantiated TaskListViewManager object.
+     */
+    public TaskListViewManager getTaskListViewManager() {
+        return taskListViewManager;
+    }
+
+    /**
+     * @return reference to instantiated InputFieldViewManager object.
+     */
+    public InputFieldViewManager getInputFieldViewManager() {
+        return inputFieldViewManager;
+    }
+
+    /**
+     * @return reference to instantiated TitleBarViewManager object.
+     */
+    public TitleBarViewManager getTitleBarViewManager() {
+        return titleBarViewManager;
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Called whenever the list experiences a change of state.
+     * This greys out the undo/redo button based on whether there
+     * are available undo/redo states.
+     */
+    public void refreshSidebar() {
+        sidebarViewManager.refreshUndoButton();
+        sidebarViewManager.refreshRedoButton();
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\SettingsViewManager.java
+	 */
+
+
+/* SettingsView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.*?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+      prefWidth="1000.0" style="-fx-background-color: rgba(0, 0, 0, 0.3);" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.SettingsViewManager">
+    <AnchorPane layoutX="275.0" layoutY="150.0" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="450.0"
+                style="-fx-background-color: black;">
+        <children>
+          <Label layoutX="14.0" layoutY="14.0" prefHeight="53.0" prefWidth="386.0"
+                 text="CHOOSE YOUR SAVEFILE LOCATION." textFill="WHITE">
+              <font>
+                  <Font size="20.0"/>
+              </font>
+          </Label>
+          <TextField fx:id="filePathTextField" layoutX="32.0" layoutY="67.0" prefHeight="44.0" prefWidth="294.0"
+                     promptText="watdo.json">
+              <font>
+                  <Font size="20.0"/>
+              </font>
+          </TextField>
+          <Button fx:id="browseButton" layoutX="336.0" layoutY="67.0" mnemonicParsing="false" prefHeight="44.0"
+                  prefWidth="82.0" text="BROWSE?">
+              <font>
+                  <Font size="12.0"/>
+              </font>
+          </Button>
+          <Button fx:id="saveButton" layoutX="217.0" layoutY="351.0" mnemonicParsing="false" prefHeight="26.0"
+                  prefWidth="97.0" text="OK, SAVE"/>
+          <Button fx:id="cancelButton" layoutX="326.0" layoutY="351.0" mnemonicParsing="false" prefHeight="26.0"
+                  prefWidth="97.0" text="NEVERMIND"/>
+          <CheckBox fx:id="randomColorsCheckBox" layoutX="14.0" layoutY="140.0" mnemonicParsing="false"
+                    text="ENABLE RANDOM COLORS" textFill="WHITE">
+              <font>
+                  <Font size="20.0"/>
+              </font>
+          </CheckBox>
+          <CheckBox fx:id="notificationCheckBox" layoutX="14.0" layoutY="186.0" mnemonicParsing="false"
+                    text="ENABLE NOTIFICATIONS" textFill="WHITE">
+              <font>
+                  <Font size="20.0"/>
+              </font>
+          </CheckBox>
+        </children>
+    </AnchorPane>
+</Pane>
+ */
+
+package app.viewmanagers;
+
+import app.services.LoggingService;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
+
+import java.io.File;
+import java.util.logging.Level;
+
+/**
+ * This is the view manager for the Settings component, which
+ * appears as a pop up when "settings" is entered as a command or if
+ * the settings button is clicked.
+ *
+ * It lets the user set the directory of the .json document, as well
+ * as options to enable/disable random list cell colors and notifications.
+ */
+public class SettingsViewManager {
+
+    @FXML
+    private TextField filePathTextField;
+
+    @FXML
+    private Button browseButton;
+
+    @FXML
+    private Button saveButton;
+
+    @FXML
+    private Button cancelButton;
+
+    @FXML
+    private CheckBox randomColorsCheckBox;
+
+    @FXML
+    private CheckBox notificationCheckBox;
+
+    private RootViewManager rootViewManager;
+
+    private File directory;
+
+    /**
+     * Initializer of SettingsView.
+     * Clicking on the save button passes all options to rootViewManager.
+     */
+    @FXML
+    private void initialize() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+
+        browseButton.setOnAction((event) -> showChooser(directoryChooser));
+        cancelButton.setOnAction((event) -> rootViewManager.closeSettings());
+        saveButton.setOnAction((event) ->
+                rootViewManager.saveSettings(
+                        filePathTextField.getText(),
+                        randomColorsCheckBox.isSelected(),
+                        notificationCheckBox.isSelected()));
+    }
+
+    /**
+     * This is called when the user clicks on the "browse" button. It opens
+     * up a finder/browser/explorer that allows the user to select a directory
+     * graphically.
+     *
+     * There is also a textfield next to the browse button, should the user
+     * prefer entering the directory manually.
+     * @param directoryChooser The DirectoryChooser object that opens up an explorer dialog to choose a directory.
+     */
+    private void showChooser(DirectoryChooser directoryChooser) {
+        directory = directoryChooser.showDialog(rootViewManager.getMainApp().getPrimaryStage());
+        filePathTextField.setText(directory.toString());
+
+        assert(directory.length() >= 0);
+        LoggingService.getLogger().log(Level.INFO, "Selected directory: " + directory.toString());
+    }
+
+    /**
+     * UX feature. Set the default button as cancel to prevent accidental
+     * changing of settings.
+     */
+    public void focusOnButton() {
+        cancelButton.setDefaultButton(true);
+        cancelButton.requestFocus();
+    }
+
+    /**
+     * Remove the focus on the cancel button.
+     */
+    public void cancelFocusOnButton() {
+        cancelButton.setDefaultButton(false);
+    }
+
+    /**
+     * This is called internally when opening the settings view. This file path
+     * refers to the location of watdo.json. * This fills the text field with the
+     * file path as set in settings.json.
+     * @param absolutePath The absolute path to the directory of watdo.json. e.g. /foo/bar/baz/
+     */
+    public void setAbsolutePathToDirectory(String absolutePath) {
+        filePathTextField.setText(absolutePath);
+    }
+
+    /**
+     * Set the notifications checkbox depending on whether notifications are enabled.
+     * @param notificationsEnabled True if the user enables Notifications.
+     */
+    public void setNotificationsEnabled(Boolean notificationsEnabled) {
+        notificationCheckBox.setSelected(notificationsEnabled);
+    }
+
+    /**
+     * Set the random colors checkbox depending on whether random colors are enabled.
+     * @param randomColorsEnabled True if random colors if the user enables random colors in the TaskListView.
+     */
+    public void setRandomColorsEnabled(Boolean randomColorsEnabled) {
+        randomColorsCheckBox.setSelected(randomColorsEnabled);
+    }
+
+    /**
+     * Set back-reference to rootViewManager.
+     * @param rootViewManager The instance of RootViewManager where this SettingsViewManager instance was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\SettingsViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\SidebarViewManager.java
+	 */
+
+
+/* sidebar.css
+
+.sidebar {
+    -fx-border-style: none;
+    -fx-stroke: black;
+    -fx-stroke-width: 8;
+    -fx-background-color: #4ECDC4;
+}
+
+*/
+
+/* SidebarView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="592.0" prefWidth="32.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.viewmanagers.SidebarViewManager">
+    <opaqueInsets>
+    </opaqueInsets>
+    <Button fx:id="displayButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <Image url="@../resources/list.png"/>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Display undone tasks. Command: &quot;display&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="showDoneButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/tick.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Show completed tasks. Command: &quot;display done&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="addButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/add.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Add a task. Command: &quot;add &lt;task name&gt; [start | end | priority]&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/search.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Search for a task. Command: &quot;search &lt;task name&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="undoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fx:id="undoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                     scaleX="0.8" scaleY="0.8">
+              <image>
+                  <Image url="@../resources/undo.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Undo action. Command: &quot;undo&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="redoButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fx:id="redoImageView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"
+                     scaleX="0.8" scaleY="0.8">
+              <image>
+                  <Image url="@../resources/redo.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Redo action. Command: &quot;redo&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="helpButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;" translateY="230.0">
+        <graphic>
+          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                     scaleY="0.8">
+              <image>
+                  <Image url="@../resources/bulb.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Help. Command: &quot;help&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0"
+            style="-fx-background-color: transparent;" translateY="230.0">
+        <graphic>
+            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" scaleX="0.8"
+                       scaleY="0.8">
+                <image>
+                    <Image url="@../resources/settings.png"/>
+                </image>
+            </ImageView>
+        </graphic>
+        <tooltip>
+        <Tooltip text="Settings. Command: &quot;settings&quot;"/>
+        </tooltip>
+    </Button>
+</VBox>
+
+ */
+
+package app.viewmanagers;
+
+import app.exceptions.InvalidInputException;
+import app.services.LoggingService;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.util.logging.Level;
+
+/**
+ * This class manages the Sidebar control, which consists of various buttons
+ * for interacting with the application.
+ */
+public class SidebarViewManager {
+
+    @FXML
+    private Button displayButton;
+
+    @FXML
+    private Button addButton;
+
+    @FXML
+    private Button searchButton;
+
+    @FXML
+    private Button showDoneButton;
+
+    @FXML
+    private Button undoButton;
+
+    @FXML
+    private ImageView undoImageView;
+
+    @FXML
+    private Button redoButton;
+
+    @FXML
+    private ImageView redoImageView;
+
+    @FXML
+    private Button helpButton;
+
+    @FXML
+    private Button settingsButton;
+
+    private RootViewManager rootViewManager;
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * Also sets the event listeners for each button.
+     */
+    @FXML
+    private void initialize() {
+        Button[] buttons = {
+                displayButton,
+                addButton,
+                searchButton,
+                helpButton,
+                undoButton,
+                redoButton,
+                settingsButton,
+                showDoneButton
+        };
+
+        for (Button button : buttons) {
+            button.setOnAction((e) -> clickedButton(button));
+        }
+    }
+
+    /**
+     * Apply the button's event listener action. Some actions are immediate upon clicking (undo,
+     * redo), while the rest fill the input field with a command string.
+     * @param button The button to assign an action to.
+     */
+    private void clickedButton(Button button) {
+        LoggingService.getLogger().log(Level.INFO, "Clicked on: " + button.getId());
+        switch (button.getId()) {
+            case "displayButton":
+                rootViewManager.setAndFocusInputField("display");
+                break;
+            case "addButton":
+                rootViewManager.setAndFocusInputField("add ");
+                break;
+            case "searchButton":
+                rootViewManager.setAndFocusInputField("search ");
+                break;
+            case "showDoneButton":
+                rootViewManager.setAndFocusInputField("display done");
+                break;
+            case "undoButton":
+                tryUndo();
+                break;
+            case "redoButton":
+                tryRedo();
+                break;
+            case "helpButton":
+                rootViewManager.openHelp();
+                break;
+            case "settingsButton":
+                rootViewManager.openSettings();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Attempt to undo the state. Show error if there's nothing to undo.
+     */
+    private void tryUndo() {
+        if (isUndoable()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("undo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Nothing to undo.\n");
+        }
+    }
+
+    /**
+     * Attempt to redo the state. Show error if there's nothing to redo.
+     */
+    private void tryRedo() {
+        if (isRedoable()) {
+            try {
+                rootViewManager.getInputFieldViewManager().checkCommandLengthAndExecute("redo");
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+            }
+        } else {
+            rootViewManager.getMainApp().showErrorNotification("Error", "Nothing to redo.\n");
+        }
+    }
+
+    /**
+     * Check with UndoController if there's anything to undo.
+     * @return True if there is an undoable state to go to.
+     */
+    private boolean isRedoable() {
+        return !rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty();
+    }
+
+    /**
+     * Check with UndoController if there's anything to redo.
+     * @return True if there is a redoable state to go to.
+     */
+    private boolean isUndoable() {
+        return !rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty();
+    }
+
+    /**
+     * This is called whenever there is a change of list state. Grey out undo button if
+     * there is nothing to undo.
+     */
+    public void refreshUndoButton() {
+        if (rootViewManager.getMainApp().getCommandController().getUndoController().isUndoEmpty()) {
+            undoImageView.setImage(new Image("app/resources/undo-grey.png"));
+        } else{
+            undoImageView.setImage(new Image("app/resources/undo.png"));
+        }
+    }
+
+    /**
+     * This is called whenever there is a change of list state. Grey out redo button if
+     * there is nothing to redo.
+     */
+    public void refreshRedoButton() {
+        if (rootViewManager.getMainApp().getCommandController().getUndoController().isRedoEmpty()) {
+            redoImageView.setImage(new Image("app/resources/redo-grey.png"));
+        } else{
+            redoImageView.setImage(new Image("app/resources/redo.png"));
+        }
+    }
+
+    /**
+     * Set back-reference to rootViewManager.
+     * @param rootViewManager The RootViewManager instance where this SidebarViewManager was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\SidebarViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TaskListCellViewManager.java
+	 */
+
+
+/* taskListCell.css
+
+.cell {
+    -fx-border-style: solid;
+    -fx-border-color: white;
+    -fx-border-width: 5 5 5 5;
+}
+
+*/
+
+/* TaskListCellView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.*?>
+<AnchorPane id="cell" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="app.viewmanagers.TaskListCellViewManager">
+    <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ"
+           textAlignment="CENTER" textFill="#797777">
+        <font>
+          <Font size="34.0"/>
+        </font>
+    </Label>
+    <Button fx:id="deleteButton" layoutX="882.0" layoutY="5.0" mnemonicParsing="false"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/cross.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Delete this task. Command: &quot;delete &lt;task index&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Button fx:id="updateButton" layoutX="857.0" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0"
+            prefWidth="20.0" style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/compose.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip
+                  text="Update this task. Command: &quot;update &lt;index number&gt; [task name | start | end | priority]&quot;"/>
+        </tooltip>
+    </Button>
+    <Label fx:id="bottomDateLabel" layoutX="628.0" layoutY="22.0" prefHeight="14.0" prefWidth="184.0"
+           text="END 1 JANUARY 2015" textFill="WHITE">
+        <font>
+          <Font size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="topDateLabel" layoutX="628.0" layoutY="6.0" prefHeight="14.0" prefWidth="184.0"
+           text="START 31 DECEMBER 2014 16:00" textFill="WHITE">
+        <font>
+          <Font size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="priorityLevelLabel" layoutX="806.0" layoutY="12.0" prefHeight="16.0" prefWidth="57.0" text="high"
+           textAlignment="RIGHT" textFill="WHITE" wrapText="true">
+        <font>
+          <Font name="System Italic" size="11.0"/>
+        </font>
+    </Label>
+    <Label fx:id="taskNameLabel" layoutX="81.0" layoutY="11.0" prefHeight="16.0" prefWidth="468.0"
+           stylesheets="@../stylesheets/taskListCell.css" text="Lorem ipsum" textFill="WHITE">
+        <font>
+          <Font size="15.0"/>
+        </font>
+        <tooltip>
+          <Tooltip fx:id="taskNameTooltip"/>
+        </tooltip>
+    </Label>
+    <Button fx:id="doneButton" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/tick.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Mark as undone. Command: &quot;undone &lt;index number&gt;&quot;"/>
+        </tooltip>
+    </Button>
+    <Label layoutX="34.0" layoutY="12.0" text="#" textFill="WHITE"/>
+    <Label fx:id="indexLabel" layoutX="43.0" layoutY="12.0" prefHeight="16.0" prefWidth="38.0" text="42"
+           textFill="WHITE">
+        <font>
+          <Font name="System Bold" size="13.0"/>
+        </font>
+    </Label>
+    <Button fx:id="undoneButton" layoutY="6.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0"
+            style="-fx-background-color: transparent;">
+        <graphic>
+          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+              <image>
+                  <Image url="@../resources/untick.png"/>
+              </image>
+          </ImageView>
+        </graphic>
+        <tooltip>
+          <Tooltip text="Mark as done. Command: &quot;done &lt;index number&gt;&quot;"/>
+        </tooltip>
+    </Button>
+</AnchorPane>
+
+*/
+
+package app.viewmanagers;
+
+import app.model.TodoItem;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
+
+import java.util.Date;
+
+/**
+ * Each TaskListCell represents a single TodoItem.
+ */
+public class TaskListCellViewManager extends ListCell<TodoItem> {
+
+    @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
+    private Label taskNameLabel;
+
+    @FXML
+    private Label topDateLabel;
+
+    @FXML
+    private Label bottomDateLabel;
+
+    @FXML
+    private Label priorityLevelLabel;
+
+    @FXML
+    private Label overdueLabel;
+
+    @FXML
+    private Label indexLabel;
+
+    @FXML
+    private Button updateButton;
+
+    @FXML
+    private Button deleteButton;
+
+    @FXML
+    private Button doneButton;
+
+    @FXML
+    private Button undoneButton;
+
+    @FXML
+    private Tooltip taskNameTooltip;
+
+    private RootViewManager rootViewManager;
+
+    private TodoItem task;
+
+    private TaskListViewManager taskListViewManager;
+    final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+
+
+    /**
+     * This method is implicitly called whenever the taskData of TaskListViewManager
+     * is changed. It updates the ListCell object with the new TodoItem.
+     * @param task Update the ListCell with this TodoItem object.
+     * @param empty True if there is no TodoItem object.
+     */
+    @Override
+    protected void updateItem(TodoItem task, boolean empty) {
+        super.updateItem(task, empty);
+        this.task = task;
+        setGraphic(anchorPane);
+        if (empty) {
+            clearContent();
+        } else {
+            populateContent(task);
+        }
+    }
+
+    /**
+     * Remove all content from the ListCell.
+     */
+    private void clearContent() {
+        setText(null);
+        setGraphic(null);
+    }
+
+    /**
+     * Fills up the controls in the cell with the appropriate information.
+     *
+     * Some labels are shown conditionally. For example, the done/undone button
+     * is shown based on the done/undone status of the task, and overdue labels aren't
+     * shown when the task is done.
+     *
+     * Technically, we could replace the done/undone buttons with a single button, but
+     * having two buttons trades memory usage for code readability and organization, which is
+     * a worthwhile tradeoff.
+     * @param task Populate the controls with the properties of this TodoItem.
+     */
+    private void populateContent(TodoItem task) {
+        setIndex();
+        setTaskName(task);
+        setPriorityLevel(task);
+        setDates(task);
+
+        taskNameTooltip.setText(task.getTaskName());
+        doneButton.setVisible(task.isDone());
+        undoneButton.setVisible(!task.isDone());
+        overdueLabel.setVisible(task.isOverdue() && !task.isDone());
+    }
+
+    /**
+     * Setter for the priority label.
+     *
+     * Substring-ing is a hacky way to get around the implementation of priority strings.
+     * Currently, priority strings are in the form of "1. High", "2. Medium", etc. to facilitate
+     * sorting. Because we only want the priority text, we'll have to substring the number out.
+     * @param task Set the priorityLevelLabel with the priority string of this TodoItem.
+     */
+    private void setPriorityLevel(TodoItem task) {
+        priorityLevelLabel.setText(task.getPriority().substring(3).toUpperCase());
+        setBackgroundColor(task);
+    }
+
+    /**
+     * Setter for the date labels.
+     *
+     * There are four different configurations of data labels in accordance to the different types
+     * of tasks: floating, deadline, event, endless.
+     * @param task Set the dateLabels with the priority string of this TodoItem.
+     */
+    private void setDates(TodoItem task) {
+        switch (task.getTodoItemType().toLowerCase()) {
+            case "event":
+                topDateLabel.setText("START " + task.getStartDateString());
+                bottomDateLabel.setText("END " + task.getEndDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(true);
+                break;
+            case "deadline":
+                topDateLabel.setText("DUE " + task.getEndDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(false);
+                break;
+            case "endless":
+                topDateLabel.setText("START " + task.getStartDateString());
+                topDateLabel.setVisible(true);
+                bottomDateLabel.setVisible(false);
+                break;
+            default:
+                topDateLabel.setVisible(false);
+                bottomDateLabel.setVisible(false);
+                break;
+        }
+    }
+
+    /**
+     * Setter for the index label.
+     */
+    private void setIndex() {
+        indexLabel.setText(String.valueOf(getTaskIndex()));
+    }
+
+    /**
+     * Setter for the task name label.
+     *
+     * toUpperCase() is purely for cosmetic reasons.
+     * @param task Set the taskNameLabel with the name of this TodoItem.
+     */
+    private void setTaskName(TodoItem task){
+        taskNameLabel.setText(task.getTaskName().toUpperCase());
+    }
+
+    /**
+     * Since the actual task list displayed to the user is 1-index,
+     * we'll have to increment getIndex() by 1.
+     * @return 1-index of the task in the current list.
+     */
+    private int getTaskIndex() { return getIndex() + 1; }
+
+    /**
+     * Getter for the task information.
+     *
+     * This method is called when the update button is clicked. For UX reasons,
+     * we want to pre-fill the input field with all of the task's information, such as
+     * name, dates, and priority levels. This helps the user by not requiring them to
+     * type the entire command again in the case where they only made a minor
+     * mistake.
+     *
+     * @param task The referenced TodoItem.
+     * @return a valid command string with all of the task's information.
+     */
+    private String getTaskInfo(TodoItem task) {
+        String info = "";
+
+        info = info + task.getTaskName();
+
+        if (task.getStartDate() != null) {
+           info = info + " start " + task.getStartDateString().toLowerCase();
+        }
+
+        if (task.getEndDate() != null) {
+            info = info + " end " + task.getEndDateString().toLowerCase();
+        }
+
+        if (task.getPriority() != null) {
+            info = info + " priority " + task.getPriority().substring(3).toLowerCase();
+        }
+
+        return info;
+    }
+
+    /**
+     * Setter of the cell's background color.
+     *
+     * Due to the information we have from each task (due date + priority, specifically),
+     * we are able to estimate the importance of the task. We will quantify this
+     * importance level and represent it by adjusting the alpha value (transparency)
+     * of the background color of the cell.
+     *
+     * Each priority level (High/Med/Low) is assigned a static weight. This weight is
+     * then multiplied by a factor that's obtained from the difference in days
+     * from the current day to the deadline. The range of values is from 0.315 to 1,
+     * where 1 is full opaqueness.
+     *
+     * Done tasks always have a alpha value of 0.45.
+     *
+     * @param task The referenced TodoItem.
+     */
+    private void setBackgroundColor(TodoItem task) {
+        String alphaValue;
+        int differenceInDays = 0;
+
+        if (task.getEndDate() != null) {
+            differenceInDays = (int) (((task.getEndDate().getTime() - new Date().getTime())) / DAY_IN_MILLIS);
+        }
+
+        // Overdue tasks should be fully saturated
+        if (differenceInDays < 0) {
+            alphaValue = "1";
+        } else {
+            float factor = calculateFactor(differenceInDays);
+            // Compare by priority level
+            switch(task.getPriority().substring(3).toLowerCase()) {
+                case "high":
+                    alphaValue = String.valueOf(1 * factor);
+                    break;
+                case "medium":
+                    alphaValue = String.valueOf(0.85 * factor);
+                    break;
+                case "low":
+                    alphaValue = String.valueOf(0.7 * factor);
+                    break;
+                default:
+                    alphaValue = "1";
+            }
+
+        }
+
+        // Done tasks are low priority
+        if (task.isDone() || task.getTodoItemType().equals(TodoItem.FLOATING)) {
+            alphaValue = "0.45";
+        }
+
+        if (rootViewManager.getMainApp().getCommandController().areRandomColorsEnabled()) {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getRandomColor() + "," + alphaValue + ");");
+        } else {
+            anchorPane.setStyle("-fx-background-color: rgba(" + taskListViewManager.getCurrentColor() + "," + alphaValue + ");");
+        }
+    }
+
+    /**
+     * Normalize and return a scaling factor between 0.45 and 1. The further the deadline,
+     * the smaller the factor.
+     * @param differenceInDays
+     * @return a float value between 0.45 and 1, depending on the difference in days till the deadline.
+     */
+    private float calculateFactor(int differenceInDays) {
+        if (differenceInDays == 0) {
+            return 1;
+        }
+
+        float normalized;
+        if (differenceInDays > 30) {
+            normalized = (float) 0.45;
+        } else {
+            normalized = (float) (((30.0 - differenceInDays) / 30.0) + 0.45);
+        }
+
+        if (normalized > 1) {
+            normalized = 1;
+        }
+
+        return normalized;
+    }
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * Also initialize the buttons and assign their event listeners.
+     */
+    @FXML
+    private void initialize() {
+        Button[] buttons = {
+                updateButton,
+                deleteButton,
+                doneButton,
+                undoneButton
+        };
+
+        for (Button button : buttons) {
+            button.setOnAction((e) -> clickedButton(button) );
+        }
+    }
+
+    /**
+     * Clicking the buttons will fill the input field with a command string corresponding
+     * to the action.
+     * @param button The button to assign an action to.
+     */
+    private void clickedButton(Button button) {
+        switch (button.getId()) {
+            case "updateButton":
+                rootViewManager.setAndFocusInputField("update " + getTaskIndex() + " " + getTaskInfo(task));
+                break;
+            case "deleteButton":
+                rootViewManager.setAndFocusInputField("delete " + getTaskIndex());
+                break;
+            case "doneButton":
+                rootViewManager.setAndFocusInputField("undone " + getTaskIndex());
+                break;
+            case "undoneButton":
+                rootViewManager.setAndFocusInputField("done " + getTaskIndex());
+                break;
+        }
+    }
+
+    /**
+     * Set back-reference to the rootViewManager.
+     * @param rootViewManager The RootViewManager instance where the parent TaskListViewManager was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+
+    /**
+     * Set back-reference to taskListViewManager.
+     * @param taskListViewManager The TaskListViewManager instance where this TaskListCellViewManager instance was created from.
+     */
+    public void setTaskListViewManager(TaskListViewManager taskListViewManager) {
+        this.taskListViewManager = taskListViewManager;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TaskListCellViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TaskListViewManager.java
+	 */
+
+
+
+/* taskListView.css
+
+Retrieved from: http://blog.ngopal.com.np/2012/07/11/customize-scrollbar-via-css/
+I'm not the author of the code, so it will not be included here.
+
+*/
+
+/* TaskListView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.text.Font?>
+<ListView fx:id="taskListView" fixedCellSize="44.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListViewManager">
+    <Label text="You have no tasks." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    <Label fx:id="emptySearch" text="No tasks found." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+</ListView>
+
+ */
+
+package app.viewmanagers;
+
+import app.services.LoggingService;
+import app.views.WelcomePane;
+import app.model.TodoItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.logging.Level;
+
+/**
+ * TaskListViewManager manages the ListView object, which is responsible
+ * for creating and displaying individual ListCell objects that represent
+ * a TodoItem each.
+ */
+public class TaskListViewManager {
+
+    @FXML
+    public ListView<TodoItem> taskListView;
+
+    @FXML
+    private Label emptySearch;
+
+    private RootViewManager rootViewManager;
+    private WelcomePane welcomePane;
+    private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
+
+    private List<String> colors;
+    private String color;
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * In our implementation, we are using a custom CellFactory for generating
+     * ListCells. This opens up the class to allow customized controls and methods.
+     *
+     * The placeholder of the ListView also differs based on the user's context.
+     * This can be either a ListView with 0 tasks (welcomePane) or a search view with
+     * 0 results (emptySearch Label).
+     */
+    @FXML
+    public void initialize() {
+        initColors();
+        color = getRandomColor();
+
+        taskListView.setCellFactory(taskListView -> {
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(rootViewManager.getMainApp().getResourceURL("views/TaskListCellView.fxml"));
+                loader.load();
+                TaskListCellViewManager controller = loader.getController();
+                controller.setRootViewManager(rootViewManager);
+                controller.setTaskListViewManager(this);
+                return controller;
+            } catch (IOException e) {
+                LoggingService.getLogger().log(Level.SEVERE, e.getMessage());
+                return null;
+            }
+        });
+
+        welcomePane = new WelcomePane();
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
+    }
+
+    /**
+     * Set the placeholder when there are no results for a search term.
+     */
+    public void setEmptySearchPlaceholder() {
+        taskListView.setPlaceholder(emptySearch);
+    }
+
+    /**
+     * Set the placeholder when the task list is empty.
+     */
+    public void setUserGuidePlaceholder() {
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
+    }
+
+    /**
+     * This method is called from various components whenever the task
+     * list needs to be updated. For example, searching and changing
+     * view context (Overdue, Done, Undone) uses this method.
+     * @param taskData An ObservableList containing TodoItems to replace the current list.
+     */
+    public void updateView(ObservableList<TodoItem> taskData) {
+
+        // Workaround for inherent bug in JavaFX that refuses
+        // to update the ListView with new objects.
+        taskListView.getItems().clear();
+
+        this.taskData = taskData;
+        taskListView.setItems(taskData);
+
+        if (this.taskData.size() > 0) {
+            scrollToLastModifiedTask(taskData);
+        }
+
+        rootViewManager.refreshSidebar();
+
+        LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
+    }
+
+    /**
+     * Provide automatic scrolling to the least recently modified task as an UX feature.
+     * @param taskData The current list of TodoItems being displayed to the user.
+     */
+    private void scrollToLastModifiedTask(ObservableList<TodoItem> taskData) {
+        UUID uuid = rootViewManager.getMainApp().getTaskController().getLastModifiedUUID();
+        int index = convertUUIDtoIndex(uuid, taskData);
+        scrollTo(index);
+        highlight(index);
+    }
+
+    /**
+     * Scroll to a specified index. UX feature.
+     * @param index The index of the task list cell to scroll to.
+     */
+    public void scrollTo(int index) {
+        taskListView.scrollTo(index);
+    }
+
+    /**
+     * Highlight a specified index. UX feature.
+     * @param index The index of the task list cell to highlight.
+     */
+    public void highlight(int index) {
+        taskListView.getSelectionModel().select(index);
+        taskListView.getFocusModel().focus(index);
+    }
+
+    /**
+     * To pinpoint to a specific task in the current visible task list, the implementation
+     * does not provide an accurate task index, as these tasks are filtered out by their statuses
+     * (done, undone) into different lists. Hence, we're making use of a more unique identifier,
+     * the UUID. This method does a linear search in the current task list to get the index of
+     * the task with the specific UUID.
+     *
+     * Returns -1 if task is not found.
+     *
+     * @param uuid The UUID of the specified TodoItem.
+     * @param taskData The list of TodoItems to check against.
+     * @return index of task in current task list with the specified UUID.
+     */
+    private int convertUUIDtoIndex(UUID uuid, ObservableList<TodoItem> taskData) {
+        for (TodoItem task : taskData) {
+            if (task.getUUID() == uuid) {
+                return taskData.indexOf(task);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * When the user disable random colors, this method returns the selected
+     * color that was initialized at launch time.
+     *
+     * @return The chosen color from instantiation time.
+     */
+    public String getCurrentColor() {
+        return color;
+    }
+
+    /**
+     * When the user enables random colors, this method generates the colors
+     * to be applied for each ListCell.
+     * @return A random color.
+     */
+    public String getRandomColor() {
+        return colors.get(new Random().nextInt(colors.size()));
+    }
+
+    /**
+     * Initialize the color palette.
+     */
+    private void initColors() {
+        colors = Arrays.asList(
+                "208, 23, 22", // red 700
+                "194, 24, 91", // pink 700
+                "123, 31, 162", // purple 700
+                "81, 45, 168", // deep purple 700
+                "57, 63, 159", // indigo 700
+                "69, 94, 222", // blue 700
+                "2, 136, 209", // light blue 700
+                "0, 151, 167", // cyan 700
+                "0, 121, 107", // teal 700
+                "10, 126, 7", // green 700
+                "85, 139, 47", // light green 800
+                "130, 119, 23", // lime 900
+                "230, 81, 0", // orange 900
+                "229, 74, 25", // deep orange 700
+                "121, 85, 72"); // brown 500
+    }
+
+    /**
+     * Set back-reference to the rootviewManager.
+     * @param rootViewManager The RootViewManager instance where this TaskListViewManager instance was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+
+    /**
+     * Public getter for the current task list.
+     * @return an ObservableList of TodoItems.
+     */
+    public ObservableList<TodoItem> getTaskData() {
+        return taskData;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TaskListViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TitleBarViewManager.java
+	 */
+
+
+/* titleBarView.css
+
+.choice-box .label {
+    -fx-text-fill: black;
+}
+
+*/
+
+/* TitleBarView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="30.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.viewmanagers.TitleBarViewManager">
+    <AnchorPane prefHeight="30.0" prefWidth="1000.0" style="-fx-background-color: black;">
+        <children>
+          <Label fx:id="titleBarLabel" alignment="CENTER" layoutX="290.0" layoutY="5.0" prefHeight="23.0"
+                 prefWidth="421.0" text="Title" textAlignment="CENTER" textFill="WHITE">
+              <font>
+                  <Font size="18.0"/>
+              </font>
+          </Label>
+          <ChoiceBox id="choice-box" fx:id="sortStyleChoiceBox" layoutX="881.0" layoutY="1.0" prefHeight="26.0"
+                     prefWidth="117.0"/>
+          <Label fx:id="sortByLabel" layoutX="804.0" layoutY="5.0" text="SORT BY:" textFill="WHITE">
+              <font>
+                  <Font size="15.0"/>
+              </font>
+          </Label>
+        </children>
+    </AnchorPane>
+</Pane>
+
+ */
+
+package app.viewmanagers;
+
+import app.controllers.TaskController;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+
+/**
+ * The TitleBar contains a label that shows the user their current context,
+ * as well as a drop-down choice box that lets the user switch how the tasks
+ * are sorted by.
+ */
+public class TitleBarViewManager {
+
+    @FXML
+    private Label titleBarLabel;
+
+    @FXML
+    private ChoiceBox sortStyleChoiceBox;
+
+    @FXML
+    private Label sortByLabel;
+
+    private RootViewManager rootViewManager;
+
+    public static enum SortStyle { START, END, PRIORITY, NAME };
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @FXML
+    public void initialize() {
+        initSortStyleChoiceBox();
+    }
+
+    /**
+     * Initialize the choice box that lets the user choose the sorting style of the
+     * task list.
+     */
+    private void initSortStyleChoiceBox() {
+        sortStyleChoiceBox.setItems(FXCollections.observableArrayList(
+                "TASK NAME", "START DATE", "END DATE", "PRIORITY"
+        ));
+
+        sortStyleChoiceBox.setValue("END DATE");
+
+        sortStyleChoiceBox
+                .getSelectionModel()
+                .selectedIndexProperty()
+                .addListener((observableValue, oldIndex, newIndex) ->
+                rootViewManager
+                        .getMainApp()
+                        .getTaskController()
+                        .setSortingStyle((int) newIndex)
+                );
+    }
+
+    /**
+     * The sorting control is disabled in the search view context,
+     * and enabled in all other contexts.
+     * @param isVisible If set to true, show the sorting controls.
+     */
+    public void setSortControlsVisible(boolean isVisible) {
+        sortByLabel.setVisible(isVisible);
+        sortStyleChoiceBox.setVisible(isVisible);
+    }
+
+    /**
+     * Public setter for the titleBarLabel.
+     * @param title The title of the current view context.
+     */
+    public void setTitle(String title) {
+        titleBarLabel.setText(title.toUpperCase());
+    }
+
+    /**
+     * Called by ActionController. This changes the selected item
+     * in the sortStyleChoiceBox when the user sorts the list
+     * with a command input instead of selecting the style in
+     * the choiceBox.
+     * @param style The SortStyle enum element (START, END, NAME, PRIORITY).
+     */
+    public void setSortStyle(TaskController.SortingStyle style) {
+        switch (style) {
+            case TASKNAME_ENDDATE:
+                sortStyleChoiceBox.setValue("TASK NAME");
+                break;
+            case STARTDATE_PRIORITY:
+                sortStyleChoiceBox.setValue("START DATE");
+                break;
+            case ENDDATE_PRIORITY:
+                sortStyleChoiceBox.setValue("END DATE");
+                break;
+            case PRIORITY_ENDDATE:
+                sortStyleChoiceBox.setValue("PRIORITY");
+                break;
+        }
+    }
+
+    /**
+     * Set back-reference to the rootViewManager.
+     * @param rootViewManager The RootViewManager instance where this TitleBarViewManager instance was created from.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\TitleBarViewManager.java
+
+
+
+
+

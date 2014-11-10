@@ -1,0 +1,2790 @@
+//@author: a0116703n
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+	 */
+
+    /**
+     * Calls modelManager to update with new settings.
+     * 
+     * @param filePath The new file directory to be used
+     * @param randomColorsEnabled The new setting for random color display
+     * @param notificationsEnabled The new setting for notifications display
+     * @return The result string to be printed to the console
+     */
+    public String changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+        assert filePath != null;
+        
+        try {
+            modelManager.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
+        } catch (IOException e) {
+            if (e.getMessage().equals(ModelManager.WRITE_SETTINGS_FAILED)) {
+                CommandController.notifyWithError("Failed to write to settings.json file.");
+            } else {
+                CommandController.notifyWithError("Failed to load new file.");
+            }
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        } catch (NullPointerException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        }
+        return "changed settings\n";
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * Sets the undoController in use. Called by Main, or any tester methods.
+     * 
+     * @param controller The undoController to be used by this controller.
+     */
+    public void setUndoController(UndoController controller) {
+        undoController = controller;
+        actionController.setUndoController(undoController);
+        resetTaskList();
+    }
+    
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * Calls the changeSettings method in modelManager. Mostly used by the SettingsView
+     * to change the user's settings from the settings window. 
+     * 
+     * @param filePath The new file directory to be used. 
+     * @param randomColorsEnabled The new random color display setting.
+     * @param notificationsEnabled The new notification display setting.
+     */
+    public void changeSettings(String filePath, Boolean randomColorsEnabled, Boolean notificationsEnabled) {
+        String feedback = actionController.changeSettings(filePath, randomColorsEnabled, notificationsEnabled);
+        
+        // The data in modelManager has changed, so we refresh the data to be displayed and clear the undo stack.
+        undoController.clear();
+        resetTaskList();
+        updateView();
+        
+        // Finally do a System.out.println.
+        printString(feedback);
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * @return The current setting for displaying tasks in random colors
+     */
+    public Boolean areRandomColorsEnabled() {
+        return modelManager.areRandomColorsEnabled();
+    }
+    
+    /**
+     * @return The current setting for whether notifications are displayed
+     */
+    public Boolean areNotificationsEnabled() {
+        try {
+            return modelManager.areNotificationsEnabled();
+        } catch (NullPointerException e) {
+            return false;
+        }
+    }
+    
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * Getter for actionController.
+     * 
+     * @return actionController
+     */
+    public ActionController getActionController() {
+        return actionController;
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openSettings() {
+        main.getRootViewManager().openSettings();
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openHelp() {
+        main.getRootViewManager().openHelp();
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\model\FileStorage.java
+	 */
+
+
+import app.services.LoggingService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+
+/**
+ * This class is in charge of all I/O operations from the Model, and
+ * manages program settings.
+ *
+ */
+public class FileStorage {
+    
+    // Settings data
+    private String fileName;
+    private String fileDirectory;
+    private Boolean notificationsEnabled;
+    private Boolean randomColorsEnabled;
+    
+    // Load/write statuses. Mainly for debugging convenience.
+    private String loadStatus;
+    private String writeStatus;
+    
+    // Error messages
+    public static String LOAD_SUCCESS = ModelManager.LOAD_SUCCESS;
+    public static String LOAD_FAILED = ModelManager.LOAD_FAILED;
+    public static String PARSE_FAILED = ModelManager.PARSE_FAILED;
+    public static String WRITE_SUCCESS = ModelManager.WRITE_SUCCESS;
+    public static String WRITE_FAILED = ModelManager.WRITE_FAILED;
+    public static String WRITE_SETTINGS_FAILED = ModelManager.WRITE_SETTINGS_FAILED;
+    public static String LOAD_SETTINGS_FAILED = ModelManager.LOAD_SETTINGS_FAILED;
+
+    // Default file names
+    public static final String DEFAULT_FILE_NAME = "watdo.json";
+    public static final String DEFAULT_FILE_DIRECTORY = "./";
+    public static final String SETTINGS_FILE_NAME = "settings.json";
+    
+    // Logger messages
+    private static final String LOADING_FILE_MESSAGE = "Loading file ";
+    private static final String WRITING_FILE_MESSAGE = "Writing to file ";
+    private static final String WRITE_FILE_SUCCESS_MESSAGE = "Successfully updated file ";
+    private static final String CHANGING_SETTINGS_MESSAGE = "Changing settings. New directory is ";
+    private static final String LOADING_SETTINGS_MESSAGE = "Loading settings file.";
+    private static final String WRITING_SETTINGS_MESSAGE = "Writing to settings file.";
+    private static final String WRITE_SETTINGS_SUCCESS_MESSAGE = "Successfully updated settings file.";
+    private static final String NO_FILE_FOUND_MESSAGE = "No file found at target destination.";
+    private static final String NO_SETTINGS_FILE_FOUND_MESSAGE = "No settings file found at target destination, creating new settings.json.";
+    
+    // Fields in JSON objects
+    private static final String JSON_TASK_NAME_FIELD = "taskName";
+    private static final String JSON_START_DATE_FIELD = "startDate";
+    private static final String JSON_END_DATE_FIELD = "endDate";
+    private static final String JSON_PRIORITY_FIELD = "priority";
+    private static final String JSON_DONE_STATUS_FIELD = "doneStatus";
+    private static final String JSON_DIRECTORY_FIELD = "fileDirectory";
+    private static final String JSON_RANDOM_COLORS_FIELD = "randomColorsEnabled";
+    private static final String JSON_NOTIFICATIONS_FIELD = "notificationsEnabled";
+    
+    // Date formatting
+    private static final String DATE_FORMAT = "EEE MMM dd HH:mm:ss zzz yyyy";
+    
+    // Slash character for concatSlash
+    private static final char SLASH_CHARACTER = '/';
+    
+    /**
+     * Constructor
+     * 
+     * Initializes internal state and settings.
+     * Does NOT attempt to do any file I/O operations yet. Instead, we
+     * let ModelManager control when to fire I/O operations.
+     */
+    public FileStorage() {
+        this.fileDirectory = DEFAULT_FILE_DIRECTORY;
+        this.fileName = DEFAULT_FILE_NAME;
+        this.notificationsEnabled = true;
+        this.randomColorsEnabled = true;
+    }
+    
+    /**
+     * Loads watdo.json file data as a String, and then parses it and returns
+     * the data as an ArrayList of TodoItems. 
+     * 
+     * @return Loaded ArrayList of TodoItems from file
+     * 
+     * @throws IOException Undefined message, caught by ModelManager constructor
+     * @throws JSONException Undefined message, caught by ModelManager constructor
+     * @throws ParseException Undefined message, caught by ModelManager constructor
+     */
+    public ArrayList<TodoItem> loadFile() throws IOException, JSONException, ParseException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, LOADING_FILE_MESSAGE + fileDirectory + fileName);
+        
+        // Try to open the file!
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(fileDirectory + fileName);
+        } catch (FileNotFoundException e) { // if no file found at stated path, return
+            LoggingService.getLogger().log(Level.INFO, NO_FILE_FOUND_MESSAGE);
+            return null;
+        }
+        
+        // Successfully opened the file, now we get the data as a string.
+        BufferedReader reader = new BufferedReader(fileToRead);
+        String fileString = "";
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            fileString += line;
+        }
+        reader.close();
+        
+        // Now we parse the string.
+        JSONArray fileArray = new JSONArray(new JSONTokener(fileString));
+        
+        ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();  
+
+        for (int i = 0; i < fileArray.length(); i++) {
+            JSONObject currentJSONObject = fileArray.getJSONObject(i);
+            
+            String currentTaskName = null;
+            Date currentStartDate = null;
+            Date currentEndDate = null;
+            String currentPriority = null;
+            Boolean currentDoneStatus = false;
+            
+            String JSONTaskName = currentJSONObject.optString(JSON_TASK_NAME_FIELD);
+            String JSONStartDate = currentJSONObject.optString(JSON_START_DATE_FIELD);
+            String JSONEndDate = currentJSONObject.optString(JSON_END_DATE_FIELD);
+            String JSONPriority = currentJSONObject.optString(JSON_PRIORITY_FIELD); 
+            Boolean JSONDoneStatus = currentJSONObject.optBoolean(JSON_DONE_STATUS_FIELD);
+            
+            SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            
+            if (JSONTaskName.length() > 0) {
+                currentTaskName = JSONTaskName;
+            }
+
+            if (JSONStartDate.length() > 0) {
+                currentStartDate = df.parse(JSONStartDate);
+            }
+            
+            if (JSONEndDate.length() > 0) {
+                currentEndDate = df.parse(JSONEndDate);
+            }
+            
+            if (JSONPriority.length() > 0) {
+                currentPriority = JSONPriority;
+            }
+            
+            if (JSONDoneStatus) {
+                currentDoneStatus = JSONDoneStatus;
+            }
+            
+            todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
+        }
+        
+        return todoItems;
+    }
+    
+    /**
+     * Updates the content of the watdo.json file with the given data.
+     * 
+     * @param todoItems The data to write to the file.
+     * @throws IOException Messages are LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     */
+    public void updateFile(ArrayList<TodoItem> todoItems) throws IOException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, WRITING_FILE_MESSAGE + fileDirectory + fileName);
+        
+        // Then try to access the file destination!
+        FileWriter fileToWrite;
+        try {
+            File targetFile = new File(fileDirectory);
+            if (!targetFile.exists()) {
+                targetFile.mkdirs();
+            }
+            fileToWrite = new FileWriter(fileDirectory + fileName);
+        } catch (Exception e) {
+            throw new IOException(LOAD_FAILED);
+        }
+
+        // Access successful, now we start writing the data to a single JSONArray.
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        JSONArray fileArray = new JSONArray();
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FORMAT);
+        
+        try {
+            for(TodoItem currentTodoItem : todoItems) {
+                JSONObject fileObject = new JSONObject();
+                
+                String currentTaskName = currentTodoItem.getTaskName();
+                Date currentStartDate = currentTodoItem.getStartDate();
+                Date currentEndDate = currentTodoItem.getEndDate();
+                String currentPriority = currentTodoItem.getPriority();
+                Boolean currentDoneStatus = currentTodoItem.isDone();
+                
+                if (currentTaskName != null) {
+                    fileObject.put(JSON_TASK_NAME_FIELD, currentTaskName);
+                }
+                if (currentStartDate != null) {
+                    fileObject.put(JSON_START_DATE_FIELD, df.format(currentStartDate).toString());
+                }
+                if (currentEndDate != null) {
+                    fileObject.put(JSON_END_DATE_FIELD, df.format(currentEndDate).toString());
+                }
+                if (currentPriority != null) {
+                    fileObject.put(JSON_PRIORITY_FIELD, currentPriority);
+                }
+                if (currentDoneStatus != null) {
+                    fileObject.put(JSON_DONE_STATUS_FIELD, currentDoneStatus);
+                }
+                fileArray.put(fileObject);
+            }
+        } catch (JSONException e) {
+            throw new IOException(PARSE_FAILED);
+        }
+        
+        // Now that we have the JSONArray, we convert it into an indented string,
+        // and then write to the file.
+        try {
+            writer.write(fileArray.toString(2));
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            LoggingService.getLogger().log(Level.SEVERE, fileName + WRITE_FAILED);
+            throw new IOException(WRITE_FAILED);
+        }
+        
+        // Log again to confirm the success of the operation.
+        LoggingService.getLogger().log(Level.INFO, WRITE_FILE_SUCCESS_MESSAGE + fileDirectory + fileName);
+        
+        // Finally close the target file.
+        try {
+            fileToWrite.close();
+        } catch (Exception e) {
+            throw new IOException(LOAD_FAILED);
+        }
+    }
+    
+    /**
+     * Changes this object's internal settings to the given ones,
+     * and then update the settings.json file with the new settings.
+     * Finally, this method will load the watdo.json data at the new
+     * directory.
+     * 
+     * @param fileDirectory The new directory to load watdo.json at. Must not be null.
+     * @param newRandomColorsEnabled The new random color display setting
+     * @param newNotificationsEnabled The new notification setting
+     * @return ArrayList of TodoItems after loading the file
+     * @throws IOException with WRITE_SETTINGS_FAILED
+     */
+    public ArrayList<TodoItem> changeSettings(String fileDirectory, Boolean newRandomColorsEnabled, Boolean newNotificationsEnabled) throws IOException {
+        // First, log the method call.
+        LoggingService.getLogger().log(Level.INFO, CHANGING_SETTINGS_MESSAGE + fileDirectory);
+        
+        assert fileDirectory != null; //fileDirectory must not be null.
+        
+        // Store the old data in temp variables in case of errors.
+        String tempFileDirectory = this.fileDirectory;
+        Boolean tempRandomColorsEnabled = this.randomColorsEnabled;
+        Boolean tempNotificationsEnabled = this.notificationsEnabled;
+        ArrayList<TodoItem> loadResult;
+
+        // Now change the internal values.
+        if (newRandomColorsEnabled != null) {
+            this.randomColorsEnabled = newRandomColorsEnabled;
+        }
+        if (newNotificationsEnabled != null) {
+            this.notificationsEnabled = newNotificationsEnabled;
+        }
+        this.fileDirectory = fileDirectory;
+        concatSlash();
+        
+        // Try to load the file at the new directory.
+        // If successful, we write the new settings to the settings.json file
+        // and then return the loaded data.
+        try {
+            loadResult = loadFile();
+            this.loadStatus = LOAD_SUCCESS;
+            updateSettings();
+            return loadResult;
+        } catch (Exception e) {
+            // If there are any issues during the process, we change the internal values
+            // back to the old values, and then throw an exception.
+            this.fileDirectory = tempFileDirectory;
+            this.randomColorsEnabled = tempRandomColorsEnabled;
+            this.notificationsEnabled = tempNotificationsEnabled;
+            this.loadStatus = LOAD_FAILED;
+            throw new IOException(WRITE_SETTINGS_FAILED);
+        }
+    }
+    
+    /**
+     * Loads settings from the settings.json file. Usually called only at
+     * program startup.
+     * 
+     * @throws IOException Message undefined, caught by ModelManager.
+     * @throws JSONException Message undefined, caught by ModelManager.
+     */
+    public void loadSettings() throws IOException, JSONException {
+        // First, log the method call.
+        LoggingService.getLogger().log(Level.INFO, LOADING_SETTINGS_MESSAGE);
+        
+        // Then try to open the settings file.
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(SETTINGS_FILE_NAME);
+        } catch (FileNotFoundException e) { // if no file found at stated path, create new settings file
+            LoggingService.getLogger().log(Level.INFO, NO_SETTINGS_FILE_FOUND_MESSAGE);
+            updateSettings();
+            return;
+        }
+        
+        // When settings file is found, begin parsing the data.
+        BufferedReader reader = new BufferedReader(fileToRead);
+        
+        String fileString = "";
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            fileString += line;
+        }
+        
+        JSONObject settingsObject = new JSONObject(fileString);
+        
+        String JSONfileDirectory = settingsObject.optString(JSON_DIRECTORY_FIELD);
+        Boolean JSONrandomColorsEnabled = settingsObject.optBoolean(JSON_RANDOM_COLORS_FIELD);
+        Boolean JSONnotificationsEnabled = settingsObject.optBoolean(JSON_NOTIFICATIONS_FIELD);
+        
+        fileDirectory = JSONfileDirectory;
+        randomColorsEnabled = JSONrandomColorsEnabled;
+        notificationsEnabled = JSONnotificationsEnabled;
+        
+        // Close the file when we're done.
+        reader.close();
+    }
+    
+    /**
+     * Writes this object's current settings data to the settings.json file.
+     * 
+     * @throws IOException Message LOAD_SETTINGS_FAILED, WRITE_SETTINGS_FAILED
+     * @throws JSONException Messsage undefined, caught by changeSettings
+     */
+    public void updateSettings() throws IOException, JSONException {
+        // First, log the method call.
+        LoggingService.getLogger().log(Level.INFO, WRITING_SETTINGS_MESSAGE);
+        
+        // Then, try to access the file.
+        FileWriter fileToWrite;
+        try {
+            fileToWrite = new FileWriter(SETTINGS_FILE_NAME);
+        } catch (Exception e) {
+            throw new IOException(LOAD_SETTINGS_FAILED);
+        }
+
+        // Now we convert the settings data into a JSONObject.
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        concatSlash();
+        
+        JSONObject settingsObject = new JSONObject();
+        settingsObject.put(JSON_DIRECTORY_FIELD, fileDirectory);
+        settingsObject.put(JSON_RANDOM_COLORS_FIELD, randomColorsEnabled);
+        settingsObject.put(JSON_NOTIFICATIONS_FIELD, notificationsEnabled);
+        
+        // And then convert the JSONObject into an indented string
+        // And then write it to the file.
+        try {
+            writer.write(settingsObject.toString(2));
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            LoggingService.getLogger().log(Level.SEVERE, SETTINGS_FILE_NAME + WRITE_FAILED);
+            throw new IOException(LOAD_SETTINGS_FAILED);
+        }
+        
+        // Log again to confirm operation success.
+        LoggingService.getLogger().log(Level.INFO, WRITE_SETTINGS_SUCCESS_MESSAGE);
+        
+        // Finally we close the file.
+        try {
+            fileToWrite.close();
+        } catch (Exception e) {
+            throw new IOException(WRITE_SETTINGS_FAILED);
+        }
+    }
+    
+    // Methods for acquiring settings data
+    /**
+     * @return The filename in use by the program. Always watdo.json.
+     */
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    /**
+     * @return The filepath in use by the program.
+     */
+    public String getFileDirectory() {
+        return this.fileDirectory;
+    }
+    
+    /**
+     * @return The filepath and filename in use by the program.
+     */
+    public String getFullFileName() {
+        return this.fileDirectory + this.fileName;
+    }
+    
+    /**
+     * @return The settings value for whether random color task display is enabled.
+     */
+    public Boolean areRandomColorsEnabled() {
+        return this.randomColorsEnabled;
+    }
+    
+    /**
+     * @return The settings value for whether notification display is enabled.
+     */
+    public Boolean areNotificationsEnabled() {
+        return this.notificationsEnabled;
+    }
+
+    // File directory formatting
+    /**
+     * If there is no forward slash at the end of the target directory,
+     * concatenate the target directory string with a forward slash.
+     */
+    private void concatSlash() {
+        if (fileDirectory.length() > 0) {
+            if (fileDirectory.charAt(fileDirectory.length() - 1) != SLASH_CHARACTER) {
+                fileDirectory = fileDirectory + SLASH_CHARACTER;
+            }
+        }
+    }
+    
+    // Debugging methods
+    /**
+     * @return The current file load status of the program.
+     */
+    public String getLoadStatus() {
+        return this.loadStatus;
+    }
+    
+    /**
+     * @return The current file write status of the program.
+     */
+    public String getWriteStatus() {
+        return this.writeStatus;
+    }
+    
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\model\FileStorage.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\model\ModelManager.java
+	 */
+
+
+import app.exceptions.InvalidInputException;
+import app.services.LoggingService;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.ListIterator;
+import java.util.UUID;
+import java.util.logging.Level;
+
+/**
+ * The main class in the Model. This class controls the model's logic,
+ * and calls methods from other Model classes.
+ */
+public class ModelManager {
+    // Error messages to be thrown to controller.
+    public static final String LOAD_SUCCESS = "Successfully loaded file!";
+    public static final String LOAD_FAILED = "Failed to load file.";
+    public static final String PARSE_FAILED = "File data is corrupted.";
+    public static final String SETTINGS_PARSE_FAILED = "Settings data is corrupted.";
+    public static final String WRITE_SUCCESS = "Successfully written to file!";
+    public static final String WRITE_FAILED = "Failed to write to file.";
+    public static final String WRITE_SETTINGS_FAILED = "Failed to write to settings file.";
+    public static final String LOAD_SETTINGS_FAILED = "Failed to load settings file.";
+    public static final String START_DATE_AFTER_END_DATE = "Start date cannot be after end date.";
+    
+    // Logger messages
+    private static final String ADD_MESSAGE = "Adding new task ";
+    private static final String UPDATE_MESSAGE = "Updating task.";
+    private static final String DELETE_MESSAGE = "Deleting task.";
+    private static final String CLEAR_MESSAGE = "Clearing all tasks.";
+    
+    // Model class instances
+    private TodoItemList todoList;
+    private FileStorage dataStorage;
+    
+    private UUID latestModified;
+    
+    /**
+     * Upon construction of a ModelManager, file I/O are instantly carried out. The data files are first loaded here.
+     * 
+     * @throws IOException with LOAD_SETTINGS_FAILED, SETTINGS_PARSE_FAILED, PARSE_FAILED and LOAD_FAILED messages
+     */
+    public ModelManager() throws IOException {
+        // Don't load the any files yet
+        this.dataStorage = new FileStorage();
+        this.latestModified = null;
+        
+        // First load the settings
+        try {
+            dataStorage.loadSettings();
+        } catch (JSONException e) {
+            LoggingService.getLogger().log(Level.SEVERE, SETTINGS_PARSE_FAILED);
+            throw new IOException(SETTINGS_PARSE_FAILED);
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, LOAD_SETTINGS_FAILED);
+            throw new IOException(LOAD_SETTINGS_FAILED);
+        }
+        
+        // Then load the data from target directory
+        try {
+            this.todoList = new TodoItemList(dataStorage.loadFile());
+        } catch (ParseException e) {
+            LoggingService.getLogger().log(Level.SEVERE, PARSE_FAILED);
+            throw new IOException(PARSE_FAILED);
+        } catch (JSONException e) {
+            LoggingService.getLogger().log(Level.SEVERE, PARSE_FAILED);
+            throw new IOException(PARSE_FAILED);
+        } catch (IOException e) {
+            LoggingService.getLogger().log(Level.SEVERE, LOAD_FAILED);
+            throw new IOException(LOAD_FAILED);
+        }
+        
+        // Finally, resort the task list based on end date
+        TodoItemSorter.changeSortStyle(TodoItemSorter.DEFAULT_SORTING_STYLE);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+    }
+    
+    // CRUD
+    /**
+     * Adds a task into the program data and then writes it into the database file. 
+     * 
+     * @param newTaskName The name of the new task
+     * @param newStartDate The start date of the new task
+     * @param newEndDate The end date of the new task
+     * @param newPriority The priority level of the new task. If this is not TodoItem.HIGH/MEDIUM/LOW, priority is set to MEDIUM.
+     * @param newDoneStatus The done status of the new task. If this is null, done status is set to false.
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     */
+    public void addTask(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, ADD_MESSAGE + newTaskName);
+        
+        // Then update the program data
+        TodoItem newTodoItem = new TodoItem(newTaskName, newStartDate, newEndDate, newPriority, newDoneStatus);
+        todoList.addTodoItem(newTodoItem);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+        
+        // Then update file
+        dataStorage.updateFile(todoList.getTodoItems());
+        
+        // Finally, update the last modified UUID
+        latestModified = newTodoItem.getUUID();
+    }
+    
+    /**
+     * Updates a task within the program data and then updates database file.
+     * 
+     * @param itemID The UUID of the item to be updated
+     * @param parameters An array specifying which attribute of the TodoItem to update
+     * @param newTaskName (Can be null) The new task name of the item.
+     * @param newStartDate (Can be null) The new start date of the item.
+     * @param newEndDate (Can be null) The new end date of the item.
+     * @param newPriority (Can be null) The new priority level of the item. If this is not TodoItem.LOW/MEDIUM/HIGH, an assertion error will occur.
+     * @param newDoneStatus (Can be null) The new done status of the item.
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
+    public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException, InvalidInputException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, UPDATE_MESSAGE);
+        
+        // parameters array should always be length 5
+        assert parameters.length == 5;
+        
+        // Search for the task to update by its UUID
+        TodoItem toChange = todoList.getByUUID(itemID);
+        
+        assert toChange != null; // UUID should always exist
+        
+        // Now we update the program data based on the parameters
+        // Both start and end dates
+        if (parameters[1] && parameters[2]) {
+            if (newStartDate.getTime() > newEndDate.getTime()) throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+        }
+        // Just start date
+        if (parameters[1]) {
+            if (toChange.getEndDate() != null) {
+                if (newStartDate.getTime() > toChange.getEndDate().getTime()) {
+                    throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+                }
+            }
+            toChange.setStartDate(newStartDate);
+        }
+        // Just end date
+        if (parameters[2]) {
+            if (toChange.getStartDate() != null) {
+                if (toChange.getStartDate().getTime() > newEndDate.getTime()) {
+                    throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+                }
+            }
+            toChange.setEndDate(newEndDate);
+        }
+        // If START_DATE_AFTER_END_DATE occurs, we don't want to update the TodoItem at all.
+        // So we try to update start date and end date first before anything.
+        
+        // Task name
+        if (parameters[0]) {
+            toChange.setTaskName(newTaskName);
+        }
+        
+        // Priority
+        if (parameters[3]) {
+            toChange.setPriority(newPriority);
+        }
+        // Done status
+        if (parameters[4]) {
+            toChange.setDoneStatus(newDoneStatus);
+        }
+        
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+
+        // Then, update the file
+        dataStorage.updateFile(todoList.getTodoItems());
+        
+        // Finally, update the last modified UUID
+        latestModified = toChange.getUUID();
+    }
+    
+    /**
+     * Deletes a task within the program data and then updates the file.
+     * 
+     * @param itemID The UUID of the item to be deleted
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     * @return The deleted TodoItem
+     */
+    public TodoItem deleteTask(UUID itemID) throws IOException {
+        // First, log the method call
+        LoggingService.getLogger().log(Level.INFO, DELETE_MESSAGE);
+        
+        // Then update the data in memory
+        TodoItem deletedItem = todoList.deleteByUUID(itemID);
+        assert deletedItem != null; // UUID should always exist
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+
+        // Then update the file
+        dataStorage.updateFile(todoList.getTodoItems());
+        
+        return deletedItem;
+    }
+    
+    /**
+     * clearTasks
+     * 
+     * Clears all tasks in the program data and in the database file.
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
+    public void clearTasks() throws IOException {
+        todoList.clearTodoItems();
+
+        LoggingService.getLogger().log(Level.INFO, CLEAR_MESSAGE);
+        
+        dataStorage.updateFile(todoList.getTodoItems());
+    }
+    
+    // Sorting
+    /**
+     * Changes the sortingStyle in the TodoItemSorter.
+     * 
+     * @param newSortingStyle The new sorting style index.
+     */
+    public void setSortingStyle(int newSortingStyle) {
+        TodoItemSorter.changeSortStyle(newSortingStyle);
+        TodoItemSorter.resortTodoList(todoList.getTodoItems());
+    }
+
+    /**
+     * @return The current sorting style of the program.
+     */
+    public int getSortingStyle() {
+        return TodoItemSorter.getSortStyle();
+    }
+    
+    // Data exposure
+    /**
+     * Returns the data held by Model.
+     * 
+     * @return The ArrayList of TodoItems currently in the program memory.
+     */
+    public ArrayList<TodoItem> getTodoItemList() {
+        return todoList.getTodoItems();
+    }
+    
+    /**
+     * Returns the data held by Model as a ListIterator
+     * 
+     * @return The iterator of the ArrayList of TodoItems currently in the program memory.
+     */
+    public ListIterator<TodoItem> getTodoItemIterator() {
+        return getTodoItemList().listIterator();
+    }
+    
+    // Settings
+    /**
+     * Changes the settings stored in the FileStorage, and then updates the settings.json file.
+     * 
+     * @param fileDirectory The new directory to switch to
+     * @param randomColorsEnabled The new setting for random colors
+     * @param notificationsEnabled The new setting for notifications
+     * @throws IOException with WRITE_SETTINGS_FAILED
+     */
+    public void changeSettings(String fileDirectory, Boolean randomColorsEnabled, Boolean notificationsEnabled) throws IOException {
+        todoList = new TodoItemList(dataStorage.changeSettings(fileDirectory, randomColorsEnabled, notificationsEnabled));
+        
+        // Reloading the data repopulates the item list with different items, so the UUID is not valid any more.
+        latestModified = null;
+    }
+    
+    /**
+     * Returns the current file directory in use by the program.
+     * 
+     * @return The file directory in use
+     */
+    public String getFileDirectory() {
+        return dataStorage.getFileDirectory();
+    }
+    
+    /**
+     * Returns the current setting of random task item colors.
+     * 
+     * @return The current random color setting
+     */
+    public Boolean areRandomColorsEnabled() {
+        return dataStorage.areRandomColorsEnabled();
+    }
+    
+    /**
+     * Returns the current setting of notification display.
+     * 
+     * @return The current notification setting
+     */
+    public Boolean areNotificationsEnabled() {
+        return dataStorage.areNotificationsEnabled();
+    }
+    
+    // Last modified
+    /**
+     * @return The index within the program data of the last modified task item.
+     */
+    public int getLastModifiedIndex() {
+        return todoList.searchIndexByUUID(latestModified);
+    }
+    
+    /**
+     * @return The last modified task item's UUID.
+     */
+    public UUID getLastModifiedUUID() {
+        return latestModified;
+    }
+    
+    // For use by Undo/Redo functionalities
+    /**
+     * Reloads a snapshot of the program data. This has the same effect on the
+     * program data as switching to a new directory containing the given data.
+     * 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     */
+    public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
+        // We attempt to write to the database file first. If there are
+        // any I/O problems, we still have the old data intact.
+        dataStorage.updateFile(newTodoItems);
+        
+        this.todoList = new TodoItemList(newTodoItems);
+        this.latestModified = null;
+        
+        TodoItemSorter.resortTodoList(this.todoList.getTodoItems());
+    }
+    
+    // Miscellaneous
+    /**
+     * @return The full filepath to the program.
+     */
+    public String getFullFileName() {
+        return dataStorage.getFullFileName();
+    }
+    
+    /**
+     * @return The number of tasks held in program memory.
+     */
+    public int countTasks() {
+        return todoList.countTodoItems();
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\model\ModelManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\model\TodoItem.java
+	 */
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
+
+/**
+ * The model class to hold one to-do task of wat do.
+ */
+
+public class TodoItem {
+    // Data fields
+	private String taskName;
+	private Date startDate;
+	private Date endDate;
+	private String priority;
+	private Boolean doneStatus;
+	
+	// Unique UUID tag
+	private UUID itemID;
+	
+	// Task types
+	public static final String EVENT = "Event";
+	public static final String DEADLINE = "Deadline";
+	public static final String FLOATING = "Floating";
+	public static final String ENDLESS = "Endless";
+	public static final String INVALID = "Invalid";
+	
+	// Priority levels
+	public static final String HIGH = "1. High";
+	public static final String MEDIUM = "2. Medium";
+	public static final String LOW = "3. Low";
+	
+	// Constructors
+	/**
+	 * The standard constructor of a TodoItem. Upon calling this method,
+	 * an immutable UUID will be assigned to the TodoItem.
+	 * 
+	 * @param newTaskName The task name of the new task. Can be null.
+	 * @param newStartDate The start date of the new task. Can be null.
+	 * @param newEndDate The end date of the new task. Can be null.
+	 * @param newPriority The priority of the new task. Can be null. If not HIGH/MEDIUM/LOW, the new task's priority will be set at MEDIUM.
+	 * @param newDoneStatus The done status of the new task. Can be null. If null, the new task's priority will be set at false.
+	 */
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) {
+	    if (newTaskName != null) {
+	        this.taskName = newTaskName; 
+	    }
+	    
+	    if (newStartDate != null) {
+	        this.startDate = newStartDate;
+	    }
+	    
+	    if (newEndDate != null) {
+	        this.endDate = newEndDate;
+	    }
+
+	    this.priority = MEDIUM;
+	    if (newPriority != null) {
+	        if (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM)) {
+	            this.priority = newPriority;
+	        }
+	    }
+	    
+	    if (newDoneStatus != null) {
+	        this.doneStatus = newDoneStatus; 
+	    } else {
+	        this.doneStatus = false;
+	    }
+	    
+	    this.itemID = UUID.randomUUID();
+	}
+	
+	/**
+	 * Auxiliary constructor for a TodoItem, requiring only the start date
+	 * and end date. The priority is assumed to be MEDIUM, while the done
+	 * status is assumed to be false.
+	 * 
+	 * @param newTaskName The task name of the new item. Can be null.
+	 * @param newStartDate The start date of the new item. Can be null.
+	 * @param newEndDate The end date of the new item. Can be null.
+	 */
+	public TodoItem(String newTaskName, Date newStartDate, Date newEndDate) {
+	    this(newTaskName, newStartDate, newEndDate, MEDIUM, false);
+	}
+	
+	// Attribute getters and setters 
+	/**
+	 * @return The name of the task.
+	 */
+    public String getTaskName() {
+        return taskName;
+    }
+    
+    /**
+     * @param newTaskName The new name of the task.
+     */
+    protected void setTaskName(String newTaskName) {
+        this.taskName = newTaskName;
+    }
+    
+    /**
+     * @return The start date of the task.
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+    
+    /**
+     * @param newStartDate The new start date of the task.
+     */
+    protected void setStartDate(Date newStartDate) {
+        this.startDate = newStartDate;
+    }
+    
+    /**
+     * @return The end date of the task.
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+    
+    /**
+     * @param newEndDate The new end date of the task.
+     */
+    protected void setEndDate(Date newEndDate) {
+        this.endDate = newEndDate;
+    }
+	
+    /**
+     * @return The priority level of the task.
+     */
+	public String getPriority() {
+	    return this.priority;
+	}
+	
+	/**
+	 * @param newPriority The new priority of the task. Unlike the constructor, this
+	 * must be HIGH/MEDIUM/LOW.
+	 */
+	protected void setPriority(String newPriority) {
+	    assert newPriority != null;
+	    assert (newPriority.equals(HIGH) || newPriority.equals(LOW) || newPriority.equals(MEDIUM));
+	    
+	    this.priority = newPriority;
+	}
+
+	/**
+	 * @return The done status of the task.
+	 */
+    public Boolean isDone() {
+        return doneStatus;
+    }
+    
+    /**
+     * @param newDoneStatus The new done status of the task.
+     */
+    protected void setDoneStatus(Boolean newDoneStatus) {
+        assert newDoneStatus != null;
+        
+        this.doneStatus = newDoneStatus;
+    }
+    
+    /**
+     * The UUID associated with the task is immutable. It cannot be changed
+     * once the TodoItem has been created.
+     * 
+     * @return The UUID tag of the task.
+     */
+    public UUID getUUID() {
+        return itemID;
+    }
+	
+    // Miscellaneous convenience methods requested by View and Controller
+    /**
+     * @return A custom formatted string representing the start date.
+     */
+	public String getStartDateString() {
+	    return getDateString(startDate);
+	}
+	
+	/**
+	 * @return A custom formatted string representing the end date.
+	 */
+	public String getEndDateString() {
+	    return getDateString(endDate);
+	}
+	
+	/**
+	 * Formats a Date object into a custom string representing that date.
+	 * 
+	 * @param date The date to be formatted.
+	 * @return The custom formatted string.
+	 */
+	private String getDateString(Date date) {
+	    if (date == null) {
+	        return null;
+	    }
+	    
+	    Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        String month = theMonth(cal.get(Calendar.MONTH));
+        int year = cal.get(Calendar.YEAR);
+        String hoursAndMinutes = String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        return day + " " + month + " " + year + " " + hoursAndMinutes;
+    }
+
+	/**
+	 * Auxiliary method to help the getDateString method. Converts a month into
+	 * its name.
+	 * 
+	 * @param month The month to be converted.
+	 * @return The month's name.
+	 */
+    private static String theMonth(int month){
+        String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+        return monthNames[month].toUpperCase();
+    }
+
+    /**
+     * Returns the task type of the TodoItem. Possible types are FLOATING, DEADLINE, ENDLESS and EVENT.
+     * 
+     * @return The task type of the TodoItem.
+     */
+    public String getTodoItemType() {
+        if (startDate == null) {
+            if (endDate == null) {
+                return FLOATING;
+            } else {
+                return DEADLINE;
+            }
+        } else {
+            if (endDate == null) {
+                return ENDLESS;
+            } else {
+                return EVENT;
+            }
+        }
+    }
+    
+    /**
+     * A convenience method to check whether a TodoItem is overdue based on its end date.
+     * 
+     * @return Whether the current task is overdue.
+     */
+    public boolean isOverdue() {
+        if (endDate == null) {
+            return false;
+        }
+        
+        Date currentDate = new Date();
+        return (currentDate.getTime() > endDate.getTime());
+    }
+    
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\model\TodoItem.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\model\TodoItemList.java
+	 */
+
+
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.UUID;
+
+/**
+ * The model class to hold a list of TodoItems. Has utility methods like searching
+ * for a TodoItem by its UUID, but aside from that, functions like an ArrayList of
+ * TodoItems.
+ */
+
+public class TodoItemList {
+    // Internal ArrayList
+	private ArrayList<TodoItem> todoItems;
+	
+	/**
+	 * Standard constructor. Initializes an empty TodoItemList. 
+	 */
+	public TodoItemList() {
+		todoItems = new ArrayList<TodoItem>();
+	}
+	
+	/**
+	 * Constructor used for replacing mass amounts of task data. Mostly used for
+	 * undo/redo functionalities.
+	 * 
+	 * @param newTodoItems The new task data to be used as the program data.
+	 */
+	public TodoItemList(ArrayList<TodoItem> newTodoItems) {
+	    if (newTodoItems != null) {
+	        this.todoItems = newTodoItems;
+	    } else {
+	        this.todoItems = new ArrayList<TodoItem>();
+	    }
+	}
+	
+	// Data exposure methods
+	/**
+	 * @return The internal ArrayList of TodoItems.
+	 */
+	public ArrayList<TodoItem> getTodoItems() {
+		return todoItems;
+	}
+	
+	/**
+	 * @return The iterator of the internal ArrayList of TodoItems.
+	 */
+    public ListIterator<TodoItem> getTodoItemsIterator() {
+        return todoItems.listIterator();
+    }
+	
+    // UUID-related methods
+    /**
+     * Returns the TodoItem with the given UUID.
+     * 
+     * @param itemID The UUID of the item to search for.
+     * @return The item with the given UUID.
+     */
+	public TodoItem getByUUID(UUID itemID) {
+        for (TodoItem currentItem : todoItems) {
+            if (currentItem.getUUID().equals(itemID)) {
+                return currentItem;
+            }
+        }
+	    return null;
+	}
+	
+	/**
+	 * Returns the index within the TodoItemList of the TodoItem with the given UUID.
+	 * 
+	 * @param itemID The UUID of the item to search for.
+	 * @return The index of the item.
+	 */
+    public int searchIndexByUUID(UUID itemID) {
+        for (int i = 0; i < todoItems.size(); i++) {
+            TodoItem currentItem = todoItems.get(i);
+            if (currentItem.getUUID().equals(itemID)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+	
+	// CRUD
+    /**
+     * Adds a new TodoItem into the internal ArrayList.
+     * 
+     * @param newItem The TodoItem to be added.
+     */
+	public void addTodoItem(TodoItem newItem) {
+		todoItems.add(newItem);
+	}
+
+	/**
+	 * Deletes a TodoItem by its UUID.
+	 * 
+	 * @param itemID The UUID of the item to be deleted.
+	 * @return The deleted TodoItem.
+	 */
+    public TodoItem deleteByUUID(UUID itemID) {
+        for (int i = 0; i < todoItems.size(); i++) {
+            if (todoItems.get(i).getUUID().equals(itemID)) {
+                return todoItems.remove(i);
+            } 
+        }
+        return null;
+    }
+    
+    /**
+     * Clears the TodoItemList of its TodoItems.
+     */
+    public void clearTodoItems() {
+        todoItems = new ArrayList<TodoItem>();
+    }
+    
+    // Miscellaneous
+    /**
+     * @return The number of TodoItems inside the TodoItemList.
+     */
+    public int countTodoItems() {
+        return todoItems.size();
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\model\TodoItemList.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\model\TodoItemSorter.java
+	 */
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+/**
+ * This class holds the comparators for sorting TodoItems. Note that while this
+ * class *can* be instantiated, it is not meant to be instantiated. All of its 
+ * methods and fields are static.
+ *
+ */
+public class TodoItemSorter {
+
+    public static final int DEFAULT_SORTING_STYLE = 2; // By default, sort by end date. 
+    private static int sortingStyle;
+    
+    // Comparators. Implement your double-criterion sorting logic here.
+    public static final Comparator[] todoItemComparators = {
+            new Comparator<TodoItem>() { // TaskName
+                public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+                    int comparisonResult = compareByParameter(todoItem1, todoItem2, 0);
+                    if (comparisonResult == 0) {
+                        return compareByParameter(todoItem1, todoItem2, 2); // Alphabetically, then end date
+                    } else {
+                        return comparisonResult;
+                    }
+                }
+            },
+            new Comparator<TodoItem>() { // StartDate
+                public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+                    int comparisonResult = compareByParameter(todoItem1, todoItem2, 1);
+                    if (comparisonResult == 0) {
+                        return compareByParameter(todoItem1, todoItem2, 3); // Start date, then priority
+                    } else {
+                        return comparisonResult;
+                    }
+                }
+            },
+            new Comparator<TodoItem>() { // EndDate
+                public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+                    int comparisonResult = compareByParameter(todoItem1, todoItem2, 2);
+                    if (comparisonResult == 0) {
+                        return compareByParameter(todoItem1, todoItem2, 3); // End date, then priority
+                    } else {
+                        return comparisonResult;
+                    }
+                }
+            },
+            new Comparator<TodoItem>() { // Priority
+                public int compare(TodoItem todoItem1, TodoItem todoItem2) {
+                    int comparisonResult = compareByParameter(todoItem1, todoItem2, 3);
+                    if (comparisonResult == 0) {
+                        return compareByParameter(todoItem1, todoItem2, 2); // Priority, then end date
+                    } else {
+                        return comparisonResult;
+                    }
+                }
+            },
+    };
+    
+    /**
+     * Checks if the TodoItem in question has the relevant data or if it just holds
+     * a null in the field in question.
+     * 
+     * @param todoItem The TodoItem to check for data existence.
+     * @param parameter The attribute to check. 0 for task name, 1 for start date, 2 for end date, 3 for priority. 
+     * @return A Boolean value describing whether the attribute is non-null in the TodoItem.
+     */
+    private static boolean isInvalid(TodoItem todoItem, int parameter) {
+        if (todoItem == null) {
+            return true;
+        }
+        
+        switch(parameter) {
+            case 0: return todoItem.getTaskName() == null;
+            case 1: return todoItem.getStartDate() == null;
+            case 2: return todoItem.getEndDate() == null;
+            case 3: return todoItem.getPriority() == null;
+            default: return false;
+        }
+    }
+    
+    /**
+     * Comparison method to compare two TodoItems by the specified attribute. The
+     * "equals" case is then handled by the double-criterion logic in the Comparators
+     * array above.
+     * The return value can be negative (for todoItem1 < todoItem2), positive (for todoItem1 > todoItem2)
+     * or equal (for todoItem1 == todoItem2). 
+     * 
+     * @param todoItem1 The first TodoItem to be compared
+     * @param todoItem2 The second TodoItem to be compared
+     * @param parameter The attribute to compare the two TodoItems by
+     * @return An integer value with the same meaning as the result of a compareTo call.
+     */
+    private static int compareByParameter(TodoItem todoItem1, TodoItem todoItem2, int parameter) {
+        boolean todoItem1Invalidity = isInvalid(todoItem1, parameter);
+        boolean todoItem2Invalidity = isInvalid(todoItem2, parameter);
+        
+        // If both invalid, they're equal.
+        if (todoItem1Invalidity && todoItem2Invalidity) {
+            return 0;
+        }
+        
+        // Push all 'null' to the back. This makes all floating tasks appear at the bottom.
+        if (todoItem2Invalidity) {
+            return -1;
+        }
+        if (todoItem1Invalidity) {
+            return 1;
+        }
+        
+        switch(parameter) {
+            case 0: return todoItem1.getTaskName().toLowerCase().compareTo(todoItem2.getTaskName().toLowerCase());
+            case 1: return ((Long) todoItem1.getStartDate().getTime()).compareTo(todoItem2.getStartDate().getTime());
+            case 2: return ((Long) todoItem1.getEndDate().getTime()).compareTo(todoItem2.getEndDate().getTime());
+            case 3: return todoItem1.getPriority().compareTo(todoItem2.getPriority());
+            default: return 0;
+        }
+    }
+    
+    /**
+     * Sorts an ArrayList of TodoItems by the current sorting style.
+     * 
+     * @param todoList The ArrayList of TodoItems to be sorted.
+     */
+    public static void resortTodoList(ArrayList<TodoItem> todoList) {
+        Collections.sort(todoList, todoItemComparators[sortingStyle]);
+    }
+    
+    /**
+     * Changes the current sorting style in use.
+     * 
+     * @param newSortingStyle The new sorting style.
+     */
+    public static void changeSortStyle(int newSortingStyle) {
+        sortingStyle = newSortingStyle;
+    }
+    
+    /**
+     * @return The current sorting style in use.
+     */
+    public static int getSortStyle() {
+        return sortingStyle;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\model\TodoItemSorter.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest1.java
+	 */
+
+
+import app.Main;
+import app.model.FileStorage;
+import app.model.TodoItem;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+/**
+ * First integration test.
+ * Tests the correct use case for the add, saveto and clear commands.
+ */
+public class IntegrationTest1 {
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    
+    // Tests add from Main
+    @Test
+    public void testMainAdd() {
+       FileStorage testStorage = new FileStorage();
+       try {
+           testStorage.loadSettings();
+       } catch (Exception e) {
+           fail();
+       }
+       String previousDirectory = testStorage.getFileDirectory();
+
+       // Commands to be carried out
+       String directoryCommand = "saveto testDirectory/";
+       String clearCommand = "clear";
+       String addCommand1 = "add task 1";
+       String addCommand2 = "add task 2 priority high";
+       String addCommand3 = "add task 3 due tomorrow";
+       String addCommand4 = "add task 4 start yesterday end today";
+       String exitCommand = "exit";
+       String[] testCommands = {
+               directoryCommand,
+               clearCommand,
+               addCommand1,
+               addCommand2,
+               addCommand3,
+               addCommand4,
+               exitCommand};
+
+       exit.expectSystemExit();
+       exit.checkAssertionAfterwards(new Assertion() {
+           @Override
+           public void checkAssertion() throws Exception {
+
+               // Checks if the data is intact!
+               ArrayList<TodoItem> testTodoItems;
+
+               try {
+                   testStorage.loadSettings();
+                   testTodoItems = testStorage.loadFile();
+               } catch (Exception e) {
+                   fail();
+                   return;
+               }
+
+               // After cleaning and adding, we should have four tasks.
+               assertEquals(4, testTodoItems.size());
+               
+               String testInput1 = "task 1";
+               String testInput2 = "task 2";
+               String testInput3 = "task 3";
+               String testInput4 = "task 4";
+               
+               assertEquals(testInput4, testTodoItems.get(0).getTaskName());
+               assertEquals(testInput3, testTodoItems.get(1).getTaskName());
+               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+               assertEquals(testInput1, testTodoItems.get(3).getTaskName());
+
+               // Cleanup
+               testStorage.updateFile(new ArrayList<TodoItem>());
+               testStorage.changeSettings(previousDirectory, null, null);
+           }
+       });
+
+       // Carry out commands
+       try {
+           Main.main(testCommands);
+       } catch (Exception e) {
+           // Do nothing, this is already caught by the ExpectedSystemExit.
+       }
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest1.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest2.java
+	 */
+
+
+import app.Main;
+import app.model.FileStorage;
+import app.model.TodoItem;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+/**
+ * Second integration test.
+ * Tests the correct use case for sort, search, delete, undo and redo.
+ */
+public class IntegrationTest2 {
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    
+    // Tests add from Main
+    @Test
+    public void testMain() {
+       FileStorage testStorage = new FileStorage();
+       try {
+           testStorage.loadSettings();
+       } catch (Exception e) {
+           fail();
+       }
+       String previousDirectory = testStorage.getFileDirectory();
+       
+       // Commands to be carried out
+       String directoryCommand = "saveto testDirectory/";
+       String clearCommand = "clear";
+       String addCommand1 = "add task 1";
+       String addCommand2 = "add task 2 priority high";
+       String addCommand3 = "add task 3 due november 11 1am priority low";
+       String addCommand4 = "add task 4 start november 10 1am end november 11 12:30am";
+       String addCommand5 = "add task 5 due november 15 1am priority low";
+       String addCommand6 = "add task 6 due november 16 1am priority low";
+       String addCommand7 = "add task 7 due november 19 1am";
+       String sortCommand1 = "sort priority";
+       String deleteCommand1 = "delete 7"; // Should delete task 6
+       String sortCommand2 = "sort end";
+       String deleteCommand2 = "delete 6"; // Should delete task 7
+       String searchCommand = "search 5";
+       String deleteCommand3 = "delete 1"; // Should delete task 5
+       String deleteCommand4 = "delete 1"; // Should delete task 2, then task 1 (called twice)
+       String undoCommand = "undo"; // Should recreate task 1, then task 2 (called twice)
+       String redoCommand = "redo"; // Should delete task 2
+       String exitCommand = "exit";
+       
+       String[] testCommands = {
+               directoryCommand,
+               clearCommand,
+               addCommand1,
+               addCommand2,
+               addCommand3,
+               addCommand4,
+               addCommand5,
+               addCommand6,
+               addCommand7,
+               sortCommand1,
+               deleteCommand1,
+               sortCommand2,
+               deleteCommand2,
+               searchCommand,
+               deleteCommand3,
+               deleteCommand4,
+               deleteCommand4,
+               undoCommand,
+               undoCommand,
+               redoCommand,
+               exitCommand};
+       
+       exit.expectSystemExit();
+       exit.checkAssertionAfterwards(new Assertion() {
+           @Override
+           public void checkAssertion() throws Exception {
+
+               // Now we check if the data is intact.
+               ArrayList<TodoItem> testTodoItems;
+
+               try {
+                   testStorage.loadSettings();
+                   testTodoItems = testStorage.loadFile();
+               } catch (Exception e) {
+                   fail();
+                   return;
+               }
+               
+               // The leftover data after the five deletes, two undos and one redo should be 3 items. 
+               assertEquals(3, testTodoItems.size());
+               
+               // Then leftover data should be task 1, task 4 then task 3.
+               String testInput2 = "task 2";
+               String testInput3 = "task 3";
+               String testInput7 = "task 7";
+               
+               assertEquals(testInput3, testTodoItems.get(0).getTaskName());
+               assertEquals(testInput7, testTodoItems.get(1).getTaskName());
+               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+               
+               // Yay! We passed the tests. Now change back to previous directory.
+               testStorage.updateFile(new ArrayList<TodoItem>());
+               testStorage.changeSettings(previousDirectory, null, null);
+           }
+       });
+
+       // Carry out commands
+       try {
+           Main.main(testCommands);
+       } catch (Exception e) {
+           // Do nothing, this is already caught by the ExpectedSystemExit.
+       }
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest2.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest3.java
+	 */
+
+
+import app.Main;
+import app.model.FileStorage;
+import app.model.TodoItem;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+/**
+ * It is 2014. You are working on your very very important task, when something terrible happens.
+ * Your watdo.json file contents has been corrupted! *gasp* But no worries, you are going to be just
+ * fine, for error handling is here! 
+ *  
+ * Third integration test.
+ * Tests program behavior when watdo.json data is compromised.
+ */
+public class IntegrationTest3 {
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    
+    // Tests add from Main
+    @Test
+    public void testMain() {
+       // First we manually switch to the test directory
+       FileStorage testStorage = new FileStorage();
+       try {
+           testStorage.loadSettings();
+       } catch (Exception e) {
+           fail();
+       }
+       String previousDirectory = testStorage.getFileDirectory();
+       
+       try {
+           testStorage.changeSettings("testDirectory/", null, null);
+       } catch (Exception e) {
+           fail();
+       }
+       
+       // Then we make fixtures
+       ArrayList<TodoItem> testTodoItems = getFixtures();
+       
+       // Then write those fixtures to testDirectory/watdo.json
+       try {
+           testStorage.updateFile(testTodoItems);
+       } catch (Exception e) {
+           fail();
+       }
+       
+       // Then we attempt to shave a whole chunk of the testDirectory/watdo.json file off.
+       // First we open the file and get the data string.
+       String fileString = readFromFile("testDirectory/watdo.json");
+       
+       // Why 42, you ask? 42, of course!
+       // Jokes aside, the task names are 6 characters long ("task 1"), and we have seven tasks.
+       // 6*7 = 42. The file should definitely be longer than this length.
+       // This is mainly to check for an empty file after writing.
+       if (fileString.length() <= 42) {
+           fail();
+       }
+       
+       // Now we shave 42 characters off from the data string.
+       // This string should now be meaningless.
+       String badFileString = fileString.substring(42);
+       
+       // Now we replace the file content with the bad string.
+       writeToFile(badFileString, "testDirectory/watdo.json");
+       
+       // Now we setup the commands to be carried out.
+       String[] testCommands = getCommands();
+       // Now none of the commands should work except exit, now that the data is corrupted.
+       
+       exit.expectSystemExit();
+       exit.checkAssertionAfterwards(new Assertion() {
+           @Override
+           public void checkAssertion() throws Exception {
+               // Now we check if there is any change to the data.
+               String newFileString = readFromFile("testDirectory/watdo.json");
+               
+               // There should be no change.
+               assertEquals(badFileString, newFileString);
+               
+               // Good. No change. None of the commands have any effect.
+               testStorage.updateFile(new ArrayList<TodoItem>());
+               testStorage.changeSettings(previousDirectory, null, null);
+           }
+       });
+
+       // Carry out commands
+       try {
+           Main.main(testCommands);
+       } catch (Exception e) {
+           // Do nothing, this is already caught by the ExpectedSystemExit.
+       }
+    }
+    
+    private ArrayList<TodoItem> getFixtures() {
+        ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
+        testTodoItems.add(new TodoItem("task 1", null, null));
+        testTodoItems.add(new TodoItem("task 2", null, null, TodoItem.HIGH, null));
+        testTodoItems.add(new TodoItem("task 3", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 4", new Date(), new Date(), null, null));
+        testTodoItems.add(new TodoItem("task 5", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 6", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 7", null, new Date(), null, null));
+        return testTodoItems;
+    }
+    
+    private String readFromFile(String targetFile) {
+        // First we open the file
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(targetFile);
+        } catch (FileNotFoundException e) { // if no file found at stated path, error (we should have written it there)
+            fail();
+            return null;
+        }
+        
+        // Successfully opened the file, now we get the data string.
+        BufferedReader reader = new BufferedReader(fileToRead);
+
+        String fileString = "";
+        try {
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                fileString += line;
+            }
+            reader.close();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        return fileString;
+    }
+    
+    private void writeToFile(String toWrite, String targetFile) {
+        // We write the bad string to the testDirectory/watdo.json file.
+        FileWriter fileToWrite;
+        try {
+            fileToWrite = new FileWriter(targetFile);
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+
+        // Access successful, now we write the bad string out.
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        try {
+            writer.write(toWrite);
+            writer.flush();
+            writer.close();
+            fileToWrite.close();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+    }
+    
+    private String[] getCommands() {
+        String directoryCommand = "saveto testDirectory/";
+        String clearCommand = "clear";
+        String addCommand1 = "add task 1";
+        String addCommand2 = "add task 2 priority high";
+        String addCommand3 = "add task 3 due november 11 1am priority low";
+        String addCommand4 = "add task 4 start november 10 1am end november 11 12:30am";
+        String addCommand5 = "add task 5 due november 15 1am priority low";
+        String addCommand6 = "add task 6 due november 16 1am priority low";
+        String addCommand7 = "add task 7 due november 19 1am";
+        String sortCommand1 = "sort priority";
+        String deleteCommand1 = "delete 7";
+        String sortCommand2 = "sort end";
+        String deleteCommand2 = "delete 6";
+        String searchCommand = "search 5";
+        String deleteCommand3 = "delete 1";
+        String deleteCommand4 = "delete 1";
+        String undoCommand = "undo";
+        String redoCommand = "redo";
+        String exitCommand = "exit";
+        
+        String[] testCommands = {
+                directoryCommand,
+                clearCommand,
+                addCommand1,
+                addCommand2,
+                addCommand3,
+                addCommand4,
+                addCommand5,
+                addCommand6,
+                addCommand7,
+                sortCommand1,
+                deleteCommand1,
+                sortCommand2,
+                deleteCommand2,
+                searchCommand,
+                deleteCommand3,
+                deleteCommand4,
+                deleteCommand4,
+                undoCommand,
+                undoCommand,
+                redoCommand,
+                exitCommand};
+        
+        return testCommands;
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest3.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest4.java
+	 */
+
+
+import app.Main;
+import app.model.FileStorage;
+import app.model.TodoItem;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.Assertion;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+/**
+ * The corrupted watdo.json was just the mid-boss. Now comes the final challenge.
+ * The corrupted settings.json stands between you and your very important tasks.
+ *  
+ * Fourth integration test.
+ * Tests program behavior when settings data is compromised.
+ */
+public class IntegrationTest4 {
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    
+    // Tests add from Main
+    @Test
+    public void testMain() {
+        // First we load the old settings data.
+        String settingsFileString = readFromFile("settings.json");
+            
+        // First we manually switch to the test directory
+        FileStorage testStorage = new FileStorage();
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+         
+        try {
+            testStorage.changeSettings("testDirectory/", null, null);
+        } catch (Exception e) {
+            fail();
+        }
+           
+        // Then we make fixtures
+        ArrayList<TodoItem> testTodoItems = getFixtures();
+        
+        // Then write those fixtures to testDirectory/watdo.json
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Then we load the string from testDirectory/watdo.json
+        String dataFileString = readFromFile("testDirectory/watdo.json");
+           
+        // Now we shave half of the characters off from the settings string.
+        // This string should now be meaningless.
+        String badFileString = settingsFileString.substring(settingsFileString.length()/2);
+           
+        // Now we replace the settings file with the bad string.
+        writeToFile(badFileString, "settings.json");
+           
+        // Now we setup the commands to be carried out.
+        String[] testCommands = getCommands();
+        // Now none of the commands should work except exit, now that the settings are corrupted.
+           
+        exit.expectSystemExit();
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
+               // Now we check if there is any change to the data.
+               String newFileString = readFromFile("testDirectory/watdo.json");
+            
+               // There should be no change.
+               assertEquals(dataFileString, newFileString);
+           
+               // Good. No change. None of the commands have any effect.
+               // Restore the old data.
+               testStorage.updateFile(new ArrayList<TodoItem>());
+               writeToFile(settingsFileString, "settings.json");
+            }
+       });
+            
+       // Carry out commands
+       try {
+           Main.main(testCommands);
+       } catch (Exception e) {
+           // Do nothing, this is already caught by the ExpectedSystemExit.
+       }
+    }
+    
+    /**
+     * 
+     * 
+     * @return
+     */
+    private ArrayList<TodoItem> getFixtures() {
+        ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
+        testTodoItems.add(new TodoItem("task 1", null, null));
+        testTodoItems.add(new TodoItem("task 2", null, null, TodoItem.HIGH, null));
+        testTodoItems.add(new TodoItem("task 3", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 4", new Date(), new Date(), null, null));
+        testTodoItems.add(new TodoItem("task 5", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 6", null, new Date(), TodoItem.LOW, null));
+        testTodoItems.add(new TodoItem("task 7", null, new Date(), null, null));
+        return testTodoItems;
+    }
+    
+    /**
+     * Reads a file's data as a String and returns it.
+     * 
+     * @param targetFile The file path of the target file
+     * @return The string containing a file's data
+     */
+    private String readFromFile(String targetFile) {
+        // First we open the file
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader(targetFile);
+        } catch (FileNotFoundException e) { // if no file found at stated path, error (we should have written it there)
+            fail();
+            return null;
+        }
+        
+        // Successfully opened the file, now we get the data string.
+        BufferedReader reader = new BufferedReader(fileToRead);
+
+        String fileString = "";
+        try {
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                fileString += (line + "\n");
+            }
+            reader.close();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        return fileString;
+    }
+    
+    /**
+     * Writes the given string to the target file.
+     * 
+     * @param toWrite The string to be written to the target file.
+     * @param targetFile The target file to be written to.
+     */
+    private void writeToFile(String toWrite, String targetFile) {
+        // We write the bad string to the testDirectory/watdo.json file.
+        FileWriter fileToWrite;
+        try {
+            fileToWrite = new FileWriter(targetFile);
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+
+        // Access successful, now we write the bad string out.
+        BufferedWriter writer = new BufferedWriter(fileToWrite);
+        try {
+            writer.write(toWrite);
+            writer.flush();
+            writer.close();
+            fileToWrite.close();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+    }
+    
+    /**
+     * Creates an array of commands to be carried out.
+     * 
+     * @return The string array of commands to feed into main's args array.
+     */
+    private String[] getCommands() {
+        String directoryCommand = "saveto testDirectory/";
+        String clearCommand = "clear";
+        String addCommand1 = "add task 1";
+        String addCommand2 = "add task 2 priority high";
+        String addCommand3 = "add task 3 due november 11 1am priority low";
+        String addCommand4 = "add task 4 start november 10 1am end november 11 12:30am";
+        String addCommand5 = "add task 5 due november 15 1am priority low";
+        String addCommand6 = "add task 6 due november 16 1am priority low";
+        String addCommand7 = "add task 7 due november 19 1am";
+        String sortCommand1 = "sort name";
+        String sortCommand2 = "sort end";
+        String sortCommand3 = "sort start";
+        String sortCommand4 = "sort priority";
+        String deleteCommand1 = "delete 7";
+        String deleteCommand2 = "delete 6";
+        String searchCommand = "search 5";
+        String deleteCommand3 = "delete 1";
+        String deleteCommand4 = "delete 1";
+        String undoCommand = "undo";
+        String redoCommand = "redo";
+        String exitCommand = "exit";
+        
+        String[] testCommands = {
+                directoryCommand,
+                clearCommand,
+                addCommand1,
+                addCommand2,
+                addCommand3,
+                addCommand4,
+                addCommand5,
+                addCommand6,
+                addCommand7,
+                sortCommand1,
+                sortCommand2,
+                sortCommand3,
+                sortCommand4,
+                deleteCommand1,
+                sortCommand2,
+                deleteCommand2,
+                searchCommand,
+                deleteCommand3,
+                deleteCommand4,
+                deleteCommand4,
+                undoCommand,
+                undoCommand,
+                redoCommand,
+                exitCommand};
+        
+        return testCommands;
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\integration\IntegrationTest4.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\ModelUnits.java
+	 */
+
+
+import app.model.*;
+import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+public class ModelUnits {
+
+    // Tests TodoItem constructor
+    @Test
+    public void testTodoItemConstructor() {
+        String testInput1 = "Test String 1";
+        Date startDate1 = new Date();
+        Date endDate1 = new Date();
+        String testInput2 = "Dummy priority";
+        String testInput3 = "1. High";
+        Boolean testBoolean1 = true;
+        
+        // Valid inputs, standard constructor
+        TodoItem testedTodoItem1 = new TodoItem(testInput1, startDate1, endDate1, testInput3, testBoolean1);
+        assertEquals(testInput1, testedTodoItem1.getTaskName());
+        assertEquals(startDate1.getTime(), testedTodoItem1.getStartDate().getTime());
+        assertEquals(endDate1.getTime(), testedTodoItem1.getEndDate().getTime());
+        assertEquals(TodoItem.HIGH, testedTodoItem1.getPriority());
+        assertEquals(testBoolean1, testedTodoItem1.isDone());
+        
+        // Special constructor
+        TodoItem testedTodoItem2 = new TodoItem(testInput1, startDate1, endDate1);
+        assertEquals(testInput1, testedTodoItem2.getTaskName());
+        assertEquals(startDate1.getTime(), testedTodoItem2.getStartDate().getTime());
+        assertEquals(endDate1.getTime(), testedTodoItem2.getEndDate().getTime());
+        assertEquals(TodoItem.MEDIUM, testedTodoItem2.getPriority());
+        assertEquals(false, testedTodoItem2.isDone());
+        
+        // Borderline bad inputs, standard constructor
+        TodoItem testedTodoItem3 = new TodoItem(null, null, null, testInput2, null);
+        assertEquals(null, testedTodoItem3.getTaskName());
+        assertEquals(null, testedTodoItem3.getStartDate());
+        assertEquals(null, testedTodoItem3.getEndDate());
+        assertEquals(TodoItem.MEDIUM, testedTodoItem3.getPriority());
+        assertEquals(false, testedTodoItem3.isDone());
+    }
+    
+    // Tests TodoItemList constructor
+    @Test
+    public void testTodoItemListConstructor() {
+        // Standard constructor
+        TodoItemList testedList1 = new TodoItemList();
+        assertEquals(0, testedList1.countTodoItems());
+        
+        // Special constructor for existing data
+        ArrayList<TodoItem> inputArrayList1 = new ArrayList<TodoItem>();
+        TodoItemList testedList2 = new TodoItemList(inputArrayList1);
+        assertEquals(0, testedList2.countTodoItems());
+        
+        // Another special constructor for existing data
+        ArrayList<TodoItem> inputArrayList2 = new ArrayList<TodoItem>();
+        inputArrayList2.add(new TodoItem(null, null, null));
+        TodoItemList testedList3 = new TodoItemList(inputArrayList2);
+        assertEquals(1, testedList3.countTodoItems());
+    }
+    
+    // Tests TodoItemList create and delete
+    @Test
+    public void testTodoItemListAddAndDelete() {
+        String testInput1 = "Test String 1";
+        String testInput2 = "Test String 2";
+        String testInput3 = "Test String 3";
+        Date startDate1 = new Date();
+        Date endDate1 = new Date();
+        
+        // Add
+        TodoItemList testedList1 = new TodoItemList();
+        testedList1.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
+        assertEquals(1, testedList1.countTodoItems());
+        testedList1.addTodoItem(new TodoItem(testInput2, startDate1, null));
+        assertEquals(2, testedList1.countTodoItems());
+        testedList1.addTodoItem(new TodoItem(testInput2, null, endDate1));
+        assertEquals(3, testedList1.countTodoItems());
+        testedList1.addTodoItem(new TodoItem(testInput3, null, null));
+        assertEquals(4, testedList1.countTodoItems());
+        
+        // Test for task type
+        ArrayList<TodoItem> currentTestedList = testedList1.getTodoItems();
+        assertEquals(TodoItem.EVENT, currentTestedList.get(0).getTodoItemType());
+        assertEquals(TodoItem.ENDLESS, currentTestedList.get(1).getTodoItemType());
+        assertEquals(TodoItem.DEADLINE, currentTestedList.get(2).getTodoItemType());
+        assertEquals(TodoItem.FLOATING, currentTestedList.get(3).getTodoItemType());
+        
+        // Delete
+        testedList1.deleteByUUID(currentTestedList.get(2).getUUID());
+        assertEquals(3, testedList1.countTodoItems());
+        currentTestedList = testedList1.getTodoItems();
+        assertEquals(testInput1, currentTestedList.get(0).getTaskName());
+        assertEquals(null, currentTestedList.get(1).getEndDate());
+        assertEquals(null, currentTestedList.get(2).getEndDate());
+        
+        // Clear
+        testedList1.clearTodoItems();
+        assertEquals(0, testedList1.countTodoItems());
+    }
+    
+    // Tests TodoItemSorter
+    // Thou who trieth to debug this crawling horror, surrender.
+    @Test
+    public void testTodoItemSorter() {
+        String testInput1 = "Test String 1";
+        String testInput2 = "Test String 2";
+        String testInput4 = "Test String 4";
+        String testInput5 = "Test String 5";
+        String testInput6 = "Test String 6";
+        Date earlyDate = new Date();
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
+        
+        // Setup fixtures
+        TodoItemList testedList1 = new TodoItemList();
+        testedList1.addTodoItem(new TodoItem(testInput1, null, lateDate, TodoItem.HIGH, false));
+        testedList1.addTodoItem(new TodoItem(testInput2, null, lateDate, TodoItem.MEDIUM, false));
+        testedList1.addTodoItem(new TodoItem(null, earlyDate, lateDate, TodoItem.LOW, false));
+        testedList1.addTodoItem(new TodoItem(testInput4, lateDate, earlyDate, TodoItem.MEDIUM, false));
+        testedList1.addTodoItem(new TodoItem(testInput4, earlyDate, lateDate, TodoItem.HIGH, false));
+        testedList1.addTodoItem(new TodoItem(null, null, lateDate, TodoItem.MEDIUM, false));
+        testedList1.addTodoItem(new TodoItem(testInput5, null, lateDate, TodoItem.HIGH, false));
+        testedList1.addTodoItem(new TodoItem(testInput6, null, lateDate, TodoItem.MEDIUM, false));
+        
+        // TaskName then EndDate
+        TodoItemSorter.changeSortStyle(0);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
+        ArrayList<TodoItem> currentTodoItems = testedList1.getTodoItems();
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
+            if (currentTodoItem.getTaskName() == null) {
+                if (nextTodoItem.getTaskName() == null) {
+                   if (currentTodoItem.getEndDate() != null) {
+                       if (nextTodoItem.getEndDate() == null) fail();
+                       if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getTaskName() == null) fail();
+                if (currentTodoItem.getTaskName().compareTo(nextTodoItem.getTaskName()) < 0) fail();
+                if (currentTodoItem.getTaskName().equals(nextTodoItem.getTaskName())) {
+                    if (currentTodoItem.getEndDate() != null) {
+                        if (nextTodoItem.getEndDate() == null) fail();
+                        if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
+                    }
+                }
+            }
+        }
+        
+        // StartDate then Priority
+        TodoItemSorter.changeSortStyle(1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
+        currentTodoItems = testedList1.getTodoItems();
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
+            if (currentTodoItem.getStartDate() == null) {
+                if (nextTodoItem.getStartDate() == null) {
+                   if (currentTodoItem.getPriority() != null) {
+                       if (nextTodoItem.getPriority() == null) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getStartDate() == null) fail();
+                if (currentTodoItem.getStartDate().getTime() < nextTodoItem.getStartDate().getTime()) fail();
+                if (currentTodoItem.getStartDate().getTime() == nextTodoItem.getStartDate().getTime()) {
+                    if (currentTodoItem.getPriority() != null) {
+                        if (nextTodoItem.getPriority() == null) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
+                    }
+                }
+            }
+        }
+        
+        // EndDate then Priority
+        TodoItemSorter.changeSortStyle(2);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
+        currentTodoItems = testedList1.getTodoItems();
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
+            if (currentTodoItem.getEndDate() == null) {
+                if (nextTodoItem.getEndDate() == null) {
+                   if (currentTodoItem.getPriority() != null) {
+                       if (nextTodoItem.getPriority() == null) fail();
+                       if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getEndDate() == null) fail();
+                if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
+                if (currentTodoItem.getEndDate().getTime() == nextTodoItem.getEndDate().getTime()) {
+                    if (currentTodoItem.getPriority() != null) {
+                        if (nextTodoItem.getPriority() == null) fail();
+                        if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) fail();
+                    }
+                }
+            }
+        }
+        
+        // Priority then EndDate
+        TodoItemSorter.changeSortStyle(3);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
+        currentTodoItems = testedList1.getTodoItems();
+        for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
+            TodoItem currentTodoItem = currentTodoItems.get(i);
+            TodoItem nextTodoItem = currentTodoItems.get(i - 1);
+            if (currentTodoItem.getPriority() == null) {
+                if (nextTodoItem.getPriority() == null) {
+                   if (currentTodoItem.getEndDate() != null) {
+                       if (nextTodoItem.getEndDate() == null) fail();
+                       if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
+                   }
+                }
+            } else {
+                if (nextTodoItem.getPriority() == null) fail();
+                if (currentTodoItem.getPriority().compareTo(nextTodoItem.getPriority()) < 0) {
+                    fail();
+                }
+                if (currentTodoItem.getPriority().equals(nextTodoItem.getPriority())) {
+                    if (currentTodoItem.getEndDate() != null) {
+                        if (nextTodoItem.getEndDate() == null) fail();
+                        if (currentTodoItem.getEndDate().getTime() < nextTodoItem.getEndDate().getTime()) fail();
+                    }
+                }
+            }
+        }
+    }
+    
+    // Tests FileStorage
+    @Test
+    public void testFileStorage() {
+        FileStorage testStorage = new FileStorage();
+        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
+        assertEquals(FileStorage.DEFAULT_FILE_DIRECTORY, testStorage.getFileDirectory());
+        
+        // Try to load settings file
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Yay! Successfully loaded settings file!
+        String tempFileDirectory = FileStorage.DEFAULT_FILE_DIRECTORY;
+        Boolean tempRandomColorsEnabled = false;
+        Boolean tempNotificationsEnabled = false;
+        
+        if (!testStorage.getFileDirectory().equals(tempFileDirectory)) {
+            tempFileDirectory = testStorage.getFileDirectory();
+        }
+        
+        if (testStorage.areRandomColorsEnabled()) {
+            tempRandomColorsEnabled = true;
+        }
+        
+        if (testStorage.areNotificationsEnabled()) {
+            tempRandomColorsEnabled = true;
+        }
+        
+        // Switch to test directory!
+        try {
+            testStorage.changeSettings("testDirectory", false, false);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("testDirectory/", testStorage.getFileDirectory()); // Trailing slash added!
+        assertEquals(false, testStorage.areRandomColorsEnabled());
+        assertEquals(false, testStorage.areNotificationsEnabled());
+        
+        // Nice! Successfully switched to test directory!
+        
+        // Now we set up an empty watdo.json
+        ArrayList<TodoItem> testTodoItems = new ArrayList<TodoItem>();
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Now we try to load it.
+        FileReader fileToRead;
+        try {
+            fileToRead = new FileReader("testDirectory/watdo.json");
+        } catch (FileNotFoundException e) {
+            fail();
+            return;
+        }
+        BufferedReader reader = new BufferedReader(fileToRead);
+        String fileString = "";
+        String line = "";
+        try {
+            while ((line = reader.readLine()) != null) {
+                fileString += line;
+            }
+            fileToRead.close();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("[]", fileString);
+        
+        // Yay! Now we insert actual data inside!
+        String testInput1 = "Test String 1";
+        Date earlyDate = new Date();
+        earlyDate = new Date(earlyDate.getTime() - (earlyDate.getTime() % 1000)); // This i
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
+        testTodoItems.add(new TodoItem(null, null, null));
+        testTodoItems.add(new TodoItem(null, earlyDate, lateDate));
+        testTodoItems.add(new TodoItem(testInput1, null, lateDate));
+        testTodoItems.add(new TodoItem(testInput1, earlyDate, null));
+        testTodoItems.add(new TodoItem(testInput1, earlyDate, lateDate, TodoItem.HIGH, true));
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Now we extract the data and see if it's the same.
+        ArrayList<TodoItem> extractedResult;
+        try {
+            extractedResult = testStorage.loadFile();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        assertEquals(5, extractedResult.size());
+        assertEquals(null, extractedResult.get(0).getTaskName());
+        assertEquals(null, extractedResult.get(0).getStartDate());
+        assertEquals(null, extractedResult.get(0).getEndDate());
+        assertEquals(TodoItem.MEDIUM, extractedResult.get(0).getPriority());
+        assertEquals(false, extractedResult.get(0).isDone());
+        assertEquals(null, extractedResult.get(1).getTaskName());
+        assertEquals(earlyDate.getTime(), extractedResult.get(1).getStartDate().getTime());
+        assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
+        assertEquals(lateDate.getTime(), extractedResult.get(1).getEndDate().getTime());
+        assertEquals(TodoItem.HIGH, extractedResult.get(4).getPriority());
+        assertEquals(true, extractedResult.get(4).isDone());
+        
+        // Yay! We're done! Time to clean up.
+        try {
+            testStorage.updateFile(new ArrayList<TodoItem>());
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Switch back to old directory!
+        try {
+            testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            fail();
+        }
+        
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(FileStorage.DEFAULT_FILE_NAME, testStorage.getFileName());
+        assertEquals(tempFileDirectory, testStorage.getFileDirectory());
+        assertEquals(tempRandomColorsEnabled, testStorage.areRandomColorsEnabled());
+        assertEquals(tempNotificationsEnabled, testStorage.areNotificationsEnabled());
+    }
+    
+    // Everyone together now!
+    @Test
+    public void testModelManager() {
+        ModelManager testManager1;
+        try {
+            testManager1 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        try {
+            testManager1.changeSettings("testDirectory/", null, null);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Create
+        String testInput1 = "Test String 1";
+        String testInput2 = "Test String 2";
+        String testInput3 = "Test String 3";
+        String testInput4 = "Test String 4";
+        Date earlyDate = new Date();
+        Date lateDate = new Date(earlyDate.getTime() + 100000);
+        
+        try {
+            testManager1.clearTasks();
+            testManager1.addTask(testInput1, earlyDate, lateDate, TodoItem.HIGH, true);
+            testManager1.addTask(testInput2, null, null, TodoItem.LOW, null);
+            testManager1.addTask(testInput3, earlyDate, null, TodoItem.MEDIUM, null);
+            testManager1.addTask(testInput4, null, earlyDate, TodoItem.LOW, false);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        // Load
+        ModelManager testManager2;
+        try {
+            testManager2 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        assertEquals(4, testManager2.countTasks());
+        
+        testManager2.setSortingStyle(0);
+        
+        assertEquals(testInput1, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(3).getTaskName());
+        
+        // Sort
+        testManager2.setSortingStyle(3);
+        
+        // Remember, collections.sort is stable.
+        assertEquals(testInput1, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(3).getTaskName());
+
+        // Update
+        Boolean[] testParameters = {false, false, false, true, true};
+        
+        try {
+            testManager2.updateTask(testManager2.getTodoItemList().get(2).getUUID(), testParameters, null, null, null, TodoItem.HIGH, true);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput1, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(2).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(3).getTaskName());
+        
+        // Delete
+        try {
+            testManager2.deleteTask(testManager2.getTodoItemList().get(1).getUUID());
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals(3, testManager2.countTasks());
+        assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
+        assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
+        assertEquals(testInput2, testManager2.getTodoItemList().get(2).getTaskName());
+        
+        // Clear
+        try {
+            testManager2.clearTasks();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        ModelManager testManager3;
+        try {
+            testManager3 = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        assertEquals("testDirectory/watdo.json", testManager3.getFullFileName());
+        assertEquals(0, testManager3.countTasks());
+        
+        try {
+            testManager3.changeSettings("", null, null);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    // Test for extra values in changeSettings
+    @Test
+    public void testChangeSettings() {
+        FileStorage testStorage = new FileStorage();
+
+        // Saves old working directory settings 
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        String tempFileDirectory = testStorage.getFileDirectory();
+        Boolean tempRandomColorsEnabled = testStorage.areRandomColorsEnabled();
+        Boolean tempNotificationsEnabled = testStorage.areNotificationsEnabled();
+
+        // Tests for correct use case
+        try {
+            testStorage.changeSettings("testDirectory", false, true);
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        
+        assertEquals("testDirectory/", testStorage.getFileDirectory());
+        assertEquals(false, testStorage.areRandomColorsEnabled());
+        assertEquals(true, testStorage.areNotificationsEnabled());
+        
+        // Revert back to working directory
+        try {
+            testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+}
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\ModelUnits.java
+
+
+
+
+

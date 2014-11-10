@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.Main;
+import app.exceptions.InvalidInputException;
 import app.helpers.CommandObject;
 import app.services.LoggingService;
 import app.model.ModelManager;
@@ -15,8 +16,6 @@ import java.util.logging.Level;
  * This class takes in a command object, which specifies the details of the action to be carried out,
  * and then interacts with the model through ModelManager to carry out the action. The data structure can then
  * be extracted from this class by the CommandController.
- * 
- * @author ryan
  */
 
 public class ActionController {
@@ -46,7 +45,6 @@ public class ActionController {
     private static ModelManager modelManager;
     private static TaskController taskController;
     private static UndoController undoController;
-    private static Main main;
     private static ArrayList<TodoItem> returnList;
 
     // Individual command methods
@@ -325,6 +323,8 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        } catch (InvalidInputException e) {
+            LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
@@ -363,6 +363,9 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        } catch (InvalidInputException e) {
+            // Should never happen at all.
+            LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -401,6 +404,9 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+        } catch (InvalidInputException e) {
+            // Should never happen at all.
+            LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -408,7 +414,7 @@ public class ActionController {
     /**
      * This method is used by CommandController to open the help view.
      * It takes a CommandObject and check whether the CommandObject is valid.
-     * It calls the main to open the help view.
+     * It calls the commandController to open the help view.
      * 
      * @param commandObject
      * @return A feedback string to notify whether the method has carried out successfully.
@@ -418,14 +424,14 @@ public class ActionController {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
-        main.getRootViewManager().openHelp();
+        commandController.openHelp();
         return MESSAGE_OPEN_HELP;
     }
 
     /**
      * This method is used by CommandController to open the settings view.
      * It takes a CommandObject and check whether the CommandObject is valid.
-     * It calls the main to open the settings view.
+     * It calls the commandController to open the settings view.
      * 
      * @param commandObject
      * @return A feedback string to notify whether the method has carried out successfully.
@@ -435,7 +441,7 @@ public class ActionController {
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
-        main.getRootViewManager().openSettings();
+        commandController.openSettings();
         return MESSAGE_OPEN_SETTINGS;
     }
     
@@ -569,15 +575,6 @@ public class ActionController {
      */
     protected void setTaskController(TaskController controller) {
         taskController = controller;
-    }
-
-    /**
-     * Method to set the Main. It is called by CommandController.
-     * 
-     * @param main
-     */
-    protected void setMainApp(Main main) {
-        this.main = main;
     }
 
     /**
