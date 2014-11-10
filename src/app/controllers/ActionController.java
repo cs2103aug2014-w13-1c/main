@@ -165,6 +165,7 @@ public class ActionController {
             return EMPTY_MESSAGE;
         } catch (InvalidInputException e) {
             LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
