@@ -38,6 +38,7 @@ public class ActionController {
     private final String MESSAGE_OPEN_SETTINGS = "Showing settings\n";
     private final String MESSAGE_REDO = "Redo\n";
     private final String MESSAGE_UNDO = "Undo\n";
+    private final String EMPTY_MESSAGE = "";
     
     // Class variables
     private static CommandController commandController;
@@ -68,8 +69,10 @@ public class ActionController {
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_ADD_COMPLETE, commandObject.getInputString()));
     }
@@ -122,8 +125,10 @@ public class ActionController {
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return MESSAGE_CLEAR_COMPLETE;
     }
@@ -162,8 +167,10 @@ public class ActionController {
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+                return EMPTY_MESSAGE;
             } catch (NullPointerException e) {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+                return EMPTY_MESSAGE;
             }
 
             return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
@@ -261,7 +268,7 @@ public class ActionController {
                 return null;
             }
         } else {
-//            main.getPrimaryStage().setTitle("Search results for: \"" + commandObject.getCommandString() + "\"");
+//            main.getPrimaryStage().setTitle("Search results for: \EMPTY_MESSAGE + commandObject.getCommandString() + "\EMPTY_MESSAGE);
             taskController.setDisplayType(TaskController.DisplayType.SEARCH);
             return String.format(MESSAGE_SEARCH_COMPLETE, "updating task list view with results\n");
         }
@@ -298,7 +305,7 @@ public class ActionController {
             return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
         // Checking which parameters are updated
-        String toBeUpdated = "";
+        String toBeUpdated = EMPTY_MESSAGE;
         while (st.hasMoreTokens()) {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
@@ -317,15 +324,20 @@ public class ActionController {
             undoController.clearRedo();
             modelManager.updateTask(currentList.get(index).getUUID(),
                                     parameters, toBeUpdated.trim(), commandObject.getStartDate(), commandObject.getEndDate(), commandObject.getPriority(), null);
+            CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (InvalidInputException e) {
+            CommandController.notifyWithError("Start date must not be after end date.");
             LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
-        return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
+        return String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString());
     }
 
     /**
@@ -360,11 +372,14 @@ public class ActionController {
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (InvalidInputException e) {
             // Should never happen at all.
             LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -401,11 +416,14 @@ public class ActionController {
         } catch (IOException e) {
             CommandController.notifyWithError("Failed to write to file.");
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (InvalidInputException e) {
             // Should never happen at all.
             LoggingService.getLogger().log(Level.SEVERE, "InvalidInputException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
@@ -466,8 +484,10 @@ public class ActionController {
                 CommandController.notifyWithError("Failed to load new file.");
             }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return MESSAGE_CHANGE_SAVE_FILE_LOCATION;
     }
@@ -487,8 +507,10 @@ public class ActionController {
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+                return EMPTY_MESSAGE;
             } catch (NullPointerException e) {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+                return EMPTY_MESSAGE;
             }
             return MESSAGE_UNDO;
         }
@@ -508,8 +530,10 @@ public class ActionController {
             } catch (IOException e) {
                 CommandController.notifyWithError("Failed to write to file.");
                 LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+                return EMPTY_MESSAGE;
             } catch (NullPointerException e) {
                 LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+                return EMPTY_MESSAGE;
             }
             return MESSAGE_REDO;
         }
@@ -536,8 +560,10 @@ public class ActionController {
                 CommandController.notifyWithError("Failed to load new file.");
             }
             LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            return EMPTY_MESSAGE;
         } catch (NullPointerException e) {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return EMPTY_MESSAGE;
         }
         return "changed settings\n";
     }
