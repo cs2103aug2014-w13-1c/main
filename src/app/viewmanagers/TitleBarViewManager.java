@@ -123,7 +123,7 @@ public class TitleBarViewManager {
      * in the sortStyleChoiceBox when the user sorts the list
      * with a command input instead of selecting the style in
      * the choiceBox.
-     * @param style The SortStyle enum element (START, END, NAME, PRIORITY).
+     * @param style The TaskController.SortingStyle enum element
      */
     public void setSortStyle(TaskController.SortingStyle style) {
         switch (style) {
