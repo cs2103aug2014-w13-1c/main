@@ -110,7 +110,7 @@ public class UndoController {
     /**
      * Clears both the undo and redo stack.
      */
-    protected void clear() {
+    public void clear() {
         undoStack.clear();
         redoStack.clear();
     }

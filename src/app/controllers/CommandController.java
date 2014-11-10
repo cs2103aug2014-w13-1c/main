@@ -369,6 +369,7 @@ public class CommandController {
         actionController.setMainApp(main);
     }
 
+    //@author A0111987X
     /**
      * This method is called by Main to set the TaskController of this class.
      * @param controller
@@ -379,6 +380,12 @@ public class CommandController {
         resetTaskList();
     }
     
+    //@author A0116703N
+    /**
+     * Sets the undoController in use. Called by Main, or any tester methods.
+     * 
+     * @param controller The undoController to be used by this controller.
+     */
     public void setUndoController(UndoController controller) {
         undoController = controller;
         actionController.setUndoController(undoController);
