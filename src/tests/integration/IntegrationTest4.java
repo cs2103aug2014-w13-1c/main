@@ -22,11 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
+ * Tests program behavior when settings data is compromised.
+ * 
  * The corrupted watdo.json was just the mid-boss. Now comes the final challenge.
  * The corrupted settings.json stands between you and your very important tasks.
  *  
  * Fourth integration test.
- * Tests program behavior when settings data is compromised.
  */
 public class IntegrationTest4 {
     @Rule

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 /**
- * First integration test.
  * Tests the correct use case of setting a task as done and undone.
  *
  * Steps taken:
@@ -24,6 +23,8 @@ import static org.junit.Assert.*;
  * 4) Set the first one to undone
  * 5) Go to display
  * 6) Exit
+ * 
+ * Fifth integration test.
  */
 public class IntegrationTest5 {
     @Rule

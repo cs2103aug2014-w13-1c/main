@@ -15,8 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * First integration test.
  * Tests the correct use case for the add, saveto and clear commands.
+ * 
+ * First integration test.
  */
 public class IntegrationTest1 {
     @Rule
