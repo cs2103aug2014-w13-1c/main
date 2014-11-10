@@ -68,7 +68,7 @@ public class CommandParserUnits {
     
     @Test
     public void canDetectKeywordsProperly() {
-        ArrayList<Keyword> testList = parserTest.getKeywords("add foo start foo end dummy priority blah");
+        ArrayList<Keyword> testList = CommandParser.getKeywords("add foo start foo end dummy priority blah");
         assertEquals(0, testList.get(0).getStartIndex());
         assertEquals(2, testList.get(0).getEndIndex());
         assertEquals(8, testList.get(1).getStartIndex());
