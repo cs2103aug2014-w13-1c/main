@@ -49,7 +49,13 @@ public class ActionController {
     private static ArrayList<TodoItem> returnList;
 
     // Individual command methods
-    // Add command method(s)
+    /**
+     * This method is used to add a new TodoItem.
+     * This method is 
+     * 
+     * @param commandObject
+     * @return A string notifying whether the method carries out properly.
+     */
     public String add(CommandObject commandObject){
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "add"));
@@ -171,6 +177,8 @@ public class ActionController {
     }
     
     /**
+     * This method is used to search a quary.
+     * 
      * Calls taskController to search for query, then updates resultList (which will be used by CommandController
      * to show to view).
      * 
@@ -218,6 +226,7 @@ public class ActionController {
     }
 
     /**
+     * This method is used to update a TodoItem.
      * Updates ModelManager and gets new data based on the CommandObject
      * 
      * @param commandObject
