@@ -33,6 +33,7 @@ public class CommandObject {
 
     /**
      * Setter for inputString.
+     * Used to store the whole user command.
      *
      * @param string inputString
      */
@@ -42,6 +43,7 @@ public class CommandObject {
 
     /**
      * Getter for inputString.
+     * Used to store the whole user command.
      *
      * @return inputString
      */
@@ -51,6 +53,7 @@ public class CommandObject {
 
     /**
      * Setter for inputStringArray.
+     * Used to store the whole user command that has been tokenized into an array.
      *
      * @param array inputStringArray
      */
@@ -60,6 +63,7 @@ public class CommandObject {
 
     /**
      * Getter for inputStringArray.
+     * Used to store the whole user command that has been tokenized into an array.
      *
      * @return inputStringArray
      */
@@ -69,6 +73,7 @@ public class CommandObject {
 
     /**
      * Setter for commandWord.
+     * Used to store the command keyword.
      *
      * @param word commandWord
      */
@@ -78,6 +83,7 @@ public class CommandObject {
 
     /**
      * Getter for commandWord.
+     * Used to store the command keyword.
      *
      * @return commandWord
      */
@@ -87,6 +93,7 @@ public class CommandObject {
 
     /**
      * Setter for commandString.
+     * Used to store the command parameter.
      *
      * @param string commandString
      */
@@ -96,6 +103,7 @@ public class CommandObject {
 
     /**
      * Getter for commandString.
+     * Used to store the command parameter.
      *
      * @return commandString
      */
@@ -105,6 +113,7 @@ public class CommandObject {
 
     /**
      * Setter for startDate.
+     * Used to store the start date of the task.
      *
      * @param date startDate
      */
@@ -114,6 +123,7 @@ public class CommandObject {
 
     /**
      * Getter for startDate.
+     * Used to store the start date of the task.
      *
      * @return startDate
      */
@@ -123,6 +133,7 @@ public class CommandObject {
 
     /**
      * Setter for endDate.
+     * Used to store the end date of the task.
      *
      * @param date endDate
      */
@@ -132,6 +143,7 @@ public class CommandObject {
 
     /**
      * Getter for endDate.
+     * Used to store the end date of the task.
      *
      * @return endDate
      */
@@ -141,6 +153,7 @@ public class CommandObject {
 
     /**
      * Setter for priority.
+     * Used to store the priority of the task.
      *
      * @param string priority
      */
@@ -150,6 +163,7 @@ public class CommandObject {
 
     /**
      * Getter for priority.
+     * Used to store the priority of the task.
      *
      * @return priority
      */
@@ -159,6 +173,7 @@ public class CommandObject {
 
     /**
      * Getter for startDateUpdated.
+     * Used to determine if start date needs to be updated.
      *
      * @return startDateUpdated
      */
@@ -168,6 +183,7 @@ public class CommandObject {
 
     /**
      * Setter for startDateUpdated.
+     * Used to determine if start date needs to be updated.
      *
      * @param updated startDateUpdated
      */
@@ -177,6 +193,7 @@ public class CommandObject {
 
     /**
      * Getter for endDateUpdated.
+     * Used to determine if end date needs to be updated.
      *
      * @return endDateUpdated
      */
@@ -186,6 +203,7 @@ public class CommandObject {
 
     /**
      * Setter for endDateUpdated.
+     * Used to determine if end date needs to be updated.
      *
      * @param updated endDateUpdated
      */
@@ -204,6 +222,7 @@ public class CommandObject {
 
     /**
      * Setter for endIndex.
+     * Used to store the end index of the commandString.
      * Only updates endIndex if the new one is smaller than the existing one.
      *
      * @param index endIndex

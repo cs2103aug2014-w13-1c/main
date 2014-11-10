@@ -4,7 +4,7 @@ package tests.units;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import app.controllers.CommandParser;
+import app.services.ParsingService;
 import app.helpers.CommandObject;
 import app.helpers.Keyword;
 import static org.junit.Assert.assertEquals;
@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class CommandParserUnits {
-    CommandParser parserTest = new CommandParser();
+    ParsingService parserTest = new ParsingService();
         
     @Test
     public void canParseProperly() {
@@ -67,7 +67,7 @@ public class CommandParserUnits {
     
     @Test
     public void canDetectKeywordsProperly() {
-        ArrayList<Keyword> testList = CommandParser.getKeywords("add foo start foo end dummy priority blah");
+        ArrayList<Keyword> testList = ParsingService.getKeywords("add foo start foo end dummy priority blah");
         assertEquals(0, testList.get(0).getStartIndex());
         assertEquals(2, testList.get(0).getEndIndex());
         assertEquals(8, testList.get(1).getStartIndex());

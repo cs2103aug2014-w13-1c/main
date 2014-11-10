@@ -77,10 +77,10 @@ public class IntegrationTest1 {
                String testInput3 = "task 3";
                String testInput4 = "task 4";
                
-               assertEquals(testInput2, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput1, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput4, testTodoItems.get(2).getTaskName());
-               assertEquals(testInput3, testTodoItems.get(3).getTaskName());
+               assertEquals(testInput4, testTodoItems.get(0).getTaskName());
+               assertEquals(testInput3, testTodoItems.get(1).getTaskName());
+               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+               assertEquals(testInput1, testTodoItems.get(3).getTaskName());
 
                // Cleanup
                testStorage.updateFile(new ArrayList<TodoItem>());

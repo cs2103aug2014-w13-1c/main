@@ -138,8 +138,8 @@
 
 package app.viewmanagers;
 
-import app.helpers.InvalidInputException;
-import app.helpers.LoggingService;
+import app.exceptions.InvalidInputException;
+import app.services.LoggingService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;

@@ -1,5 +1,5 @@
 //@author A0111987X
-package app.helpers;
+package app.exceptions;
 
 /**
  * Custom exception class to handle invalid inputs.

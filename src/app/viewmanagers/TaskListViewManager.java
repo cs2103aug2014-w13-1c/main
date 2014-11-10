@@ -33,8 +33,8 @@ I'm not the author of the code, so it will not be included here.
 
 package app.viewmanagers;
 
-import app.helpers.LoggingService;
-import app.helpers.WelcomePane;
+import app.services.LoggingService;
+import app.views.WelcomePane;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -16,7 +16,7 @@
 package app.viewmanagers;
 
 import app.Main;
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;

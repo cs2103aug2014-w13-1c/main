@@ -4,7 +4,8 @@ package app.controllers;
 import app.Main;
 import app.helpers.CommandObject;
 import app.helpers.Keyword;
-import app.helpers.LoggingService;
+import app.services.ParsingService;
+import app.services.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
@@ -45,7 +46,7 @@ public class CommandController {
     private static ModelManager modelManager;
     private static Main main;
     private static TaskController taskController;
-    private static CommandParser commandParser;
+    private static ParsingService parsingService;
     private static UndoController undoController;
 
     private static String modelManagerError;
@@ -212,7 +213,7 @@ public class CommandController {
      * during creation of ActionController and will set the main app for ActionController.
      */
     public CommandController() {
-        commandParser = new CommandParser();
+        parsingService = new ParsingService();
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
@@ -237,7 +238,6 @@ public class CommandController {
         }
         actionController = new ActionController(modelManager);
         actionController.setCommandController(this);
-        undoController = UndoController.getUndoController();
     }
 
     /**
@@ -249,7 +249,7 @@ public class CommandController {
      */
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandObject = commandParser.parseCommand(inputString);
+        CommandObject commandObject = parsingService.parseCommand(inputString);
         printString(processCommand(commandObject));
     }
 
@@ -262,7 +262,7 @@ public class CommandController {
      * @return ArrayList<Keyword> an ArrayList of Keyword
      */
     public ArrayList<Keyword> parseKeywords(String inputString) {
-        return CommandParser.getKeywords(inputString);
+        return ParsingService.getKeywords(inputString);
     }
 
     /**
@@ -326,16 +326,16 @@ public class CommandController {
         
         switch (taskController.getSortingStyle()) {
             case 0:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(0);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.TASKNAME_ENDDATE);
                 break;
             case 1:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(1);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.STARTDATE_PRIORITY);
                 break;
             case 2:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(2);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.ENDDATE_PRIORITY);
                 break;
             case 3:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(3);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.PRIORITY_ENDDATE);
                 break;
         }
     }
@@ -370,6 +370,7 @@ public class CommandController {
         actionController.setMainApp(main);
     }
 
+    //@author A0111987X
     /**
      * This method is called by Main to set the TaskController of this class.
      * @param controller
@@ -377,6 +378,18 @@ public class CommandController {
     public void setTaskController(TaskController controller) {
         taskController = controller;
         actionController.setTaskController(taskController);
+        resetTaskList();
+    }
+    
+    //@author A0116703N
+    /**
+     * Sets the undoController in use. Called by Main, or any tester methods.
+     * 
+     * @param controller The undoController to be used by this controller.
+     */
+    public void setUndoController(UndoController controller) {
+        undoController = controller;
+        actionController.setUndoController(undoController);
         resetTaskList();
     }
     
@@ -441,10 +454,16 @@ public class CommandController {
     }
 
     //@author A0116703N
+    /**
+     * @return The current setting for displaying tasks in random colors
+     */
     public Boolean areRandomColorsEnabled() {
         return modelManager.areRandomColorsEnabled();
     }
     
+    /**
+     * @return The current setting for whether notifications are displayed
+     */
     public Boolean areNotificationsEnabled() {
         try {
             return modelManager.areNotificationsEnabled();

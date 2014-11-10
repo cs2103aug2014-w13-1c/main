@@ -105,11 +105,11 @@ public class TodoItemSorter {
             return 0;
         }
         
-        // Push all 'null' to the front. This makes all floating tasks appear on top.
-        if (todoItem1Invalidity) {
+        // Push all 'null' to the back. This makes all floating tasks appear at the bottom.
+        if (todoItem2Invalidity) {
             return -1;
         }
-        if (todoItem2Invalidity) {
+        if (todoItem1Invalidity) {
             return 1;
         }
         

@@ -101,13 +101,13 @@ public class IntegrationTest2 {
                assertEquals(3, testTodoItems.size());
                
                // Then leftover data should be task 1, task 4 then task 3.
-               String testInput1 = "task 1";
+               String testInput2 = "task 2";
                String testInput3 = "task 3";
-               String testInput4 = "task 4";
+               String testInput7 = "task 7";
                
-               assertEquals(testInput1, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput4, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput3, testTodoItems.get(2).getTaskName());
+               assertEquals(testInput3, testTodoItems.get(0).getTaskName());
+               assertEquals(testInput7, testTodoItems.get(1).getTaskName());
+               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
                
                // Yay! We passed the tests. Now change back to previous directory.
                testStorage.updateFile(new ArrayList<TodoItem>());

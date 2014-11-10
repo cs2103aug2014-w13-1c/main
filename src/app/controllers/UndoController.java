@@ -30,7 +30,7 @@ public class UndoController {
      *
      * @return UndoController (singleton pattern)
      */
-    protected static UndoController getUndoController() {
+    public static UndoController getUndoController() {
         if (self == null) {
             self = new UndoController();
         }
@@ -110,7 +110,7 @@ public class UndoController {
     /**
      * Clears both the undo and redo stack.
      */
-    protected void clear() {
+    public void clear() {
         undoStack.clear();
         redoStack.clear();
     }

@@ -1,7 +1,7 @@
 package tests.units;
 
 //author A0111764L
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import org.junit.Test;
 
 import java.io.File;
@@ -47,6 +47,7 @@ public class LoggingServiceTest {
         File log = new File("./logs/watdo.log");
         log.delete();
         assertThat(log.exists(), is(false));
+        log.mkdir();
 
         /* First test that the boundary case for empty file is true */
         assertThat(log.length() == 0, is(true));
