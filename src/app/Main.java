@@ -4,6 +4,7 @@ package app;
 
 import app.controllers.CommandController;
 import app.controllers.TaskController;
+import app.controllers.UndoController;
 import app.exceptions.InvalidInputException;
 import app.services.LoggingService;
 import app.viewmanagers.RootViewManager;
@@ -11,6 +12,7 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import org.controlsfx.control.Notifications;
 import org.controlsfx.dialog.Dialogs;
 
@@ -34,6 +36,7 @@ public class Main extends Application {
 
     private CommandController commandController;
     private TaskController taskController;
+    private UndoController undoController;
     private RootViewManager rootViewManager;
 
     /**
@@ -104,9 +107,11 @@ public class Main extends Application {
     private void initControllerComponents() {
         commandController = new CommandController();
         taskController = TaskController.getTaskController();
+        undoController = UndoController.getUndoController();
         commandController.setMainApp(this);
         taskController.setMainApp(this);
         commandController.setTaskController(taskController);
+        commandController.setUndoController(undoController);
         commandController.updateView();
     }
 

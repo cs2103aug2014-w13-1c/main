@@ -43,6 +43,7 @@
 
 package app.viewmanagers;
 
+import app.controllers.TaskController;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -124,40 +125,23 @@ public class TitleBarViewManager {
      * the choiceBox.
      * @param style The SortStyle enum element (START, END, NAME, PRIORITY).
      */
-    public void setSortStyle(SortStyle style) {
+    public void setSortStyle(TaskController.SortingStyle style) {
         switch (style) {
-            case START:
+            case TASKNAME_ENDDATE:
+                sortStyleChoiceBox.setValue("TASK NAME");
+                break;
+            case STARTDATE_PRIORITY:
                 sortStyleChoiceBox.setValue("START DATE");
                 break;
-            case END:
+            case ENDDATE_PRIORITY:
                 sortStyleChoiceBox.setValue("END DATE");
                 break;
-            case PRIORITY:
+            case PRIORITY_ENDDATE:
                 sortStyleChoiceBox.setValue("PRIORITY");
-                break;
-            case NAME:
-                sortStyleChoiceBox.setValue("TASK NAME");
                 break;
         }
     }
 
-    public void setSortStyleByIndex(int index) {
-        switch(index) {
-            case 0:
-                setSortStyle(SortStyle.NAME);
-                break;
-            case 1:
-                setSortStyle(SortStyle.START);
-                break;
-            case 2:
-                setSortStyle(SortStyle.END);
-                break;
-            case 3:
-                setSortStyle(SortStyle.PRIORITY);
-                break;
-        }
-    }
-    
     /**
      * Set back-reference to the rootViewManager.
      * @param rootViewManager The RootViewManager instance where this TitleBarViewManager instance was created from.
