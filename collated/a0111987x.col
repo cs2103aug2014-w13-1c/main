@@ -1,0 +1,1875 @@
+//@author: a0111987x
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+	 */
+
+    // Undo and redo method(s)
+    public String undo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (undoController.isUndoEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            try {
+                undoController.saveRedo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(undoController.loadUndo());
+            } catch (IOException e) {
+                CommandController.notifyWithError("Failed to write to file.");
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            }
+            return MESSAGE_UNDO;
+        }
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+	 */
+
+    public String redo(CommandObject commandObject) {
+        if (!commandObject.getCommandString().isEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        }
+        if (undoController.isRedoEmpty()) {
+            return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
+        } else {
+            try {
+                undoController.saveUndo(modelManager.getTodoItemList());
+                modelManager.loadTodoItems(undoController.loadRedo());
+            } catch (IOException e) {
+                CommandController.notifyWithError("Failed to write to file.");
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            }
+            return MESSAGE_REDO;
+        }
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * This method is called by Main to set the TaskController of this class.
+     * @param controller
+     */
+    public void setTaskController(TaskController controller) {
+        taskController = controller;
+        actionController.setTaskController(taskController);
+        resetTaskList();
+    }
+    
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * Gets the current file directory from ModelManager.
+     *
+     * @return current file directory
+     */
+    public String getSaveDirectory() {
+        return modelManager.getFileDirectory();
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\TaskController.java
+	 */
+
+package app.controllers;
+
+import app.Main;
+import app.services.LoggingService;
+import app.model.TodoItem;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+import java.util.logging.Level;
+
+/**
+ * In charge of sorting and searching of tasks.
+ * Actual sorting of tasks is done in Model Manager, this just acts as an interface to that.
+ * Implemented as a singleton.
+ */
+public class TaskController {
+
+    private static TaskController self;
+    private static Main main;
+    private static DisplayType displayType;
+    private static SortingStyle sortingStyle;
+
+    /**
+     * Enum containing the various display types.
+     */
+    public static enum DisplayType {
+        ALL, DONE, UNDONE, OVERDUE, SEARCH
+    }
+
+    /**
+     * Enum containing the various sorting styles.
+     */
+    public static enum SortingStyle {
+        TASKNAME_ENDDATE, STARTDATE_PRIORITY, ENDDATE_PRIORITY, PRIORITY_ENDDATE
+    }
+
+    /**
+     * Constructor for TaskController, sets default display type and sorting style.
+     */
+    public TaskController() {
+        displayType = DisplayType.ALL;
+        sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+    }
+
+    /**
+     * Getter for TaskController.
+     *
+     * @return TaskController (singleton pattern)
+     */
+    public static TaskController getTaskController() {
+        if (self == null) {
+            self = new TaskController();
+        }
+        return self;
+    }
+
+    /**
+     * Setter for main.
+     *
+     * @param main main
+     */
+    public void setMainApp(Main main) {
+        TaskController.main = main;
+    }
+
+    /**
+     * Returns all results whose task name contains the search query.
+     *
+     * @param query search query
+     * @return      tasks whose task name contains the search query
+     */
+    public ArrayList<TodoItem> instantSearch(String query) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (todo.getTaskName().toLowerCase().
+                    contains(query.toLowerCase())) {
+                results.add(todo);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * Returns all tasks.
+     *
+     * @return all tasks
+     */
+    public ArrayList<TodoItem> getAllTasks() {
+        displayType = DisplayType.ALL;
+        return CommandController.getTaskList();
+    }
+
+    /**
+     * Returns all done tasks.
+     *
+     * @return done tasks
+     */
+    public ArrayList<TodoItem> getDoneTasks() {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (todo.isDone()) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.DONE;
+        return results;
+    }
+
+    /**
+     * Returns all undone tasks.
+     * Implemented as the default view.
+     *
+     * @return undone tasks
+     */
+    public ArrayList<TodoItem> getUndoneTasks() {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (!todo.isDone()) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.UNDONE;
+        return results;
+    }
+
+    /**
+     * Returns all overdue tasks.
+     *
+     * @return overdue tasks
+     */
+    public ArrayList<TodoItem> getOverdueTasks() {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (!todo.isDone() && todo.isOverdue()) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.OVERDUE;
+        return results;
+    }
+
+    /**
+     * Return tasks that start on the specified day.
+     *
+     * @param date  start date
+     * @return      tasks that start on the specified day
+     */
+    public ArrayList<TodoItem> getTasksStartingOn(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (todo.getStartDate() != null &&
+                todo.getStartDate().getDay() == date.getDay() &&
+                todo.getStartDate().getMonth() == date.getMonth() &&
+                todo.getStartDate().getYear() == date.getYear()) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    /**
+     * Returns tasks that end on the specified day.
+     *
+     * @param date  end date
+     * @return      tasks that end on the specified day
+     */
+    public ArrayList<TodoItem> getTasksEndingOn(Date date) {
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (todo.getEndDate() != null &&
+                    todo.getEndDate().getDay() == date.getDay() &&
+                    todo.getEndDate().getMonth() == date.getMonth() &&
+                    todo.getEndDate().getYear() == date.getYear()) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    /**
+     * Returns tasks that fall within the given date range.
+     * Includes tasks whose start or end dates fall within the date range.
+     * Also includes tasks which start before and end after the date range.
+     *
+     * @param start start date
+     * @param end   end date
+     * @return      tasks within that date range
+     */
+    public ArrayList<TodoItem> getTasksWithinDateRange(Date start, Date end) {
+        // setting date range to be the full days for both the start and end dates
+        start.setHours(0);
+        start.setMinutes(0);
+        start.setSeconds(0);
+        end.setHours(23);
+        end.setMinutes(59);
+        end.setSeconds(59);
+        ArrayList<TodoItem> results = new ArrayList<>();
+        for (TodoItem todo : CommandController.getTaskList()) {
+            if (todo.getStartDate() != null && todo.getEndDate() != null && todo.getStartDate().before(start) && todo.getEndDate().after(end)) {
+                results.add(todo);
+            } else if (todo.getStartDate() != null && !todo.getStartDate().before(start) && !todo.getStartDate().after(end)) {
+                results.add(todo);
+            } else if (todo.getEndDate() != null && !todo.getEndDate().before(start) && !todo.getEndDate().after(end)) {
+                results.add(todo);
+            }
+        }
+        displayType = DisplayType.SEARCH;
+        return results;
+    }
+
+    /**
+     * Setter for sortingStyle.
+     * Sets sorting style for model manager and calls for a re-sort of the task list.
+     * Finally calls for an view update of the task list to reflect the new sorting style.
+     *
+     * @param newSortingStyle sortingStyle
+     */
+    public void setSortingStyle(int newSortingStyle) {
+        System.out.println(newSortingStyle);
+        switch (newSortingStyle) {
+            case 0 :
+                sortingStyle = SortingStyle.TASKNAME_ENDDATE;
+                break;
+            case 1 :
+                sortingStyle = SortingStyle.STARTDATE_PRIORITY;
+                break;
+            case 2 :
+                // default sorting style
+                sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
+            case 3 :
+                sortingStyle = SortingStyle.PRIORITY_ENDDATE;
+                break;
+            default :
+                sortingStyle = SortingStyle.ENDDATE_PRIORITY;
+                break;
+        }
+        System.out.println(sortingStyle);
+        try {
+            main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        } catch (NullPointerException e) {
+            // No ModelManager, so don't do anything
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage()); 
+        }
+        main.getCommandController().resetTaskList();
+        main.getCommandController().updateView();
+    }
+
+    /**
+     * @return The current sorting style of the program.
+     */
+    public int getSortingStyle() {
+        try {
+            return main.getCommandController().getModelManager().getSortingStyle();
+        } catch (NullPointerException e) {
+            // Model manager doesn't exist, so we can pass placeholder data.
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return -1;
+        }
+    }
+    
+    /**
+     * Acts as the interface between the view and the model manager for getting the last modified task's UUID.
+     *
+     * @return last modified UUID
+     */
+    public UUID getLastModifiedUUID() {
+        return main.getCommandController().getModelManager().getLastModifiedUUID();
+    }
+
+    /**
+     * Getter for displayType.
+     *
+     * @return displayType
+     */
+    public DisplayType getDisplayType() {
+        return displayType;
+    }
+
+    /**
+     * Setter for displayType.
+     *
+     * @param type displayType
+     */
+    public void setDisplayType(DisplayType type) {
+        displayType = type;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\TaskController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\UndoController.java
+	 */
+
+package app.controllers;
+
+import app.model.TodoItem;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+/**
+ * In charge of undos and redos.
+ * Implements undos and redos as two stacks of ArrayLists of TodoItems.
+ * Implemented as a singleton.
+ */
+public class UndoController {
+
+    private static UndoController self;
+    private static Stack<ArrayList<TodoItem>> undoStack;
+    private static Stack<ArrayList<TodoItem>> redoStack;
+
+    /**
+     * Initialises both the undo and redo stacks.
+     */
+    private UndoController() {
+        undoStack = new Stack<>();
+        redoStack = new Stack<>();
+    }
+
+    /**
+     * Getter for UndoController.
+     *
+     * @return UndoController (singleton pattern)
+     */
+    public static UndoController getUndoController() {
+        if (self == null) {
+            self = new UndoController();
+        }
+        return self;
+    }
+
+    /**
+     * Saves an ArrayList of TodoItems to the undo stack using deep cloning.
+     *
+     * @param list ArrayList of TodoItems to be saved.
+     */
+    protected void saveUndo(ArrayList<TodoItem> list) {
+        ArrayList<TodoItem> undo = new ArrayList<>();
+        for (TodoItem todo : list) {
+            undo.add(new TodoItem(todo.getTaskName(),
+                    todo.getStartDate(),
+                    todo.getEndDate(),
+                    todo.getPriority(),
+                    todo.isDone()));
+        }
+        undoStack.push(undo);
+    }
+
+    /**
+     * Saves an ArrayList of TodoItems to the redo stack using deep cloning.
+     *
+     * @param list ArrayList of TodoItems to be saved.
+     */
+    protected void saveRedo(ArrayList<TodoItem> list) {
+        ArrayList<TodoItem> redo = new ArrayList<>();
+        for (TodoItem todo : list) {
+            redo.add(new TodoItem(todo.getTaskName(),
+                    todo.getStartDate(),
+                    todo.getEndDate(),
+                    todo.getPriority(),
+                    todo.isDone()));
+        }
+        redoStack.push(redo);
+    }
+
+    /**
+     * Checks if undo stack is empty.
+     *
+     * @return Status of undo stack.
+     */
+    public boolean isUndoEmpty() {
+        return undoStack.isEmpty();
+    }
+
+    /**
+     * Checks if redo stack is empty.
+     *
+     * @return Status of redo stack.
+     */
+    public boolean isRedoEmpty() {
+        return redoStack.isEmpty();
+    }
+
+    /**
+     * Pops an ArrayList of TodoItems from the undo stack.
+     *
+     * @return ArrayList of TodoItems
+     */
+    protected ArrayList<TodoItem> loadUndo() {
+        return undoStack.pop();
+    }
+
+    /**
+     * Pops an ArrayList of TodoItems from the redo stack.
+     *
+     * @return ArrayList of TodoItems
+     */
+    protected ArrayList<TodoItem> loadRedo() {
+        return redoStack.pop();
+    }
+
+    /**
+     * Clears both the undo and redo stack.
+     */
+    public void clear() {
+        undoStack.clear();
+        redoStack.clear();
+    }
+
+    /**
+     * Clears the redo stack.
+     */
+    protected void clearRedo() {
+        redoStack.clear();
+    }
+
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\UndoController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\exceptions\InvalidInputException.java
+	 */
+
+package app.exceptions;
+
+/**
+ * Custom exception class to handle invalid inputs.
+ */
+public class InvalidInputException extends Exception {
+
+    /**
+     * Calls parent (Exception) with Invalid Input Exception message.
+     *
+     * @param message Error message that describes the exception.
+     */
+    public InvalidInputException(String message) {
+        super("Invalid Input Exception: " + message);
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\exceptions\InvalidInputException.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\helpers\CommandObject.java
+	 */
+
+package app.helpers;
+
+import java.util.Date;
+
+/**
+ * CommandObject is a class purely to encapsulate all the details related to a command.
+ * The class is used only to store information and thus is mainly made out of
+ * getter and setter methods.
+ */
+public class CommandObject {
+    private String inputString;
+    private String commandWord;
+    private String commandString;
+    private int endIndex;
+    private Date startDate;
+    private Date endDate;
+    private boolean startDateKeyword;
+    private boolean endDateKeyword;
+    private String priority;
+    private String[] inputStringArray;
+
+    /**
+     * Constructor for CommandObject.
+     * Sets setStartDateUpdated and setEndDateUpdated to false.
+     * Sets endIndex to 1000000000 (a very large number).
+     */
+    public CommandObject() {
+        setStartDateKeyword(false);
+        setEndDateKeyword(false);
+        endIndex = 1000000000;
+    }
+
+    /**
+     * Setter for inputString.
+     * Used to store the whole user command.
+     *
+     * @param string inputString
+     */
+    public void setInputString(String string) {
+        inputString = string;
+    }
+
+    /**
+     * Getter for inputString.
+     * Used to store the whole user command.
+     *
+     * @return inputString
+     */
+    public String getInputString() {
+        return inputString;
+    }
+
+    /**
+     * Setter for inputStringArray.
+     * Used to store the whole user command that has been tokenized into an array.
+     *
+     * @param array inputStringArray
+     */
+    public void setInputStringArray(String[] array) {
+        inputStringArray = array;
+    }
+
+    /**
+     * Getter for inputStringArray.
+     * Used to store the whole user command that has been tokenized into an array.
+     *
+     * @return inputStringArray
+     */
+    public String[] getInputStringArray() {
+        return inputStringArray;
+    }
+
+    /**
+     * Setter for commandWord.
+     * Used to store the command keyword.
+     *
+     * @param word commandWord
+     */
+    public void setCommandWord(String word) {
+        commandWord = word;
+    }
+
+    /**
+     * Getter for commandWord.
+     * Used to store the command keyword.
+     *
+     * @return commandWord
+     */
+    public String getCommandWord() {
+        return commandWord;
+    }
+
+    /**
+     * Setter for commandString.
+     * Used to store the command parameter.
+     *
+     * @param string commandString
+     */
+    public void setCommandString(String string) {
+        commandString = string;
+    }
+
+    /**
+     * Getter for commandString.
+     * Used to store the command parameter.
+     *
+     * @return commandString
+     */
+    public String getCommandString() {
+        return commandString;
+    }
+
+    /**
+     * Setter for startDate.
+     * Used to store the start date of the task.
+     *
+     * @param date startDate
+     */
+    public void setStartDate(Date date) {
+        startDate = date;
+    }
+
+    /**
+     * Getter for startDate.
+     * Used to store the start date of the task.
+     *
+     * @return startDate
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Setter for endDate.
+     * Used to store the end date of the task.
+     *
+     * @param date endDate
+     */
+    public void setEndDate(Date date) {
+        endDate = date;
+    }
+
+    /**
+     * Getter for endDate.
+     * Used to store the end date of the task.
+     *
+     * @return endDate
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Setter for priority.
+     * Used to store the priority of the task.
+     *
+     * @param string priority
+     */
+    public void setPriority(String string) {
+        priority = string;
+    }
+
+    /**
+     * Getter for priority.
+     * Used to store the priority of the task.
+     *
+     * @return priority
+     */
+    public String getPriority() {
+        return priority;
+    }
+
+    /**
+     * Getter for startDateUpdated.
+     * Used to determine if start date needs to be updated.
+     *
+     * @return startDateUpdated
+     */
+    public boolean hasStartDateKeyword() {
+        return startDateKeyword;
+    }
+
+    /**
+     * Setter for startDateUpdated.
+     * Used to determine if start date needs to be updated.
+     *
+     * @param updated startDateUpdated
+     */
+    public void setStartDateKeyword(boolean keyword) {
+        startDateKeyword = keyword;
+    }
+
+    /**
+     * Getter for endDateUpdated.
+     * Used to determine if end date needs to be updated.
+     *
+     * @return endDateUpdated
+     */
+    public boolean hasEndDateKeyword() {
+        return endDateKeyword;
+    }
+
+    /**
+     * Setter for endDateUpdated.
+     * Used to determine if end date needs to be updated.
+     *
+     * @param updated endDateUpdated
+     */
+    public void setEndDateKeyword(boolean keyword) {
+        endDateKeyword = keyword;
+    }
+
+    /**
+     * Getter for endIndex.
+     *
+     * @return endIndex
+     */
+    public int getEndIndex() {
+        return endIndex;
+    }
+
+    /**
+     * Setter for endIndex.
+     * Used to store the end index of the commandString.
+     * Only updates endIndex if the new one is smaller than the existing one.
+     *
+     * @param index endIndex
+     */
+    public void setEndIndex(int index) {
+        if (endIndex > index) {
+            endIndex = index;
+        }
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\helpers\CommandObject.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\helpers\Keyword.java
+	 */
+
+package app.helpers;
+
+/**
+ * Class to store start and end indexes of words. Indexes are positions in the command string.
+ * Used for keyword highlighting to pass indexes of words to tell the inputField which words to highlight.
+ */
+public class Keyword {
+
+    private final int startIndex;
+    private final int endIndex;
+
+    /**
+     * Constructor, takes in the start and end indexes of a word.
+     * The word itself is not stored.
+     *
+     * @param start Start index of word.
+     * @param end   End index of word.
+     */
+    public Keyword(int start, int end) {
+        startIndex = start;
+        endIndex = end;
+    }
+
+    /**
+     * Getter for the startIndex.
+     *
+     * @return startIndex
+     */
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    /**
+     * Getter for the endIndex.
+     *
+     * @return endIndex
+     */
+    public int getEndIndex() {
+        return endIndex;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\helpers\Keyword.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\services\KeywordDetectorService.java
+	 */
+
+package app.services;
+
+import app.helpers.Keyword;
+import org.fxmisc.richtext.StyleSpans;
+import org.fxmisc.richtext.StyleSpansBuilder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+/**
+ * Helper class in charge of converting an ArrayList of Keywords which contain indexes to words that the
+ * ParsingService has recognised, to a StyleSpans collection which is used to tell the inputField which
+ * words to highlight.
+ */
+public class KeywordDetectorService {
+
+    /**
+     * Takes in an ArrayList of Keywords and returns a StyleSpans collection which is then used
+     * for keyword highlighting.
+     *
+     * Code is adapted from:
+     * https://github.com/TomasMikula/RichTextFX/blob/master/richtextfx-demos/src/main/java/org/fxmisc/richtext/demo/JavaKeywords.java
+     *
+     * @param keywords  ArrayList of Keywords.
+     * @param command   Command string that was entered.
+     * @return          StyleSpans collection.
+     */
+    public static StyleSpans<Collection<String>> getStyleSpans(ArrayList<Keyword> keywords, String command) {
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        int lastWordEnd = 0;
+        for (Keyword keyword : keywords) {
+            spansBuilder.add(Collections.emptyList(), keyword.getStartIndex() - lastWordEnd);
+            spansBuilder.add(Collections.singleton("keyword"), keyword.getEndIndex() - keyword.getStartIndex() + 1);
+            lastWordEnd = keyword.getEndIndex() + 1;
+        }
+        spansBuilder.add(Collections.emptyList(), command.length() - lastWordEnd);
+        return spansBuilder.create();
+    }
+
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\services\KeywordDetectorService.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\HelpViewManager.java
+	 */
+
+package app.viewmanagers;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+
+/* HelpView.fxml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
+      prefWidth="1000.0" style="-fx-background-color: rgba(0, 0, 0, 0.3);" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.HelpViewManager">
+    <AnchorPane layoutX="275.0" layoutY="50.0" minHeight="0.0" minWidth="0.0" prefHeight="601.0" prefWidth="450.0"
+                style="-fx-background-color: black;">
+        <Label alignment="CENTER" layoutX="32.0" layoutY="14.0" prefHeight="53.0" prefWidth="386.0"
+               text="Need some help using wat do?" textFill="WHITE">
+            <font>
+                <Font name="System Bold" size="22.0"/>
+            </font>
+        </Label>
+        <Button fx:id="okButton" layoutX="321.0" layoutY="543.0" mnemonicParsing="false" prefHeight="26.0"
+                prefWidth="97.0" text="GOT IT"/>
+        <Label fx:id="helpCommands" layoutX="32.0" layoutY="66.0" prefHeight="460.0" prefWidth="386.0"
+               textFill="WHITE" wrapText="true">
+            <font>
+                <Font size="16.0"/>
+            </font>
+        </Label>
+    </AnchorPane>
+</Pane>
+ */
+
+
+/**
+ * View manager for the Help View. View contains a label with the available commands that the user
+ * can use in the program, and an OK button.
+ */
+public class HelpViewManager {
+
+    @FXML
+    private Button okButton;
+
+    private RootViewManager rootViewManager;
+
+    @FXML
+    private Label helpCommands;
+
+    /**
+     * Populates label with help text.
+     */
+    @FXML
+    private void initialize() {
+        helpCommands.setText("Here are the other commands you can use:\n" +
+                "\n" +
+                "add <task name> [start | end | priority]\n" +
+                "delete <task index>\n" +
+                "done <task index>\n" +
+                "undone <task index>\n" +
+                "update <task index> [task name | start | end | priority]\n" +
+                "search <task name>\n" +
+                "search [start | end]\n" +
+                "sort [start / end / priority]\n" +
+                "display [done / all / overdue]\n" +
+                "undo\n" +
+                "redo\n" +
+                "help\n" +
+                "settings\n" +
+                "clear\n" +
+                "exit\n" +
+                "\n" +
+                "Other things you can do:\n" +
+                "Press [TAB] when entering the first word for auto-complete\n" +
+                "Press [UP] to return to your last entered command");
+        okButton.setOnAction((event) -> rootViewManager.closeHelp());
+    }
+
+    /**
+     * Setter for rootViewManager
+     *
+     * @param rootViewManager The rootViewManager that initialises HelpViewManager.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+
+    /**
+     * Sets okButton as default button and brings focus to it.
+     */
+    public void focusOnButton() {
+        okButton.setDefaultButton(true);
+        okButton.requestFocus();
+    }
+
+    /**
+     * Unsets okButton as the default button.
+     */
+    public void cancelFocusOnButton() {
+        okButton.setDefaultButton(false);
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\HelpViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\InputFieldViewManager.java
+	 */
+
+package app.viewmanagers;
+
+import app.services.KeywordDetectorService;
+import app.services.ParsingService;
+import app.exceptions.InvalidInputException;
+import app.helpers.Keyword;
+import app.services.LoggingService;
+import app.model.TodoItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import org.fxmisc.richtext.StyleClassedTextArea;
+import org.fxmisc.richtext.StyleSpans;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
+
+/* inputField.css
+.input-field {
+    -fx-font-family: Helvetica;
+    -fx-font-size: 30px;
+    -fx-background-color: #C7F464;
+    -fx-padding: 15px;
+}
+
+.keyword {
+    -fx-fill: #C44D58;
+    -fx-font-weight: bold;
+}
+ */
+
+/**
+ * View Manager for the inputField.
+ * inputField is implemented using RichTextFX to allow for per character styling, which is then used
+ * for keyword highlighting.
+ *
+ * InputFieldViewManager is also in charge of the following things:
+ * - real-time search: task list is updated with search results as the user types, only works for task name queries,
+ * and not with date queries
+ * - real-time cell highlighting: highlights (and scrolls to if the command was entered by the user) the relevant cell
+ * to indicate the task which the command will have an effect on (used for update/delete/done/undone)
+ * - pressing the up key in the inputField populates it with the last entered command (regardless of its validity)
+ * - auto-complete for keywords: using tab for auto-complete, which only works for the first word,
+ * having multiple matches will pop up a notification telling the user the possible keywords that match
+ */
+public class InputFieldViewManager {
+
+    private String lastCommand;
+    private StyleClassedTextArea inputField;
+    private RootViewManager rootViewManager;
+    private Boolean searchState;
+    private Boolean isFromButton;
+
+    /**
+     * Constructor for InputFieldViewManager, initialises the relevant components for InputFieldViewManager,
+     * then adds two listeners, one for input changes and one for key presses.
+     */
+    public InputFieldViewManager() {
+        initInputFieldViewManager();
+        inputField.textProperty().addListener(this::keyListener);
+        inputField.addEventFilter(KeyEvent.KEY_PRESSED, this::keyPressListener);
+    }
+
+    /**
+     * Initialises the relevant components for InputFieldViewManager, such as the relevant styles from the css file.
+     */
+    private void initInputFieldViewManager() {
+        lastCommand = "";
+        inputField = new StyleClassedTextArea();
+        inputField.setPrefHeight(100);
+        inputField.getStylesheets().add("app/stylesheets/inputField.css");
+        inputField.getStyleClass().add("input-field");
+        inputField.setWrapText(true);
+        searchState = false;
+        isFromButton = false;
+    }
+
+    /**
+     * Listener for changes in inputField.
+     * Removes spaces (" ") if they are the first character in the command.
+     * Calls the methods in charge of keyword highlighting, instant search and cell highlighting.
+     *
+     * @param observable    Observable entity which isn't used.
+     * @param oldValue      Old value of the inputField.
+     * @param newValue      New value of the inputField.
+     */
+    private void keyListener(javafx.beans.Observable observable, String oldValue, String newValue) {
+        if (newValue.length() > 0 && newValue.substring(0, 1).equals(" ")) {
+            // this doesn't allow for spaces (" ") as the first character in the command.
+            inputField.replaceText(newValue.substring(1));
+        } else {
+            inputField.setStyleSpans(0, keywordDetection(newValue));
+        }
+        instantSearchAndHighlight();
+    }
+
+    /**
+     * Listener for key presses in the inputField.
+     * If the [ENTER] key is pressed, sends current user input to the CommandController for execution.
+     * If the [UP] key is pressed, replaces the current text with the last entered command.
+     * If the [TAB] key is pressed, calls auto-complete method.
+     *
+     * @param event KeyEvent
+     */
+    private void keyPressListener(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            if (!inputField.getText().equals("")) {
+                lastCommand = inputField.getText();
+            }
+            try {
+                checkCommandLengthAndExecute(lastCommand);
+            } catch (InvalidInputException e) {
+                LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
+            }
+        } else if (event.getCode() == KeyCode.UP && !lastCommand.equals("") &&
+                !lastCommand.equals(inputField.getText())) {
+            event.consume();
+            inputField.replaceText(lastCommand);
+        } else if (event.getCode() == KeyCode.TAB) {
+            event.consume();
+            String completedString = autoComplete(inputField.getText());
+            if (completedString != null) {
+                inputField.replaceText(completedString + " ");
+            }
+        }
+    }
+
+    /**
+     * Calls relevant methods when a real-time search or cell highlight situation is detected.
+     * This detection is purely based on the first word of the current user input.
+     * Also resets the placeholder of the task list to the welcome splash page.
+     */
+    private void instantSearchAndHighlight() {
+        if (inputField.getText().startsWith("search ")) {
+            searchState = true;
+            instantSearch(inputField.getText().substring(7));
+        } else if (inputField.getText().startsWith("update ") ||
+                inputField.getText().startsWith("delete ") ||
+                inputField.getText().startsWith("undone ") ||
+                inputField.getText().startsWith("done ")) {
+            highlightCell(inputField.getText().split(" ", -1)[1], isFromButton);
+        } else {
+            if (searchState) {
+                rootViewManager.getMainApp().getCommandController().updateView();
+                searchState = false;
+            }
+            rootViewManager.getTaskListViewManager().setUserGuidePlaceholder();
+        }
+    }
+
+    /**
+     * Highlights the task based on the identified index in the current user input.
+     *
+     * Scroll to task is only enabled if the user types the command that triggers cell highlighting,
+     * if the inputField is populated using a button (done, update or delete), the task list does not
+     * scroll to the highlighted task in order not to confuse the user.
+     *
+     * @param index Index of the task to highlight.
+     * @param fromButton True if the command came from pressing a button rather than the user typing it.
+     */
+    private void highlightCell(String index, boolean fromButton) {
+        int highlightIndex;
+        try {
+            highlightIndex = Integer.parseInt(index);
+        } catch (NumberFormatException e) {
+            highlightIndex = -1;
+        }
+        if (highlightIndex > 0 &&
+                highlightIndex <= rootViewManager.getTaskListViewManager().getTaskData().size()) {
+            if (!fromButton) {
+                rootViewManager.getTaskListViewManager().scrollTo(highlightIndex - 1);
+            }
+            rootViewManager.getTaskListViewManager().highlight(highlightIndex - 1);
+        }
+    }
+
+    /**
+     * For real-time searching for only task name queries. Does not apply to queries with dates.
+     * Updates task list with real-time results based on search query.
+     * Updates task list placeholder if there are no search results.
+     *
+     * @param query search query
+     */
+    private void instantSearch(String query) {
+        LoggingService.getLogger().log(Level.INFO, "Instant search query: \"" + query + "\"");
+        ArrayList<TodoItem> results =
+                rootViewManager.getMainApp().getTaskController().instantSearch(query);
+        rootViewManager.getMainApp().getCommandController().updateView(results);
+        if (results.isEmpty() && rootViewManager.getMainApp().getCommandController().getModelManager() != null) {
+            rootViewManager.getTaskListViewManager().setEmptySearchPlaceholder();
+        }
+    }
+
+    /**
+     * Generates a list of matching keywords taken from the ParsingService based on the current user input.
+     *
+     * @param command user input
+     * @return Only match for keyword or null if there is no match or more than one match.
+     */
+    private String autoComplete(String command) {
+        ArrayList<String> results = new ArrayList<>();
+        for (String keyword : ParsingService.commandKeywords) {
+            if (command.length() < keyword.length() && command.equals(keyword.substring(0, command.length()))) {
+                results.add(keyword);
+            }
+        }
+        return autoCompleteResults(results);
+    }
+
+    /**
+     * Based on the ArrayList of possible matches of keywords, if there is just one, it returns that keyword.
+     * If there are more than one, it displays all possibilities in a notification and then returns null.
+     * Also returns null if there are no results.
+     *
+     * @param results ArrayList of Strings which are the matching keywords.
+     * @return Only match for keyword or null if there is no match or more than one match.
+     */
+    private String autoCompleteResults(ArrayList<String> results) {
+        if (results.size() == 0) {
+            return null;
+        } else if (results.size() == 1) {
+            return results.get(0);
+        } else {
+            String multipleKeywords = "Possible keywords: ";
+            for (String result : results) {
+                multipleKeywords = multipleKeywords + result + " ";
+            }
+            rootViewManager.getMainApp().showInfoNotification("AutoComplete", multipleKeywords);
+            return null;
+        }
+    }
+
+    /**
+     * Checks to make sure the command is not empty, if not it throws an Invalid Input Exception.
+     *
+     * @param command user input
+     * @throws InvalidInputException
+     */
+    public void checkCommandLengthAndExecute(String command) throws InvalidInputException {
+        if (command.length() == 0) {
+            throw new InvalidInputException("empty command");
+        } else {
+            assert command.length() > 0;
+            inputField.clear();
+            LoggingService.getLogger().log(Level.INFO, "Command passed to CommandController: \"" + command + "\"");
+            rootViewManager.getMainApp().getCommandController().parseCommand(command);
+        }
+    }
+
+    /**
+     * Gets the ArrayList of Keywords from CommandController (which passes it to ParsingService) to figure out
+     * which keywords to highlight based on the current user input string. Passes the ArrayList to KeywordDetectorService
+     * to get the StyleSpans collection for use with RichTextFX.
+     *
+     * @param command input string
+     * @return StyleSpans collection with the information needed to determine which keywords to highlight.
+     */
+    private StyleSpans<Collection<String>> keywordDetection(String command) {
+        ArrayList<Keyword> keywords = rootViewManager.getMainApp().getCommandController().parseKeywords(command);
+        return KeywordDetectorService.getStyleSpans(keywords, command);
+    }
+
+    /**
+     * Setter for isFromButton.
+     * Used for cell highlighting to determine if the task list should scroll to the highlighted task.
+     *
+     * @param newIsFromButton isFromButton
+     */
+    protected void setFromButton(boolean newIsFromButton) {
+        isFromButton = newIsFromButton;
+    }
+
+    /**
+     * Getter for the inputField. Used mainly by rootViewManager to interact with the inputField.
+     *
+     * @return inputField
+     */
+    public StyleClassedTextArea getInputField() {
+        return inputField;
+    }
+
+    /**
+     * Setter for rootViewManager
+     *
+     * @param rootViewManager The rootViewManager that initialises InputFieldViewManager.
+     */
+    public void setRootViewManager(RootViewManager rootViewManager) {
+        this.rootViewManager = rootViewManager;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\InputFieldViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Initialises the Help View.
+     *
+     * @throws IOException Throw IO Exception if the FXML file cannot be found/loaded.
+     */
+    private void initHelpView() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(mainApp.getResourceURL("views/HelpView.fxml"));
+        helpView = loader.load();
+        helpViewManager = loader.getController();
+        helpViewManager.setRootViewManager(this);
+        rootLayout.getChildren().add(helpView);
+        helpView.toBack();
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Brings help view to front.
+     */
+    public void openHelp() {
+        helpView.toFront();
+        helpViewManager.focusOnButton();
+    }
+
+    /**
+     * Sends help view to back.
+     */
+    public void closeHelp() {
+        helpView.toBack();
+        helpViewManager.cancelFocusOnButton();
+        inputField.requestFocus();
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+	 */
+
+    /**
+     * Populates the inputField with a specified string and brings it into focus.
+     *
+     * @param text String to populate the inputField with.
+     */
+    public void setAndFocusInputField(String text) {
+        if (!inputField.getText().equals(text)) {
+            inputFieldViewManager.setFromButton(true);
+            inputField.replaceText(text);
+            inputFieldViewManager.setFromButton(false);
+            inputField.positionCaret(text.length());
+            inputField.requestFocus();
+        } else {
+            inputField.requestFocus();
+        }
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\viewmanagers\RootViewManager.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\views\WelcomePane.java
+	 */
+
+package app.views;
+
+import javafx.geometry.Pos;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.*;
+
+/**
+ * Creates the Welcome Splash Page that is shown when there are no tasks.
+ */
+public class WelcomePane {
+
+    private final GridPane welcomePane;
+
+    /**
+     * Initialises and populates the GridPane containing the Welcome Splash Page.
+     */
+    public WelcomePane() {
+        welcomePane = new GridPane();
+        welcomePane.setAlignment(Pos.CENTER);
+        String family = "Helvetica";
+        double size = 30;
+        TextFlow textFlow = new TextFlow();
+        textFlow.setTextAlignment(TextAlignment.CENTER);
+        textFlow.setLineSpacing(10);
+
+        Text text1 = new Text("Welcome to wat do\n\n");
+        text1.setFont(Font.font(family, FontWeight.BOLD, size + 10));
+
+        Text text2 = new Text("To add a new task, enter:\n");
+        text2.setFont(Font.font(family, size));
+
+        Text text3 = new Text("add ");
+        text3.setFont(Font.font(family, FontWeight.BOLD, size));
+
+        Text text4 = new Text("<task name>\n\n");
+        text4.setFont(Font.font(family, FontPosture.ITALIC, size));
+
+        Text text5 = new Text("Type ");
+        text5.setFont(Font.font(family, size));
+
+        Text text6 = new Text("help");
+        text6.setFont(Font.font(family, FontWeight.BOLD, size));
+
+        Text text7 = new Text(" for more commands");
+        text7.setFont(Font.font(family, size));
+
+        textFlow.getChildren().addAll(text1, text2, text3, text4, text5, text6, text7);
+        welcomePane.add(textFlow, 0, 0);
+    }
+
+    /**
+     * Getter for welcomePane.
+     *
+     * @return GridPane containing Welcome Splash Page.
+     */
+    public GridPane getWelcomePane() {
+        return welcomePane;
+    }
+
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\views\WelcomePane.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\RootViewManagerStub.java
+	 */
+
+package tests.units;
+
+import app.viewmanagers.RootViewManager;
+import app.viewmanagers.TaskListViewManager;
+import app.viewmanagers.TitleBarViewManager;
+
+/**
+ * RootViewManager stub created for TaskControllerTest.
+ */
+public class RootViewManagerStub extends RootViewManager {
+
+    /**
+     * Empty constructor.
+     */
+    RootViewManagerStub() {
+        // do nothing
+    }
+
+    /**
+     * Returns a new TitleBarViewManagerStub.
+     *
+     * @return TitleBarViewManagerStub
+     */
+    @Override
+    public TitleBarViewManager getTitleBarViewManager() {
+        return new TitleBarViewManagerStub();
+    }
+
+    /**
+     * Returns a new TaskListViewManagerStub.
+     *
+     * @return TaskListViewManagerStub
+     */
+    @Override
+    public TaskListViewManager getTaskListViewManager() {
+        return new TaskListViewManagerStub();
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\RootViewManagerStub.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\TaskControllerTest.java
+	 */
+
+package tests.units;
+
+import app.Main;
+import app.controllers.CommandController;
+import app.controllers.TaskController;
+import app.controllers.UndoController;
+import app.viewmanagers.RootViewManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Test class for TaskController, tests filtering of tasks.
+ */
+public class TaskControllerTest extends Main {
+
+    private TaskController taskController;
+    private CommandController commandController;
+
+    /**
+     * Setup needed to run tests, includes creating a new CommandController and TaskController.
+     * Changes to test directory.
+     */
+    @Before
+    public void setUp() {
+        commandController = new CommandController();
+        commandController.setMainApp(this);
+        taskController = TaskController.getTaskController();
+        taskController.setMainApp(this);
+        commandController.setTaskController(taskController);
+        commandController.setUndoController(UndoController.getUndoController());
+        commandController.parseCommand("saveto ./testDirectory");
+        commandController.parseCommand("clear");
+    }
+
+    /**
+     * Teardown for tests, clears the task list and sets commandController and taskController to null.
+     * Changes back to default directory.
+     */
+    @After
+    public void tearDown() {
+        commandController.parseCommand("clear");
+        commandController.parseCommand("saveto ./");
+        commandController = null;
+        taskController = null;
+    }
+
+    /**
+     * Override for showInfoNotification that just prints the message.
+     *
+     * @param title The title of the notification.
+     * @param message The message to be shown.
+     */
+    @Override
+    public void showInfoNotification(String title, String message) {
+        System.out.println(title + ": " + message);
+    }
+
+    /**
+     * Override for showErrorNotification that just prints the message.
+     *
+     * @param title The title of the notification.
+     * @param message The error message to be shown.
+     */
+    @Override
+    public void showErrorNotification(String title, String message) {
+        System.out.println(title + ": " + message);
+    }
+
+    /**
+     * Override for getRootViewManager that returns a RootViewManagerStub instead of a RootViewManager.
+     *
+     * @return RootViewManagerStub
+     */
+    @Override
+    public RootViewManager getRootViewManager() {
+        return new RootViewManagerStub();
+    }
+
+    /**
+     * Testing the ability to search within all task names.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testInstantSearch() throws Exception {
+        // testing with an empty task list
+        assertEquals(taskController.instantSearch("task").size(), 0);
+
+        // testing search for tasks
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.instantSearch("task").size(), 3);
+        assertEquals(taskController.instantSearch("1").size(), 1);
+        assertEquals(taskController.instantSearch("222").size(), 1);
+    }
+
+    /**
+     * Testing the ability to filter all tasks.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetAllTasks() throws Exception {
+        // testing with an empty task list
+        assertEquals(taskController.getAllTasks().size(), 0);
+
+        // testing that added tasks are in all tasks
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.getAllTasks().size(), 3);
+
+        // testing that deleting tasks results in less tasks
+        commandController.parseCommand("delete 2");
+        assertEquals(taskController.getAllTasks().size(), 2);
+
+        // testing for more adding of tasks
+        commandController.parseCommand("add task 444");
+        commandController.parseCommand("add task 555");
+        assertEquals(taskController.getAllTasks().size(), 4);
+    }
+
+    /**
+     * Testing the ability to filter done tasks.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetDoneTasks() throws Exception {
+        // first we test that in an empty task list, the number of done tasks is 0
+        assertEquals(taskController.getDoneTasks().size(), 0);
+
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.getDoneTasks().size(), 0);
+
+        // testing for 2 done tasks
+        commandController.parseCommand("done 1");
+        commandController.parseCommand("done 1");
+        assertEquals(taskController.getDoneTasks().size(), 2);
+    }
+
+    /**
+     * Testing the ability to filter undone tasks.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetUndoneTasks() throws Exception {
+        // first we test that in an empty task list, the number of undone tasks is 0
+        assertEquals(taskController.getUndoneTasks().size(), 0);
+
+        commandController.parseCommand("add task 111");
+        commandController.parseCommand("add task 222");
+        commandController.parseCommand("add task 333");
+        assertEquals(taskController.getUndoneTasks().size(), 3);
+
+        // testing for 2 undone tasks
+        commandController.parseCommand("done 3");
+        commandController.parseCommand("done 1");
+        commandController.parseCommand("display done");
+        commandController.parseCommand("undone 2");
+        assertEquals(taskController.getUndoneTasks().size(), 2);
+    }
+
+    /**
+     * Testing the ability to filter overdue tasks.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetOverdueTasks() throws Exception {
+        // first we test that in an empty task list, the number of overdue tasks is 0
+        assertEquals(taskController.getOverdueTasks().size(), 0);
+
+        // testing for 2 overdue tasks
+        commandController.parseCommand("add task 111 end yesterday");
+        commandController.parseCommand("add task 222 end tomorrow");
+        commandController.parseCommand("add task 333 end yesterday");
+        assertEquals(taskController.getOverdueTasks().size(), 2);
+    }
+
+    /**
+     * Testing the ability to filter tasks starting on a certain day.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetTasksStartingOn() throws Exception {
+        // first we test that in an empty task list, the number of tasks falling on today is 0
+        assertEquals(taskController.getTasksStartingOn(new Date()).size(), 0);
+
+        // testing that it will only find tasks that end on the day itself
+        commandController.parseCommand("add task 111 start today");
+        commandController.parseCommand("add task 222 start tomorrow");
+        commandController.parseCommand("add task 333 start yesterday");
+        assertEquals(taskController.getTasksStartingOn(new Date()).size(), 1);
+    }
+
+    /**
+     * Testing the ability to filter tasks ending on a certain day.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetTasksEndingOn() throws Exception {
+        // first we test that in an empty task list, the number of tasks falling on today is 0
+        assertEquals(taskController.getTasksEndingOn(new Date()).size(), 0);
+
+        // testing that it will only find tasks that end on the day itself
+        commandController.parseCommand("add task 111 end today");
+        commandController.parseCommand("add task 222 end tomorrow");
+        commandController.parseCommand("add task 333 end yesterday");
+        assertEquals(taskController.getTasksEndingOn(new Date()).size(), 1);
+    }
+
+    /**
+     * Testing the ability to filter tasks that fall within the given date range.
+     *
+     * @throws Exception any exception
+     */
+    @Test
+    public void testGetTasksWithinDateRange() throws Exception {
+        // first we test that in an empty task list, the number of tasks falling on today is 0
+        assertEquals(taskController.getTasksWithinDateRange(new Date(), new Date()).size(), 0);
+
+        // testing that it will only find tasks within the date range
+        commandController.parseCommand("add task 111 start today");
+        commandController.parseCommand("add task 222 start tomorrow");
+        commandController.parseCommand("add task 333 start yesterday");
+        commandController.parseCommand("add task 444 end today");
+        commandController.parseCommand("add task 555 end tomorrow");
+        commandController.parseCommand("add task 666 end yesterday");
+        commandController.parseCommand("add task 777 start last week end next week");
+        assertEquals(taskController.getTasksWithinDateRange(new Date(), new Date()).size(), 3);
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\TaskControllerTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\TaskListViewManagerStub.java
+	 */
+
+package tests.units;
+
+import app.model.TodoItem;
+import app.viewmanagers.TaskListViewManager;
+import javafx.collections.ObservableList;
+
+/**
+ * TaskListViewManager stub created for TaskControllerTest.
+ */
+public class TaskListViewManagerStub extends TaskListViewManager {
+
+    /**
+     * Empty constructor.
+     */
+    TaskListViewManagerStub() {
+        // do nothing
+    }
+
+    /**
+     * Override for updateView that does nothing.
+     *
+     * @param list ObservableList of TodoItems to update the list with
+     */
+    @Override
+    public void updateView(ObservableList<TodoItem> list) {
+        // do nothing
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\TaskListViewManagerStub.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\TitleBarViewManagerStub.java
+	 */
+
+package tests.units;
+
+import app.viewmanagers.TitleBarViewManager;
+
+/**
+ * TitleBarViewManager stub created for TaskControllerTest.
+ */
+public class TitleBarViewManagerStub extends TitleBarViewManager {
+
+    /**
+     * Empty constructor.
+     */
+    TitleBarViewManagerStub() {
+        // do nothing
+    }
+
+    /**
+     * Override for setSortControlsVisible that does nothing.
+     *
+     * @param sortControlsVisible whether the sort controls should be visible
+     */
+    @Override
+    public void setSortControlsVisible(boolean sortControlsVisible) {
+        // do nothing
+    }
+
+    /**
+     * Override for setTitle that does nothing.
+     *
+     * @param title The title of the current view context.
+     */
+    @Override
+    public void setTitle(String title) {
+        // do nothing
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\TitleBarViewManagerStub.java
+
+
+
+
+

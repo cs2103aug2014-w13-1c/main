@@ -16,10 +16,7 @@ import java.util.logging.Level;
 
 /**
  * The main class in the Model. This class controls the model's logic,
- * and calls methods from other Model classes. 
- * 
- * @author Nguyen Quoc Dat (A0116703N)
- *
+ * and calls methods from other Model classes.
  */
 public class ModelManager {
     // Error messages to be thrown to controller.

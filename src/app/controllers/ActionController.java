@@ -16,8 +16,6 @@ import java.util.logging.Level;
  * This class takes in a command object, which specifies the details of the action to be carried out,
  * and then interacts with the model through ModelManager to carry out the action. The data structure can then
  * be extracted from this class by the CommandController.
- * 
- * @author ryan
  */
 
 public class ActionController {

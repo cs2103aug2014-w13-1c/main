@@ -20,8 +20,6 @@ import java.util.logging.Level;
  * This class is the main controller. It is called by the Main to create the other controllers (ActionController,
  * TaskController and UndoController) and initialise ModelManager.
  * Skeleton based on jolly's CE2.
- *
- * @author ryan
  */
 
 public class CommandController {

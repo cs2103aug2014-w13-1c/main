@@ -18,9 +18,6 @@ import static org.junit.Assert.fail;
 /**
  * Second integration test.
  * Tests the correct use case for sort, search, delete, undo and redo.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
- *
  */
 public class IntegrationTest2 {
     @Rule

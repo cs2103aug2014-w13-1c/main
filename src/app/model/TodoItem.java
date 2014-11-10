@@ -6,8 +6,6 @@ import java.util.UUID;
 
 /**
  * The model class to hold one to-do task of wat do.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
  */
 
 public class TodoItem {

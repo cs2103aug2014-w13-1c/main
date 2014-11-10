@@ -9,8 +9,6 @@ import java.util.UUID;
  * The model class to hold a list of TodoItems. Has utility methods like searching
  * for a TodoItem by its UUID, but aside from that, functions like an ArrayList of
  * TodoItems.
- * 
- * @author Nguyen Quoc Dat (A0116703N)
  */
 
 public class TodoItemList {
