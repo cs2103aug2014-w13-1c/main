@@ -1,6 +1,7 @@
 //@author A0111987X
-package app.helpers;
+package app.services;
 
+import app.helpers.Keyword;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 
@@ -10,10 +11,10 @@ import java.util.Collections;
 
 /**
  * Helper class in charge of converting an ArrayList of Keywords which contain indexes to words that the
- * CommandParser has recognised, to a StyleSpans collection which is used to tell the inputField which
+ * ParsingService has recognised, to a StyleSpans collection which is used to tell the inputField which
  * words to highlight.
  */
-public class KeywordDetector {
+public class KeywordDetectorService {
 
     /**
      * Takes in an ArrayList of Keywords and returns a StyleSpans collection which is then used

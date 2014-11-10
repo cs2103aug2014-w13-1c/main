@@ -4,7 +4,7 @@ package tests.units;
 import java.io.IOException;
 
 import app.controllers.ActionController;
-import app.controllers.CommandParser;
+import app.services.ParsingService;
 import app.controllers.UndoController;
 import app.helpers.CommandObject;
 import app.model.ModelManager;
@@ -15,7 +15,7 @@ import org.junit.Test;
 public class ActionControllerUnits {
     ActionController actionTest;
     UndoController undoControllerTest = UndoController.getUndoController();
-    CommandParser parserTest = new CommandParser();
+    ParsingService parserTest = new ParsingService();
     CommandObject commandObjectTest = new CommandObject();
     
     @Test

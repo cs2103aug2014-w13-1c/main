@@ -1,5 +1,5 @@
 //@author A0111987X
-package app.helpers;
+package app.views;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;

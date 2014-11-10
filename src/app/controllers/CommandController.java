@@ -4,7 +4,8 @@ package app.controllers;
 import app.Main;
 import app.helpers.CommandObject;
 import app.helpers.Keyword;
-import app.helpers.LoggingService;
+import app.services.ParsingService;
+import app.services.LoggingService;
 import app.model.ModelManager;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
@@ -45,8 +46,8 @@ public class CommandController {
     private static ModelManager modelManager;
     private static Main main;
     private static TaskController taskController;
+    private static ParsingService parsingService;
     private static UndoController undoController;
-    private static CommandParser commandParser;
 
     private static String modelManagerError;
     
@@ -212,7 +213,7 @@ public class CommandController {
      * during creation of ActionController and will set the main app for ActionController.
      */
     public CommandController() {
-        commandParser = new CommandParser();
+        parsingService = new ParsingService();
         try {
             modelManager = new ModelManager();
         } catch (IOException e) {
@@ -248,7 +249,7 @@ public class CommandController {
      */
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandObject = commandParser.parseCommand(inputString);
+        CommandObject commandObject = parsingService.parseCommand(inputString);
         printString(processCommand(commandObject));
     }
 
@@ -261,7 +262,7 @@ public class CommandController {
      * @return ArrayList<Keyword> an ArrayList of Keyword
      */
     public ArrayList<Keyword> parseKeywords(String inputString) {
-        return CommandParser.getKeywords(inputString);
+        return ParsingService.getKeywords(inputString);
     }
 
     /**

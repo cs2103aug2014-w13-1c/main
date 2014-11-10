@@ -1,7 +1,7 @@
 package tests.units;
 
 //author A0111764L
-import app.helpers.LoggingService;
+import app.services.LoggingService;
 import org.junit.Test;
 
 import java.io.File;
