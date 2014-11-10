@@ -15,8 +15,3 @@ watdo.log.*
 logs/
 doc/
 .settings/
-<<<<<<< HEAD
-.idea/
-*.iml
-=======
->>>>>>> parent of 297cd9b... Ignore .idea file
