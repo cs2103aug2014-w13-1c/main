@@ -29,12 +29,12 @@ public class CommandParser {
     }
 
     // Constructor and initialization
-    protected CommandParser() {
+    public CommandParser() {
         setKeywords();
         dateParser = new Parser();
     }
 
-    protected CommandObject parseCommand(String inputString) {
+    public CommandObject parseCommand(String inputString) {
         currentCommandObject = new CommandObject();
         currentCommandObject.setInputString(inputString);
         currentCommandObject.setInputStringArray(inputString.trim().split(" "));
@@ -102,7 +102,7 @@ public class CommandParser {
         sortKeywords.add("name");
     }
 
-    protected static ArrayList<Keyword> getKeywords(String inputString) {
+    public static ArrayList<Keyword> getKeywords(String inputString) {
         ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
