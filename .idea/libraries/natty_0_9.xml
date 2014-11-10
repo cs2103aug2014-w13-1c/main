@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="natty-0.9">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/natty-0.9.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
