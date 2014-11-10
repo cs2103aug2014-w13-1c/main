@@ -13,8 +13,7 @@ import org.junit.Test;
 
 public class CommandParserUnits {
     CommandParser parserTest = new CommandParser();
-    
-    
+        
     @Test
     public void canParseProperly() {
         CommandObject commandObjectTest = new CommandObject();
