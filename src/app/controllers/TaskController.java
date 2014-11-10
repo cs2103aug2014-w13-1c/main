@@ -39,7 +39,7 @@ public class TaskController {
     /**
      * Constructor for TaskController, sets default display type and sorting style.
      */
-    private TaskController() {
+    public TaskController() {
         displayType = DisplayType.ALL;
         sortingStyle = SortingStyle.ENDDATE_PRIORITY;
     }
