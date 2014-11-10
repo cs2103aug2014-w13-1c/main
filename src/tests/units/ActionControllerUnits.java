@@ -1,7 +1,6 @@
 package tests.units;
 //@author A0114914L
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import app.controllers.ActionController;

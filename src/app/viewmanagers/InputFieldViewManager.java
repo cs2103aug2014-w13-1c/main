@@ -110,7 +110,7 @@ public class InputFieldViewManager {
                 lastCommand = inputField.getText();
             }
             try {
-                checkCommandLengthAndExecute(lastCommand);
+                checkCommandLengthAndExecute(inputField.getText());
             } catch (InvalidInputException e) {
                 LoggingService.getLogger().log(Level.INFO, "Invalid Input Exception: empty command");
             }

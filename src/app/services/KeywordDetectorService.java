@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Helper class in charge of converting an ArrayList of Keywords which contain indexes to words that the
+ * Service class in charge of converting an ArrayList of Keywords which contain indexes to words that the
  * ParsingService has recognised, to a StyleSpans collection which is used to tell the inputField which
  * words to highlight.
  */
