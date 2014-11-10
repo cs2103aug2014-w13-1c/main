@@ -462,7 +462,7 @@ public class ActionController {
         taskController = controller;
     }
 
-    protected ArrayList<TodoItem> getReturnList() {
+    public ArrayList<TodoItem> getReturnList() {
         return returnList;
     }
 

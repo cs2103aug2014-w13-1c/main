@@ -490,4 +490,14 @@ public class CommandController {
     public ModelManager getModelManager() {
         return modelManager;
     }
+    
+    //@author A0116703N
+    /**
+     * Getter for actionController.
+     * 
+     * @return actionController
+     */
+    public ActionController getActionController() {
+        return actionController;
+    }
 }
