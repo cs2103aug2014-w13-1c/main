@@ -4,6 +4,7 @@ package tests.units;
 import app.Main;
 import app.controllers.CommandController;
 import app.controllers.TaskController;
+import app.controllers.UndoController;
 import app.viewmanagers.RootViewManager;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class TaskControllerTest extends Main {
     public void setUp() {
         commandController = new CommandController();
         commandController.setMainApp(this);
+        commandController.setUndoController(UndoController.getUndoController());
         taskController = TaskController.getTaskController();
         taskController.setMainApp(this);
         commandController.setTaskController(taskController);
