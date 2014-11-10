@@ -264,7 +264,7 @@ public class InputFieldViewManager {
 
     /**
      * Setter for isFromButton.
-     * Used for cell highlighting to determine if the task list should scroll to the highlighted task to.
+     * Used for cell highlighting to determine if the task list should scroll to the highlighted task.
      *
      * @param newIsFromButton isFromButton
      */
