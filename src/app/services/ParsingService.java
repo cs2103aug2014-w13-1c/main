@@ -240,7 +240,7 @@ public class ParsingService {
                         toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
                         j++;
                     }
-                    if (toBeParsed.trim().equals("remove")) {
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
                         currentCommandObject.setStartDateKeyword(true);
                         currentCommandObject.setEndIndex(i);
                     }
@@ -263,7 +263,7 @@ public class ParsingService {
                         toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
                         j++;
                     }
-                    if (toBeParsed.trim().equals("remove")) {
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
                         currentCommandObject.setEndDateKeyword(true);
                         currentCommandObject.setEndIndex(i);
                     }

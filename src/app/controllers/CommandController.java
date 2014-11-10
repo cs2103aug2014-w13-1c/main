@@ -248,7 +248,7 @@ public class CommandController {
      */
     public void parseCommand(String inputString) {
         printString("Parsing: \"" + inputString + "\"\n");
-        CommandObject commandObject = parsingService.parseCommand(inputString);
+        CommandObject commandObject = parsingService.parseCommand(inputString.toLowerCase());
         printString(processCommand(commandObject));
     }
 
