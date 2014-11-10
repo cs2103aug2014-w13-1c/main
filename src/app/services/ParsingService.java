@@ -224,6 +224,7 @@ public class ParsingService {
                     }
                     if (toBeParsed.trim().equals("remove")) {
                         currentCommandObject.setEndDateUpdated(true);
+                        currentCommandObject.setEndIndex(i);
                     }
                     else {
                         currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
