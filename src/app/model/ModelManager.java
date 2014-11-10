@@ -206,8 +206,6 @@ public class ModelManager {
     }
     
     /**
-     * clearTasks
-     * 
      * Clears all tasks in the program data and in the database file.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
