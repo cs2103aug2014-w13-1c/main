@@ -57,7 +57,7 @@ public class ActionController {
      * It then calls ModelManager to add a TodoItem based on the CommandObject.
      * 
      * @param commandObject
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
     public String add(CommandObject commandObject){
         // To check if CommandString is empty
@@ -83,7 +83,7 @@ public class ActionController {
      * It calls TaskController to select the display option depending on the CommandObject.
      * 
      * @param commandObject
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
     public String display(CommandObject commandObject) {
         if (!commandObject.getCommandString().isEmpty()) {
@@ -111,7 +111,7 @@ public class ActionController {
      * It then calls ModelManager to clear the TodoItem(s).
      * 
      * @param commandObject
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
     public String clear(CommandObject commandObject) {
         // To check whether CommandString is empty
@@ -140,7 +140,7 @@ public class ActionController {
      * 
      * @param commandObject
      * @param currentList
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
     public String delete(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         // To check whether CommandString is empty
@@ -196,7 +196,7 @@ public class ActionController {
      * It calls TaskController to sort the TodoItem(s) based on the option given by CommandObject.
      * 
      * @param commandObject
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
     public String sort(CommandObject commandObject) {
         // To check whether CommandString is empty
@@ -228,11 +228,10 @@ public class ActionController {
      * to show to view).
      * 
      * @param commandObject
-     * @return A string notifying whether the method carries out properly.
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
-    // Search command method(s)
     public String search(CommandObject commandObject) {
-        // To check whether CommandString is empty and 
+        // To check whether CommandString is empty and there is no indication of searching by dates
         if (commandObject.getCommandString().isEmpty() && !commandObject.hasStartDateKeyword() && !commandObject.hasEndDateKeyword()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
@@ -272,15 +271,19 @@ public class ActionController {
     }
 
     /**
-     * This method is used to update a TodoItem.
-     * Updates ModelManager and gets new data based on the CommandObject
+     * This method is used by CommandController to update a TodoItem.
+     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
+     * TodoItem to be able to update the TodoItem from the current list.
+     * It calls UndoController to save the state for undo command.
+     * It calls ModelManager to update the TodoItem by a given index (from current list) and gets new data based
+     * on the CommandObject.
      * 
      * @param commandObject
      * @param currentList The current data to be passed to display.
-     * @return a feedback string to notify whether the method has carried out successfully 
+     * @return A feedback string to notify whether the method has carried out successfully.
      */
-    // Update command method(s)
     public String update(CommandObject commandObject, ArrayList<TodoItem> currentList) {
+        // To check whether CommandString is empty
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "update"));
         }
@@ -297,6 +300,7 @@ public class ActionController {
         if (index < 0 || index >= currentList.size()) {
             return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
+        // Checking which parameters are updated
         String toBeUpdated = "";
         while (st.hasMoreTokens()) {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
@@ -325,7 +329,17 @@ public class ActionController {
         return CommandController.notifyWithInfo(String.format(MESSAGE_UPDATE_COMPLETE, commandObject.getInputString()));
     }
 
-    // Done method
+    /**
+     * This method is used by CommandController to mark a TodoItem as done.
+     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
+     * TodoItem to be able to update the TodoItem from the current list.
+     * It calls UndoController to save the state for undo command.
+     * It calls ModelManager to mark the TodoItem by a given index (from current list) as done.
+     * 
+     * @param commandObject
+     * @param currentList
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
     public String done(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "done"));
@@ -353,7 +367,17 @@ public class ActionController {
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
-    // Undone method
+    /**
+     * This method is used by CommandController to mark a TodoItem as undone.
+     * It takes a CommandObject and check whether the CommandObject is valid. It also takes the current list of
+     * TodoItem to be able to update the TodoItem from the current list.
+     * It calls UndoController to save the state for undo command.
+     * It calls ModelManager to mark the TodoItem by a given index (from current list) as undone.
+     * 
+     * @param commandObject
+     * @param currentList
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
     public String undone(CommandObject commandObject, ArrayList<TodoItem> currentList) {
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "undone"));
@@ -381,8 +405,16 @@ public class ActionController {
         return CommandController.notifyWithInfo(String.format(MESSAGE_CHANGE_DONE_STATUS_COMPLETE, commandObject.getCommandString()));
     }
 
-    // Help method
+    /**
+     * This method is used by CommandController to open the help view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the main to open the help view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
     public String help(CommandObject commandObject) {
+        // To check whether CommandString is empty
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -390,8 +422,16 @@ public class ActionController {
         return MESSAGE_OPEN_HELP;
     }
 
-    // Settings method
+    /**
+     * This method is used by CommandController to open the settings view.
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls the main to open the settings view.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
     public String settings(CommandObject commandObject) {
+     // To check whether CommandString is not empty
         if (!commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -399,8 +439,16 @@ public class ActionController {
         return MESSAGE_OPEN_SETTINGS;
     }
     
-    // Change save file location (for .json)
+    /**
+     * This method is used by CommandController to change save file location (for .json).
+     * It takes a CommandObject and check whether the CommandObject is valid.
+     * It calls ModelManager to change the save file location.
+     * 
+     * @param commandObject
+     * @return A feedback string to notify whether the method has carried out successfully.
+     */
     public String changeSaveLocation(CommandObject commandObject) {
+        // To check whether CommandString is empty
         if (commandObject.getCommandString().isEmpty()) {
             return CommandController.notifyWithError(ERROR_WRONG_COMMAND_FORMAT);
         }
@@ -490,6 +538,12 @@ public class ActionController {
     }
 
     //@author A0114914L
+    /**
+     * Constructor for ActionController. It is called by CommandController. It is passed a ModelManager and
+     * set the ModelManager inside this class.
+     * 
+     * @param manager
+     */
     public ActionController(ModelManager manager) {
         modelManager = manager;
         if (manager != null) {
@@ -499,23 +553,48 @@ public class ActionController {
         }
     }
     
+    /**
+     * Method to set the UndoController. It is called by CommandController.
+     * 
+     * @param controller
+     */
     public void setUndoController(UndoController controller) {
         undoController = controller;
     }
 
+    /**
+     * Method to set the TaskController. It is called by CommandController.
+     * 
+     * @param controller
+     */
     protected void setTaskController(TaskController controller) {
         taskController = controller;
     }
 
-    public ArrayList<TodoItem> getReturnList() {
-        return returnList;
-    }
-
+    /**
+     * Method to set the Main. It is called by CommandController.
+     * 
+     * @param main
+     */
     protected void setMainApp(Main main) {
         this.main = main;
     }
 
+    /**
+     * Method to refer back to the CommandController.
+     * 
+     * @param controller
+     */
     protected void setCommandController(CommandController controller) {
         commandController = controller;
+    }
+
+    /**
+     * Getter for returnList.
+     * 
+     * @return returnList ArrayList of TodoItem of the current return list.
+     */
+    public ArrayList<TodoItem> getReturnList() {
+        return returnList;
     }
 }
