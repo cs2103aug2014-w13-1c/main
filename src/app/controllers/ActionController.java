@@ -233,7 +233,7 @@ public class ActionController {
     // Search command method(s)
     public String search(CommandObject commandObject) {
         // To check whether CommandString is empty and 
-        if (commandObject.getCommandString().isEmpty() && !commandObject.isStartDateUpdated() && !commandObject.isEndDateUpdated()) {
+        if (commandObject.getCommandString().isEmpty() && !commandObject.hasStartDateKeyword() && !commandObject.hasEndDateKeyword()) {
             return CommandController.notifyWithError(String.format(ERROR_WRONG_COMMAND_FORMAT, "search"));
         }
         try {
@@ -245,13 +245,13 @@ public class ActionController {
             LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
         }
         ArrayList<TodoItem> results = new ArrayList<TodoItem>();
-        if (commandObject.isStartDateUpdated()) {
-            if (commandObject.isEndDateUpdated()) {
+        if (commandObject.hasStartDateKeyword()) {
+            if (commandObject.hasEndDateKeyword()) {
                 results = taskController.getTasksWithinDateRange(commandObject.getStartDate(), commandObject.getEndDate());
             } else {
                 results = taskController.getTasksStartingOn(commandObject.getStartDate());
             }
-        } else if (commandObject.isEndDateUpdated()) {
+        } else if (commandObject.hasEndDateKeyword()) {
             results = taskController.getTasksEndingOn(commandObject.getEndDate());
         } else {
             results = taskController.instantSearch(commandObject.getCommandString());
@@ -302,10 +302,10 @@ public class ActionController {
             toBeUpdated = toBeUpdated.concat(st.nextToken()) + " ";
             parameters[0] = true;
         }
-        if (commandObject.isStartDateUpdated()) {
+        if (commandObject.hasStartDateKeyword()) {
             parameters[1] = true;
         }
-        if (commandObject.isEndDateUpdated()) {
+        if (commandObject.hasEndDateKeyword()) {
             parameters[2] = true;
         }
         if (commandObject.getPriority() != null) {
