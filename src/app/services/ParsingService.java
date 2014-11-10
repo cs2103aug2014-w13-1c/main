@@ -134,14 +134,14 @@ public class ParsingService {
         String[] inputStringArray = inputString.trim().split(" ");
         int startIndex = 0;
         int endIndex = inputStringArray[0].length() - 1;
-        if (commandKeywords.contains(inputStringArray[0])) {
+        if (commandKeywords.contains(inputStringArray[0].toLowerCase())) {
             currentKeywords.add(new Keyword(0, endIndex));
             startIndex = endIndex + 2;
         }
         if (inputStringArray[0].equalsIgnoreCase("add")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (addKeywords.contains(inputStringArray[i])) {
+                if (addKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -150,7 +150,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("update")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (updateKeywords.contains(inputStringArray[i])) {
+                if (updateKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -159,7 +159,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("display")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (displayKeywords.contains(inputStringArray[i])) {
+                if (displayKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -168,7 +168,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("search")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (searchKeywords.contains(inputStringArray[i])) {
+                if (searchKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
@@ -177,7 +177,7 @@ public class ParsingService {
         if (inputStringArray[0].equalsIgnoreCase("sort")) {
             for (int i = 1; i < inputStringArray.length; i++) {
                 endIndex = startIndex + inputStringArray[i].length() - 1;
-                if (sortKeywords.contains(inputStringArray[i])) {
+                if (sortKeywords.contains(inputStringArray[i].toLowerCase())) {
                     currentKeywords.add(new Keyword(startIndex, endIndex));
                 }
                 startIndex = endIndex + 2;
