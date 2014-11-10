@@ -31,7 +31,7 @@ public class IntegrationTest5 {
     
     // Tests add from Main
     @Test
-    public void testMainAdd() {
+    public void testMain() {
        FileStorage testStorage = new FileStorage();
        try {
            testStorage.loadSettings();
