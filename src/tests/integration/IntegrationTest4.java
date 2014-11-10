@@ -198,9 +198,11 @@ public class IntegrationTest4 {
         String addCommand5 = "add task 5 due november 15 1am priority low";
         String addCommand6 = "add task 6 due november 16 1am priority low";
         String addCommand7 = "add task 7 due november 19 1am";
-        String sortCommand1 = "sort priority";
-        String deleteCommand1 = "delete 7";
+        String sortCommand1 = "sort name";
         String sortCommand2 = "sort end";
+        String sortCommand3 = "sort start";
+        String sortCommand4 = "sort priority";
+        String deleteCommand1 = "delete 7";
         String deleteCommand2 = "delete 6";
         String searchCommand = "search 5";
         String deleteCommand3 = "delete 1";
@@ -220,6 +222,9 @@ public class IntegrationTest4 {
                 addCommand6,
                 addCommand7,
                 sortCommand1,
+                sortCommand2,
+                sortCommand3,
+                sortCommand4,
                 deleteCommand1,
                 sortCommand2,
                 deleteCommand2,

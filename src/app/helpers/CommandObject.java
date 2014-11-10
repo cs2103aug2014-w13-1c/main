@@ -15,8 +15,8 @@ public class CommandObject {
     private int endIndex;
     private Date startDate;
     private Date endDate;
-    private boolean startDateUpdated;
-    private boolean endDateUpdated;
+    private boolean startDateKeyword;
+    private boolean endDateKeyword;
     private String priority;
     private String[] inputStringArray;
 
@@ -26,8 +26,8 @@ public class CommandObject {
      * Sets endIndex to 1000000000 (a very large number).
      */
     public CommandObject() {
-        setStartDateUpdated(false);
-        setEndDateUpdated(false);
+        setStartDateKeyword(false);
+        setEndDateKeyword(false);
         endIndex = 1000000000;
     }
 
@@ -177,8 +177,8 @@ public class CommandObject {
      *
      * @return startDateUpdated
      */
-    public boolean isStartDateUpdated() {
-        return startDateUpdated;
+    public boolean hasStartDateKeyword() {
+        return startDateKeyword;
     }
 
     /**
@@ -187,8 +187,8 @@ public class CommandObject {
      *
      * @param updated startDateUpdated
      */
-    public void setStartDateUpdated(boolean updated) {
-        startDateUpdated = updated;
+    public void setStartDateKeyword(boolean keyword) {
+        startDateKeyword = keyword;
     }
 
     /**
@@ -197,8 +197,8 @@ public class CommandObject {
      *
      * @return endDateUpdated
      */
-    public boolean isEndDateUpdated() {
-        return endDateUpdated;
+    public boolean hasEndDateKeyword() {
+        return endDateKeyword;
     }
 
     /**
@@ -207,8 +207,8 @@ public class CommandObject {
      *
      * @param updated endDateUpdated
      */
-    public void setEndDateUpdated(boolean updated) {
-        endDateUpdated = updated;
+    public void setEndDateKeyword(boolean keyword) {
+        endDateKeyword = keyword;
     }
 
     /**
