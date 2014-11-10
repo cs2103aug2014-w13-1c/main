@@ -2,6 +2,7 @@ package tests.integration;
 //@author A0116703N
 
 import app.Main;
+import app.helpers.LoggingService;
 import app.model.FileStorage;
 import app.model.TodoItem;
 
@@ -22,87 +23,81 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * It is 2014. You are working on your very very important task, when something terrible happens.
- * Your watdo.json file contents has been corrupted! *gasp* But no worries, you are going to be just
- * fine, for error handling is here! 
+ * The corrupted watdo.json was just the mid-boss. Now comes the final challenge.
+ * The corrupted settings.json stands between you and your very important tasks.
  *  
- * Third integration test.
- * Tests program behavior when watdo.json data is compromised.
+ * Fourth integration test.
+ * Tests program behavior when settings data is compromised.
  * 
  * @author Nguyen Quoc Dat (A0116703N)
  *
  */
-public class IntegrationTest3 {
+public class IntegrationTest4 {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
     
     // Tests add from Main
     @Test
     public void testMain() {
-       // First we manually switch to the test directory
-       FileStorage testStorage = new FileStorage();
-       try {
-           testStorage.loadSettings();
-       } catch (Exception e) {
-           fail();
-       }
-       String previousDirectory = testStorage.getFileDirectory();
-       
-       try {
-           testStorage.changeSettings("testDirectory/", null, null);
-       } catch (Exception e) {
-           fail();
-       }
-       
-       // Then we make fixtures
-       ArrayList<TodoItem> testTodoItems = getFixtures();
-       
-       // Then write those fixtures to testDirectory/watdo.json
-       try {
-           testStorage.updateFile(testTodoItems);
-       } catch (Exception e) {
-           fail();
-       }
-       
-       // Then we attempt to shave a whole chunk of the testDirectory/watdo.json file off.
-       // First we open the file and get the data string.
-       String fileString = readFromFile("testDirectory/watdo.json");
-       
-       // Why 42, you ask? 42, of course!
-       // Jokes aside, the task names are 6 characters long ("task 1"), and we have seven tasks.
-       // 6*7 = 42. The file should definitely be longer than this length.
-       // This is mainly to check for an empty file after writing.
-       if (fileString.length() <= 42) {
-           fail();
-       }
-       
-       // Now we shave 42 characters off from the data string.
-       // This string should now be meaningless.
-       String badFileString = fileString.substring(42);
-       
-       // Now we replace the file content with the bad string.
-       writeToFile(badFileString, "testDirectory/watdo.json");
-       
-       // Now we setup the commands to be carried out.
-       String[] testCommands = getCommands();
-       // Now none of the commands should work except exit, now that the data is corrupted.
-       
-       exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+        // First we load the old settings data.
+        String settingsFileString = readFromFile("settings.json");
+            
+        // First we manually switch to the test directory
+        FileStorage testStorage = new FileStorage();
+        try {
+            testStorage.loadSettings();
+        } catch (Exception e) {
+            fail();
+        }
+        String previousDirectory = testStorage.getFileDirectory();
+         
+        try {
+            testStorage.changeSettings("testDirectory/", null, null);
+        } catch (Exception e) {
+            fail();
+        }
+           
+        // Then we make fixtures
+        ArrayList<TodoItem> testTodoItems = getFixtures();
+        
+        // Then write those fixtures to testDirectory/watdo.json
+        try {
+            testStorage.updateFile(testTodoItems);
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Then we load the string from testDirectory/watdo.json
+        String dataFileString = readFromFile("testDirectory/watdo.json");
+           
+        // Now we shave half of the characters off from the settings string.
+        // This string should now be meaningless.
+        String badFileString = settingsFileString.substring(settingsFileString.length()/2);
+           
+        // Now we replace the settings file with the bad string.
+        writeToFile(badFileString, "settings.json");
+           
+        // Now we setup the commands to be carried out.
+        String[] testCommands = getCommands();
+        // Now none of the commands should work except exit, now that the settings are corrupted.
+           
+        exit.expectSystemExit();
+        exit.checkAssertionAfterwards(new Assertion() {
+            @Override
+            public void checkAssertion() throws Exception {
                // Now we check if there is any change to the data.
                String newFileString = readFromFile("testDirectory/watdo.json");
-               
+            
                // There should be no change.
-               assertEquals(badFileString, newFileString);
-               
+               assertEquals(dataFileString, newFileString);
+           
                // Good. No change. None of the commands have any effect.
+               // Restore the old data.
                testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
-           }
+               writeToFile(settingsFileString, "settings.json");
+            }
        });
-
+            
        // Carry out commands
        try {
            Main.main(testCommands);
