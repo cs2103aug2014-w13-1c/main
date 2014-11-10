@@ -16,8 +16,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Second integration test.
  * Tests the correct use case for sort, search, delete, undo and redo.
+ * 
+ * Second integration test.
  */
 public class IntegrationTest2 {
     @Rule

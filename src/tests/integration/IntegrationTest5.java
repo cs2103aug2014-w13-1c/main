@@ -23,6 +23,8 @@ import static org.junit.Assert.*;
  * 4) Set the first one to undone
  * 5) Go to display
  * 6) Exit
+ * 
+ * Fifth integration test.
  */
 public class IntegrationTest5 {
     @Rule

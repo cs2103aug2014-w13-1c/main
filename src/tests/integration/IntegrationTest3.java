@@ -22,12 +22,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
+ * Tests program behavior when watdo.json data is compromised.
+ * 
  * It is 2014. You are working on your very very important task, when something terrible happens.
  * Your watdo.json file contents has been corrupted! *gasp* But no worries, you are going to be just
  * fine, for error handling is here! 
  *  
  * Third integration test.
- * Tests program behavior when watdo.json data is compromised.
  */
 public class IntegrationTest3 {
     @Rule

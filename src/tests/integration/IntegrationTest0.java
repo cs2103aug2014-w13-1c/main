@@ -32,7 +32,9 @@ public class IntegrationTest0 {
                exitCommand};
 
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(() -> assertTrue(true));
+       exit.checkAssertionAfterwards(
+               () -> assertTrue(true)
+       );
 
        // Carry out commands
        try {
