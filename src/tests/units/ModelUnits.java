@@ -115,7 +115,6 @@ public class ModelUnits {
     public void testTodoItemSorter() {
         String testInput1 = "Test String 1";
         String testInput2 = "Test String 2";
-        String testInput3 = "Test String 3";
         String testInput4 = "Test String 4";
         String testInput5 = "Test String 5";
         String testInput6 = "Test String 6";
