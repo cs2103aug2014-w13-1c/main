@@ -30,10 +30,10 @@ public class TaskControllerTest extends Main {
     public void setUp() {
         commandController = new CommandController();
         commandController.setMainApp(this);
-        commandController.setUndoController(UndoController.getUndoController());
         taskController = TaskController.getTaskController();
         taskController.setMainApp(this);
         commandController.setTaskController(taskController);
+        commandController.setUndoController(UndoController.getUndoController());
         commandController.parseCommand("saveto ./testDirectory");
         commandController.parseCommand("clear");
     }
