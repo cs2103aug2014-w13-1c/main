@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.Main;
 import app.exceptions.InvalidInputException;
 import app.helpers.CommandObject;
 import app.services.LoggingService;
