@@ -120,18 +120,23 @@ public class ActionController {
         if (index < 0 || index >= currentList.size()) {
             return CommandController.notifyWithError(ERROR_INVALID_INDEX);
         }
-        String toBeDeleted = currentList.get(index).getTaskName();
         try {
-            commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
-            commandController.getUndoController().clearRedo();
-            modelManager.deleteTask(currentList.get(index).getUUID());
-        } catch (IOException e) {
-            CommandController.notifyWithError("Failed to write to file.");
-            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
-        } catch (NullPointerException e) {
-            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            String toBeDeleted = currentList.get(index).getTaskName();
+            try {
+                commandController.getUndoController().saveUndo(modelManager.getTodoItemList());
+                commandController.getUndoController().clearRedo();
+                modelManager.deleteTask(currentList.get(index).getUUID());
+            } catch (IOException e) {
+                CommandController.notifyWithError("Failed to write to file.");
+                LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+            } catch (NullPointerException e) {
+                LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            }
+
+            return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
+        } catch (IndexOutOfBoundsException e) {
+            return CommandController.notifyWithError("Index out of bounds.");
         }
-        return CommandController.notifyWithInfo(String.format(MESSAGE_DELETE_COMPLETE, toBeDeleted));
     }
 
     protected boolean isInt(String number) {

@@ -28,12 +28,11 @@ public class IntegrationTest2 {
     
     // Tests add from Main
     @Test
-    public void testMainAdd() {
+    public void testMain() {
        FileStorage testStorage = new FileStorage();
        try {
            testStorage.loadSettings();
        } catch (Exception e) {
-           e.printStackTrace();
            fail();
        }
        String previousDirectory = testStorage.getFileDirectory();
@@ -94,7 +93,6 @@ public class IntegrationTest2 {
                    testStorage.loadSettings();
                    testTodoItems = testStorage.loadFile();
                } catch (Exception e) {
-                   e.printStackTrace();
                    fail();
                    return;
                }

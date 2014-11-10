@@ -348,7 +348,11 @@ public class CommandController {
     }
     
     public Boolean areNotificationsEnabled() {
-        return modelManager.areNotificationsEnabled();
+        try {
+            return modelManager.areNotificationsEnabled();
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
     
     public UndoController getUndoController() {

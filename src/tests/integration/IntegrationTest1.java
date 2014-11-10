@@ -32,7 +32,6 @@ public class IntegrationTest1 {
        try {
            testStorage.loadSettings();
        } catch (Exception e) {
-           e.printStackTrace();
            fail();
        }
        String previousDirectory = testStorage.getFileDirectory();
@@ -66,7 +65,6 @@ public class IntegrationTest1 {
                    testStorage.loadSettings();
                    testTodoItems = testStorage.loadFile();
                } catch (Exception e) {
-                   e.printStackTrace();
                    fail();
                    return;
                }

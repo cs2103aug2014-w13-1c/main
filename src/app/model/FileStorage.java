@@ -118,15 +118,16 @@ public class FileStorage {
             return null;
         }
         
-        // Successfully opened the file, now we parse the data.
+        // Successfully opened the file, now we get the data as a string.
         BufferedReader reader = new BufferedReader(fileToRead);
-        
         String fileString = "";
         String line = "";
         while ((line = reader.readLine()) != null) {
             fileString += line;
         }
+        reader.close();
         
+        // Now we parse the string.
         JSONArray fileArray = new JSONArray(new JSONTokener(fileString));
         
         ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();  
@@ -170,7 +171,6 @@ public class FileStorage {
             
             todoItems.add(new TodoItem(currentTaskName, currentStartDate, currentEndDate, currentPriority, currentDoneStatus));
         }
-        reader.close();
         
         return todoItems;
     }

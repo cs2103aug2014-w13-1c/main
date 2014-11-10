@@ -155,12 +155,14 @@ public class Main extends Application {
      * @param error The error message to be shown.
      */
     public void showErrorDialog(String title, String error) {
-        Dialogs.create()
+        if (!isTesting()) {
+            Dialogs.create()
                 .owner(primaryStage)
                 .title(title)
                 .masthead("Error")
                 .message(error)
                 .showError();
+        } // If in test mode, don't show an error dialog.
     }
 
     /**

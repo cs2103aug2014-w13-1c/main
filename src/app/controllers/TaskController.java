@@ -2,11 +2,13 @@
 package app.controllers;
 
 import app.Main;
+import app.helpers.LoggingService;
 import app.model.TodoItem;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * In charge of sorting and searching of tasks.
@@ -238,7 +240,12 @@ public class TaskController {
                 break;
         }
         System.out.println(sortingStyle);
-        main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        try {
+            main.getCommandController().getModelManager().setSortingStyle(newSortingStyle);
+        } catch (NullPointerException e) {
+            // No ModelManager, so don't do anything
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage()); 
+        }
         main.getCommandController().resetTaskList();
         main.getCommandController().updateView();
     }
@@ -247,7 +254,13 @@ public class TaskController {
      * @return The current sorting style of the program.
      */
     public int getSortingStyle() {
-        return main.getCommandController().getModelManager().getSortingStyle();
+        try {
+            return main.getCommandController().getModelManager().getSortingStyle();
+        } catch (NullPointerException e) {
+            // Model manager doesn't exist, so we can pass placeholder data.
+            LoggingService.getLogger().log(Level.SEVERE, "NullPointerException" + e.getMessage());
+            return -1;
+        }
     }
     
     /**
