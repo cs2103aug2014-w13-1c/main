@@ -22,7 +22,7 @@
             minWidth="-Infinity" prefHeight="40.0" prefWidth="920.0" style="-fx-background-color: #444444;"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="app.viewmanagers.TaskListCellViewManager">
-    <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text="ಠ_ಠ"
+    <Label fx:id="overdueLabel" layoutX="557.0" layoutY="-2.0" prefHeight="30.0" prefWidth="71.0" text=""
            textAlignment="CENTER" textFill="#797777">
         <font>
           <Font size="34.0"/>

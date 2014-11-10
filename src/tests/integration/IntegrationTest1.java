@@ -52,38 +52,35 @@ public class IntegrationTest1 {
                exitCommand};
 
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+       exit.checkAssertionAfterwards(() -> {
 
-               // Checks if the data is intact!
-               ArrayList<TodoItem> testTodoItems;
+           // Checks if the data is intact!
+           ArrayList<TodoItem> testTodoItems;
 
-               try {
-                   testStorage.loadSettings();
-                   testTodoItems = testStorage.loadFile();
-               } catch (Exception e) {
-                   fail();
-                   return;
-               }
-
-               // After cleaning and adding, we should have four tasks.
-               assertEquals(4, testTodoItems.size());
-               
-               String testInput1 = "task 1";
-               String testInput2 = "task 2";
-               String testInput3 = "task 3";
-               String testInput4 = "task 4";
-               
-               assertEquals(testInput4, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput3, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
-               assertEquals(testInput1, testTodoItems.get(3).getTaskName());
-
-               // Cleanup
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
+           try {
+               testStorage.loadSettings();
+               testTodoItems = testStorage.loadFile();
+           } catch (Exception e) {
+               fail();
+               return;
            }
+
+           // After cleaning and adding, we should have four tasks.
+           assertEquals(4, testTodoItems.size());
+
+           String testInput1 = "task 1";
+           String testInput2 = "task 2";
+           String testInput3 = "task 3";
+           String testInput4 = "task 4";
+
+           assertEquals(testInput4, testTodoItems.get(0).getTaskName());
+           assertEquals(testInput3, testTodoItems.get(1).getTaskName());
+           assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+           assertEquals(testInput1, testTodoItems.get(3).getTaskName());
+
+           // Cleanup
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands

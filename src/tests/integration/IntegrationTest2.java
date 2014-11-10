@@ -80,37 +80,34 @@ public class IntegrationTest2 {
                exitCommand};
        
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
+       exit.checkAssertionAfterwards(() -> {
 
-               // Now we check if the data is intact.
-               ArrayList<TodoItem> testTodoItems;
+           // Now we check if the data is intact.
+           ArrayList<TodoItem> testTodoItems;
 
-               try {
-                   testStorage.loadSettings();
-                   testTodoItems = testStorage.loadFile();
-               } catch (Exception e) {
-                   fail();
-                   return;
-               }
-               
-               // The leftover data after the five deletes, two undos and one redo should be 3 items. 
-               assertEquals(3, testTodoItems.size());
-               
-               // Then leftover data should be task 1, task 4 then task 3.
-               String testInput2 = "task 2";
-               String testInput3 = "task 3";
-               String testInput7 = "task 7";
-               
-               assertEquals(testInput3, testTodoItems.get(0).getTaskName());
-               assertEquals(testInput7, testTodoItems.get(1).getTaskName());
-               assertEquals(testInput2, testTodoItems.get(2).getTaskName());
-               
-               // Yay! We passed the tests. Now change back to previous directory.
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
+           try {
+               testStorage.loadSettings();
+               testTodoItems = testStorage.loadFile();
+           } catch (Exception e) {
+               fail();
+               return;
            }
+
+           // The leftover data after the five deletes, two undos and one redo should be 3 items.
+           assertEquals(3, testTodoItems.size());
+
+           // Then leftover data should be task 1, task 4 then task 3.
+           String testInput2 = "task 2";
+           String testInput3 = "task 3";
+           String testInput7 = "task 7";
+
+           assertEquals(testInput3, testTodoItems.get(0).getTaskName());
+           assertEquals(testInput7, testTodoItems.get(1).getTaskName());
+           assertEquals(testInput2, testTodoItems.get(2).getTaskName());
+
+           // Yay! We passed the tests. Now change back to previous directory.
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands

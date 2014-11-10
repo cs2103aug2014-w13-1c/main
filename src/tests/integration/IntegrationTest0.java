@@ -13,8 +13,6 @@ import static org.junit.Assert.fail;
 
 /**
  * Tests for a successful application launch and file storage IO.
- * 
- * Integration test 0. 
  */
 public class IntegrationTest0 {
     @Rule

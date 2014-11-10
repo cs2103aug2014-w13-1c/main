@@ -86,19 +86,16 @@ public class IntegrationTest3 {
        // Now none of the commands should work except exit, now that the data is corrupted.
        
        exit.expectSystemExit();
-       exit.checkAssertionAfterwards(new Assertion() {
-           @Override
-           public void checkAssertion() throws Exception {
-               // Now we check if there is any change to the data.
-               String newFileString = readFromFile("testDirectory/watdo.json");
-               
-               // There should be no change.
-               assertEquals(badFileString, newFileString);
-               
-               // Good. No change. None of the commands have any effect.
-               testStorage.updateFile(new ArrayList<TodoItem>());
-               testStorage.changeSettings(previousDirectory, null, null);
-           }
+       exit.checkAssertionAfterwards(() -> {
+           // Now we check if there is any change to the data.
+           String newFileString = readFromFile("testDirectory/watdo.json");
+
+           // There should be no change.
+           assertEquals(badFileString, newFileString);
+
+           // Good. No change. None of the commands have any effect.
+           testStorage.updateFile(new ArrayList<TodoItem>());
+           testStorage.changeSettings(previousDirectory, null, null);
        });
 
        // Carry out commands
