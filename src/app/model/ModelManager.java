@@ -1,7 +1,9 @@
 package app.model;
 //@author A0116703N
 
+import app.exceptions.InvalidInputException;
 import app.services.LoggingService;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class ModelManager {
     public static final String WRITE_FAILED = "Failed to write to file.";
     public static final String WRITE_SETTINGS_FAILED = "Failed to write to settings file.";
     public static final String LOAD_SETTINGS_FAILED = "Failed to load settings file.";
+    public static final String START_DATE_AFTER_END_DATE = "Start date cannot be after end date.";
     
     // Logger messages
     private static final String ADD_MESSAGE = "Adding new task ";
@@ -121,7 +124,7 @@ public class ModelManager {
      * @param newDoneStatus (Can be null) The new done status of the item.
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
-    public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException {
+    public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException, InvalidInputException {
         // First, log the method call
         LoggingService.getLogger().log(Level.INFO, UPDATE_MESSAGE);
         
@@ -134,18 +137,36 @@ public class ModelManager {
         assert toChange != null; // UUID should always exist
         
         // Now we update the program data based on the parameters
+        // Both start and end dates
+        if (parameters[1] && parameters[2]) {
+            if (newStartDate.getTime() > newEndDate.getTime()) throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+        }
+        // Just start date
+        if (parameters[1]) {
+            if (toChange.getEndDate() != null) {
+                if (newStartDate.getTime() > toChange.getEndDate().getTime()) {
+                    throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+                }
+            }
+            toChange.setStartDate(newStartDate);
+        }
+        // Just end date
+        if (parameters[2]) {
+            if (toChange.getStartDate() != null) {
+                if (toChange.getStartDate().getTime() > newEndDate.getTime()) {
+                    throw new InvalidInputException(START_DATE_AFTER_END_DATE);
+                }
+            }
+            toChange.setEndDate(newEndDate);
+        }
+        // If START_DATE_AFTER_END_DATE occurs, we don't want to update the TodoItem at all.
+        // So we try to update start date and end date first before anything.
+        
         // Task name
         if (parameters[0]) {
             toChange.setTaskName(newTaskName);
         }
-        // Start date
-        if (parameters[1]) {
-            toChange.setStartDate(newStartDate);
-        }
-        // End date
-        if (parameters[2]) {
-            toChange.setEndDate(newEndDate);
-        }
+        
         // Priority
         if (parameters[3]) {
             toChange.setPriority(newPriority);

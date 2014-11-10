@@ -265,6 +265,11 @@ public class ActionControllerUnits {
         
         ActionController actionTest = commandControllerTest.getActionController();
         
+        String oldDirectory = commandControllerTest.getModelManager().getFileDirectory();
+        Boolean oldRandomColors = commandControllerTest.getModelManager().areRandomColorsEnabled();
+        Boolean oldNotifications = commandControllerTest.getModelManager().areNotificationsEnabled();
+        actionTest.changeSettings("testDirectory", true, true);
+        
         commandObjectTest = parserTest.parseCommand("saveto testDirectory");
         actionTest.changeSaveLocation(commandObjectTest);
         commandObjectTest = parserTest.parseCommand("clear");

@@ -207,10 +207,11 @@ public class CommandController {
 
     // CommandController public methods
     /**
-     * Constructor for CommandController. It will also initialise CommandParser, ModelManager, ActionController
-     * and UndoController. During initialisation of ModelManager, it will catch an IOException from ModelManager
-     * and do the necessary error catching depending on the type of the error. It will then pass the model manager
-     * during creation of ActionController and will set the main app for ActionController.
+     * Constructor for CommandController. It will also initialise CommandParser, ModelManager, ActionController,
+     * taskController and UndoController. During initialisation of ModelManager, it will catch an IOException 
+     * from ModelManager and do the necessary error catching depending on the type of the error. It will then 
+     * pass the model manager during creation of ActionController and will set the main app for 
+     * ActionController.
      */
     public CommandController() {
         parsingService = new ParsingService();
@@ -367,7 +368,6 @@ public class CommandController {
      */
     public void setMainApp(Main main) {
         CommandController.main = main;
-        actionController.setMainApp(main);
     }
 
     //@author A0111987X
@@ -499,5 +499,19 @@ public class CommandController {
      */
     public ActionController getActionController() {
         return actionController;
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openSettings() {
+        main.getRootViewManager().openSettings();
+    }
+    
+    /**
+     * Invocation to open the settings window.
+     */
+    public void openHelp() {
+        main.getRootViewManager().openHelp();
     }
 }
