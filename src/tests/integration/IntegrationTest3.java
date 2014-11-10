@@ -2,7 +2,6 @@ package tests.integration;
 //@author A0116703N
 
 import app.Main;
-import app.helpers.LoggingService;
 import app.model.FileStorage;
 import app.model.TodoItem;
 
@@ -13,14 +12,11 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
