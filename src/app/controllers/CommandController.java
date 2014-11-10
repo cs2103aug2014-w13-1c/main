@@ -264,16 +264,16 @@ public class CommandController {
         
         switch (taskController.getSortingStyle()) {
             case 0:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(0);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.TASKNAME_ENDDATE);
                 break;
             case 1:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(1);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.STARTDATE_PRIORITY);
                 break;
             case 2:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(2);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.ENDDATE_PRIORITY);
                 break;
             case 3:
-                main.getRootViewManager().getTitleBarViewManager().setSortStyleByIndex(3);
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.PRIORITY_ENDDATE);
                 break;
         }
     }
