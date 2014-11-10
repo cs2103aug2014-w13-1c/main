@@ -119,7 +119,8 @@ public class ModelManager {
      * @param newEndDate (Can be null) The new end date of the item.
      * @param newPriority (Can be null) The new priority level of the item. If this is not TodoItem.LOW/MEDIUM/HIGH, an assertion error will occur.
      * @param newDoneStatus (Can be null) The new done status of the item.
-     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
+     * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED
+     * @throws InvalidInputException with START_DATE_AFTER_END_DATE  
      */
     public void updateTask(UUID itemID, Boolean[] parameters, String newTaskName, Date newStartDate, Date newEndDate, String newPriority, Boolean newDoneStatus) throws IOException, InvalidInputException {
         // First, log the method call
@@ -205,8 +206,6 @@ public class ModelManager {
     }
     
     /**
-     * clearTasks
-     * 
      * Clears all tasks in the program data and in the database file.
      * 
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
@@ -319,6 +318,7 @@ public class ModelManager {
      * Reloads a snapshot of the program data. This has the same effect on the
      * program data as switching to a new directory containing the given data.
      * 
+     * @param newTodoItems The new set of TodoItems to be loaded to.
      * @throws IOException with LOAD_FAILED, PARSE_FAILED, WRITE_FAILED 
      */
     public void loadTodoItems(ArrayList<TodoItem> newTodoItems) throws IOException {
