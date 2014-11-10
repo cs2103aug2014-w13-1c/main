@@ -1,4 +1,4 @@
-package app.tests;
+package tests.units;
 
 import app.controllers.CommandController;
 import app.model.TodoItemList;
@@ -14,6 +14,7 @@ public class CommandControllerUnits {
     // Testing if todo can be added
     @org.junit.Test
     public void canAdd() throws Exception {
+        commandTest.parseCommand("saveto testDirectory");
         commandTest.parseCommand("clear");
         commandTest.parseCommand("add task 1");
         commandTest.parseCommand("add *&$(*&$)(@");
@@ -23,6 +24,7 @@ public class CommandControllerUnits {
         assertEquals(4, thing.countTodoItems());
         
         commandTest.parseCommand("clear");
+        commandTest.parseCommand("saveto .");
     }
     
     // Testing whether add todo with start and end date
@@ -32,6 +34,7 @@ public class CommandControllerUnits {
         expectedStartDate.set(2000, 5, 6);
         Calendar expectedEndDate = Calendar.getInstance();
         expectedEndDate.set(2015, 9, 13);
+        commandTest.parseCommand("saveto testDirectory");
         commandTest.parseCommand("add dummy start 6 June 2000 end 13 October 2015");
         TodoItemList thing = new TodoItemList(); // what kind of variable name is this
         Calendar outputStartDate = Calendar.getInstance();
@@ -48,5 +51,6 @@ public class CommandControllerUnits {
         assertEquals(expectedEndDate.get(Calendar.YEAR), outputEndDate.get(Calendar.YEAR));
         
         commandTest.parseCommand("clear");
+        commandTest.parseCommand("saveto .");
     }
 }

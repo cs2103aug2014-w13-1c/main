@@ -1,0 +1,1244 @@
+//@author: a0114914l
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+	 */
+
+    /**
+     * Constructor for ActionController. It is called by CommandController. It is passed a ModelManager and
+     * set the ModelManager inside this class.
+     * 
+     * @param manager
+     */
+    public ActionController(ModelManager manager) {
+        modelManager = manager;
+        if (manager != null) {
+            returnList = modelManager.getTodoItemList();
+        } else {
+            returnList = null;
+        }
+    }
+    
+    /**
+     * Method to set the UndoController. It is called by CommandController.
+     * 
+     * @param controller
+     */
+    public void setUndoController(UndoController controller) {
+        undoController = controller;
+    }
+
+    /**
+     * Method to set the TaskController. It is called by CommandController.
+     * 
+     * @param controller
+     */
+    protected void setTaskController(TaskController controller) {
+        taskController = controller;
+    }
+
+    /**
+     * Method to refer back to the CommandController.
+     * 
+     * @param controller
+     */
+    protected void setCommandController(CommandController controller) {
+        commandController = controller;
+    }
+
+    /**
+     * Getter for returnList.
+     * 
+     * @return returnList ArrayList of TodoItem of the current return list.
+     */
+    public ArrayList<TodoItem> getReturnList() {
+        return returnList;
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\ActionController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+
+import app.Main;
+import app.helpers.CommandObject;
+import app.helpers.Keyword;
+import app.services.ParsingService;
+import app.services.LoggingService;
+import app.model.ModelManager;
+import app.model.TodoItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+
+
+/**
+ * This class is the main controller. It is called by the Main to create the other controllers (ActionController,
+ * TaskController and UndoController) and initialise ModelManager.
+ * Skeleton based on jolly's CE2.
+ */
+
+public class CommandController {
+    protected enum CommandType {
+        ADD, DELETE, DISPLAY, CLEAR, EXIT, SORT, SEARCH, UPDATE,
+        DONE, UNDONE, HELP, SETTINGS, SAVETO, INVALID, INVALID_DATE,
+        UNDO, REDO
+    }
+
+    // Errors
+    private final String ERROR_INVALID_DATE = "Error. Invalid Date\n";
+    private final String ERROR_INVALID_COMMAND_WORD = "Error. Unidentified command word.\n";
+    
+    private final String ERROR_SETTINGS_PARSE_FAILED = "Seems like there's a problem with your settings.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_PARSE_FAILED = "Seems like there's a problem with your watdo.json file.\nPlease modify it using a text editor or delete it.";
+    private final String ERROR_SETTINGS_LOAD_FAILED = "Failed to load settings.json.\nPlease close the program and try again.";
+    private final String ERROR_LOAD_FAILED = "Failed to load watdo.json.\nPlease close the program and try again.";
+    private final String ERROR_UNKNOWN_MODEL_ERROR = "There has been an unexpected problem with our database.\nPlease close the program and try again.";
+    
+    // Class variables
+    private static ActionController actionController;
+    private static ModelManager modelManager;
+    private static Main main;
+    private static TaskController taskController;
+    private static ParsingService parsingService;
+    private static UndoController undoController;
+
+    private static String modelManagerError;
+    
+    private ArrayList<TodoItem> currentList;
+    
+    /**
+     * Method for printing message.
+     * 
+     * @param message
+     */
+    protected void printString(String message) {
+        System.out.print(message);
+    }
+
+    /**
+     * This method will take in the command word word and will return an enum of different command types.
+     * 
+     * @param commandWord
+     * @return CommandType an enum of different command types
+     */
+    protected CommandType determineCommandType(String commandWord) {
+        if (commandWord.equalsIgnoreCase("add")) {
+            return CommandType.ADD;
+        } else if (commandWord.equalsIgnoreCase("delete")) {
+            return CommandType.DELETE;
+        } else if (commandWord.equalsIgnoreCase("display")) {
+            return CommandType.DISPLAY;
+        } else if (commandWord.equalsIgnoreCase("clear")) {
+            return CommandType.CLEAR;
+        } else if (commandWord.equalsIgnoreCase("exit")) {
+            return CommandType.EXIT;
+        } else if (commandWord.equalsIgnoreCase("sort")) {
+            return CommandType.SORT;
+        } else if (commandWord.equalsIgnoreCase("search")) {
+            return CommandType.SEARCH;
+        } else if (commandWord.equalsIgnoreCase("update")) {
+            return CommandType.UPDATE;
+        } else if (commandWord.equalsIgnoreCase("done")) {
+            return CommandType.DONE;
+        } else if (commandWord.equalsIgnoreCase("undone")) {
+            return CommandType.UNDONE;
+        } else if (commandWord.equalsIgnoreCase("help")) {
+            return CommandType.HELP;
+        } else if (commandWord.equalsIgnoreCase("settings")) {
+            return CommandType.SETTINGS;
+        } else if (commandWord.equalsIgnoreCase("saveto")) {
+            return CommandType.SAVETO;
+        } else if (commandWord.equalsIgnoreCase("dateError")) {
+            return CommandType.INVALID_DATE;
+        } else if (commandWord.equalsIgnoreCase("undo")) {
+            return CommandType.UNDO;
+        } else if (commandWord.equalsIgnoreCase("redo")) {
+            return CommandType.REDO;
+        } else {
+            return CommandType.INVALID;
+        }
+    }
+
+    /**
+     * This method will take in a CommandObject and get the CommandType from determineCommandType method.
+     * It will do a simple switch logic, determined by the command word type and call the correct method from
+     * ActionController. It will return a feedback string that will be displayed by the display later on.
+     * 
+     * @param commandObject
+     * @return feedback
+     */
+    protected String processCommand(CommandObject commandObject) {
+        String commandWord = commandObject.getCommandWord();
+        CommandType commandType = determineCommandType(commandWord);
+        String feedback;
+        switch (commandType) {
+            case ADD :
+                feedback = actionController.add(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case DISPLAY :
+                feedback = actionController.display(commandObject);
+                currentList = actionController.getReturnList();
+                updateView(actionController.getReturnList());
+                return feedback;
+            case CLEAR :
+                feedback = actionController.clear(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case DELETE :
+                feedback = actionController.delete(commandObject, currentList);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case SORT :
+                feedback = actionController.sort(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case SEARCH :
+                feedback = actionController.search(commandObject);
+                currentList = actionController.getReturnList();
+                if (currentList.isEmpty()) {
+                    taskController.setDisplayType(TaskController.DisplayType.UNDONE);
+                    resetTaskList();
+                    updateView();
+                } else {
+                    main.getRootViewManager().getTitleBarViewManager().setTitle("Search results for: \"" +
+                                                                                commandObject.getInputString().substring(7) + "\"");
+                    updateView(actionController.getReturnList());
+                }
+                return feedback;
+            case UPDATE :
+                feedback = actionController.update(commandObject, currentList);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case DONE :
+                feedback = actionController.done(commandObject, currentList);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case UNDONE :
+                feedback = actionController.undone(commandObject, currentList);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case HELP :
+                feedback = actionController.help(commandObject);
+                return feedback;
+            case SETTINGS :
+                feedback = actionController.settings(commandObject);
+                return feedback;
+            case SAVETO :
+                feedback = actionController.changeSaveLocation(commandObject);
+                undoController.clear();
+                resetTaskList();
+                updateView();
+                return feedback;
+            case EXIT :
+                System.exit(0);
+            case INVALID_DATE :
+                feedback = notifyWithError(ERROR_INVALID_DATE);
+                return feedback;
+            case UNDO :
+                feedback = actionController.undo(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            case REDO :
+                feedback = actionController.redo(commandObject);
+                resetTaskList();
+                updateView();
+                return feedback;
+            default :
+                feedback = notifyWithError(ERROR_INVALID_COMMAND_WORD);
+                return feedback;
+        }
+    }
+
+    // CommandController public methods
+    /**
+     * Constructor for CommandController. It will also initialise CommandParser, ModelManager, ActionController,
+     * taskController and UndoController. During initialisation of ModelManager, it will catch an IOException 
+     * from ModelManager and do the necessary error catching depending on the type of the error. It will then 
+     * pass the model manager during creation of ActionController and will set the main app for 
+     * ActionController.
+     */
+    public CommandController() {
+        parsingService = new ParsingService();
+        try {
+            modelManager = new ModelManager();
+        } catch (IOException e) {
+            switch(e.getMessage()) {
+                case ModelManager.LOAD_SETTINGS_FAILED:
+                    modelManagerError = ERROR_SETTINGS_LOAD_FAILED;
+                    break;
+                case ModelManager.SETTINGS_PARSE_FAILED:
+                    modelManagerError = ERROR_SETTINGS_PARSE_FAILED;
+                    break;
+                case ModelManager.LOAD_FAILED:
+                    modelManagerError = ERROR_LOAD_FAILED;
+                    break;
+                case ModelManager.PARSE_FAILED:
+                    modelManagerError = ERROR_PARSE_FAILED;
+                    break;
+                default:
+                    modelManagerError = ERROR_UNKNOWN_MODEL_ERROR;
+                    break;
+            }   
+            LoggingService.getLogger().log(Level.SEVERE, "IOException: " + e.getMessage());
+        }
+        actionController = new ActionController(modelManager);
+        actionController.setCommandController(this);
+    }
+
+    /**
+     * This method will be called by the InputFieldViewManager to start parsing the input string typed by the
+     * user. It will also call the CommandParser method to change the input string into a CommandObject.
+     * It will then print the result for debugging purpose. The result is not shown in the user interface.
+     * 
+     * @param inputString
+     */
+    public void parseCommand(String inputString) {
+        printString("Parsing: \"" + inputString + "\"\n");
+        CommandObject commandObject = parsingService.parseCommand(inputString.toLowerCase());
+        printString(processCommand(commandObject));
+    }
+
+    /**
+     * This method is called by the InputFieldViewManager to detect the keywords in the input string.
+     * The input string will be passed by the InputFieldViewManager and will be passed to CommandParser to get
+     * the keywords. It will return an ArrayList of Keyword.
+     * 
+     * @param inputString
+     * @return ArrayList<Keyword> an ArrayList of Keyword
+     */
+    public ArrayList<Keyword> parseKeywords(String inputString) {
+        return ParsingService.getKeywords(inputString);
+    }
+
+    /**
+     * This method is used to convert an ArrayList of TodoItem into an ObservableList of TodoItem.
+     * It uses javafx library to do the conversion.
+     * 
+     * @param todoList
+     * @return ObservableList<TodoItem> an ObservableList of TodoItem
+     */
+    public ObservableList<TodoItem> convertList(ArrayList<TodoItem> todoList) {
+        return FXCollections.observableArrayList(todoList);
+    }
+
+    /**
+     * This method will update the view (user interface) with the list of current todo items to be shown to the
+     * user. This method will be called by the processCommand method to update the view after "updating" (CRUD,
+     * sort, search) the todo items.
+     */
+    public void updateView() {
+        updateTitle();
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(currentList));
+    }
+
+    /**
+     * An overloading method for updateView. It will take in an ArrayList<TodoItem> and view that ArrayList in
+     * the view.
+     * 
+     * @param todoItems an ArrayList of TodoItem
+     */
+    public void updateView(ArrayList<TodoItem> todoItems) {
+        updateTitle();
+        main.getRootViewManager().getTaskListViewManager().updateView(convertList(todoItems));
+    }
+
+    /**
+     * This method will update the title bar of the view accordingly depending on the display type which
+     * can be retrieved from the TaskController.
+     */
+    private void updateTitle() {
+        switch (taskController.getDisplayType()) {
+            case ALL:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
+                main.getRootViewManager().getTitleBarViewManager().setTitle("All tasks");
+                break;
+            case DONE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Done tasks");
+                break;
+            case UNDONE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Undone tasks");
+                break;
+            case OVERDUE:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(true);
+                main.getRootViewManager().getTitleBarViewManager().setTitle("Overdue tasks");
+                break;
+            case SEARCH:
+                main.getRootViewManager().getTitleBarViewManager().setSortControlsVisible(false);
+                break;
+        }
+        
+        switch (taskController.getSortingStyle()) {
+            case 0:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.TASKNAME_ENDDATE);
+                break;
+            case 1:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.STARTDATE_PRIORITY);
+                break;
+            case 2:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.ENDDATE_PRIORITY);
+                break;
+            case 3:
+                main.getRootViewManager().getTitleBarViewManager().setSortStyle(TaskController.SortingStyle.PRIORITY_ENDDATE);
+                break;
+        }
+    }
+
+    /**
+     * This method will get the ArrayList<TodoItem> from the ModelManager.
+     * 
+     * @return ArrayList<TodoItem>
+     */
+    public static ArrayList<TodoItem> getTaskList() {
+        if (modelManager == null) {
+            main.showErrorDialog("FILE ERROR", modelManagerError);
+            return new ArrayList<TodoItem>();
+        }
+        return modelManager.getTodoItemList();
+    }
+
+    /**
+     * This method will update the currentList with the undone TodoItem retrived from TaskController.
+     */
+    public void resetTaskList() {
+        currentList = taskController.getUndoneTasks();
+    }
+
+    /**
+     * This method is called by Main to set the main app of this class.
+     * 
+     * @param main
+     */
+    public void setMainApp(Main main) {
+        CommandController.main = main;
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * This method will call the Main to show an error notification if Main is not null.
+     * It will return the error string.
+     * 
+     * @param error
+     * @return error
+     */
+    public static String notifyWithError(String error) {
+        if (main != null) {
+            main.showErrorNotification("Error", error);
+        }
+        return error;
+    }
+
+    /**
+     * This method will call the Main to show an info notication if Main is not null.
+     * It will return the message string.
+     * 
+     * @param message
+     * @return message
+     */
+    public static String notifyWithInfo(String message) {
+        if (main != null) {
+            main.showInfoNotification("Information", message);
+        }
+        return message;
+    }
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+	 */
+
+    /**
+     * Getter for undoController.
+     * 
+     * @return undoController
+     */
+    public UndoController getUndoController() {
+        return undoController;
+    }
+
+    /**
+     * Getter for modelManager.
+     * 
+     * @return modelManager
+     */
+    public ModelManager getModelManager() {
+        return modelManager;
+    }
+    
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\controllers\CommandController.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\app\services\ParsingService.java
+	 */
+
+
+import app.helpers.CommandObject;
+import app.helpers.Keyword;
+import app.model.TodoItem;
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class ParsingService {
+    private static CommandObject currentCommandObject;
+    private static Parser dateParser;
+    
+    public static ArrayList<String> commandKeywords = new ArrayList<String>();
+    private static ArrayList<String> addKeywords = new ArrayList<String>();
+    private static ArrayList<String> updateKeywords = new ArrayList<String>();
+    private static ArrayList<String> startDateKeywords = new ArrayList<String>();
+    private static ArrayList<String> endDateKeywords = new ArrayList<String>();
+    private static ArrayList<String> displayKeywords = new ArrayList<String>();
+    private static ArrayList<String> searchKeywords = new ArrayList<String>();
+    private static ArrayList<String> sortKeywords = new ArrayList<String>();
+    
+    /**
+     * This is a string manipulation method to get the index of the next space position from a string.
+     * 
+     * @param inputString
+     * @param startIndex
+     * @return index of the next space position.
+     */
+    private int nextSpacePosition(String inputString, int startIndex) {
+        return inputString.indexOf(" ", startIndex);
+    }
+
+    // Constructor and initialization
+    /**
+     * Constructor for ParsingService. It sets and initialises keywords. It also initialise the date parser.
+     */
+    public ParsingService() {
+        setKeywords();
+        dateParser = new Parser();
+    }
+
+    /**
+     * The parsing command method. It creates a CommandObject. And set all the parameters of the CommandObject
+     * from the inputString.
+     * 
+     * @param inputString
+     * @return a CommandObject to be used by CommandController (which will be passed to ActionController)
+     */
+    public CommandObject parseCommand(String inputString) {
+        currentCommandObject = new CommandObject();
+        currentCommandObject.setInputString(inputString);
+        currentCommandObject.setInputStringArray(inputString.trim().split(" "));
+        currentCommandObject.setEndIndex(currentCommandObject.getInputStringArray().length);
+        currentCommandObject.setCommandWord(parseCommandWord(inputString));
+        if (commandKeywords.contains(currentCommandObject.getCommandWord())) {
+            setDates();
+            checkDate();
+            setPriority();
+            currentCommandObject.setCommandString(parseCommandString(inputString));
+        }
+        return currentCommandObject;
+    }
+
+    // Keyword(s) methods
+    /**
+     * Initialisation of the keywords.
+     */
+    private static void setKeywords() {
+        commandKeywords.clear();
+        commandKeywords.add("add");
+        commandKeywords.add("delete");
+        commandKeywords.add("display");
+        commandKeywords.add("clear");
+        commandKeywords.add("exit");
+        commandKeywords.add("sort");
+        commandKeywords.add("search");
+        commandKeywords.add("update");
+        commandKeywords.add("help");
+        commandKeywords.add("settings");
+    	commandKeywords.add("saveto");
+        commandKeywords.add("done");
+        commandKeywords.add("undone");
+        commandKeywords.add("undo");
+        commandKeywords.add("redo");
+        
+    	startDateKeywords.clear();
+        startDateKeywords.add("start");
+        startDateKeywords.add("begin");
+        startDateKeywords.add("from");
+        
+        endDateKeywords.clear();
+        endDateKeywords.add("end");
+        endDateKeywords.add("due");
+        endDateKeywords.add("by");
+        
+        addKeywords.clear();
+        addKeywords.add("priority");
+        addKeywords.addAll(startDateKeywords);
+        addKeywords.addAll(endDateKeywords);
+        
+        updateKeywords.clear();
+        updateKeywords.add("remove");
+        updateKeywords.addAll(addKeywords);
+        
+        displayKeywords.clear();
+        displayKeywords.add("all");
+        displayKeywords.add("done");
+        displayKeywords.add("overdue");
+        displayKeywords.add("undone");
+                
+        searchKeywords.clear();
+        searchKeywords.addAll(startDateKeywords);
+        searchKeywords.addAll(endDateKeywords);
+        
+        sortKeywords.clear();
+        sortKeywords.addAll(addKeywords);
+        sortKeywords.add("name");
+    }
+
+    /**
+     * This method is used to get the keywords from the current inputString. It is used by the InputFieldViewManager
+     * to detect the keywords for keywords highlighting.
+     * 
+     * @param inputString
+     * @return an ArrayList of Keyword
+     */
+    public static ArrayList<Keyword> getKeywords(String inputString) {
+        ArrayList<Keyword> currentKeywords = new ArrayList<Keyword>();
+        String[] inputStringArray = inputString.trim().split(" ");
+        int startIndex = 0;
+        int endIndex = inputStringArray[0].length() - 1;
+        if (commandKeywords.contains(inputStringArray[0].toLowerCase())) {
+            currentKeywords.add(new Keyword(0, endIndex));
+            startIndex = endIndex + 2;
+        }
+        if (inputStringArray[0].equalsIgnoreCase("add")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (addKeywords.contains(inputStringArray[i].toLowerCase())) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("update")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (updateKeywords.contains(inputStringArray[i].toLowerCase())) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("display")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (displayKeywords.contains(inputStringArray[i].toLowerCase())) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("search")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (searchKeywords.contains(inputStringArray[i].toLowerCase())) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        if (inputStringArray[0].equalsIgnoreCase("sort")) {
+            for (int i = 1; i < inputStringArray.length; i++) {
+                endIndex = startIndex + inputStringArray[i].length() - 1;
+                if (sortKeywords.contains(inputStringArray[i].toLowerCase())) {
+                    currentKeywords.add(new Keyword(startIndex, endIndex));
+                }
+                startIndex = endIndex + 2;
+            }
+        }
+        return currentKeywords;
+    }
+
+    // Parsing method(s)
+    /**
+     * This method will parse the command word from the input string.
+     * 
+     * @param inputString
+     * @return the command word
+     */
+    private String parseCommandWord(String inputString) {
+        int firstWordPos = nextSpacePosition(inputString, 0);
+        if(firstWordPos == -1) {
+            return inputString;
+        } else {
+            return inputString.substring(0, nextSpacePosition(inputString, 0));
+        }
+    }
+
+    /**
+     * This method will parse the command string (argument string) from the input string.
+     * 
+     * @param inputString
+     * @return the command string
+     */
+    private String parseCommandString(String inputString) {
+        String result = "";
+        int firstWordPos = nextSpacePosition(inputString, 0);
+        if (firstWordPos != -1) {
+            int i = 1;
+            while (i < currentCommandObject.getEndIndex()) {
+                result = result.concat(currentCommandObject.getInputStringArray()[i] + " ");
+                i++;
+            }
+        }
+
+        return result.trim();
+    }
+
+    /**
+     * This method will parse the date from the input string if available. It will set the dates of the
+     * CommandObject to the given value (by the input string) or leave it as null.
+     */
+    private void setDates() {
+        boolean startDateFlag = false;
+        boolean endDateFlag = false;
+        for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0 ; i--) {
+            if (startDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+                if (!startDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
+                        currentCommandObject.setStartDateKeyword(true);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else {
+                        currentCommandObject.setStartDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.hasStartDateKeyword()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
+                }
+                startDateFlag = true;
+            }
+            else if (endDateKeywords.contains(currentCommandObject.getInputStringArray()[i])) {
+                if (!endDateFlag) {
+                    String toBeParsed = "";
+                    String dateKeyword = currentCommandObject.getInputStringArray()[i];
+                    int j = i + 1;
+                    while (j < currentCommandObject.getInputStringArray().length &&
+                           !addKeywords.contains(currentCommandObject.getInputStringArray()[j])) {
+                        toBeParsed = toBeParsed.concat(currentCommandObject.getInputStringArray()[j] + " ");
+                        j++;
+                    }
+                    if (toBeParsed.trim().equalsIgnoreCase("remove")) {
+                        currentCommandObject.setEndDateKeyword(true);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else {
+                        currentCommandObject.setEndDate(getDate(dateKeyword, toBeParsed));
+                        if (currentCommandObject.hasEndDateKeyword()) {
+                            currentCommandObject.setEndIndex(i);
+                        }
+                    }
+                }
+                endDateFlag = true;
+            }
+        }
+    }
+
+    /**
+     * This method will check that the end date of the CommandObject is not before the start date.
+     */
+    private void checkDate() {
+        if (currentCommandObject.getStartDate() != null && currentCommandObject.getEndDate() != null) {
+            if (currentCommandObject.getEndDate().before(currentCommandObject.getStartDate())) {
+                currentCommandObject.setCommandWord("dateError");
+            }
+        }
+    }
+
+    /**
+     * This method uses natty library to parse the date from toBeParsed string. Hence, it can parse date with 
+     * a natural language input.
+     * 
+     * @param dateKeyword
+     * @param toBeParsed
+     * @return the date
+     */
+    private Date getDate(String dateKeyword, String toBeParsed) {
+        List<Date> dateList = new ArrayList<Date>();
+        List<DateGroup> groups = dateParser.parse(toBeParsed);
+        for (DateGroup group : groups) {
+            if (group.getDates() != null) {
+                    dateList.addAll(group.getDates());
+            }
+        }
+        if (!dateList.isEmpty()) {
+            if (startDateKeywords.contains(dateKeyword)) {
+                currentCommandObject.setStartDateKeyword(true);
+            }
+            else {
+                currentCommandObject.setEndDateKeyword(true);
+            }
+            return dateList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * This method will parse the priority and set the priority of the CommandObject accordingly.
+     */
+    private void setPriority() {
+        if (currentCommandObject.getCommandWord().equalsIgnoreCase("add") || currentCommandObject.getCommandWord().equalsIgnoreCase("update")) {
+            for (int i = currentCommandObject.getInputStringArray().length - 1; i > 0; i--) {
+                if (currentCommandObject.getInputStringArray()[i].equalsIgnoreCase("priority") && i != currentCommandObject.getInputStringArray().length - 1) {
+                    if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("low")) {
+                        currentCommandObject.setPriority(TodoItem.LOW);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("medium") || currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("med")) {
+                        currentCommandObject.setPriority(TodoItem.MEDIUM);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    else if (currentCommandObject.getInputStringArray()[i + 1].equalsIgnoreCase("high")) {
+                        currentCommandObject.setPriority(TodoItem.HIGH);
+                        currentCommandObject.setEndIndex(i);
+                    }
+                    
+                    break;
+                }
+            }
+        }
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\app\services\ParsingService.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\ActionControllerUnits.java
+	 */
+
+
+import java.util.ArrayList;
+
+import app.controllers.ActionController;
+import app.controllers.CommandController;
+import app.controllers.TaskController;
+import app.services.ParsingService;
+import app.controllers.UndoController;
+import app.helpers.CommandObject;
+import app.model.ModelManager;
+import app.model.TodoItem;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class ActionControllerUnits {
+    ActionController actionTest;
+    UndoController undoControllerTest = UndoController.getUndoController();
+    ParsingService parserTest = new ParsingService();
+    CommandObject commandObjectTest = new CommandObject();
+    
+    @Test
+    public void canAddCorrectly() {
+        ModelManager manager;
+        try {
+            manager = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        actionTest = new ActionController(manager);
+        actionTest.setUndoController(undoControllerTest);
+        
+        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
+        actionTest.changeSaveLocation(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 1");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add *&$(*&$)(@ due yesterday");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add 34987314 due today");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add hello world due tomorrow");
+        actionTest.add(commandObjectTest);
+        assertEquals(4, manager.countTasks());
+        
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        assertEquals(0, manager.countTasks());
+        
+        commandObjectTest = parserTest.parseCommand("saveto .");
+        actionTest.changeSaveLocation(commandObjectTest);
+        assertEquals("./", manager.getFileDirectory());
+    }
+    
+    @Test
+    public void canUpdateAndDeleteCorrectly() {
+        ModelManager manager;
+        try {
+            manager = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        actionTest = new ActionController(manager);
+        undoControllerTest.clear();
+        actionTest.setUndoController(undoControllerTest);
+        
+        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
+        actionTest.changeSaveLocation(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 1");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add *&$(*&$)(@ due yesterday");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add 34987314 due today");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add hello world due tomorrow");
+        actionTest.add(commandObjectTest);
+        
+        commandObjectTest = parserTest.parseCommand("update 2 task 2 due 3 days later");
+        actionTest.update(commandObjectTest, manager.getTodoItemList());
+        assertEquals("task 2", manager.getTodoItemList().get(2).getTaskName());
+        commandObjectTest = parserTest.parseCommand("delete 2");
+        actionTest.delete(commandObjectTest, manager.getTodoItemList());
+        assertEquals(3, manager.countTasks());
+        assertEquals("*&$(*&$)(@", manager.getTodoItemList().get(0).getTaskName());
+        assertEquals("task 2", manager.getTodoItemList().get(1).getTaskName());
+        assertEquals("task 1", manager.getTodoItemList().get(2).getTaskName());
+        commandObjectTest = parserTest.parseCommand("saveto .");
+        actionTest.changeSaveLocation(commandObjectTest);
+        assertEquals("./", manager.getFileDirectory());
+    }
+
+    @Test
+    public void canUndoAndRedoCorrectly() {
+        ModelManager manager;
+        try {
+            manager = new ModelManager();
+        } catch (Exception e) {
+            fail();
+            return;
+        }
+        
+        actionTest = new ActionController(manager);
+        undoControllerTest.clear();
+        actionTest.setUndoController(undoControllerTest);
+        
+        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
+        actionTest.changeSaveLocation(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 1");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add *&$(*&$)(@ due yesterday");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add 34987314 due today");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add hello world due tomorrow");
+        actionTest.add(commandObjectTest);
+        
+        commandObjectTest = parserTest.parseCommand("delete 2");
+        actionTest.delete(commandObjectTest, manager.getTodoItemList());
+        commandObjectTest = parserTest.parseCommand("delete 2");
+        actionTest.delete(commandObjectTest, manager.getTodoItemList());
+        assertEquals(2, manager.countTasks());
+        commandObjectTest = parserTest.parseCommand("undo");
+        actionTest.undo(commandObjectTest);
+        assertEquals(3, manager.countTasks());
+        actionTest.undo(commandObjectTest);
+        assertEquals(4, manager.countTasks());
+        commandObjectTest = parserTest.parseCommand("redo");
+        actionTest.redo(commandObjectTest);
+        assertEquals(3, manager.countTasks());
+        
+        assertEquals("*&$(*&$)(@", manager.getTodoItemList().get(0).getTaskName());
+        assertEquals("hello world", manager.getTodoItemList().get(1).getTaskName());
+        assertEquals("task 1", manager.getTodoItemList().get(2).getTaskName());
+
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        assertEquals(0, manager.countTasks());
+        
+        commandObjectTest = parserTest.parseCommand("saveto .");
+        actionTest.changeSaveLocation(commandObjectTest);
+        assertEquals("./", manager.getFileDirectory());
+    }
+    
+    @Test
+    public void canDisplayDoneUndoneCorrectly() {
+        CommandController commandControllerTest = new CommandController();
+        undoControllerTest.clear();
+        TaskController taskControllerTest = new TaskController();
+        commandControllerTest.setTaskController(taskControllerTest);
+        commandControllerTest.setUndoController(undoControllerTest);
+        
+        ActionController actionTest = commandControllerTest.getActionController();
+        
+        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
+        actionTest.changeSaveLocation(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 1");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add *&$(*&$)(@ due yesterday");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add 34987314 due today");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add hello world due tomorrow");
+        actionTest.add(commandObjectTest);
+        
+        commandObjectTest = parserTest.parseCommand("display done");
+        actionTest.display(commandObjectTest);
+        ArrayList<TodoItem> returnListTest = actionTest.getReturnList();
+        assertEquals(0, returnListTest.size());
+        
+        commandObjectTest = parserTest.parseCommand("display");
+        actionTest.display(commandObjectTest);
+        returnListTest = actionTest.getReturnList();
+        assertEquals(4, returnListTest.size());
+        
+        commandObjectTest = parserTest.parseCommand("done 1");
+        actionTest.done(commandObjectTest, actionTest.getReturnList());
+        commandObjectTest = parserTest.parseCommand("display");
+        actionTest.display(commandObjectTest);
+        returnListTest = actionTest.getReturnList();
+        assertEquals(3, returnListTest.size());
+        
+        commandObjectTest = parserTest.parseCommand("display done");
+        actionTest.display(commandObjectTest);
+        returnListTest = actionTest.getReturnList();
+        assertEquals(1, returnListTest.size());
+        
+        commandObjectTest = parserTest.parseCommand("undone 1");
+        actionTest.undone(commandObjectTest, returnListTest);
+        commandObjectTest = parserTest.parseCommand("display");
+        actionTest.display(commandObjectTest);
+        returnListTest = actionTest.getReturnList();
+        assertEquals(4, returnListTest.size());
+        
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        assertEquals(0, commandControllerTest.getModelManager().countTasks());
+        
+        commandObjectTest = parserTest.parseCommand("saveto .");
+        actionTest.changeSaveLocation(commandObjectTest);
+        assertEquals("./", commandControllerTest.getModelManager().getFileDirectory());
+        
+    }
+    
+    @Test
+    public void canSearchCorrectly() {
+        CommandController commandControllerTest = new CommandController();
+        undoControllerTest.clear();
+        TaskController taskControllerTest = new TaskController();
+        commandControllerTest.setTaskController(taskControllerTest);
+        commandControllerTest.setUndoController(undoControllerTest);
+        
+        ActionController actionTest = commandControllerTest.getActionController();
+        
+        commandObjectTest = parserTest.parseCommand("saveto testDirectory");
+        actionTest.changeSaveLocation(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 1");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add tusk 1 due yesterday");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add tesk 1 due today");
+        actionTest.add(commandObjectTest);
+        commandObjectTest = parserTest.parseCommand("add task 2 priority high");
+        actionTest.add(commandObjectTest);
+        
+        commandObjectTest = parserTest.parseCommand("search task");
+        actionTest.search(commandObjectTest);
+        ArrayList<TodoItem> returnListTest = actionTest.getReturnList();
+        assertEquals(2, returnListTest.size());
+        assertEquals("task 2", returnListTest.get(0).getTaskName());
+        assertEquals("task 1", returnListTest.get(1).getTaskName());
+        
+        commandObjectTest = parserTest.parseCommand("clear");
+        actionTest.clear(commandObjectTest);
+        assertEquals(0, commandControllerTest.getModelManager().countTasks());
+        
+        commandObjectTest = parserTest.parseCommand("saveto .");
+        actionTest.changeSaveLocation(commandObjectTest);
+        assertEquals("./", commandControllerTest.getModelManager().getFileDirectory());
+        
+    }
+    
+    @Test
+    public void canChangeSettingsCorrectly() {
+        CommandController commandControllerTest = new CommandController();
+        undoControllerTest.clear();
+        TaskController taskControllerTest = new TaskController();
+        commandControllerTest.setTaskController(taskControllerTest);
+        commandControllerTest.setUndoController(undoControllerTest);
+        
+        ActionController actionTest = commandControllerTest.getActionController();
+        
+        String oldDirectory = commandControllerTest.getModelManager().getFileDirectory();
+        Boolean oldRandomColors = commandControllerTest.getModelManager().areRandomColorsEnabled();
+        Boolean oldNotifications = commandControllerTest.getModelManager().areNotificationsEnabled();
+        actionTest.changeSettings("testDirectory", true, true);
+        
+        assertEquals("testDirectory/", commandControllerTest.getModelManager().getFileDirectory());
+        assertEquals(true, commandControllerTest.areRandomColorsEnabled());
+        assertEquals(true, commandControllerTest.areNotificationsEnabled());
+        
+        actionTest.changeSettings(oldDirectory, oldRandomColors, oldNotifications);
+        
+    }
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\ActionControllerUnits.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Dat\Documents\watdo\src\tests\units\ParsingServiceUnits.java
+	 */
+
+
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import app.services.ParsingService;
+import app.helpers.CommandObject;
+import app.helpers.Keyword;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class ParsingServiceUnits {
+    ParsingService parserTest = new ParsingService();
+        
+    @Test
+    public void canParseProperly() {
+        CommandObject commandObjectTest = new CommandObject();
+        
+        // String parsing test
+        commandObjectTest = parserTest.parseCommand("add foo");
+        assertEquals("add", commandObjectTest.getCommandWord());
+        assertEquals("foo", commandObjectTest.getCommandString());
+        commandObjectTest = parserTest.parseCommand("delete 1");
+        assertEquals("delete", commandObjectTest.getCommandWord());
+        assertEquals("1", commandObjectTest.getCommandString());
+        commandObjectTest = parserTest.parseCommand("clear");
+        assertEquals("clear", commandObjectTest.getCommandWord());
+        
+        // Test for failures
+        commandObjectTest = parserTest.parseCommand("blah this and that");
+        assertEquals("blah", commandObjectTest.getCommandWord());
+        assertEquals(null, commandObjectTest.getCommandString());
+        commandObjectTest = parserTest.parseCommand("delete boo");
+        assertEquals("delete", commandObjectTest.getCommandWord());
+        assertEquals("boo", commandObjectTest.getCommandString());
+        
+        // Date parsing test
+        Calendar expectedStartDate = Calendar.getInstance();
+        expectedStartDate.set(2000, 5, 6);
+        Calendar expectedEndDate = Calendar.getInstance();
+        expectedEndDate.set(2015, 9, 13);
+        
+        commandObjectTest = parserTest.parseCommand("add dummy start 6 june 2000 end 13 october 2015");
+        Calendar outputStartDate = Calendar.getInstance();
+        outputStartDate.setTime(commandObjectTest.getStartDate());
+        Calendar outputEndDate = Calendar.getInstance();
+        outputEndDate.setTime(commandObjectTest.getEndDate());
+        
+        assertEquals(expectedStartDate.get(Calendar.DAY_OF_MONTH), outputStartDate.get(Calendar.DAY_OF_MONTH));
+        assertEquals(expectedStartDate.get(Calendar.MONTH), outputStartDate.get(Calendar.MONTH));
+        assertEquals(expectedStartDate.get(Calendar.YEAR), outputStartDate.get(Calendar.YEAR));
+        
+        assertEquals(expectedEndDate.get(Calendar.DAY_OF_MONTH), outputEndDate.get(Calendar.DAY_OF_MONTH));
+        assertEquals(expectedEndDate.get(Calendar.MONTH), outputEndDate.get(Calendar.MONTH));
+        assertEquals(expectedEndDate.get(Calendar.YEAR), outputEndDate.get(Calendar.YEAR));
+        
+        // Priority parsing test
+        commandObjectTest = parserTest.parseCommand("add foo priority high");
+        assertEquals("1. High", commandObjectTest.getPriority());
+        commandObjectTest = parserTest.parseCommand("add foo priority medium");
+        assertEquals("2. Medium", commandObjectTest.getPriority());
+        commandObjectTest = parserTest.parseCommand("add foo priority low");
+        assertEquals("3. Low", commandObjectTest.getPriority());
+    }
+    
+    @Test
+    public void canDetectKeywordsProperly() {
+        ArrayList<Keyword> testList = ParsingService.getKeywords("add foo start foo end dummy priority blah");
+        assertEquals(0, testList.get(0).getStartIndex());
+        assertEquals(2, testList.get(0).getEndIndex());
+        assertEquals(8, testList.get(1).getStartIndex());
+        assertEquals(12, testList.get(1).getEndIndex());
+        assertEquals(18, testList.get(2).getStartIndex());
+        assertEquals(20, testList.get(2).getEndIndex());
+        assertEquals(28, testList.get(3).getStartIndex());
+        assertEquals(35, testList.get(3).getEndIndex());
+    }
+
+}
+
+	// End of segment: C:\Users\Dat\Documents\watdo\src\tests\units\ParsingServiceUnits.java
+
+
+
+
+

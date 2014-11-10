@@ -1,10 +1,12 @@
-package app.tests;
+package tests.units;
+//@author A0116703N
 
 import app.model.*;
-import org.json.JSONObject;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,6 +25,7 @@ public class ModelUnits {
         String testInput3 = "1. High";
         Boolean testBoolean1 = true;
         
+        // Valid inputs, standard constructor
         TodoItem testedTodoItem1 = new TodoItem(testInput1, startDate1, endDate1, testInput3, testBoolean1);
         assertEquals(testInput1, testedTodoItem1.getTaskName());
         assertEquals(startDate1.getTime(), testedTodoItem1.getStartDate().getTime());
@@ -30,6 +33,7 @@ public class ModelUnits {
         assertEquals(TodoItem.HIGH, testedTodoItem1.getPriority());
         assertEquals(testBoolean1, testedTodoItem1.isDone());
         
+        // Special constructor
         TodoItem testedTodoItem2 = new TodoItem(testInput1, startDate1, endDate1);
         assertEquals(testInput1, testedTodoItem2.getTaskName());
         assertEquals(startDate1.getTime(), testedTodoItem2.getStartDate().getTime());
@@ -37,6 +41,7 @@ public class ModelUnits {
         assertEquals(TodoItem.MEDIUM, testedTodoItem2.getPriority());
         assertEquals(false, testedTodoItem2.isDone());
         
+        // Borderline bad inputs, standard constructor
         TodoItem testedTodoItem3 = new TodoItem(null, null, null, testInput2, null);
         assertEquals(null, testedTodoItem3.getTaskName());
         assertEquals(null, testedTodoItem3.getStartDate());
@@ -48,13 +53,16 @@ public class ModelUnits {
     // Tests TodoItemList constructor
     @Test
     public void testTodoItemListConstructor() {
+        // Standard constructor
         TodoItemList testedList1 = new TodoItemList();
         assertEquals(0, testedList1.countTodoItems());
         
+        // Special constructor for existing data
         ArrayList<TodoItem> inputArrayList1 = new ArrayList<TodoItem>();
         TodoItemList testedList2 = new TodoItemList(inputArrayList1);
         assertEquals(0, testedList2.countTodoItems());
         
+        // Another special constructor for existing data
         ArrayList<TodoItem> inputArrayList2 = new ArrayList<TodoItem>();
         inputArrayList2.add(new TodoItem(null, null, null));
         TodoItemList testedList3 = new TodoItemList(inputArrayList2);
@@ -70,25 +78,25 @@ public class ModelUnits {
         Date startDate1 = new Date();
         Date endDate1 = new Date();
         
+        // Add
         TodoItemList testedList1 = new TodoItemList();
         testedList1.addTodoItem(new TodoItem(testInput1, startDate1, endDate1));
         assertEquals(1, testedList1.countTodoItems());
-        
         testedList1.addTodoItem(new TodoItem(testInput2, startDate1, null));
         assertEquals(2, testedList1.countTodoItems());
-        
         testedList1.addTodoItem(new TodoItem(testInput2, null, endDate1));
         assertEquals(3, testedList1.countTodoItems());
-        
         testedList1.addTodoItem(new TodoItem(testInput3, null, null));
         assertEquals(4, testedList1.countTodoItems());
         
+        // Test for task type
         ArrayList<TodoItem> currentTestedList = testedList1.getTodoItems();
         assertEquals(TodoItem.EVENT, currentTestedList.get(0).getTodoItemType());
         assertEquals(TodoItem.ENDLESS, currentTestedList.get(1).getTodoItemType());
         assertEquals(TodoItem.DEADLINE, currentTestedList.get(2).getTodoItemType());
         assertEquals(TodoItem.FLOATING, currentTestedList.get(3).getTodoItemType());
         
+        // Delete
         testedList1.deleteByUUID(currentTestedList.get(2).getUUID());
         assertEquals(3, testedList1.countTodoItems());
         currentTestedList = testedList1.getTodoItems();
@@ -96,6 +104,7 @@ public class ModelUnits {
         assertEquals(null, currentTestedList.get(1).getEndDate());
         assertEquals(null, currentTestedList.get(2).getEndDate());
         
+        // Clear
         testedList1.clearTodoItems();
         assertEquals(0, testedList1.countTodoItems());
     }
@@ -106,13 +115,13 @@ public class ModelUnits {
     public void testTodoItemSorter() {
         String testInput1 = "Test String 1";
         String testInput2 = "Test String 2";
-        String testInput3 = "Test String 3";
         String testInput4 = "Test String 4";
         String testInput5 = "Test String 5";
         String testInput6 = "Test String 6";
         Date earlyDate = new Date();
         Date lateDate = new Date(earlyDate.getTime() + 100000);
         
+        // Setup fixtures
         TodoItemList testedList1 = new TodoItemList();
         testedList1.addTodoItem(new TodoItem(testInput1, null, lateDate, TodoItem.HIGH, false));
         testedList1.addTodoItem(new TodoItem(testInput2, null, lateDate, TodoItem.MEDIUM, false));
@@ -124,8 +133,8 @@ public class ModelUnits {
         testedList1.addTodoItem(new TodoItem(testInput6, null, lateDate, TodoItem.MEDIUM, false));
         
         // TaskName then EndDate
-        TodoItemSorter.sortingStyle = 0;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.changeSortStyle(0);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         ArrayList<TodoItem> currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -150,8 +159,8 @@ public class ModelUnits {
         }
         
         // StartDate then Priority
-        TodoItemSorter.sortingStyle = 1;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.changeSortStyle(1);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -176,8 +185,8 @@ public class ModelUnits {
         }
         
         // EndDate then Priority
-        TodoItemSorter.sortingStyle = 2;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.changeSortStyle(2);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -202,8 +211,8 @@ public class ModelUnits {
         }
         
         // Priority then EndDate
-        TodoItemSorter.sortingStyle = 3;
-        TodoItemSorter.resortTodoList(testedList1);
+        TodoItemSorter.changeSortStyle(3);
+        TodoItemSorter.resortTodoList(testedList1.getTodoItems());
         currentTodoItems = testedList1.getTodoItems();
         for (int i = testedList1.countTodoItems() - 1; i > 0; i--) {
             TodoItem currentTodoItem = currentTodoItems.get(i);
@@ -359,6 +368,7 @@ public class ModelUnits {
         try {
             testStorage.changeSettings(tempFileDirectory, tempRandomColorsEnabled, tempNotificationsEnabled);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             fail();
         }
         
@@ -409,6 +419,7 @@ public class ModelUnits {
             fail();
         }
         
+        // Load
         ModelManager testManager2;
         try {
             testManager2 = new ModelManager();
@@ -435,7 +446,7 @@ public class ModelUnits {
         assertEquals(testInput4, testManager2.getTodoItemList().get(2).getTaskName());
         assertEquals(testInput2, testManager2.getTodoItemList().get(3).getTaskName());
 
-        //Update
+        // Update
         Boolean[] testParameters = {false, false, false, true, true};
         
         try {
@@ -457,7 +468,6 @@ public class ModelUnits {
         }
         
         assertEquals(3, testManager2.countTasks());
-        
         assertEquals(testInput4, testManager2.getTodoItemList().get(0).getTaskName());
         assertEquals(testInput3, testManager2.getTodoItemList().get(1).getTaskName());
         assertEquals(testInput2, testManager2.getTodoItemList().get(2).getTaskName());
@@ -521,21 +531,5 @@ public class ModelUnits {
         } catch (Exception e) {
             fail();
         }
-    }
-    
-    // Minor test for sorting in todoItemList
-    @Test
-    public void testTodoItemListSort() {
-        TodoItemList testList = new TodoItemList();
-        testList.addTodoItem(new TodoItem("2", null, null, null, null));
-        testList.addTodoItem(new TodoItem("1", null, null, null, null));
-        
-        assertEquals("2", testList.getTodoItems().get(0).getTaskName());
-        assertEquals("1", testList.getTodoItems().get(1).getTaskName());
-        
-        testList.sortTodoItems(TodoItemSorter.todoItemComparators[0]);
-        
-        assertEquals("1", testList.getTodoItems().get(0).getTaskName());
-        assertEquals("2", testList.getTodoItems().get(1).getTaskName());
     }
 }

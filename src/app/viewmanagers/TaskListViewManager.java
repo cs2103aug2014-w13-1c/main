@@ -1,7 +1,40 @@
+//@author A0111764L
+
+
+/* taskListView.css
+
+Retrieved from: http://blog.ngopal.com.np/2012/07/11/customize-scrollbar-via-css/
+I'm not the author of the code, so it will not be included here.
+
+*/
+
+/* TaskListView.fxml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.text.Font?>
+<ListView fx:id="taskListView" fixedCellSize="44.0" prefHeight="400.0" prefWidth="400.0" stylesheets="@../stylesheets/taskList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.viewmanagers.TaskListViewManager">
+    <Label text="You have no tasks." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+    <Label fx:id="emptySearch" text="No tasks found." textFill="BLACK">
+        <font>
+            <Font size="20.0" />
+        </font>
+    </Label>
+</ListView>
+
+ */
+
 package app.viewmanagers;
 
-import app.helpers.LoggingService;
-import app.helpers.UserGuide;
+import app.services.LoggingService;
+import app.views.WelcomePane;
 import app.model.TodoItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +50,11 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * TaskListViewManager manages the ListView object, which is responsible
+ * for creating and displaying individual ListCell objects that represent
+ * a TodoItem each.
+ */
 public class TaskListViewManager {
 
     @FXML
@@ -25,14 +63,24 @@ public class TaskListViewManager {
     @FXML
     private Label emptySearch;
 
-    private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
-    private UserGuide userGuide;
-
     private RootViewManager rootViewManager;
+    private WelcomePane welcomePane;
+    private ObservableList<TodoItem> taskData = FXCollections.observableArrayList();
+
     private List<String> colors;
     private String color;
 
-
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     *
+     * In our implementation, we are using a custom CellFactory for generating
+     * ListCells. This opens up the class to allow customized controls and methods.
+     *
+     * The placeholder of the ListView also differs based on the user's context.
+     * This can be either a ListView with 0 tasks (welcomePane) or a search view with
+     * 0 results (emptySearch Label).
+     */
     @FXML
     public void initialize() {
         initColors();
@@ -53,21 +101,31 @@ public class TaskListViewManager {
             }
         });
 
-        userGuide = new UserGuide();
-        taskListView.setPlaceholder(userGuide.getUserGuide());
+        welcomePane = new WelcomePane();
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
 
+    /**
+     * Set the placeholder when there are no results for a search term.
+     */
     public void setEmptySearchPlaceholder() {
         taskListView.setPlaceholder(emptySearch);
     }
 
+    /**
+     * Set the placeholder when the task list is empty.
+     */
     public void setUserGuidePlaceholder() {
-        taskListView.setPlaceholder(userGuide.getUserGuide());
+        taskListView.setPlaceholder(welcomePane.getWelcomePane());
     }
 
+    /**
+     * This method is called from various components whenever the task
+     * list needs to be updated. For example, searching and changing
+     * view context (Overdue, Done, Undone) uses this method.
+     * @param taskData An ObservableList containing TodoItems to replace the current list.
+     */
     public void updateView(ObservableList<TodoItem> taskData) {
-        assert(taskData.size() >= 0);
-        assert(taskData.size() <= Integer.MAX_VALUE);
 
         // Workaround for inherent bug in JavaFX that refuses
         // to update the ListView with new objects.
@@ -85,14 +143,47 @@ public class TaskListViewManager {
         LoggingService.getLogger().log(Level.INFO, "Refreshed task list.");
     }
 
+    /**
+     * Provide automatic scrolling to the least recently modified task as an UX feature.
+     * @param taskData The current list of TodoItems being displayed to the user.
+     */
     private void scrollToLastModifiedTask(ObservableList<TodoItem> taskData) {
         UUID uuid = rootViewManager.getMainApp().getTaskController().getLastModifiedUUID();
         int index = convertUUIDtoIndex(uuid, taskData);
+        scrollTo(index);
+        highlight(index);
+    }
+
+    /**
+     * Scroll to a specified index. UX feature.
+     * @param index The index of the task list cell to scroll to.
+     */
+    public void scrollTo(int index) {
         taskListView.scrollTo(index);
+    }
+
+    /**
+     * Highlight a specified index. UX feature.
+     * @param index The index of the task list cell to highlight.
+     */
+    public void highlight(int index) {
         taskListView.getSelectionModel().select(index);
         taskListView.getFocusModel().focus(index);
     }
 
+    /**
+     * To pinpoint to a specific task in the current visible task list, the implementation
+     * does not provide an accurate task index, as these tasks are filtered out by their statuses
+     * (done, undone) into different lists. Hence, we're making use of a more unique identifier,
+     * the UUID. This method does a linear search in the current task list to get the index of
+     * the task with the specific UUID.
+     *
+     * Returns -1 if task is not found.
+     *
+     * @param uuid The UUID of the specified TodoItem.
+     * @param taskData The list of TodoItems to check against.
+     * @return index of task in current task list with the specified UUID.
+     */
     private int convertUUIDtoIndex(UUID uuid, ObservableList<TodoItem> taskData) {
         for (TodoItem task : taskData) {
             if (task.getUUID() == uuid) {
@@ -102,14 +193,28 @@ public class TaskListViewManager {
         return -1;
     }
 
+    /**
+     * When the user disable random colors, this method returns the selected
+     * color that was initialized at launch time.
+     *
+     * @return The chosen color from instantiation time.
+     */
     public String getCurrentColor() {
         return color;
     }
 
+    /**
+     * When the user enables random colors, this method generates the colors
+     * to be applied for each ListCell.
+     * @return A random color.
+     */
     public String getRandomColor() {
         return colors.get(new Random().nextInt(colors.size()));
     }
 
+    /**
+     * Initialize the color palette.
+     */
     private void initColors() {
         colors = Arrays.asList(
                 "208, 23, 22", // red 700
@@ -129,20 +234,19 @@ public class TaskListViewManager {
                 "121, 85, 72"); // brown 500
     }
 
+    /**
+     * Set back-reference to the rootviewManager.
+     * @param rootViewManager The RootViewManager instance where this TaskListViewManager instance was created from.
+     */
     public void setRootViewManager(RootViewManager rootViewManager) {
         this.rootViewManager = rootViewManager;
     }
 
+    /**
+     * Public getter for the current task list.
+     * @return an ObservableList of TodoItems.
+     */
     public ObservableList<TodoItem> getTaskData() {
         return taskData;
     }
-
-    public void highlightCell (int index, boolean isFromButton) {
-        if (!isFromButton) {
-            taskListView.scrollTo(index);
-        }
-        taskListView.getSelectionModel().select(index);
-        taskListView.getFocusModel().focus(index);
-    }
-
 }
